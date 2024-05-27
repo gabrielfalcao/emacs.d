@@ -1,18 +1,31 @@
-;; Keep emacs Custom-settings in separate file
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-(defun load-file-if-exists (file-name)
-  (let ((file-path (expand-file-name file-name user-emacs-directory)))
-    (load-file file-path)
-    ))
+;;; package -- init
+;;;    /##  ### /### /###     /###     /###     /###
+;;;   / ###  ##/ ###/ /##  / / ###  / / ###  / / #### /
+;;;  /   ###  ##  ###/ ###/ /   ###/ /   ###/ ##  ###/
+;;; ##    ### ##   ##   ## ##    ## ##       ####
+;;; ########  ##   ##   ## ##    ## ##         ###
+;;; #######   ##   ##   ## ##    ## ##           ###
+;;; ##        ##   ##   ## ##    ## ##             ###
+;;; ####    / ##   ##   ## ##    /# ###     / /###  ##
+;;;  ######/  ###  ###  ### ####/ ## ######/ / #### /
+;;;   #####    ###  ###  ### ###   ## #####     ###/
+;;; Commentary:
+;;;   none
+;;;
+;;; Code:
 
 
-(load-file-if-exists "typst-mode.el")
-(load-file-if-exists "0-basics.el")
-(load-file-if-exists "1-package-management.el")
-(load-file-if-exists "2-shell.el")
-(load-file-if-exists "3-autocomplete.el")
-(load-file-if-exists "4-theme.el")
-(load-file-if-exists "5-mode-bindings.el")
-(load-file-if-exists "6-hooks.el")
-(load-file-if-exists "7-programming-tools.el")
-;;(load-file "custom.el")
+(progn
+  (require 'package)
+  (setq package-archives nil)
+  (require 'use-package)
+  (use-package flycheck :init (global-flycheck-mode))
+  (setq use-package-always-ensure t)
+  (add-to-list 'load-path "~/.emacs.d/site-g")
+  (add-to-list 'custom-safe-themes "c22b959c98815a8a718ce4689edf28749aa9d108be6a4e96d993f8bef4d8cf0e")
+  (add-to-list 'custom-safe-themes "cc50aa77450a8b1fea9ffdd99d0e3f008db33c845126f14943799bf706c5ac86")
+  (load-library "kanagawa")
+  (load-library "typst-mode")
+  (load-library "5O1")
+  (load-library "7O1")
+  (load-library "8O1"))
