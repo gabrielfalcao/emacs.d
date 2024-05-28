@@ -1,3 +1,1 @@
-(progn
-  (add-to-list 'load-path "~/.emacs.d/g")
-  (load-library "gabr."))
+(progn (add-to-list 'load-path "~/.emacs.d/t") (load-library "k"))
