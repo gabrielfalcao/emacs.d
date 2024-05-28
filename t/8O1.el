@@ -1,17 +1,15 @@
-;;; package -- 8-kbd.el
-;;;    /##  ### /### /###     /###     /###     /###
-;;;   / ###  ##/ ###/ /##  / / ###  / / ###  / / #### /
-;;;  /   ###  ##  ###/ ###/ /   ###/ /   ###/ ##  ###/
-;;; ##    ### ##   ##   ## ##    ## ##       ####
-;;; ########  ##   ##   ## ##    ## ##         ###
-;;; #######   ##   ##   ## ##    ## ##           ###
-;;; ##        ##   ##   ## ##    ## ##             ###
-;;; ####    / ##   ##   ## ##    /# ###     / /###  ##
-;;;  ######/  ###  ###  ### ####/ ## ######/ / #### /
-;;;   #####    ###  ###  ### ###   ## #####     ###/
-;;; Commentary:
-;;;
-;;; Code:
+;; package -- 8O1.el
+;;    /##  ### /### /###     /###     /###     /###
+;;   / ###  ##/ ###/ /##  / / ###  / / ###  / / #### /
+;;  /   ###  ##  ###/ ###/ /   ###/ /   ###/ ##  ###/
+;; ##    ### ##   ##   ## ##    ## ##       ####
+;; ########  ##   ##   ## ##    ## ##         ###
+;; #######   ##   ##   ## ##    ## ##           ###
+;; ##        ##   ##   ## ##    ## ##             ###
+;; ####    / ##   ##   ## ##    /# ###     / /###  ##
+;;  ######/  ###  ###  ### ####/ ## ######/ / #### /
+;;   #####    ###  ###  ### ###   ## #####     ###/
+
 (scroll-bar-mode t)
 (menu-bar-mode 0)
 (tool-bar-mode 0)
@@ -23,22 +21,28 @@
   (global-set-key (kbd "C-x C-n") 'uncomment-region)
   (global-set-key (kbd "C-c c") 'comment-region)
   (global-set-key (kbd "C-#") 'comment-region))
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+(add-hook 'write-files-hook 'delete-trailing-whitespace)
+
 
 (progn
   (global-set-key (kbd "C-c C-x C-e") 'base64-encode-region)
   (global-set-key (kbd "C-c C-x C-d") 'base64-decode-region)
   (global-set-key (kbd "C-c C-e C-3") 'rot13-region))
-
 (global-set-key (kbd "C-<") 'decrease-left-margin)
 (global-set-key (kbd "C->") 'increase-left-margin)
 (progn
   (put 'upcase-region 'disabled nil)
   (global-set-key (kbd "C-x C-u") #'(lambda () (interactive) (error "C-x C-k")))
   (global-set-key (kbd "C-x C-k") #'upcase-region)
+  (global-set-key (kbd "C-c C-k") #'upcase-region)
+  (global-set-key (kbd "C-x C-n") #'upcase-region)
+  (global-set-key (kbd "C-c C-n") #'upcase-region)
   )
 (progn
   (put 'downcase-region 'disabled nil)
-  (global-set-key (kbd "C-x C-l") #'downcase-region))
+  (global-set-key (kbd "C-x C-l") #'downcase-region)
+  (global-set-key (kbd "C-c C-l") #'downcase-region))
 
 (global-set-key [(shift C-tab)] #'(lambda () (interactive) (other-window -1)))
 (global-set-key [(meta n)] #'(lambda () (interactive) (scroll-up 1)))
@@ -59,49 +63,50 @@
         "M-t"
 
         ))
-;; M-s       
-;; M-s .     
-;; M-s M-w   
-;; M-s _     
-;; M-s h     
-;; M-s h f   
-;; M-s h l   
-;; M-s h p   
-;; M-s h r   
-;; M-s h u   
-;; M-s h w   
-;; M-s o     
-;; M-s w     
-;; M-s-F     
-;; M-s-f     
-;; M-s-h     
-;; M-t       
-;; M-u       
-;; M-v       
-;; M-w       
-;; M-x       
-;; M-y       
-;; M-z       
-;; M-{       
-;; M-|       
-;; M-}       
-;; M-~       
+;; M-s
+;; M-s .
+;; M-s M-w
+;; M-s _
+;; M-s h
+;; M-s h f
+;; M-s h l
+;; M-s h p
+;; M-s h r
+;; M-s h u
+;; M-s h w
+;; M-s o
+;; M-s w
+;; M-s-F
+;; M-s-f
+;; M-s-h
+;; M-t
+;; M-u
+;; M-v
+;; M-w
+;; M-x
+;; M-y
+;; M-z
+;; M-{
+;; M-|
+;; M-}
+;; M-~
 
 
 (global-set-key (kbd "C-g") #'(lambda () (interactive) (progn
                                                          (message "g")
 							 (keyboard-quit))))
-(global-set-key (kbd "M-u") #'(lambda () (interactive) (error "aint happenin'")))
-(global-set-key (kbd "M-l") #'(lambda () (interactive) (error "aint happenin'")))
+(global-set-key (kbd "M-u") #'(lambda () (interactive) (error "AINT HAPPENIN'")))
+(global-set-key (kbd "M-l") #'(lambda () (interactive) (error "AINT HAPPENIN'")))
 (global-set-key (kbd "C-q") 'keyboard-quit)
 (global-set-key [(ctrl s)] 'isearch-forward-regexp)
 (global-set-key [(ctrl shift s)] 'isearch-backward-regexp)
-(global-set-key (kbd "M-O") #'(lambda () (interactive) (insert "ॐ")))
-(global-set-key (kbd "M-G") #'(lambda () (interactive) (insert "Ꭶ")))
-;; (global-set-key (kbd "M-g") #'(lambda () (interactive)
-;;                                 (insert-char (string-make-unibyte "Ꭶ"))))
-(global-unset-key (kbd "M-o"))
-(global-unset-key (kbd "M-g"))
+(progn
+  (global-unset-key (kbd "M-o"))
+  (global-unset-key (kbd "M-g"))
+  (global-set-key (kbd "M-O") #'(lambda () (interactive) (insert "ॐ")))
+  (global-set-key (kbd "M-G") #'(lambda () (interactive) (insert "Ꭶ")))
+  (global-set-key (kbd "M-g g") 'goto-line)
+  (global-set-key (kbd "M-g M-g") 'goto-line))
 
 (setq mac-option-modifier 'meta)
 (setq mac-command-modifier 'meta)

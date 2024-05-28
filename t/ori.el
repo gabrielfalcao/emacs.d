@@ -18,15 +18,19 @@
 
 
 
+
+
+
+
 (defun Ꭶ()
   "ॐ"
   (interactive)
-  (let* ((Ꭶvisual-selectionᎦ   "#546745")
+  (let* ((Ꭶvisual-selectionᎦ   "#C6DCFC")
          (ᎦvariableᎦ           "#F49101")
          (ᎦstringᎦ             "#DCDC88")
          (ᎦregexpᎦ             "#C63367")
          (ᎦadmonitionᎦ         "#F80101")
-         (ᎦoperatorsᎦ          "#701194")
+         (ᎦoperatorsᎦ          "#F682FF")
          (ᎦnumberᎦ             "#FC580C")
          (ᎦnormalᎦ             "#DEDEDE")
          (Ꭶmode-inactive-fgᎦ   "#9195B2")
@@ -34,15 +38,15 @@
          (Ꭶmode-inactive-bgᎦ   "#010000")
          (Ꭶmode-line-bgᎦ       "#333"   )
          (Ꭶmethod-declarationᎦ "#A6E22E")
-         ;; (Ꭶtype-faceᎦ          "#36F6E9")
+         (Ꭶtype-faceᎦ          "#36F6E9")
          (Ꭶtype-faceᎦ          "#1996C9")
          (Ꭶline-fgᎦ            "#919588")
          (Ꭶline-numberᎦ        "#161A1F")
          (ᎦkeywordsᎦ           "#F13976")
          (Ꭶcursor-underscoreᎦ  "#EEDC82")
          (Ꭶcurrent-lineᎦ       "#151515")
-         (ᎦconstantᎦ           "#C159F9")
-         (ᎦcommentsᎦ           "#9C9C9C")
+         (ᎦconstantᎦ           "#F07EF8")
+         (ᎦcommentsᎦ           "#A79C83")
          (ᎦbackgroundᎦ         "#1C1C1C"))
     (with-demoted-errors "set-face-attribute: %s"
       (progn
@@ -87,7 +91,8 @@
         (set-face-attribute 'isearch-fail nil :background ᎦadmonitionᎦ)
         (set-face-attribute 'lazy-highlight nil :background ᎦoperatorsᎦ :foreground Ꭶvisual-selectionᎦ)
         (set-face-attribute 'bold nil :bold t)))))
-;;
-;;
-;;
+
+(add-hook 'after-change-major-mode-hook
+          'Ꭶ)
+
 (Ꭶ)

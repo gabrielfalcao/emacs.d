@@ -26,7 +26,6 @@
              '("V2FybmluZ3M=" (rot13-string "p2AlLKEwnN=="))))))
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
-(kill-buffer "*Messages*")
 (add-hook 'minibuffer-exit-hook
           #'(lambda ()
              (let ((buffer "*Completions*"))

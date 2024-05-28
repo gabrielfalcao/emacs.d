@@ -13,6 +13,9 @@
 ;;;   pl-specific `tools'
 ;;;
 ;;; Code:
+(setq vc-handled-backends ())
+(setq vc-handled-backends nil)
+(eval-after-load "vc" '(remove-hook 'find-file-hook 'vc-find-file-hook))
 (require 'company)
 (require 'go-mode)
 (require 'jinja2-mode)
@@ -67,7 +70,7 @@
 (add-to-list 'auto-mode-alist '("\\.json$" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.json-*$" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.jsonnet$" . jsonnet-mode))
-(add-to-list 'auto-mode-alist '("\\.jsx$" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.m?jsx?$" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.libsonnet$" . jsonnet-mode))
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
 (add-to-list 'auto-mode-alist '("\\.plist$" . xml-mode))
@@ -133,11 +136,6 @@
 (defun uniquify-all-lines-buffer ()
   (interactive "*")
   (uniquify-all-lines-region (point-min) (point-max)))
-(use-package expand-region
-  :ensure t
-  :config
-  (global-set-key (kbd "C-=") 'er/expand-region))
-(provide '5O1)
 
 (defun delete-package (pkg-desc &optional force nosave)
   "Delete package PKG-DESC.
