@@ -16,6 +16,7 @@
 (global-unset-key (kbd "C-x 5 2"))
 (global-set-key (kbd "C-c C-r") 'ruskify-region)
 (global-set-key (kbd "C-x 5 3") 'make-frame-command)
+(global-set-key (kbd "<f12>") 'cargo-mode-build)
 (progn
   (global-set-key (kbd "C-c C-n") 'uncomment-region)
   (global-set-key (kbd "C-x C-n") 'uncomment-region)
