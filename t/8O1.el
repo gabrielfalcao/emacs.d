@@ -10,12 +10,12 @@
 ;;  ######/  ###  ###  ### ####/ ## ######/ / #### /
 ;;   #####    ###  ###  ### ###   ## #####     ###/
 
-(scroll-bar-mode t)
-(menu-bar-mode 0)
-(tool-bar-mode 0)
-(server-mode t)
+(server-mode 9)
 (global-set-key (kbd "C-c u") #'(lambda () (interactive) (error "C-x C-n")))
 (global-set-key (kbd "C-c C-p") #'(lambda () (interactive) (message "cur %d" (point))))
+(global-unset-key (kbd "C-x 5 2"))
+(global-set-key (kbd "C-c C-r") 'ruskify-region)
+(global-set-key (kbd "C-x 5 3") 'make-frame-command)
 (progn
   (global-set-key (kbd "C-c C-n") 'uncomment-region)
   (global-set-key (kbd "C-x C-n") 'uncomment-region)
@@ -23,7 +23,6 @@
   (global-set-key (kbd "C-#") 'comment-region))
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 (add-hook 'write-files-hook 'delete-trailing-whitespace)
-
 
 (progn
   (global-set-key (kbd "C-c C-x C-e") 'base64-encode-region)
@@ -36,8 +35,6 @@
   (global-set-key (kbd "C-x C-u") #'(lambda () (interactive) (error "C-x C-k")))
   (global-set-key (kbd "C-x C-k") #'upcase-region)
   (global-set-key (kbd "C-c C-k") #'upcase-region)
-  (global-set-key (kbd "C-x C-n") #'upcase-region)
-  (global-set-key (kbd "C-c C-n") #'upcase-region)
   )
 (progn
   (put 'downcase-region 'disabled nil)
@@ -53,60 +50,53 @@
 (global-set-key (kbd "C-c C-s") 'isearch-backward)
 
 (mapc #'(lambda (dbk)
-              (ignore-errors
-                (global-unset-key (kbd dbk))))
+          (ignore-errors
+            (global-unset-key (kbd dbk))))
       '(
+	"M-s ."
+	"M-s M-w"
+	"M-s _"
+	"M-s h f"
+	"M-s h l"
+	"M-s h p"
+	"M-s h r"
+	"M-s h u"
+	"M-s h w"
+	"M-s h"
+	"M-s o"
+	"M-s w"
+	"M-s"
+	"M-s-F"
+	"M-s-h"
+	;; "M-t"
+	;; "M-u"
+	;; "M-y"
+	;; "M-z"
+	"M-{"
+	"M-|"
+	"M-}"
+	"M-~"
         "M-s-F"
-        "M-s-f"
         "M-s-h"
-        "M-|"
         "M-t"
-
+        "M-|"
         ))
-;; M-s
-;; M-s .
-;; M-s M-w
-;; M-s _
-;; M-s h
-;; M-s h f
-;; M-s h l
-;; M-s h p
-;; M-s h r
-;; M-s h u
-;; M-s h w
-;; M-s o
-;; M-s w
-;; M-s-F
-;; M-s-f
-;; M-s-h
-;; M-t
-;; M-u
-;; M-v
-;; M-w
-;; M-x
-;; M-y
-;; M-z
-;; M-{
-;; M-|
-;; M-}
-;; M-~
 
 
-(global-set-key (kbd "C-g") #'(lambda () (interactive) (progn
-                                                         (message "g")
-							 (keyboard-quit))))
-(global-set-key (kbd "M-u") #'(lambda () (interactive) (error "AINT HAPPENIN'")))
-(global-set-key (kbd "M-l") #'(lambda () (interactive) (error "AINT HAPPENIN'")))
-(global-set-key (kbd "C-q") 'keyboard-quit)
-(global-set-key [(ctrl s)] 'isearch-forward-regexp)
-(global-set-key [(ctrl shift s)] 'isearch-backward-regexp)
+(progn
+  (global-set-key (kbd "C-g") 'cg)
+  (global-set-key (kbd "M-u") 'ah)
+  (global-set-key (kbd "M-l") 'ah)
+  (global-set-key (kbd "C-q") 'keyboard-quit)
+  (global-set-key (kbd "C-s") 'isearch-forward-regexp)
+  (global-set-key (kbd "C-S") 'isearch-backward-regexp))
 (progn
   (global-unset-key (kbd "M-o"))
   (global-unset-key (kbd "M-g"))
-  (global-set-key (kbd "M-O") #'(lambda () (interactive) (insert "ॐ")))
   (global-set-key (kbd "M-G") #'(lambda () (interactive) (insert "Ꭶ")))
   (global-set-key (kbd "M-g g") 'goto-line)
-  (global-set-key (kbd "M-g M-g") 'goto-line))
+  (global-set-key (kbd "M-g M-g") 'goto-line)
+  (global-set-key (kbd "M-O") #'(lambda () (interactive) (insert "ॐ"))))
 
 (setq mac-option-modifier 'meta)
 (setq mac-command-modifier 'meta)
@@ -119,47 +109,21 @@
   (set-terminal-coding-system 'utf-8)
   (set-keyboard-coding-system 'utf-8)
   (set-selection-coding-system 'utf-8))
+
+
+
 (column-number-mode)
 (setq select-enable-clipboard nil)
 (setq ring-bell-function 'ignore)
 (setq inhibit-splash-screen t)
 (setq inhibit-startup-screen t)
-(global-font-lock-mode 1)
-(transient-mark-mode 1)
-(set-frame-font "Monaco-17")
-(set-face-attribute 'default t :font "Monaco-17")
-(global-prettify-symbols-mode 0)
-(require 'linum)
-(global-linum-mode 1)
-(setq linum-format "%4d")
-(setq-default truncate-lines t)
 (setq show-paren-delay 0 show-paren-style 'parenthesis)
-(show-paren-mode 1)
+(show-paren-mode 6)
 (setq-default cursor-type 'bar)
 (setq-default indent-tabs-mode nil)
 (setq scroll-conservatively 101)
 (setq show-trailing-whitespace t)
 
-(defun uniquify-all-lines-region (start end)
-  (interactive "*r")
-  (save-excursion
-    (let ((end (copy-marker end)))
-      (while
-          (progn
-            (goto-char start)
-            (re-search-forward "^\\(.*\\)\n\\(\\(.*\n\\)*\\)\\1\n" end t))
-        (replace-match "\\1\n\\2")))))
-(defun uniquify-all-lines-buffer ()
-  (interactive "*")
-  (uniquify-all-lines-region (point-min) (point-max)))
-(defun kill-bufs ()
-  (interactive)
-  (mapcar #'(lambda (b)
-              (ignore-errors
-                (set-buffer-modified-p nil)
-                (revert-buffer 1 1))
-              (kill-buffer b))
-          (buffer-list)))
 (setq
  backup-by-copying t
  backup-directory-alist

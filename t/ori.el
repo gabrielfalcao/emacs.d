@@ -25,7 +25,9 @@
 (defun Ꭶ()
   "ॐ"
   (interactive)
-  (let* ((Ꭶvisual-selectionᎦ   "#C6DCFC")
+  (let* ((ᎦselᎦ                "#C6DCFC")
+	 (ᎦselᎦ                "#CFC6A6")
+	 (ᎦselᎦ                "#B09C58")
          (ᎦvariableᎦ           "#F49101")
          (ᎦstringᎦ             "#DCDC88")
          (ᎦregexpᎦ             "#C63367")
@@ -58,7 +60,8 @@
         (set-face-attribute 'header-line nil :background Ꭶmode-line-bgᎦ :foreground ᎦnormalᎦ)
         (set-face-attribute 'highlight nil :background Ꭶcurrent-lineᎦ)
         (set-face-attribute 'info-header-xref nil :foreground ᎦkeywordsᎦ :underline t)
-        (set-face-attribute 'region nil :background Ꭶvisual-selectionᎦ :foreground ᎦbackgroundᎦ)
+        (set-face-attribute 'region nil :background ᎦselᎦ :foreground ᎦbackgroundᎦ)
+
         (set-face-attribute 'underline nil :underline )
         (set-face-attribute 'font-lock-builtin-face nil :foreground ᎦoperatorsᎦ)
         (set-face-attribute 'font-lock-comment-delimiter-face nil :foreground ᎦcommentsᎦ)
@@ -87,12 +90,19 @@
         (set-face-attribute 'vertical-border nil :background ᎦbackgroundᎦ)
         (set-face-attribute 'show-paren-mismatch nil :background ᎦadmonitionᎦ :foreground ᎦnormalᎦ :weight 'bold)
         (set-face-attribute 'show-paren-match nil :background ᎦkeywordsᎦ :foreground ᎦnormalᎦ :weight 'bold)
-        (set-face-attribute 'isearch nil :background ᎦregexpᎦ :foreground Ꭶvisual-selectionᎦ)
+        (set-face-attribute 'isearch nil :background ᎦregexpᎦ :foreground ᎦselᎦ)
         (set-face-attribute 'isearch-fail nil :background ᎦadmonitionᎦ)
-        (set-face-attribute 'lazy-highlight nil :background ᎦoperatorsᎦ :foreground Ꭶvisual-selectionᎦ)
-        (set-face-attribute 'bold nil :bold t)))))
-
-(add-hook 'after-change-major-mode-hook
-          'Ꭶ)
-
+        (set-face-attribute 'lazy-highlight nil :background ᎦoperatorsᎦ :foreground ᎦselᎦ)
+        (set-face-attribute 'bold nil :bold t))))
+  (ignore-errors
+    (progn
+      (global-font-lock-mode 1)
+      (transient-mark-mode 1)
+      (set-frame-font "Monaco-17")
+      (set-face-attribute 'default t :font "Monaco-17")
+      (global-prettify-symbols-mode 0)
+      (require 'linum)
+      (global-linum-mode 1)
+      (setq linum-format "%6d")
+      (setq-default truncate-lines t))))
 (Ꭶ)
