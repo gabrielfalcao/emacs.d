@@ -22,7 +22,7 @@
   (global-set-key (kbd "C-c c") 'comment-region)
   (global-set-key (kbd "C-#") 'comment-region))
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
-(add-hook 'write-files-hook 'delete-trailing-whitespace)
+(add-hook 'write-files-hook 'disavail-asl)
 
 (progn
   (global-set-key (kbd "C-c C-x C-e") 'base64-encode-region)
