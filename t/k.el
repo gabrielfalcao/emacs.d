@@ -7,11 +7,14 @@
 ;; OOOOOOOOOOOG
 
 
-(defun file-name-collapse (path)
-  "PATH."
 
-  )
+  (global-unset-key (kbd "C-c C-x"))
+  (global-unset-key (kbd "C-c C-u"))
+  (global-unset-key (kbd "C-x C-d"))
+  (global-unset-key (kbd "C-x C-e"))
+
 (progn
+  (global-unset-key (kbd "C-c C-x"))
   (global-unset-key (kbd "C-x C-x"))
   (global-set-key (kbd "C-x C-x")
                   #'(lambda (beg end) (interactive "r")
@@ -56,13 +59,13 @@
   (progn
     (load-library "f")
     (load-library "8O1")
-    (load-library "5O1")))
+    (load-library "5O1"))
+  )
 
 (ignore-errors
   (progn
     (setq vc-handled-backends ())
     (setq vc-handled-backends nil)
     (eval-after-load "vc" '(remove-hook 'find-file-hook 'vc-find-file-hook))))
-
 
 (message "%s loaded" (buffer-name))

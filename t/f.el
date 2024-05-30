@@ -11,13 +11,14 @@
 (defun minor-mode-slist() (mapcar (lambda (l) (format "%s" (car l))) minor-mode-alist))
 (defun string-list-html-like-display (nn sl) (format "<%s>\n%s\n</%s>" nn (string-join (mapcar 'string-shift-right sl) "\n") nn))
 (defun uniquify-all-lines-buffer () (interactive "*") (uniquify-all-lines-region (point-min) (point-max)))
-(defun uniquify-all-lines-region (start end) (interactive "*r") (save-excursion (let ((end (copy-marker end))) (while (progn (goto-char start) (re-search-forward "^\\(.*\\)\n\\(\\(.*\n\\)*\\)\\1\n" end t)) (replace-match "\\1\n\\2")))))
+(defun uniquify-all-lines-region (start end) (interactive "*r") (save-excursion
+                                                                  (let ((end (copy-marker end))) (while (progn (goto-char start) (re-search-forward "^\\(.*\\)\n\\(\\(.*\n\\)*\\)\\1\n" end t)) (replace-match "\\1\n\\2")))))
 (defun my-web-mode-hook () (setq web-mode-markup-indent-offset 2) (setq web-mode-css-indent-offset 2) (setq web-mode-code-indent-offset 2) (setq web-mode-enable-current-element-highlight t) (setq web-mode-enable-current-column-highlight t) (set-face-attribute 'web-mode-doctype-face nil :foreground (face-foreground font-lock-function-name-face)) (set-face-attribute 'web-mode-html-attr-name-face nil :foreground (face-foreground font-lock-variable-name-face)) (set-face-attribute 'web-mode-html-attr-value-face nil :foreground (face-foreground font-lock-type-face)))
 (defun gc() (interactive) (progn (scroll-bar-mode 0) (menu-bar-mode 0) (tool-bar-mode 0)))
 (defun ah() (interactive) (warn "aint happenin'"))
 
 (defun disavail-asl() (interactive)  (ignore-errors (mapc #'(lambda d) (delete-directory d t nil) '("~/.emacs.d/auto-save-list" "~/.emacs.backups"))))
-(defun ruskify-region (beg end) (interactive "*r") (replace-region-contents beg end (lambda () (reverse (buffer-substring beg end)))))
+(defun ruskify-region (beg end) (interactive "*r") (replace-region-contents beg end (lambda () (reverse (buffer-substring-no-properties beg end)))))
 (defun kooh-tini-retfa () (interactive) (ignore-errors (progn (global-company-mode) (disavail-asl)
                                                               (gc)
                                                               (Ꭶ))))
@@ -137,9 +138,9 @@
 
 (defun g/bchs()
   (format "%s %s %s "
-          (substring (secure-hash 'sha256 (buffer-substring (point-min) (point-max))) 32 40)
-          (substring (secure-hash 'sha1 (buffer-substring (point-min) (point-max))) 32 40)
-          (substring (secure-hash 'md5 (buffer-substring (point-min) (point-max))) 0 10)))
+          (substring (secure-hash 'sha256 (buffer-substring-no-properties (point-min) (point-max))) 32 40)
+          (substring (secure-hash 'sha1 (buffer-substring-no-properties (point-min) (point-max))) 32 40)
+          (substring (secure-hash 'md5 (buffer-substring-no-properties (point-min) (point-max))) 0 10)))
 
 
 (defun g/tick-mode-line (&optional cbmp)
@@ -197,18 +198,6 @@
 ;; (global-set-key (kbd "C-c C-b C-m C-p") (g/tick-mode-line ((buffer-marker-points))))
 
 
-
-;; (message "%s" (cond ((= 1 aclsl)
-
-
-;;;
-;; (message "%s"
-;;          (replace-regexp-in-string
-;;           "-*\\([n-x]*\\)-*\\([n-x]*\\)-*\\([n-x]*\\)-*" "🤸🏼‍♂️\\1 👯\\2"
-;;           (file-attribute-modes (file-attributes (buffer-file-name)))))
-
-
-
 (defun contrast-color (c)
   "C."
   (interactive "s")
@@ -232,4 +221,17 @@
                256)))
         "#FFF" "#111"))
 
-;;;;;;
+(defun collapse-string (s) "S." (string-trim (replace-regexp-in-string "\\(\\s-+\\| \\)+" " " s)))
+(defun collapse-lines-region (beg end)
+  "BEG END."
+  (interactive "*r")
+  (save-mark-and-excursion
+    (let ((region (buffer-substring-no-properties beg end)))
+      (replace-region-contents beg end
+                               #'(lambda () (collapse-string region))))))
+
+
+(global-set-key (kbd "C-c C-c C-r") 'collapse-lines-region)
+
+
+;;;
