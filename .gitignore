@@ -25,3 +25,4 @@ elpa
 /.*
 abbrev_defs
 custom.el
+/auto-save-list
