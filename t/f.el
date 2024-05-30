@@ -142,61 +142,57 @@
           (substring (secure-hash 'md5 (buffer-substring (point-min) (point-max))) 0 10)))
 
 
-;; (defun g/tick-mode-line (&optional cbmp)
-;;   (interactive)
-;;   (unless (markerp cbmp)
-;;     (error "%s not a marker" cbmp))
-
-;;   (let* ((mlfmt (list
-;;        mode-line-front-space
-;;        'g/bchs
-;;        ;; (substring (secure-hash 'sha1 (buffer-substring (point-min) (point-max))) 32 40))
-;;        ""
-;;          (g/fm)
-;;          "\t%["
-;;          (g/bfan)
-;;          "%]\t"
-;;          (downcase (format "%s-mode\t" (car mode-name)))
-;;          "𝐗%l\t𝐘%c\t%I ⊲ %i\t"
-;;          "%e "
-;;          "%t"
-;;          "%Z"
-;;          "\t"
-;;          mode-line-end-spaces)))
-;;     (cond (and (markerp cbmp)
-
-
-
-
-(message "%s" (g/bchs))
-(add-hook 'after-save-hook #'(lambda ()
-                               (setq mode-line-format
-                                     (list
-       mode-line-front-space
-       'g/bchs
-       ;; (substring (secure-hash 'sha1 (buffer-substring (point-min) (point-max))) 32 40))
-       ""
-         (g/fm)
-         "\t%["
-         (g/bfan)
-         "%]\t"
-         (downcase (format "%s-mode\t" (car mode-name)))
-         "𝐗%l\t𝐘%c\t%I ⊲ %i\t"
-         "%e "
-         "%t"
-         "%Z"
-         "\t"
-         mode-line-end-spaces))))
+(defun g/tick-mode-line (&optional cbmp)
+  (interactive)
+  (let* ((mlfmt (list
+                 mode-line-front-space
+                 'g/bchs
+                 ""
+                 (g/fm)
+                 "\t%["
+                 (g/bfan)
+                 "%]\t"
+                 (downcase (format "%s-mode\t" (car mode-name)))
+                 "𝐗%l\t𝐘%c\t%I ⊲ %i\t"
+                 (if mark-active
+                     (format "mark %d" (buffer-last-marker-position))
+                     (format "no mark"))
+                 "%e "
+                 "%t"
+                 "%Z"
+                 "\t"
+                 mode-line-end-spaces)))
+    (cond
+     ((markerp cbmp)
+      (appepnd (butlast mlfmt) '(cbmp) (last mlfmt)))
+     ('cbmp
+      mlfmt)
+     ((error "%s not a marker" cbmp)
+      t))))
 
 
+(add-hook 'after-save-hook 'g/tick-mode-line)
 
-(defun buffer-marker-points()
-  (let (cbmp)
-    (dolist (gm global-mark-ring)
-      (when (eq (marker-buffer gm) (current-buffer))
-        (progn
-          (setq cbmp (marker-position gm)))))
-    cbmp))
+(defun buffer-last-marker()
+  (car (remove nil (mapcar #'(lambda (marker)
+              (when (eq (marker-buffer marker) (current-buffer))
+                marker))
+          global-mark-ring))))
+
+
+(defun buffer-last-marker-position()
+  (when (buffer-last-marker)
+    (marker-position (buffer-last-marker))))
+
+(message "%S %S"
+         (buffer-last-marker)
+         (point-marker))
+
+(message "%S %S %S"
+         (buffer-last-marker-position)
+         (point-min)
+         (point-max))
+
 
 ;; (global-set-key (kbd "C-c C-b C-m C-p") (g/tick-mode-line ((buffer-marker-points))))
 
