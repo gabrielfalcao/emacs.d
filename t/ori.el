@@ -35,9 +35,9 @@
          (ᎦoperatorsᎦ          "#F682FF")
          (ᎦnumberᎦ             "#FC580C")
          (ᎦnormalᎦ             "#DEDEDE")
-         (Ꭶmode-inactive-fgᎦ   "#9195B2")
+         (Ꭶmode-inactive-fgᎦ   "#997711")
          (Ꭶmode-line-fgᎦ       "#ffcc00")
-         (Ꭶmode-inactive-bgᎦ   "#010000")
+         (Ꭶmode-inactive-bgᎦ   "#211f17")
          (Ꭶmode-line-bgᎦ       "#333"   )
          (Ꭶmethod-declarationᎦ "#A6E22E")
          (Ꭶtype-faceᎦ          "#36F6E9")
@@ -50,7 +50,6 @@
          (ᎦconstantᎦ           "#F07EF8")
          (ᎦcommentsᎦ           "#A79C83")
          (ᎦbackgroundᎦ         "#1C1C1C"))
-    (with-demoted-errors "set-face-attribute: %s"
       (progn
         (set-face-attribute 'Info-quoted nil :bold nil :background ᎦbackgroundᎦ :foreground ᎦnormalᎦ )
         (set-face-attribute 'bold nil        :bold nil :background ᎦbackgroundᎦ :foreground ᎦnormalᎦ )
@@ -60,6 +59,7 @@
         (set-face-attribute 'header-line nil :background Ꭶmode-line-bgᎦ :foreground ᎦnormalᎦ)
         (set-face-attribute 'highlight nil :background Ꭶcurrent-lineᎦ)
         (set-face-attribute 'info-header-xref nil :foreground ᎦkeywordsᎦ :underline t)
+        (set-face-attribute 'region nil :background ᎦselᎦ :foreground ᎦbackgroundᎦ)
         (set-face-attribute 'region nil :background ᎦselᎦ :foreground ᎦbackgroundᎦ)
 
         (set-face-attribute 'underline nil :underline )
@@ -85,16 +85,29 @@
         (set-face-attribute 'linum nil :background Ꭶline-numberᎦ :foreground Ꭶline-fgᎦ)
         (set-face-attribute 'minibuffer-prompt nil :foreground ᎦvariableᎦ)
         (set-face-attribute 'mode-line nil :background Ꭶmode-line-bgᎦ :foreground Ꭶmode-line-fgᎦ)
-        (set-face-attribute 'mode-line-inactive nil :background Ꭶmode-inactive-bgᎦ :foreground Ꭶmode-inactive-fgᎦ)
+        (set-face-attribute 'mode-line-inactive nil
+                            :background "#211f17"
+                            :foreground Ꭶline-fgᎦ :box '(:line-width (-1 . -1) :color ᎦbackgroundᎦ))
+
+        (set-face-attribute 'mode-line-emphasis nil :background "#42330D" :foreground Ꭶline-fgᎦ)
         (set-face-attribute 'cursor nil :background Ꭶcursor-underscoreᎦ)
-        (set-face-attribute 'vertical-border nil :background ᎦbackgroundᎦ)
+        (set-face-attribute 'vertical-border nil :background nil :foreground nil)
         (set-face-attribute 'show-paren-mismatch nil :background ᎦadmonitionᎦ :foreground ᎦnormalᎦ :weight 'bold)
         (set-face-attribute 'show-paren-match nil :background ᎦkeywordsᎦ :foreground ᎦnormalᎦ :weight 'bold)
         (set-face-attribute 'isearch nil :background ᎦregexpᎦ :foreground ᎦselᎦ)
         (set-face-attribute 'isearch-fail nil :background ᎦadmonitionᎦ)
         (set-face-attribute 'lazy-highlight nil :background ᎦoperatorsᎦ :foreground ᎦselᎦ)
-        (set-face-attribute 'bold nil :bold t))))
-  (ignore-errors
+        (set-face-attribute 'bold nil :bold t)
+        (set-face-attribute 'border nil :background "#000" :foreground "#000")
+        (set-face-attribute 'child-frame-border nil :background "#000" :foreground "#000")
+        (set-face-attribute 'header-line-highlight nil :background "#000" :foreground "#000")
+        (set-face-attribute 'internal-border nil :background "#000" :foreground "#000")
+        (set-face-attribute 'window-divider nil :background "#000" :foreground "#000")
+        (set-face-attribute 'window-divider-first-pixel nil :background "#000" :foreground "#000")
+        (set-face-attribute 'window-divider-last-pixel nil :background "#000" :foreground "#000")
+        (set-face-attribute 'mode-line-highlight nil :background "#000" :foreground "#000")
+        (set-face-foreground 'mode-line-highlight "#000")
+        ))
     (progn
       (global-font-lock-mode 1)
       (transient-mark-mode 1)
@@ -104,5 +117,5 @@
       (require 'linum)
       (global-linum-mode 1)
       (setq linum-format "%6d")
-      (setq-default truncate-lines t))))
+      (setq-default truncate-lines t)))
 (Ꭶ)

@@ -35,6 +35,7 @@
 (setq python-indent-offset 6)
 (setq company-idle-delay 0)
 (setq company-show-quick-access t)
+
 (add-hook 'after-init-hook 'kooh-tini-retfa)
 (add-hook 'write-files-hook 'disavail-asl)
 ;;(setq line-number-display-limit 10000)
@@ -109,4 +110,5 @@
 ;; (flycheck-define-checker sh-shellcheck :command ("shellcheck" "-x" "-f" "checkstyle" "-s" (eval (symbol-name sh-shell)) source) :modes shell-script-mode :error-parser flycheck-parse-checkstyle)
 (add-hook 'sh-mode-hook 'flycheck-mode)
 (add-hook 'shell-script-mode-hook 'flycheck-mode)
-(message "%s" (string-list-html-like-display  "minor-mode-slist" (minor-mode-slist)))
+;;(message "%s" (string-list-html-like-display  "minor-mode-slist" (minor-mode-slist)))
+(message "%s loaded" (buffer-name))
