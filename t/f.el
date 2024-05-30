@@ -28,174 +28,160 @@
 
 (defun g/wkzg() (interactive) (find-file (string-reverse (base64-decode-region "Y2V4ZWJpbC90cG8vfg==" "*"))))
 
-(defun g/pl/fmt (fmtexect &optional minor-mode)
-  (if (buffer-modified-p (current-buffer))
-      (error "%s ought to be saved"  (buffer-name))
-    (let* (
-           (target (expand-file-name  (buffer-file-name (current-buffer))))
-           (buffer (current-buffer))
-           (pebu (format "*%s %s *" fmtexect target))
-           (err (make-temp-file fmtexect nil (sha1 (buffer-file-name)))) ;; (secure-hash "sha256" (buffer-file-name))))
-           )
-    (if (and (file-readable-p target)
-             (file-regular-p target))
-        (let* (
-              (eco (format "%d" (call-process fmtexect nil (list buffer err) t target)))
-              (ets (format "%d" (file-attribute-size (file-attributes err)))))
-          (if (and (not( equal "0" eco))
-                   (not(equal "0" ets)))
-              (progn
-                (set-buffer (get-buffer-create pebu t))
-                (insert-file-contents err nil nil nil t)
-                (if (wmmd minor-mode)
-                    (message "%s" "wmmd t")
-                    (message "%s" "wmmd nil"))
-                ;; (if (symbolp minor-mode)
-                ;;     (setq minor-mode (symbol-name minor-mode)))
-                (if (member (format "%s" minor-mode) (kmm))
-                    (message "%s appears to be minor-mode" (symbol-name minor-mode))
-                    (error "%s not a symbol" minor-mode))
-                (read-only-mode nil)
-                (pop-to-buffer (get-buffer-create pebu t) 'display-buffer-same-window nil)
-                (display-buffer (current-buffer)))
-          ))))))
+;; (defun g/pl/fmt (fmtexect &optional major-mode)
+;;   (if (buffer-modified-p (current-buffer))
+;;       (error "%s ought to be saved"  (buffer-name))
+;;     (let* (
+;;            (target (expand-file-name (buffer-file-name (current-buffer))))
+;;            (buffer (current-buffer))
+;;            (pebu (format "*%s %s *" fmtexect target))
+;;            (err (make-temp-file fmtexect nil (sha1 (buffer-file-name)))) ;; (secure-hash "sha256" (buffer-file-name))))
+;;            )
+;;     (if (and (file-readable-p target)
+;;              (file-regular-p target))
+;;         (let* (
+;;               (eco (format "%d" (call-process fmtexect nil (list buffer err) t target)))
+;;               (ets (format "%d" (file-attribute-size (file-attributes err)))))
+;;           (if (and (not( equal "0" eco))
+;;                    (not(equal "0" ets)))
+;;               (progn
+;;                 (set-buffer (get-buffer-create pebu t))
+;;                 (insert-file-contents err nil nil nil t)
+;;                 ;; (if (wmmd major-mode)
+;;                 ;;     (set-buffer-major-mode major-mode)
+;;                 ;;   (error "not a mode: %s" major-mode))
+
+;;                 (read-only-mode nil)
+;;                 (pop-to-buffer (get-buffer-create pebu t) 'display-buffer-same-window nil)
+;;                 (display-buffer (current-buffer)))))))))
 
 
-(defmethod wmmd(m)
-  (if (member (format "%s" m) (kmm))
-      (or (message "%s appears to be minor-mode" m)
-          t)
-    (or (error "%s not a symbol" minor-mode)
-        nil)))
+;; (defmethod wmmd(m)
+;;   (if (member (format "%s" m) (kmm))
+;;       (or (message "%s appears to be minor-mode" m)
+;;           t)
+;;     (or (error "%s not a symbol" minor-mode)
+;;         nil)))
 
-(defun kmm()
-  (mapcar #'(lambda (n) (format "%s" (car n))) minor-mode-alist))
-
-(message "%s" (kmm))
-(defun g/pl/fmt/prettier/ts ()
-  "."
-  (interactive)
-  (g/pl/fmt "prettier" "typescript-mode"))
-
-(defun g/pl/fmt/prettier/js ()
-  "."
-  (interactive)
-  (g/pl/fmt "prettier" "javascript-mode"))
-
-(add-hook
- 'after-save-hook
- #'(lambda ()
-     (let ((x (file-name-extension (buffer-file-name (current-buffer)))))
-       (cond (
-              (and (member x (list "ts" "tsx" )) (g/pl/fmt/prettier/ts))
-              (and (member x (list "js" "jsx" )) (g/pl/fmt/prettier/js))
-              )))))
-;;;
-;; (message "%s" describe-minor-mode-from-symbol typescript-mode)
-;; (message "%s" (describe-minor-mode-from-indicator (symbol-name 'emacs-lisp-mode)))
-;; (message "%s" (describe-minor-mode-from-indicator (symbol-name '(car mode-name))))
-
-(defun g/mt(p)
-  "P."
-  (progn
-    (setq p (replace-regexp-in-string "[o-t]" "🧾" p))
-    (setq p (replace-regexp-in-string "[s-w]" "🖍️" p))
-    (setq p (replace-regexp-in-string "[x-A]" "⚱️" p))
-    p))
-
-(defun g/aclᎦ(lsa)
-  "LSA."
-  (if (stringp lsa)
-      (g/mt (format "🤸🏼‍♂️%s" lsa)) ""))
-
-(defun g/acl木(lsa)
-  "LSA."
-  (if (stringp lsa)
-      (g/mt (format "👯(%s)" lsa)) ""))
-
-(defun g/aclら(lsa)
-  "LSA."
-  (if (stringp lsa)
-      (g/mt (format "🎲️(%s)" lsa)) ""))
+;; (defun kmm()
+;;   (mapcar #'(lambda (n) (format "%s" (car n))) minor-mode-alist))
 
 
-(defun g/fm ()
-  (let* ((ffb (file-attribute-modes (file-attributes (buffer-file-name))))
-       (acls (split-string ffb "-+" t "[^a-z]"))
-       (aclsl (proper-list-p acls))
-       )
-  (cond ((= 1 aclsl) (format "%s"     (g/aclᎦ (car acls))))
-        ((= 2 aclsl) (format "%s%s"   (g/aclᎦ(car acls) (g/acl木 (elt 1 acls)))))
-        ((= 2 aclsl) (format "%s%s%s" (g/aclᎦ(car acls) (g/acl木 (elt 1 acls)) (g/aclら(elt 1 acls))))))))
+;; (defun g/pl/fmt/prettier/ts ()
+;;   "."
+;;   (interactive)
+;;   (g/pl/fmt "prettier" "typescript-mode"))
+
+;; (defun g/pl/fmt/prettier/js ()
+;;   "."
+;;   (interactive)
+;;   (g/pl/fmt "prettier" "javascript-mode"))
+
+;; (add-hook
+;;  'after-save-hook
+;;  #'(lambda ()
+;;      (let ((x (file-name-extension (buffer-file-name (current-buffer)))))
+;;        (cond (member x (list "ts" "tsx" ) (g/pl/fmt/prettier/ts))
+;;              (member x (list "js" "jsx" ) (g/pl/fmt/prettier/js))))))
+;; ;;;
+;; ;; (message "%s" describe-minor-mode-from-symbol typescript-mode)
+;; ;; (message "%s" (describe-minor-mode-from-indicator (symbol-name 'emacs-lisp-mode)))
+;; ;; (message "%s" (describe-minor-mode-from-indicator (symbol-name '(car mode-name))))
+
+;; (defun g/mt(p)
+;;   "P."
+;;   (progn
+;;     (setq p (replace-regexp-in-string "[o-t]" "🧾" p))
+;;     (setq p (replace-regexp-in-string "[s-w]" "🖍️" p))
+;;     (setq p (replace-regexp-in-string "[x-A]" "⚱️" p))
+;;     p))
+
+;; (defun g/aclᎦ(lsa)
+;;   "LSA."
+;;   (if (stringp lsa)
+;;       (g/mt (format "🤸🏼‍♂️%s" lsa)) ""))
+
+;; (defun g/acl木(lsa)
+;;   "LSA."
+;;   (if (stringp lsa)
+;;       (g/mt (format "👯(%s)" lsa)) ""))
+
+;; (defun g/aclら(lsa)
+;;   "LSA."
+;;   (if (stringp lsa)
+;;       (g/mt (format "🎲️(%s)" lsa)) ""))
 
 
-(defun g/bfan ()
-  (let ((file-name (file-relative-name (buffer-file-name))))
-    (if (equal file-name (buffer-name))
-        (format "%s\t" file-name)
-      (format "%s (%s)" (buffer-name) (file-name)))))
+;; ;; (defun g/fm ()
+;; ;;   (let ((ffb (file-attribute-modes (file-attributes (buffer-file-name)))))
+;; ;;     (cond ((stringp ffb)
+;; ;; 	   (let* ((acls (split-string ffb "-+" t "[^a-z]"))
+;; ;; 		  (aclsl (proper-list-p acls)))
+;; ;; 	     (cond ((= 1 aclsl) (format "%s"     (g/aclᎦ (car acls))))
+;; ;; 		   ((= 2 aclsl) (format "%s%s"   (g/aclᎦ(car acls) (g/acl木 (elt 1 acls)))))
+;; ;; 		   ((= 2 aclsl) (format "%s%s%s" (g/aclᎦ(car acls) (g/acl木 (elt 1 acls)) (g/aclら(elt 1 acls))))))))
+;; ;; 	 "")))
+;; ;; (g/fm)
+;; (defun g/bfan ()
+;;   (let ((file-name (file-relative-name (buffer-file-name))))
+;;     (if (equal file-name (buffer-name))
+;;         (format "%s\t" file-name)
+;;       (format "%s (%s)" (buffer-name) (file-name)))))
 
 
-(defun g/bchs()
-  (format "%s %s %s "
-          (substring (secure-hash 'sha256 (buffer-substring-no-properties (point-min) (point-max))) 32 40)
-          (substring (secure-hash 'sha1 (buffer-substring-no-properties (point-min) (point-max))) 32 40)
-          (substring (secure-hash 'md5 (buffer-substring-no-properties (point-min) (point-max))) 0 10)))
+;; (defun g/bchs()
+;;   (format "%s %s %s "
+;;           (substring (secure-hash 'sha256 (buffer-substring-no-properties (point-min) (point-max))) 32 40)
+;;           (substring (secure-hash 'sha1 (buffer-substring-no-properties (point-min) (point-max))) 32 40)
+;;           (substring (secure-hash 'md5 (buffer-substring-no-properties (point-min) (point-max))) 0 10)))
 
 
-(defun g/tick-mode-line (&optional cbmp)
-  (interactive)
-  (let* ((mlfmt (list
-                 mode-line-front-space
-                 'g/bchs
-                 ""
-                 (g/fm)
-                 "\t%["
-                 (g/bfan)
-                 "%]\t"
-                 (downcase (format "%s-mode\t" (car mode-name)))
-                 "𝐗%l\t𝐘%c\t%I ⊲ %i\t"
-                 (if mark-active
-                     (format "mark %d" (buffer-last-marker-position))
-                     (format "no mark"))
-                 "%e "
-                 "%t"
-                 "%Z"
-                 "\t"
-                 mode-line-end-spaces)))
-    (cond
-     ((markerp cbmp)
-      (appepnd (butlast mlfmt) '(cbmp) (last mlfmt)))
-     ('cbmp
-      mlfmt)
-     ((error "%s not a marker" cbmp)
-      t))))
+;; (defun g/tick-mode-line (&optional cbmp)
+;;   (interactive)
+;;   (let* ((mlfmt (list
+;;                  mode-line-front-space
+;;                  ;; 'g/bchs
+;;                  ""
+;;                  ;;(g/fm)
+;;                  "\t%["
+;;                  ;; (g/bfan)
+;;                  "%]\t"
+;;                  (downcase (format "%s-mode\t" (car mode-name)))
+;;                  "𝐗%l\t𝐘%c\t%I ⊲ %i\t"
+;;                  ;; (if mark-active
+;;                  ;;     (format "mark %d" (buffer-last-marker-position))
+;;                  ;;     (format "no mark"))
+;;                  "%e "
+;;                  "%t"
+;;                  "%Z"
+;;                  "\t"
+;;                  mode-line-end-spaces)))
+;;     mlfmt))
+
+;; (add-hook 'after-save-hook 'g/tick-mode-line)
+
+;; (defun buffer-last-marker()
+;;   (car (remove nil (mapcar #'(lambda (marker)
+;;               (when (eq (marker-buffer marker) (current-buffer))
+;;                 marker))
+;;           global-mark-ring))))
 
 
-(add-hook 'after-save-hook 'g/tick-mode-line)
+;; (defun buffer-last-marker-position()
+;;   (when (buffer-last-marker)
+;;     (marker-position (buffer-last-marker))))
 
-(defun buffer-last-marker()
-  (car (remove nil (mapcar #'(lambda (marker)
-              (when (eq (marker-buffer marker) (current-buffer))
-                marker))
-          global-mark-ring))))
+;; (message "%S %S"
+;;          (buffer-last-marker)
+;;          (point-marker))
 
-
-(defun buffer-last-marker-position()
-  (when (buffer-last-marker)
-    (marker-position (buffer-last-marker))))
-
-(message "%S %S"
-         (buffer-last-marker)
-         (point-marker))
-
-(message "%S %S %S"
-         (buffer-last-marker-position)
-         (point-min)
-         (point-max))
+;; (message "%S %S %S"
+;;          (buffer-last-marker-position)
+;;          (point-min)
+;;          (point-max))
 
 
-;; (global-set-key (kbd "C-c C-b C-m C-p") (g/tick-mode-line ((buffer-marker-points))))
+;; (global-set-key (kbd "C-c C-b C-m C-p") (g/tick-mode-line))
 
 
 (defun contrast-color (c)
