@@ -10,14 +10,13 @@
 ;;  ######/  ###  ###  ### ####/ ## ######/ / #### /
 ;;   #####    ###  ###  ### ###   ## #####     ###/
 (server-mode 9)
-(with-demoted-errors
-    "%s" (buffer-name)
     (progn
       (add-hook 'before-save-hook 'delete-trailing-whitespace)
       (add-hook 'write-files-hook 'disavail-asl)
       (user-full-name)
       (global-unset-key (kbd "C-c C-u"))
       (global-unset-key (kbd "C-x C-d"))
+      (global-unset-key (kbd "C-x C-e"))
       (global-set-key (kbd "C-c C-u C-d C-a") #'(lambda (&optional buffer) (interactive "ob UNlock BUffer")
                                                   (when buffer (pop-to-buffer buffer))
                                                   (read-only-mode -1)))
@@ -35,6 +34,7 @@
                               (message "(%s) eval'd: \n```%s``` " (secure-hash 'sha256 tgtcode) tgtcode)
                             (warn "(%s) nil in evalin': \n```%s``` " (secure-hash 'sha256 tgtcode) tgtcode))
                             ))))
+
 
       (global-set-key (kbd "C-x C-e e") 'g/ep)
       (global-set-key (kbd "C-x C-e b") 'g/wkzg)
@@ -140,7 +140,7 @@
 ;;; nichts
       (setq read-file-name-completion-ignore-case t)
 
-      (message "%s loaded" (buffer-name))))
+      (message "%s loaded" (buffer-name)))
 
 
 ;;;

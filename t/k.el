@@ -43,28 +43,6 @@
                           )))))
 
 
-(defun contrast-color (c)
-  "C."
-  (interactive "s")
-  (let* ((values (x-color-values c))
-         (fp (car values))
-         (sp (elt 1 values))
-         (tp (elt 2 values)))
-    (if
-        (> 128.0
-           (floor
-            (+ (* float-pi fp)
-               (* (* float-pi
-                     (- (+ float-pi float-pi)
-                        (+ (/ float-pi float-e )
-                           (* float-pi
-                              (/ float-pi 1.998879)))))
-                  sp)
-               (* ( / (+ tp
-                         (/ (/ float-pi float-e) 100)
-                         (* float-pi float-pi)))))
-               256)))
-        "#FFF" "#111"))
 
 (defalias 'yes-or-no-p 'y-or-n-p)
 (progn

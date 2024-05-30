@@ -50,7 +50,9 @@
          (ᎦconstantᎦ           "#F07EF8")
          (ᎦcommentsᎦ           "#A79C83")
          (ᎦbackgroundᎦ         "#1C1C1C"))
-      (progn
+    (progn
+      (require 'linum)
+      
         (set-face-attribute 'Info-quoted nil :bold nil :background ᎦbackgroundᎦ :foreground ᎦnormalᎦ )
         (set-face-attribute 'bold nil        :bold nil :background ᎦbackgroundᎦ :foreground ᎦnormalᎦ )
         (set-face-attribute 'default nil :foreground ᎦnormalᎦ :background ᎦbackgroundᎦ)
@@ -114,7 +116,6 @@
       (set-frame-font "Monaco-17")
       (set-face-attribute 'default t :font "Monaco-17")
       (global-prettify-symbols-mode 0)
-      (require 'linum)
       (global-linum-mode 1)
       (setq linum-format "%6d")
       (setq-default truncate-lines t)))
