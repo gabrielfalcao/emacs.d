@@ -185,6 +185,25 @@
    (substring (secure-hash 'md5 (buffer-substring-no-properties (point-min) (point-max))) 0 10)))
 
 
+(defun g/purge-key (pt)
+  "PT."
+  (if (or (vectorp pt) (listp pt))
+      (mapc 'g/purge-key pt)
+    (let ((key (kbd pt)))
+      (define-key (current-global-map) key nil))))
+
+(defun g/set-key (pt cg)
+  "PT CG."
+  (if (or (vectorp pt) (listp pt))
+      (mapc #'(lambda (pt)
+                (g/set-key pt cg))
+            pt)
+    (let ((key (kbd pt)))
+      (g/purge-key pt)
+      (define-key (current-global-map) key cg))))
+
+
+
 (defun g/tick-mode-line ()
   "."
   (interactive)
@@ -211,27 +230,6 @@
     (force-mode-line-update)
     ))
 
-(global-set-key (kbd "C-c C-t C-m C-l") #'(lambda () (interactive) (g/tick-mode-line)))
-;; (defun buffer-last-marker()
-;;   "."
-;;   (car (remove nil (mapcar #'(lambda (marker) (when (eq (marker-buffer marker) (current-buffer)) marker)) global-mark-ring))))
-
-
-;; (defun buffer-last-marker-position()
-;;   "."
-;;   (when (buffer-last-marker)
-;;     (marker-position (buffer-last-marker))))
-
-;; (message "%S %S"
-;;          (buffer-last-marker)
-;;          (point-marker))
-
-;; (message "%S %S %S"
-;;          (buffer-last-marker-position)
-;;          (point-min)
-;;          (point-max))
-
-(message "%s loaded" (buffer-name))
 
 
 

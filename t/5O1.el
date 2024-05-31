@@ -107,4 +107,3 @@
 (add-hook 'sh-mode-hook 'flycheck-mode)
 (add-hook 'shell-script-mode-hook 'flycheck-mode)
 ;;(message "%s" (string-list-html-like-display  "minor-mode-slist" (minor-mode-slist)))
-(message "%s loaded" (buffer-name))

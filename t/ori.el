@@ -87,7 +87,7 @@
     (set-face-attribute 'mode-line nil :background Ꭶmode-line-bgᎦ :foreground Ꭶmode-line-fgᎦ)
     (set-face-attribute 'mode-line-inactive nil
                         :background "#211f17"
-                        :foreground Ꭶline-fgᎦ :box '(:line-width (-1 . -1) :background ᎦbackgroundᎦ))
+                        :foreground Ꭶline-fgᎦ :box '(:line-width (0 . 0)))
     (set-face-attribute 'mode-line-emphasis nil :background "#42330D" :foreground Ꭶline-fgᎦ)
     (set-face-attribute 'vertical-border nil :background nil :foreground nil)
     (set-face-attribute 'show-paren-mismatch nil :background ᎦadmonitionᎦ :foreground ᎦnormalᎦ :weight 'bold)
@@ -96,15 +96,18 @@
     (set-face-attribute 'isearch-fail nil :background ᎦadmonitionᎦ)
     (set-face-attribute 'lazy-highlight nil :background ᎦoperatorsᎦ :foreground ᎦselᎦ)
     (set-face-attribute 'bold nil :bold t)
-    (set-face-attribute 'border nil :background "#000" :foreground "#000")
-    (set-face-attribute 'child-frame-border nil :background "#000" :foreground "#000")
-    (set-face-attribute 'header-line-highlight nil :background "#000" :foreground "#000")
-    (set-face-attribute 'internal-border nil :background "#000" :foreground "#000")
-    (set-face-attribute 'window-divider nil :background "#000" :foreground "#000")
-    (set-face-attribute 'window-divider-first-pixel nil :background "#000" :foreground "#000")
-    (set-face-attribute 'window-divider-last-pixel nil :background "#000" :foreground "#000")
-    (set-face-attribute 'mode-line-highlight nil :background "#000" :foreground "#000")
-    (set-face-foreground 'mode-line-highlight "#000")
+    (mapc
+     #'(lambda (s)
+         (set-face-attribute s nil :background "#000" :foreground "#000"))
+     'border
+     'child
+     'header
+     'internal
+     'window
+     'window
+     'window
+     'mode
+     )
     (show-paren-mode 10)
     (set-face-attribute 'cursor nil :background ᎦcursorᎦ)
     (setq-default cursor-type '(bar . 2))

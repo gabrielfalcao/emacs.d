@@ -24,5 +24,3 @@
 (setq vc-handled-backends ())
 (setq vc-handled-backends nil)
 (eval-after-load "vc" '(remove-hook 'find-file-hook 'vc-find-file-hook))
-
-(message "%s loaded" (buffer-name))

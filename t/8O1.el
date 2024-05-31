@@ -7,24 +7,6 @@
 ;; OOOOOOOOOOOG
 
 
-(defun g/purge-key (pt)
-  "PT."
-  (if (or (vectorp pt) (listp pt))
-      (mapc 'g/purge-key pt)
-    (let ((key (kbd pt)))
-      (define-key (current-global-map) key nil))))
-
-(defun g/set-key (pt cg)
-  "PT CG."
-  (if (or (vectorp pt) (listp pt))
-      (mapc #'(lambda (pt)
-                (g/set-key pt cg))
-            pt)
-    (let ((key (kbd pt)))
-      (g/purge-key pt)
-      (define-key (current-global-map) key cg))))
-
-
 (g/set-key '("C-x C-x") #'(lambda (beg end) (interactive "r")
                             (eval-region beg end)))
 (defun elevate (b e)
@@ -130,14 +112,18 @@
 (setq mac-option-modifier 'meta)
 (setq mac-command-modifier 'meta)
 (global-set-key [kp-delete] 'delete-char)
+(mapc #'(lambda (f)
+          '(f 'utf8))
+      '(prefer-coding-system set-default-coding-systems))
 (progn
   (prefer-coding-system 'utf-8)
-  (setq locale-coding-system 'utf-8)
-  (setq current-language-environment "UTF-8")
   (set-default-coding-systems 'utf-8)
-  (set-terminal-coding-system 'utf-8)
   (set-keyboard-coding-system 'utf-8)
-  (set-selection-coding-system 'utf-8))
+  (set-selection-coding-system 'utf-8)
+  (set-terminal-coding-system 'utf-8)
+  (setq current-language-environment "UTF-8")
+  (setq locale-coding-system 'utf-8)
+  )
 (column-number-mode)
 (setq select-enable-clipboard nil)
 (setq ring-bell-function 'ignore)
@@ -152,8 +138,5 @@
 (setq completion-ignored-extensions '(".lock" ".o" "~" ".bin" ".lbin" ".so" ".a" ".ln" ".blg" ".bbl" ".elc" ".lof" ".glo" ".idx" ".lot" ".svn/" ".hg/" ".git/" ".bzr/" "CVS/" "_darcs/" "_MTN/" ".fmt" ".tfm" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".dfsl" ".pfsl" ".d64fsl" ".p64fsl" ".lx64fsl" ".lx32fsl" ".dx64fsl" ".dx32fsl" ".fx64fsl" ".fx32fsl" ".sx64fsl" ".sx32fsl" ".wx64fsl" ".wx32fsl" ".fasl" ".ufsl" ".fsl" ".dxl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".cp" ".fn" ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo"))
 ;;; nichts
 (setq read-file-name-completion-ignore-case t)
-
-(message "%s loaded" (buffer-name))
-
 
 ;;;
