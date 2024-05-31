@@ -1,4 +1,4 @@
-;; OO^^^^^^^^^G  -*- lexical-binding: t; -*-
+;; OO^^^^^^^^^G
 ;; OO  OOOOOOOG
 ;; OO      ---- ggggg-ggg- -gggggg- -gggggg- -gggggg-
 ;; OO  OOOOOOOG gggggggggg ggg  ggg ggg  ggg ggggggg-
@@ -17,14 +17,14 @@
 (defun gc() "." (interactive) (progn (scroll-bar-mode 0) (menu-bar-mode 0) (tool-bar-mode 0)))
 (defun ah() "." (interactive) (warn "aint happenin'"))
 
-(defun disavail-asl() "." (interactive)  (ignore-errors (mapc #'(lambda d) (delete-directory d t nil) '("~/.emacs.d/auto-save-list" "~/.emacs.backups"))))
+(defun disavail-asl() "." (interactive)  (mapc #'(lambda (d) (delete-directory (expand-file-name d) t nil))
+                                                   (list "~/.emacs.d/auto-save-list" "~/.emacs.backups")))
 (defun ruskify-region (beg end) "." (interactive "*r") (replace-region-contents beg end (lambda () (reverse (buffer-substring-no-properties beg end)))))
-(defun kooh-tini-retfa () "." (interactive) (ignore-errors (progn (global-company-mode) (disavail-asl)
-                                                              (gc)
-                                                              (Ꭶ))))
-
+(defun kooh-tini-retfa () "." (interactive)  (global-company-mode) (disavail-asl) (gc) (g/tick-mode-line)
+       (Ꭶ))
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
-(add-hook 'write-files-hook 'disavail-asl)
+(add-hook 'after-save-hook 'disavail-asl)
+
 (defun g/ep() "." (interactive) (find-file (base64-decode-region (rot13-string "sv8hMJ1uL3ZhMP90Y2fhMJj="))))
 (defun nbddbn () "." (interactive) (mapc #'(lambda (dbk) (ignore-errors (global-unset-key (kbd dbk)) (global-set-key (kbd dbk) 'ah))) '( "M-s ." "M-s M-w" "M-s _" "M-r" "M-s h f" "M-s h l" "M-s h p" "M-s h r" "M-s h u" "M-s h w" "M-s h" "M-s o" "M-s w" "M-s" "M-s-F" "M-s-h" "M-y" "M-z" "M-{" "M-|" "M-}" "M-~" "M-s-F" "M-s-h" "M-t" "M-|" "M-c")))
 (defun g/wkzg() "." (interactive) (find-file (string-reverse (base64-decode-region "Y2V4ZWJpbC90cG8vfg==" "*"))))
@@ -33,30 +33,48 @@
   (interactive "s")
   (let* ((values (x-color-values c))
          (fp (car values))
-         (sp (elt 1 values))
-         (tp (elt 2 values)))
+         (sp (elt values 1))
+         (tp (elt values 2))
+         )
+
     (if
         (> 128.0
            (floor
-            (+ (* float-pi fp)
-               (* (* float-pi
+            (+ (+ (* float-pi fp)
+               (* sp (* float-pi
                      (- (+ float-pi float-pi)
-                        (+ (/ float-pi float-e )
+                        (+ (/ float-pi float-e)
                            (* float-pi
-                              (/ float-pi 1.998879)))))
-                  sp)
-               (* ( / (+ tp
-                         (/ (/ float-pi float-e) 100)
-                         (* float-pi float-pi)))))
-               256)))
-        "#FFF" "#111"))
+                              (/ float-pi 1.998879))
+                           )
+                        )
+                     )
+                  )
+               )
+               (* (/ (+ tp
+                        (/ (/ float-pi float-e) 100))
+                     (* float-pi float-pi)
+                     )
+                  )
+               )
+            256
+            )
+           )
+        "#FFF"
+      "#111")
+    )
+  )
+
+(message "%s" (contrast-color "#ffcc00"))
+
+(ignore-errors (message "%s" (contrast-color "#fc0")))
 
 (defun collapse-string (s) "S." (string-trim (replace-regexp-in-string "\\(\\s-+\\|\\n\|
 \\)+" " " s)))
 (defun collapse-lines-region (beg end)
   "BEG END."
   (interactive "*r")
-  (save-mark-and-excursion
+  (save-excursion
     (let ((region (buffer-substring-no-properties beg end)))
       (replace-region-contents beg end
                                #'(lambda () (collapse-string region))))))
@@ -104,8 +122,6 @@
                 (pop-to-buffer (get-buffer-create pebu t) 'display-buffer-same-window nil)
                 (display-buffer (current-buffer)))))))))
 
-
-
 (defun g/pl/fmt/prettier/ts ()
   "."
   (interactive)
@@ -126,6 +142,29 @@
 ;; (message "%s" describe-minor-mode-from-symbol typescript-mode)
 ;; (message "%s" (describe-minor-mode-from-indicator (symbol-name 'emacs-lisp-mode)))
 ;; (message "%s" (describe-minor-mode-from-indicator (symbol-name '(car mode-name))))
+(defun utf8ftu ()
+  (interactive)
+  (mapc #'(lambda (pnoitcnuf)
+            (if (functionp pnoitcnuf)
+                (funcall pnoitcnuf 'utf-8)
+              (setq pnoitcnuf 'utf-8)
+              ))
+  (list
+   'prefer-coding-system
+   'set-default-coding-systems
+   'set-keyboard-coding-system
+   'set-selection-coding-system
+   'set-terminal-coding-system
+   'locale-coding-system
+   )))
+
+(defun elevate (b e)
+  "B E ."
+  (interactive "r")
+  (if (and (equal "el" (file-name-extension (buffer-file-name))) (equal "emacs-lisp-mode" (format "%s" major-mode)))
+      (progn (eval-buffer)
+             (message "%s eval'd" (buffer-file-name)))
+    (message "\"%s\" aint no el" (buffer-name))))
 
 (defun g/mt(p)
   "P."
@@ -162,9 +201,9 @@
     (cond ((stringp ffb)
 	   (let* ((acls (split-string ffb "-+" t "[^a-z]"))
 		  (aclsl (proper-list-p acls)))
-	     (cond ((= 1 aclsl) (format "%s"     (g/aclᎦ (car acls))))
-		   ((= 2 aclsl) (format "%s%s"   (g/aclᎦ(car acls) (g/acl木 (elt 1 acls)))))
-		   ((= 2 aclsl) (format "%s%s%s" (g/aclᎦ(car acls) (g/acl木 (elt 1 acls)) (g/aclら(elt 1 acls))))))))
+	     (cond (= 1 aclsl) (format "%s"     (g/aclᎦ (car acls)))
+		   (= 2 aclsl) (format "%s%s"   (g/aclᎦ(car acls) (g/acl木 (elt 1 acls))))
+		   (= 3 aclsl) (format "%s%s%s" (g/aclᎦ(car acls) (g/acl木 (elt 1 acls)) (g/aclら(elt 1 acls)))))))
 	 "")))
 
 (defun g/bfan ()
@@ -182,7 +221,7 @@
    "%s %s %s "
    (substring (secure-hash 'sha256 (buffer-substring-no-properties (point-min) (point-max))) 32 40)
    (substring (secure-hash 'sha1 (buffer-substring-no-properties (point-min) (point-max))) 32 40)
-   (substring (secure-hash 'md5 (buffer-substring-no-properties (point-min) (point-max))) 0 10)))
+   (substring (secure-hash 'md5 (buffer-substring-no-properties (point-min) (point-max))) 24 32)))
 
 
 (defun g/purge-key (pt)
@@ -215,23 +254,39 @@
                  '(:eval (g/bfan))
                  "%]\t"
                  '(:eval (downcase (format "%s-mode\t" (car mode-name)))
-                 "𝐗%l\t𝐘%c\t%I ⊲ %i\t"
-                 '(:eval (if mark-active
-                     (format "mark %d" (buffer-last-marker-position))
-                   ""))
+                         "𝐗%l\t𝐘%c\t%I ⊲ %i\t")
+                 '(:eval (list (if mark-active
+                                   (propertize (format " ⇒ mark %S %S" (marker-position (mark-marker)) (point)) 'face (list :foreground "#"))
+                                 (format ""))))
                  "%e "
                  "%t"
-                 ;; "%Z"
-                 (format "<p>%s</p>" (point))
                  '(:eval (g/bchs))
                  "\t"
-                 mode-line-end-spaces))))
+                 mode-line-end-spaces)))
     (setq mode-line-format mlfmt)
     (force-mode-line-update)
     ))
 
 
+(g/tick-mode-line)
+
+(defun fold-file-name(file-name)
+  "."
+  (interactive "f")
+  ((replace-regexp-in-string (string-join "^" (getenv "HOME")) "~" (expand-file-name file-name))))
 
 
+(defun getcwd()
+  "."
+  (interactive)
+  (cond (
+         (file-exists-p (buffer-file-name)) (file-name-directory (buffer-file-name))
+         (expand-file-name "~/.emacs.d"))))
+
+
+(defun show-face-at-point()
+  "."
+  (interactive)
+  (message "%S" (face-at-point)))
 
 ;;;

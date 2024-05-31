@@ -14,8 +14,13 @@
 (setq package-archives nil)
 (setq global-flycheck-mode t)
 (add-to-list 'custom-safe-themes "5bd001a0f95d54174370e9275b1f594829930a1a95ed82741a5492facb7415e7")
+(add-to-list 'custom-safe-themes "fa410876eb2437307481f0986512b5487ca8d3fda3130872e758c5cdde6d2218")
 (add-to-list 'custom-theme-load-path "~/.emacs.d/Ꭶ")
+(load-theme 'nogosky)
+(set-face-attribute 'default nil :font "Monaco-17")
+
 (load-library "ori")
+
 
 (load-library "f")
 (load-library "8O1")

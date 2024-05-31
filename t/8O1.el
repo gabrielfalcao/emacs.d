@@ -6,16 +6,12 @@
 ;; OO        -- gg  gg  gg gggggggg gggggggg gggggggg
 ;; OOOOOOOOOOOG
 
+(utf8ftu)
 
-(g/set-key '("C-x C-x") #'(lambda (beg end) (interactive "r")
-                            (eval-region beg end)))
-(defun elevate (b e)
-  "B E ."
-  (interactive "r")
-  (if (and (equal "el" (file-name-extension (buffer-file-name))) (equal "emacs-lisp-mode" (format "%s" major-mode)))
-      (progn (eval-buffer)
-             (message "%s eval'd" (buffer-file-name)))
-    (message "\"%s\" aint no el" (buffer-name))))
+(g/set-key '("C-x C-x") #'(lambda () (interactive)
+                            (cond ((region-active-p) (eval-region (region-beginning) (region-end)))
+                                  (eval-buffer))))
+
 
 (g/set-key '("C-x C-z") 'elevate)
 
@@ -33,6 +29,7 @@
    "C-x C-d"
    "C-x C-e"
    ))
+(g/set-key '("C-c C-x C-f") 'show-face-at-point)
 (g/set-key '("C-c C-w" "C-c M-w") 'clipboard-kill-ring-save)
 (g/set-key '("C-c C-y" "C-c M-y") 'clipboard-yank)
 (g/set-key '("C-x C-q" "C-c M-y") 'keyboard-quit)
@@ -61,8 +58,8 @@
 (g/set-key '("C-n" "M-n") #'(lambda () (interactive) (scroll-down 1)))
 (g/set-key '("M-j"      ) #'(lambda () (interactive) (scroll-other-window 1)))
 (g/set-key '("M-k"      ) #'(lambda () (interactive) (scroll-other-window -1)))
-(global-set-key [(ctrl s)] 'isearch-forward)
 
+(g/set-key '("C-x C-SPC" "C-c C-SPC") 'rectangle-mark-mode)
 (g/set-key "C-x C-e e" 'g/ep)
 (g/set-key "C-x C-e b" 'g/wkzg)
 (g/set-key "M-s" 'save-buffer)
@@ -99,31 +96,24 @@
   (g/set-key "C-c C-l" #'downcase-region))
 
 
-(g/set-key '("C-g" "C-q") 'keyboard-quit)
-(g/set-key '("M-u" "M-l" "M-ESC") 'ah)
-(g/set-key "C-s"   'isearch-forward-regexp )
-(g/set-key "C-S-s" 'isearch-backward-regexp)
+(g/set-key   '("C-z" "M-z" "C-_") 'undo     )
+(g/set-key   '("M-r") 'replace-regexp       )
+(g/set-key   '("C-g" "C-q") 'keyboard-quit  )
+(g/set-key   '("M-u" "M-l" "M-ESC") 'ah     )
+(g/set-key   "C-s"   'isearch-forward-regexp )
+(g/set-key   "C-S-s" 'isearch-backward-regexp)
 
 (g/set-key "M-G" #'(lambda () (interactive) (insert "Ꭶ")))
 (g/set-key "M-g g" 'goto-line)
 (g/set-key "M-g M-g" 'goto-line)
 (g/set-key "M-O" #'(lambda () (interactive) (insert "ॐ")))
-
-(setq mac-option-modifier 'meta)
-(setq mac-command-modifier 'meta)
+(setq ns-allow-anti-aliasing t)
+(setq ns-function-modifier 'control)
+(setq ns-option-modifier 'meta)
+(setq ns-command-modifier 'meta)
 (global-set-key [kp-delete] 'delete-char)
-(mapc #'(lambda (f)
-          '(f 'utf8))
-      '(prefer-coding-system set-default-coding-systems))
-(progn
-  (prefer-coding-system 'utf-8)
-  (set-default-coding-systems 'utf-8)
-  (set-keyboard-coding-system 'utf-8)
-  (set-selection-coding-system 'utf-8)
-  (set-terminal-coding-system 'utf-8)
-  (setq current-language-environment "UTF-8")
-  (setq locale-coding-system 'utf-8)
-  )
+
+
 (column-number-mode)
 (setq select-enable-clipboard nil)
 (setq ring-bell-function 'ignore)

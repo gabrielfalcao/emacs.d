@@ -1,4 +1,4 @@
-;;; package -- 5O1
+;; package -- 5O1
 ;;;    /##  ### /### /###     /###     /###     /###
 ;;;   / ###  ##/ ###/ /##  / / ###  / / ###  / / #### /
 ;;;  /   ###  ##  ###/ ###/ /   ###/ /   ###/ ##  ###/
@@ -31,11 +31,19 @@
 (require 'typescript-mode)
 (require 'whitespace)
 (require 'blacken)
+(require 'linum)
+(require 'make-mode)
+(require 'ibuffer)
+(require 'calendar)
+(require 'rect)
+(require 'compile)
+(require 'ert)
 
 (setq python-indent-offset 6)
 (setq company-idle-delay 0)
 (setq company-show-quick-access t)
 
+(add-hook 'python-mode-hook #'(lambda () (setq virtualenv-workon-home (file-name-concat (getcwd) ".venv"))))
 (add-hook 'after-init-hook 'kooh-tini-retfa)
 (add-hook 'write-files-hook 'disavail-asl)
 ;;(setq line-number-display-limit 10000)
