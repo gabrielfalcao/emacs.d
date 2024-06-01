@@ -1,18 +1,16 @@
-;; package -- 5O1
-;;;    /##  ### /### /###     /###     /###     /###
-;;;   / ###  ##/ ###/ /##  / / ###  / / ###  / / #### /
-;;;  /   ###  ##  ###/ ###/ /   ###/ /   ###/ ##  ###/
-;;; ##    ### ##   ##   ## ##    ## ##       ####
-;;; ########  ##   ##   ## ##    ## ##         ###
-;;; #######   ##   ##   ## ##    ## ##           ###
-;;; ##        ##   ##   ## ##    ## ##             ###
-;;; ####    / ##   ##   ## ##    /# ###     / /###  ##
-;;;  ######/  ###  ###  ### ####/ ## ######/ / #### /
-;;;   #####    ###  ###  ### ###   ## #####     ###/
-;;; Commentary:
-;;;   pl-specific `tools'
-;;;
-;;; Code:
+;; OO^^^^^^^^^G
+;; OO  OOOOOOOG
+;; OO      ---- ggggg-ggg- -gggggg- -gggggg- -gggggg-
+;; OO  OOOOOOOG gggggggggg ggg  ggg ggg  ggg ggggggg-
+;; OO  OOOOOOOG gg  gg  gg gg-  -gg gg-  ---       gg
+;; OO        -- gg  gg  gg gggggggg gggggggg gggggggg
+;; OOOOOOOOOOOG
+
+(require 'package)
+(require 'flycheck)
+(setq package-archives nil)
+(setq global-flycheck-mode t)
+
 (require 'web-mode)
 (require 'company)
 (require 'go-mode)
@@ -23,7 +21,6 @@
 (require 'elixir-mode)
 (require 'terraform-mode)
 (require 'toml-mode)
-(require 'web-mode)
 (require 'rust-mode)
 (require 'yaml-mode)
 (require 'dockerfile-mode)
@@ -43,22 +40,29 @@
 (setq company-idle-delay 0)
 (setq company-show-quick-access t)
 
-(add-hook 'python-mode-hook #'(lambda () (setq virtualenv-workon-home (file-name-concat (getcwd) ".venv"))))
+(ignore-errors
+    (server-mode 9))
+(add-hook 'python-mode-hook #'(lambda () (interactive) (setq virtualenv-workon-home (file-name-concat (getcwd) ".venv"))))
 (add-hook 'after-init-hook 'kooh-tini-retfa)
 (add-hook 'write-files-hook 'disavail-asl)
 ;;(setq line-number-display-limit 10000)
-(setq company-tooltip-align-annotations t)
 ;; ;; ;; *;; ;; OzsgOzsgOzsqOzsgOzsgKGRlZnVuIHNldHVwLXRpZGUtbW9kZSAoKSAoaW50ZXJhY3RpdmUpIDs7ICh0aWRlLXNldHVwKSAoZmx5Y2hlY2stbW9kZSArMSkgKHNldHEgZmx5Y2hlY2stY2hlY2stc3ludGF4LWF1dG9tYXRpY2FsbHkgJyhzYXZlIG1vZGUtZW5hYmxlZCkpIChlbGRvYy1tb2RlICsxKSA7OyAodGlkZS1obC1pZGVudGlmaWVyLW1vZGUgKzEpIChjb21wYW55LW1vZGUgKzEpKTs7IDs7IDs7Kjs7IDs7IChhZGQtaG9vayAnYmVmb3JlLXNhdmUtaG9vayAndGlkZS1mb3JtYXQtYmVmb3JlLXNhdmUpIDs7IDs7IDs7Kjs7IDs7IChhZGQtaG9vayAndHlwZXNjcmlwdC1tb2RlLWhvb2sgIydzZXR1cC10aWRlLW1vZGUpIDs7IDs7IDs7Kjs7IDs7IChhZGQtaG9vayAnd2ViLW1vZGUtaG9vayAgKGxhbWJkYSAoKSAgKHdoZW4gKHN0cmluZy1lcXVhbCAianN4IiAoZmlsZS1uYW1lLWV4dGVuc2lvbiBidWZmZXItZmlsZS1uYW1lKSkgIChzZXR1cC10aWRlLW1vZGUpKSkpIChhZGQtaG9vayAnd2ViLW1vZGUtaG9vayAgKGxhbWJkYSAoKSAgKHdoZW4gKHN0cmluZy1lcXVhbCAidHN4IiAoZmlsZS1uYW1lLWV4dGVuc2lvbiBidWZmZXItZmlsZS1uYW1lKSkgIChzZXR1cC10aWRlLW1vZGUpKSkp
-(setq rust-cargo-default-arguments " --offline ")
-(setq web-mode-engines-alist '(("jsx"  . "\\.[tj]sx?")))
-(setq typescript-indent-level 2)
-(setq web-mode-part-padding 0)
-(setq web-mode-enable-auto-quoting 'nil)
-(setq web-mode-auto-quote-style 3)
-(setq web-mode-content-types-alist
-  '(("json" . "\\.jsonp?'")
-    ("html"  . "html'")
-    ("jsx"  . "\\.[tj]sx\\'")))
+
+
+
+(setq kill-ring-max (logxor #x10d3 #o2176)
+      company-tooltip-align-annotations t
+      rust-cargo-default-arguments " --offline "
+      web-mode-engines-alist '(("jsx"  . "\\.[tj]sx?"))
+      typescript-indent-level 2
+      web-mode-part-padding 0
+      web-mode-enable-auto-quoting 'nil
+      web-mode-auto-quote-style 3
+      web-mode-content-types-alist
+      '(("json" . "\\.jsonp?'")
+        ("html"  . "html'")
+        ("jsx"  . "\\.[tj]sx\\'"))
+      )
 (add-to-list 'auto-mode-alist '("/shell.d/" . shell-script-mode))
 (add-to-list 'auto-mode-alist '("/bin/[^/.]*" . shell-script-mode))
 (add-to-list 'auto-mode-alist '("/bin/py/[^/.]*" . python-mode))
@@ -93,9 +97,7 @@
 (add-to-list 'auto-mode-alist '("\\.ya?ml$" . yaml-mode))
 (add-to-list 'auto-mode-alist '("^---$" . yaml-mode))
 (add-to-list 'auto-mode-alist '("nginx.conf$" . nginx-mode))
-
-(add-hook 'after-change-major-mode-hook
-	  #'(lambda () (prettify-symbols-mode)))
+(add-hook 'after-change-major-mode-hook #'(lambda () (prettify-symbols-mode)))
 
 ;; (add-hook 'typescript-mode-hook 'prettier-js-mode)
 ;; (add-hook 'web-mode-hook 'prettier-js-mode)
@@ -105,7 +107,23 @@
 (setq web-mode-content-types-alist
       '(("json" . ".*[.]json$'")
         ("jsx"  . ".*[.]jsx")))
-(add-hook 'web-mode-hook  'my-web-mode-hook)
+
+(add-hook 'web-mode-hook
+          #'(lambda () (interactive)
+           (setq web-mode-markup-indent-offset 2
+                 web-mode-css-indent-offset 2
+                 web-mode-code-indent-offset 2
+                 web-mode-enable-current-element-highlight t
+                 web-mode-enable-current-column-highlight t
+                 )
+           (set-face-attribute 'web-mode-doctype-face nil
+                               :foreground (face-foreground font-lock-function-name-face))
+           (set-face-attribute 'web-mode-html-attr-name-face nil
+                               :foreground (face-foreground font-lock-variable-name-face))
+           (set-face-attribute 'web-mode-html-attr-value-face nil
+                               :foreground (face-foreground font-lock-type-face))
+           ))
+
 (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))

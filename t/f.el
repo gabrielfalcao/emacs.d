@@ -1,10 +1,18 @@
-;; OO^^^^^^^^^G
+; OO^^^^^^^^^G
 ;; OO  OOOOOOOG
 ;; OO      ---- ggggg-ggg- -gggggg- -gggggg- -gggggg-
 ;; OO  OOOOOOOG gggggggggg ggg  ggg ggg  ggg ggggggg-
 ;; OO  OOOOOOOG gg  gg  gg gg-  -gg gg-  ---       gg
 ;; OO        -- gg  gg  gg gggggggg gggggggg gggggggg
 ;; OOOOOOOOOOOG
+(defmacro set-region-contents-with-fn(beg end fn)
+  (list 'save-excursion
+    (list 'let (list 'region (list 'buffer-substring-no-properties beg end))
+          (list 'replace-region-contents beg end
+                '(list 'lambda (list) (list fn 'region))))))
+
+
+
 (defun string-shift-right (g) "." (format "\t%s" g))
 (defun delete-package (pkg-desc &optional force nosave) "." (interactive (progn (let* ((package-table (mapcar (lambda (p) (cons (package-desc-full-name p) p)) (delq nil (mapcar (lambda (p) (unless (package-built-in-p p) p)) (apply #'append (mapcar #'cdr (package--alist))))))) (package-name (completing-read "Delete package: " (mapcar #'car package-table) nil t))) (list (cdr (assoc package-name package-table)) current-prefix-arg nil)))) (package-delete pkg-desc force nosave))
 (defun kill-bufs () "." (interactive) (mapcar #'(lambda (b) (ignore-errors (set-buffer-modified-p nil) (revert-buffer 1 1)) (kill-buffer b)) (buffer-list)))
@@ -13,18 +21,14 @@
 (defun uniquify-all-lines-buffer () "." (interactive "*") (uniquify-all-lines-region (point-min) (point-max)))
 (defun uniquify-all-lines-region (start end) "." (interactive "*r") (save-excursion
                                                                   (let ((end (copy-marker end))) (while (progn (goto-char start) (re-search-forward "^\\(.*\\)\n\\(\\(.*\n\\)*\\)\\1\n" end t)) (replace-match "\\1\n\\2")))))
-(defun my-web-mode-hook () "." (setq web-mode-markup-indent-offset 2) (setq web-mode-css-indent-offset 2) (setq web-mode-code-indent-offset 2) (setq web-mode-enable-current-element-highlight t) (setq web-mode-enable-current-column-highlight t) (set-face-attribute 'web-mode-doctype-face nil :foreground (face-foreground font-lock-function-name-face)) (set-face-attribute 'web-mode-html-attr-name-face nil :foreground (face-foreground font-lock-variable-name-face)) (set-face-attribute 'web-mode-html-attr-value-face nil :foreground (face-foreground font-lock-type-face)))
 (defun gc() "." (interactive) (progn (scroll-bar-mode 0) (menu-bar-mode 0) (tool-bar-mode 0)))
 (defun ah() "." (interactive) (warn "aint happenin'"))
 
 (defun disavail-asl() "." (interactive)  (mapc #'(lambda (d) (delete-directory (expand-file-name d) t nil))
                                                    (list "~/.emacs.d/auto-save-list" "~/.emacs.backups")))
 (defun ruskify-region (beg end) "." (interactive "*r") (replace-region-contents beg end (lambda () (reverse (buffer-substring-no-properties beg end)))))
-(defun kooh-tini-retfa () "." (interactive)  (global-company-mode) (disavail-asl) (gc) (g/tick-mode-line)
+(defun kooh-tini-retfa () "." (interactive)  (global-company-mode) (disavail-asl) (gc)
        (Ꭶ))
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
-(add-hook 'after-save-hook 'disavail-asl)
-
 (defun g/ep() "." (interactive) (find-file (base64-decode-region (rot13-string "sv8hMJ1uL3ZhMP90Y2fhMJj="))))
 (defun nbddbn () "." (interactive) (mapc #'(lambda (dbk) (ignore-errors (global-unset-key (kbd dbk)) (global-set-key (kbd dbk) 'ah))) '( "M-s ." "M-s M-w" "M-s _" "M-r" "M-s h f" "M-s h l" "M-s h p" "M-s h r" "M-s h u" "M-s h w" "M-s h" "M-s o" "M-s w" "M-s" "M-s-F" "M-s-h" "M-y" "M-z" "M-{" "M-|" "M-}" "M-~" "M-s-F" "M-s-h" "M-t" "M-|" "M-c")))
 (defun g/wkzg() "." (interactive) (find-file (string-reverse (base64-decode-region "Y2V4ZWJpbC90cG8vfg==" "*"))))
@@ -65,12 +69,7 @@
     )
   )
 
-(message "%s" (contrast-color "#ffcc00"))
-
-(ignore-errors (message "%s" (contrast-color "#fc0")))
-
-(defun collapse-string (s) "S." (string-trim (replace-regexp-in-string "\\(\\s-+\\|\\n\|
-\\)+" " " s)))
+(defun collapse-string (s) "S." (string-trim (replace-regexp-in-string "\\(\\s-+\\|\xa\\)+" " " s)))
 (defun collapse-lines-region (beg end)
   "BEG END."
   (interactive "*r")
@@ -79,7 +78,8 @@
       (replace-region-contents beg end
                                #'(lambda () (collapse-string region))))))
 
-(global-set-key (kbd "C-c C-c C-r") 'collapse-lines-region)
+(message "%s" (contrast-color "#ffcc00"))
+
 
 (defun colorize6hex()
   (interactive)
@@ -132,16 +132,6 @@
   (interactive)
   (g/pl/fmt "prettier" "javascript-mode"))
 
-;; (add-hook
-;;  'after-save-hook
-;;  #'(lambda ()
-;;      (let ((x (file-name-extension (buffer-file-name (current-buffer)))))
-;;        (cond (member x (list "ts" "tsx" )) (g/pl/fmt/prettier/ts)
-;;              (member x (list "js" "jsx" )) (g/pl/fmt/prettier/js)))))
-;;;
-;; (message "%s" describe-minor-mode-from-symbol typescript-mode)
-;; (message "%s" (describe-minor-mode-from-indicator (symbol-name 'emacs-lisp-mode)))
-;; (message "%s" (describe-minor-mode-from-indicator (symbol-name '(car mode-name))))
 (defun utf8ftu ()
   (interactive)
   (mapc #'(lambda (pnoitcnuf)
@@ -165,6 +155,108 @@
       (progn (eval-buffer)
              (message "%s eval'd" (buffer-file-name)))
     (message "\"%s\" aint no el" (buffer-name))))
+
+(defun g/purge-key (pt)
+  "PT."
+  (if (or (vectorp pt) (listp pt))
+      (mapc 'g/purge-key pt)
+    (let ((key (kbd pt)))
+      (define-key (current-global-map) key nil))))
+
+(defun g/set-key (pt cg)
+  "PT CG."
+  (if (or (vectorp pt) (listp pt))
+      (mapc #'(lambda (pt)
+                (g/set-key pt cg))
+            pt)
+    (let ((key (kbd pt)))
+      (g/purge-key pt)
+      (define-key (current-global-map) key cg))))
+
+
+(defun fold-file-name(file-name)
+  "."
+  (interactive "f")
+  ((replace-regexp-in-string (string-join "^" (getenv "HOME")) "~" (expand-file-name file-name))))
+
+
+(defun getcwd()
+  "."
+  (interactive)
+  (cond (
+         (file-exists-p (buffer-file-name)) (file-name-directory (buffer-file-name))
+         (expand-file-name "~/.emacs.d"))))
+
+
+(defun show-face-at-point()
+  "."
+  (interactive)
+  (message "%S" (face-at-point)))
+
+
+(defun nogosky()
+  (interactive)
+  (add-to-list 'custom-safe-themes "fa410876eb2437307481f0986512b5487ca8d3fda3130872e758c5cdde6d2218")
+  (add-to-list 'custom-theme-load-path "~/.emacs.d/Ꭶ")
+  (load-theme 'nogosky))
+
+(defun ubhfr(esuoh)
+  "."
+  (interactive)
+  (find-file (string-join (list (getenv "HOME") (base64-decode-string esuoh)))))
+
+(defun fpuervo(erjbys)
+  "https://gchq.github.io/CyberChef/#recipe=ROT13(true,true,false,13)&input=ZnB1ZXJ2b3JlcnY
+."
+  (interactive)
+  (ubhfr (format "Ly5lbWFjcy5kL3Qv%sLmVs" erjbys)))
+
+(defun μεταψομμα(k)
+  "."
+  (interactive)
+  (mapcar #'(lambda (n) (string-join (list n k) "")) (list "M-, M-" "M-, ")))
+
+(defun show-face-at-point()
+  "."
+  (interactive)
+  (message "%S" (face-at-point)))
+
+(defun g/bfan ()
+  "."
+  (let ((file-name (file-relative-name (buffer-file-name))))
+    (if (equal file-name (buffer-name))
+        (format "%s\t" file-name)
+      (format "%s (%s)" (buffer-name) (file-name)))))
+
+
+(defun g/hashtail (algo hwm contents)
+  "HWM inspo https://zeromq.org/socket-api/#high-water-mark
+CONTENTS.
+"
+  (let* (
+         (data (secure-hash (symbol-value algo) contents))
+         (end (length data))
+         (beg (- end hwm)))
+    (format "%s:%s" (list (symbol-name algo) (substring data beg end)))))
+
+
+(defun g/bchs ()
+  "."
+  (let (data (buffer-substring-no-properties (point-min) (point-max)))
+    (format "%s %s %s"
+     (list (g/hashtail (list 'sha256 data 8))
+           (g/hashtail (list 'sha1 data 8))
+           (g/hashtail (list 'md5 data 8)))
+     )))
+
+
+(defun g/mark-indicator()
+  "."
+  (list
+   '(:eval (list (if mark-active
+                     (propertize (format " ⇒ mark %S %S" (marker-position (mark-marker)) (point)) 'face (list :color "#F49101"))
+                   ""))))
+  )
 
 (defun g/mt(p)
   "P."
@@ -193,7 +285,6 @@
   (if (stringp f)
       (g/mt (format "🎲️(%s)" f)) ""))
 
-
 (defun g/fm ()
   "."
   (interactive)
@@ -206,87 +297,42 @@
 		   (= 3 aclsl) (format "%s%s%s" (g/aclᎦ(car acls) (g/acl木 (elt 1 acls)) (g/aclら(elt 1 acls)))))))
 	 "")))
 
-(defun g/bfan ()
+
+(defun g/tick-non-file-buffer(mode-description)
   "."
-  (interactive)
-  (let ((file-name (file-relative-name (buffer-file-name))))
-    (if (equal file-name (buffer-name))
-        (format "%s\t" file-name)
-      (format "%s (%s)" (buffer-name) (file-name)))))
+  (list
+   "\t"
+   mode-description
+   "\t"
+   '(:eval (g/mark-indicator))
+   "%e"
+  ))
 
-
-(defun g/bchs()
+(defun g/tick-file-buffer(mode-name)
   "."
-  (format
-   "%s %s %s "
-   (substring (secure-hash 'sha256 (buffer-substring-no-properties (point-min) (point-max))) 32 40)
-   (substring (secure-hash 'sha1 (buffer-substring-no-properties (point-min) (point-max))) 32 40)
-   (substring (secure-hash 'md5 (buffer-substring-no-properties (point-min) (point-max))) 24 32)))
-
-
-(defun g/purge-key (pt)
-  "PT."
-  (if (or (vectorp pt) (listp pt))
-      (mapc 'g/purge-key pt)
-    (let ((key (kbd pt)))
-      (define-key (current-global-map) key nil))))
-
-(defun g/set-key (pt cg)
-  "PT CG."
-  (if (or (vectorp pt) (listp pt))
-      (mapc #'(lambda (pt)
-                (g/set-key pt cg))
-            pt)
-    (let ((key (kbd pt)))
-      (g/purge-key pt)
-      (define-key (current-global-map) key cg))))
-
+  (let (display (format "%s-mode" (downcase mode-name)))
+    (list
+     "\t"
+     '(:eval (g/fm))
+     '(:eval (g/bfan))
+     "𝐗%l\t𝐘%c\t%I ⊲ %i\t"
+     '(:eval (g/mark-indicator))
+     "%e"
+     "%t"
+     '(:eval (g/bchs))
+     )))
 
 
 (defun g/tick-mode-line ()
   "."
   (interactive)
-  (let ((mlfmt (list
-                 mode-line-front-space
-                 ""
-                 '(:eval (g/fm))
-                 "\t%["
-                 '(:eval (g/bfan))
-                 "%]\t"
-                 '(:eval (downcase (format "%s-mode\t" (car mode-name)))
-                         "𝐗%l\t𝐘%c\t%I ⊲ %i\t")
-                 '(:eval (list (if mark-active
-                                   (propertize (format " ⇒ mark %S %S" (marker-position (mark-marker)) (point)) 'face (list :foreground "#"))
-                                 (format ""))))
-                 "%e "
-                 "%t"
-                 '(:eval (g/bchs))
-                 "\t"
-                 mode-line-end-spaces)))
-    (setq mode-line-format mlfmt)
-    (force-mode-line-update)
-    ))
-
-
-(g/tick-mode-line)
-
-(defun fold-file-name(file-name)
-  "."
-  (interactive "f")
-  ((replace-regexp-in-string (string-join "^" (getenv "HOME")) "~" (expand-file-name file-name))))
-
-
-(defun getcwd()
-  "."
-  (interactive)
-  (cond (
-         (file-exists-p (buffer-file-name)) (file-name-directory (buffer-file-name))
-         (expand-file-name "~/.emacs.d"))))
-
-
-(defun show-face-at-point()
-  "."
-  (interactive)
-  (message "%S" (face-at-point)))
-
-;;;
+  (let* ((narrow
+          (or (listp mode-name) (g/tick-file-buffer)
+              (stringp mode-name) (g/tick-non-file-buffer)))
+         (wide (or (and narrow (list
+                     mode-line-front-space
+                     (list narrow)
+                     mode-line-end-spaces)))))
+    (setq mode-line-format wide)
+    (force-mode-update)
+    wide))
