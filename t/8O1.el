@@ -10,7 +10,7 @@
 
 (g/purge-key
  '(
-   "C-c C-x"
+   ;; "C-c C-x"
    "M-o M-g"
    "C-g"
    "C-S"
@@ -19,8 +19,9 @@
    "C-x 5 2"
    "C-c C-x"
    "C-c C-u"
-   "C-x C-d"
    "C-x C-e"
+   "C-x C-d"
+   "C-x C-u"
    "M-j"
    "M-k"
    "M-,"
@@ -107,7 +108,6 @@
 (g/set-key "C-c C-e C-3" 'rot13-region)
 (progn
   (put 'upcase-region 'disabled nil)
-  (g/set-key "C-x C-u" #'(lambda () (interactive) (error "C-x C-k")))
   (g/set-key '("C-x C-k" "C-c C-k") #'upcase-region))
 
 (progn
@@ -116,10 +116,10 @@
   (g/set-key "C-c C-l" #'downcase-region))
 
 
-(g/set-key   '("C-z" "M-z" "C-_") 'undo     )
-(g/set-key   '("M-r") 'replace-regexp       )
-(g/set-key   '("C-g" "C-q") 'keyboard-quit  )
-(g/set-key   '("M-u" "M-l" "M-ESC") 'ah     )
+(g/set-key   '("C-z" "M-z" "C-_") 'undo      )
+(g/set-key   '("M-r") 'replace-regexp        )
+(g/set-key   '("C-g" "C-q") 'keyboard-quit   )
+(g/set-key   '("M-u" "M-l" "M-ESC") 'ah      )
 (g/set-key   "C-s"   'isearch-forward-regexp )
 (g/set-key   "C-S-s" 'isearch-backward-regexp)
 
@@ -127,6 +127,8 @@
 (g/set-key "M-g g" 'goto-line)
 (g/set-key "M-g M-g" 'goto-line)
 (g/set-key "M-O" #'(lambda () (interactive) (insert "ॐ")))
+(g/set-key "C-x C-e m" 'morse-region)
+(g/set-key "C-x C-u m" 'unmorse-region)
 (setq ns-allow-anti-aliasing t)
 (setq ns-function-modifier 'control)
 (setq ns-option-modifier 'meta)

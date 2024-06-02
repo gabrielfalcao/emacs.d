@@ -1,16 +1,20 @@
-; OO^^^^^^^^^G
-;; OO  OOOOOOOG
-;; OO      ---- ggggg-ggg- -gggggg- -gggggg- -gggggg-
-;; OO  OOOOOOOG gggggggggg ggg  ggg ggg  ggg ggggggg-
-;; OO  OOOOOOOG gg  gg  gg gg-  -gg gg-  ---       gg
-;; OO        -- gg  gg  gg gggggggg gggggggg gggggggg
-;; OOOOOOOOOOOG
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;                                                     ;;
+;; OO^^^^^^^^^G                                        ;;
+;; OO  OOOOOOOG                                        ;;
+;; OO      ---- ggggg-ggg- -gggggg- -gggggg- -gggggg-  ;;
+;; OO  OOOOOOOG gggggggggg ggg  ggg ggg  ggg ggggggg-  ;;
+;; OO  OOOOOOOG gg  gg  gg gg-  -gg gg-  ---       gg  ;;
+;; OO        -- gg  gg  gg gggggggg gggggggg gggggggg  ;;
+;; OOOOOOOOOOOG                                        ;;
+;;                                                     ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defmacro set-region-contents-with-fn(beg end fn)
   (list 'save-excursion
     (list 'let (list 'region (list 'buffer-substring-no-properties beg end))
           (list 'replace-region-contents beg end
                 '(list 'lambda (list) (list fn 'region))))))
-
 
 
 (defun string-shift-right (g) "." (format "\t%s" g))
@@ -79,7 +83,6 @@
                                #'(lambda () (collapse-string region))))))
 
 (message "%s" (contrast-color "#ffcc00"))
-
 
 (defun colorize6hex()
   (interactive)

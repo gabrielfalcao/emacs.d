@@ -108,6 +108,13 @@
       '(("json" . ".*[.]json$'")
         ("jsx"  . ".*[.]jsx")))
 
+
+(add-hook 'shell-script-mode-hook
+          #'(lambda () (interactive)
+              (setq 'sh-basic-offset 6)
+              ))
+
+
 (add-hook 'web-mode-hook
           #'(lambda () (interactive)
            (setq web-mode-markup-indent-offset 2
