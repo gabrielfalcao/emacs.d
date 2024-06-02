@@ -12,13 +12,10 @@
 
 
 (add-to-list 'custom-safe-themes "5bd001a0f95d54174370e9275b1f594829930a1a95ed82741a5492facb7415e7")
-(set-face-attribute 'default nil :font "Monaco-17")
 
+(set-face-attribute 'default nil :font "JetBrains Mono-21")
 
 (load-library "ori")
 (load-library "f")
 (load-library "8O1")
 (load-library "5O1")
-
-(setq vc-handled-backends nil)
-(eval-after-load "vc" '(remove-hook 'find-file-hook 'vc-find-file-hook))

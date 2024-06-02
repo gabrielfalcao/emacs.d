@@ -10,7 +10,7 @@
 
 (g/purge-key
  '(
-   ;; "C-c C-x"
+   "C-c C-x"
    "M-o M-g"
    "C-g"
    "C-S"
@@ -22,10 +22,12 @@
    "C-x C-e"
    "C-x C-d"
    "C-x C-u"
+   "C-x C-d"
    "M-j"
    "M-k"
    "M-,"
-   ))
+   )
+ )
 
 (g/set-key (μεταψομμα ",") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3Qvay5lbA==")))
 (g/set-key (μεταψομμα "f") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3QvZi5lbA==")))
@@ -42,6 +44,13 @@
 ;; (g/set-key (μεταψομμα "8")#'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3QvOE8xLmVs")))
 ;; (g/set-key (μεταψομμα "5")#'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3QvNU8xLmVs")))
 ;; (g/set-key (μεταψομμα "t")#'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3Qvb3JpLmVs")))
+
+
+
+(g/set-key '("C-x C--") 'text-scale-adjust)
+(g/set-key '("C-x C-+") 'text-scale-adjust)
+(g/set-key '("C-x -") 'text-scale-adjust)
+(g/set-key '("C-x +") 'text-scale-adjust)
 (g/set-key '("C-c C-l") 'collapse-lines-region)
 (g/set-key '("C-c C-t C-m C-l") 'kooh-tini-retfa)
 (g/set-key '("C-c C-x C-f") 'show-face-at-point)
@@ -49,8 +58,11 @@
 (g/set-key '("C-c C-y" "C-c M-y") 'clipboard-yank)
 (g/set-key '("C-x C-q" "C-c M-y") 'keyboard-quit)
 (g/set-key '("C-x C-d C-h") 'info)
-(g/set-key "C-c C-u C-d C-a" #'(lambda () (interactive) (when (read-only-mode -8) (message "%s unlocked" (buffer-name)))))
+(g/set-key  "C-c C-u C-d C-a"
+            #'(lambda ()
+                (interactive) (when (read-only-mode -8) (message "%s unlocked" (buffer-name)))))
 (global-set-key (kbd "C-c C-c C-r") 'collapse-lines-region)
+
 ;; (g/set-key '("M-, M-8" "M-, 8")#'(lambda () (interactive) (rot13(fpuervo) "OE8x"))) ;; https://deezer.page.link/HUJ1z8CfsudS2he96
 ;; (g/set-key '("M-, M-5" "M-, 5")#'(lambda () (interactive) (schreib "NU8x")))
 ;; (g/set-key '("M-, M-t" "M-, t")#'(lambda () (interactive) (schreib "b3Jp")))
@@ -115,30 +127,26 @@
   (g/set-key "C-x C-l" #'downcase-region)
   (g/set-key "C-c C-l" #'downcase-region))
 
-
 (g/set-key   '("C-z" "M-z" "C-_") 'undo      )
 (g/set-key   '("M-r") 'replace-regexp        )
 (g/set-key   '("C-g" "C-q") 'keyboard-quit   )
 (g/set-key   '("M-u" "M-l" "M-ESC") 'ah      )
 (g/set-key   "C-s"   'isearch-forward-regexp )
 (g/set-key   "C-S-s" 'isearch-backward-regexp)
-
-(g/set-key "M-G" #'(lambda () (interactive) (insert "Ꭶ")))
-(g/set-key "M-g g" 'goto-line)
-(g/set-key "M-g M-g" 'goto-line)
-(g/set-key "M-O" #'(lambda () (interactive) (insert "ॐ")))
-(g/set-key "C-x C-e m" 'morse-region)
-(g/set-key "C-x C-u m" 'unmorse-region)
-(setq ns-allow-anti-aliasing t)
-(setq ns-function-modifier 'control)
-(setq ns-option-modifier 'meta)
-(setq ns-command-modifier 'meta)
+(g/set-key   "M-G" #'(lambda () (interactive) (insert "Ꭶ")))
+(g/set-key   "M-g g" 'goto-line)
+(g/set-key   "M-g M-g" 'goto-line)
+(g/set-key   "M-O" #'(lambda () (interactive) (insert "ॐ")))
+(g/set-key   "C-x C-e m" 'morse-region)
+(g/set-key   "C-x C-d m" 'unmorse-region)
+(g/set-key   "C-\\" 'morse-region)
+(g/set-key   "C-|" 'unmorse-region)
+(setq        ring-bell-function               'ignore)
 (global-set-key [kp-delete] 'delete-char)
 
 
 (column-number-mode)
 (setq select-enable-clipboard nil)
-(setq ring-bell-function 'ignore)
 (setq inhibit-splash-screen t)
 (setq inhibit-startup-screen t)
 (setq show-paren-delay 0 show-paren-style 'parenthesis)
@@ -149,6 +157,10 @@
 (add-to-list 'default-frame-alist '(ns-appearance . dark))
 (setq completion-ignored-extensions '(".lock" ".o" "~" ".bin" ".lbin" ".so" ".a" ".ln" ".blg" ".bbl" ".elc" ".lof" ".glo" ".idx" ".lot" ".svn/" ".hg/" ".git/" ".bzr/" "CVS/" "_darcs/" "_MTN/" ".fmt" ".tfm" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".dfsl" ".pfsl" ".d64fsl" ".p64fsl" ".lx64fsl" ".lx32fsl" ".dx64fsl" ".dx32fsl" ".fx64fsl" ".fx32fsl" ".sx64fsl" ".sx32fsl" ".wx64fsl" ".wx32fsl" ".fasl" ".ufsl" ".fsl" ".dxl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".cp" ".fn" ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo"))
 ;;; nichts
-(setq read-file-name-completion-ignore-case t)
+(setq read-file-name-completion-ignore-case nil)
+(setq ns-allow-anti-aliasing t)
+(setq ns-function-modifier 'control)
+(setq ns-option-modifier 'meta)
+(setq ns-command-modifier 'meta)
 
 ;;;

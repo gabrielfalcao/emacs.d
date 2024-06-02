@@ -1,0 +1,12 @@
+(g/set-key "C-\\"
+           #'(lambda (beg end)
+               (interactive "*r")
+               (save-excursion
+                 (let (contents (buffer-substring-no-properties beg end))
+                   (cond ((string-match-p "^[_./]+$")
+                          (morse-region beg end) )
+                         (morse-region beg end)
+                     )
+                   )
+                 )
+           ))

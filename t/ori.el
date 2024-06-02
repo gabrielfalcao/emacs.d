@@ -78,7 +78,11 @@
     (setq-default truncate-lines t)
     (global-font-lock-mode 1)
     (transient-mark-mode 1)
-    (set-face-attribute 'default nil :font "Monaco-17")
+
+
+
+    (set-face-attribute 'default nil :font "JetBrains Mono Thin-20")
+    (set-face-attribute 'info-menu-header nil :foreground "#DB5045" :underline nil :bold t :font "JetBrains Mono Thin-20")
     (global-prettify-symbols-mode 0)
     (setq linum-format "%6d")
     (global-linum-mode -1)
@@ -100,7 +104,7 @@
                         :overline nil
                         :underline "#D87101"
                         :bold t)
-    (set-face-attribute 'info-menu-header nil :foreground "#DB5045" :underline nil :bold t :font "Monaco 20")
+
     (set-face-attribute 'info-menu-star nil :foreground Ꭶmode-line-fgᎦ :underline nil :bold t)
     (set-face-attribute 'info-header-xref nil  :foreground ᎦkeywordsᎦ :underline t)
     (set-face-attribute 'show-paren-match nil :background Ꭶmode-line-fgᎦ :foreground ᎦbackgroundᎦ :weight 'bold)
