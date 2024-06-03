@@ -1,10 +1,18 @@
-;; OO^^^^^^^^^G
-;; OO  OOOOOOOG
-;; OO      ---- ggggg-ggg- -gggggg- -gggggg- -gggggg-
-;; OO  OOOOOOOG gggggggggg ggg  ggg ggg  ggg ggggggg-
-;; OO  OOOOOOOG gg  gg  gg gg-  -gg gg-  ---       gg
-;; OO        -- gg  gg  gg gggggggg gggggggg gggggggg
-;; OOOOOOOOOOOG
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;                                                     ;;;;;;
+;;;;;; OO^^^^^^^^^G                                        ;;;;;;
+;;;;;; OO  OOOOOOOG                                        ;;;;;;
+;;;;;; OO      ---- ggggg-ggg- -gggggg- -gggggg- -gggggg-  ;;;;;;
+;;;;;; OO  OOOOOOOG gggggggggg ggg  ggg ggg  ggg ggggggg-  ;;;;;;
+;;;;;; OO  OOOOOOOG gg  gg  gg gg-  -gg gg-  ---       gg  ;;;;;;
+;;;;;; OO        -- gg  gg  gg gggggggg gggggggg gggggggg  ;;;;;;
+;;;;;; OOOOOOOOOOOG                                        ;;;;;;
+;;;;;;                                                     ;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (setq initial-scratch-message nil)
 ;; (setq initial-buffer-choice (base64-decode-string (rot13-string "sv9jpz9dMJA0pl9jMKWmo25uoP8=")))
 (defalias 'yes-or-no-p 'y-or-n-p)

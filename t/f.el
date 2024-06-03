@@ -1,14 +1,18 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;                                                     ;;
-;; OO^^^^^^^^^G                                        ;;
-;; OO  OOOOOOOG                                        ;;
-;; OO      ---- ggggg-ggg- -gggggg- -gggggg- -gggggg-  ;;
-;; OO  OOOOOOOG gggggggggg ggg  ggg ggg  ggg ggggggg-  ;;
-;; OO  OOOOOOOG gg  gg  gg gg-  -gg gg-  ---       gg  ;;
-;; OO        -- gg  gg  gg gggggggg gggggggg gggggggg  ;;
-;; OOOOOOOOOOOG                                        ;;
-;;                                                     ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;                                                     ;;;;;;
+;;;;;; OO^^^^^^^^^G                                        ;;;;;;
+;;;;;; OO  OOOOOOOG                                        ;;;;;;
+;;;;;; OO      ---- ggggg-ggg- -gggggg- -gggggg- -gggggg-  ;;;;;;
+;;;;;; OO  OOOOOOOG gggggggggg ggg  ggg ggg  ggg ggggggg-  ;;;;;;
+;;;;;; OO  OOOOOOOG gg  gg  gg gg-  -gg gg-  ---       gg  ;;;;;;
+;;;;;; OO        -- gg  gg  gg gggggggg gggggggg gggggggg  ;;;;;;
+;;;;;; OOOOOOOOOOOG                                        ;;;;;;
+;;;;;;                                                     ;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defmacro set-region-contents-with-fn(beg end fn)
   (list 'save-excursion
@@ -301,20 +305,20 @@ CONTENTS.
 	 "")))
 
 
-(defun g/tick-non-file-buffer(mode-description)
+(defun g/tick-non-file-buffer()
   "."
   (list
-   "\t"
-   mode-description
+   (format "%s" (car mode-name))
    "\t"
    '(:eval (g/mark-indicator))
    "%e"
   ))
 
-(defun g/tick-file-buffer(mode-name)
+(defun g/tick-file-buffer()
   "."
-  (let (display (format "%s-mode" (downcase mode-name)))
+  (let ((display (downcase (format "%s-mode" (car mode-name)))))
     (list
+     display
      "\t"
      '(:eval (g/fm))
      '(:eval (g/bfan))
@@ -330,12 +334,16 @@ CONTENTS.
   "."
   (interactive)
   (let* ((narrow
-          (or (listp mode-name) (g/tick-file-buffer)
-              (stringp mode-name) (g/tick-non-file-buffer)))
-         (wide (or (and narrow (list
-                     mode-line-front-space
-                     (list narrow)
-                     mode-line-end-spaces)))))
+          (cond ((listp mode-name) (g/tick-file-buffer))
+                ((stringp mode-name) (g/tick-non-file-buffer))))
+         (wide (list
+                mode-line-front-space
+                narrow
+                mode-line-end-spaces)))
     (setq mode-line-format wide)
-    (force-mode-update)
+    (force-mode-line-update)
     wide))
+
+;; 987-2711
+
+(g/tick-mode-line)
