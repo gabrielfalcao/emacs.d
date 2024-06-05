@@ -29,7 +29,16 @@
 (defun uniquify-all-lines-region (start end) "." (interactive "*r")
        (save-excursion
          (let ((end (copy-marker end)))
-           (while (progn (goto-char start) (re-search-forward "^\\(.*\\)\n\\(\\(.*\n\\)*\\)\\1\n" end t)) (replace-match "\\1\n\\2")))))
+           (
+            while
+               (progn
+                 (goto-char start)
+                 (re-search-forward "^\\(.*\\)\n\\(\\(.*\n\\)*\\)\\1\n" end t))
+             (replace-match "\\1\n\\2")
+             )
+           )
+         )
+       )
 (defun gc() "." (interactive) (progn (scroll-bar-mode 0) (menu-bar-mode 0) (tool-bar-mode 0)))
 (defun ah() "." (interactive) (warn "aint happenin'"))
 (defun disavail-asl() "." (interactive)
@@ -90,7 +99,6 @@
 
 (defun colorize6hex()
   (interactive)
-  (save-excursion
     (let (begb hwmb cbeg cend faber)
       (setq begb (point-min))
       (setq hwmb (point-max))
@@ -101,12 +109,11 @@
         (let* ((cbeg (match-beginning 1))
               (cend (match-end 1))
               (faber (buffer-substring-no-properties cbeg cend)))
+          (set-text-properties cbeg cend nil)
           (put-text-property cbeg cend 'face (list :foreground (contrast-color faber) :background faber))
           (message "%s" (propertize faber 'face (list :foreground (contrast-color faber) :background faber)))
           ))
-      )))
-(colorize6hex)
-
+      ))
 (global-set-key (kbd "C-c C-d C-c") 'colorize6hex)
 
 (defun g/pl/fmt (fmtexect &optional major-mode)
