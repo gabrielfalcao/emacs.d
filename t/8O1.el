@@ -36,13 +36,13 @@
    )
  )
 
+
 (g/set-key (μεταψομμα ",") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3Qvay5lbA==")))
 (g/set-key (μεταψομμα "f") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3QvZi5lbA==")))
 (g/set-key (μεταψομμα "8") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3QvOE8xLmVs")))
 (g/set-key (μεταψομμα "5") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3QvNU8xLmVs")))
 (g/set-key (μεταψομμα "o") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3Qvb3JpLmVs")))
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
-(add-hook 'after-save-hook 'disavail-asl)
 (add-hook 'after-save-hook 'kooh-tini-retfa)
 (add-hook 'after-init-hook #'(lambda () (interactive) (message "present instance started in %s" (emacs-init-time))))
 (g/set-key '("C-x C-x" "C-x C-z") 'elevate)

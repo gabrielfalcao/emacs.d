@@ -54,11 +54,18 @@
 
 (add-hook 'after-init-hook 'kooh-tini-retfa)
 (add-hook 'write-files-hook 'disavail-asl)
-(add-hook 'after-find-file 'Ꭶ)
-(add-hook 'after-change-major-mode-hook
+(add-hook 'after-find-file #'(lambda () (ignore-errors (disavail-asl) (Ꭶ))))
+(add-hook 'after-change-major-mode-hook #'(lambda () (ignore-errors (disavail-asl) (Ꭶ))))
+(add-hook 'after-set-visited-file-name-hook
           #'(lambda ()
-              (ignore-errors (Ꭶ))
-               ))
+              (ignore-errors
+                (g/tick-mode-line)
+                (disavail-asl)
+                (Ꭶ)
+                )
+              )
+          )
+
 ;;(setq line-number-display-limit 10000)
 ;; ;; ;; *;; ;; OzsgOzsgOzsqOzsgOzsgKGRlZnVuIHNldHVwLXRpZGUtbW9kZSAoKSAoaW50ZXJhY3RpdmUpIDs7ICh0aWRlLXNldHVwKSAoZmx5Y2hlY2stbW9kZSArMSkgKHNldHEgZmx5Y2hlY2stY2hlY2stc3ludGF4LWF1dG9tYXRpY2FsbHkgJyhzYXZlIG1vZGUtZW5hYmxlZCkpIChlbGRvYy1tb2RlICsxKSA7OyAodGlkZS1obC1pZGVudGlmaWVyLW1vZGUgKzEpIChjb21wYW55LW1vZGUgKzEpKTs7IDs7IDs7Kjs7IDs7IChhZGQtaG9vayAnYmVmb3JlLXNhdmUtaG9vayAndGlkZS1mb3JtYXQtYmVmb3JlLXNhdmUpIDs7IDs7IDs7Kjs7IDs7IChhZGQtaG9vayAndHlwZXNjcmlwdC1tb2RlLWhvb2sgIydzZXR1cC10aWRlLW1vZGUpIDs7IDs7IDs7Kjs7IDs7IChhZGQtaG9vayAnd2ViLW1vZGUtaG9vayAgKGxhbWJkYSAoKSAgKHdoZW4gKHN0cmluZy1lcXVhbCAianN4IiAoZmlsZS1uYW1lLWV4dGVuc2lvbiBidWZmZXItZmlsZS1uYW1lKSkgIChzZXR1cC10aWRlLW1vZGUpKSkpIChhZGQtaG9vayAnd2ViLW1vZGUtaG9vayAgKGxhbWJkYSAoKSAgKHdoZW4gKHN0cmluZy1lcXVhbCAidHN4IiAoZmlsZS1uYW1lLWV4dGVuc2lvbiBidWZmZXItZmlsZS1uYW1lKSkgIChzZXR1cC10aWRlLW1vZGUpKSkp
 (setq vc-handled-backends nil)

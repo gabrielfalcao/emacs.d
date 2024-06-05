@@ -20,20 +20,21 @@
           (list 'replace-region-contents beg end
                 '(list 'lambda (list) (list fn 'region))))))
 
-
 (defun string-shift-right (g) "." (format "\t%s" g))
 (defun delete-package (pkg-desc &optional force nosave) "." (interactive (progn (let* ((package-table (mapcar (lambda (p) (cons (package-desc-full-name p) p)) (delq nil (mapcar (lambda (p) (unless (package-built-in-p p) p)) (apply #'append (mapcar #'cdr (package--alist))))))) (package-name (completing-read "Delete package: " (mapcar #'car package-table) nil t))) (list (cdr (assoc package-name package-table)) current-prefix-arg nil)))) (package-delete pkg-desc force nosave))
 (defun kill-bufs () "." (interactive) (mapcar #'(lambda (b) (ignore-errors (set-buffer-modified-p nil) (revert-buffer 1 1)) (kill-buffer b)) (buffer-list)))
 (defun minor-mode-slist() "." (mapcar (lambda (l) (format "%s" (car l))) minor-mode-alist))
 (defun string-list-html-like-display (nn sl) "." (format "<%s>\n%s\n</%s>" nn (string-join (mapcar 'string-shift-right sl) "\n") nn))
 (defun uniquify-all-lines-buffer () "." (interactive "*") (uniquify-all-lines-region (point-min) (point-max)))
-(defun uniquify-all-lines-region (start end) "." (interactive "*r") (save-excursion
-                                                                  (let ((end (copy-marker end))) (while (progn (goto-char start) (re-search-forward "^\\(.*\\)\n\\(\\(.*\n\\)*\\)\\1\n" end t)) (replace-match "\\1\n\\2")))))
+(defun uniquify-all-lines-region (start end) "." (interactive "*r")
+       (save-excursion
+         (let ((end (copy-marker end)))
+           (while (progn (goto-char start) (re-search-forward "^\\(.*\\)\n\\(\\(.*\n\\)*\\)\\1\n" end t)) (replace-match "\\1\n\\2")))))
 (defun gc() "." (interactive) (progn (scroll-bar-mode 0) (menu-bar-mode 0) (tool-bar-mode 0)))
 (defun ah() "." (interactive) (warn "aint happenin'"))
-
-(defun disavail-asl() "." (interactive)  (mapc #'(lambda (d) (delete-directory (expand-file-name d) t nil))
-                                                   (list "~/.emacs.d/auto-save-list" "~/.emacs.backups")))
+(defun disavail-asl() "." (interactive)
+       (mapc #'(lambda (d) (delete-directory (expand-file-name d) t nil))
+             (list "~/.emacs.d/auto-save-list" "~/.emacs.backups")))
 (defun ruskify-region (beg end) "." (interactive "*r") (replace-region-contents beg end (lambda () (reverse (buffer-substring-no-properties beg end)))))
 (defun kooh-tini-retfa () "." (interactive)  (global-company-mode) (disavail-asl) (gc)
        (Ꭶ))
@@ -78,6 +79,7 @@
   )
 
 (defun collapse-string (s) "S." (string-trim (replace-regexp-in-string "\\(\\s-+\\|\xa\\)+" " " s)))
+
 (defun collapse-lines-region (beg end)
   "BEG END."
   (interactive "*r")
@@ -85,8 +87,6 @@
     (let ((region (buffer-substring-no-properties beg end)))
       (replace-region-contents beg end
                                #'(lambda () (collapse-string region))))))
-
-(message "%s" (contrast-color "#ffcc00"))
 
 (defun colorize6hex()
   (interactive)
@@ -97,12 +97,16 @@
       (goto-char begb)
       (while
           (and (re-search-forward "\\([#][a-f0-9]\\{3\,6\\}\\)" hwmb t)
-               (<= (point) hwmb)
-               (setq cbeg (match-beginning 1))
-               (setq cend (match-end 1))
-               (setq faber (buffer-substring cbeg cend))
-               (put-text-property cbeg cend 'face (list :background faber :foreground (web-mode-colorize-foreground "#9acd32")))))
-      (message "%s" (propertize faber 'face (list :foreground faber))))))
+               (<= (point) hwmb))
+        (let* ((cbeg (match-beginning 1))
+              (cend (match-end 1))
+              (faber (buffer-substring-no-properties cbeg cend)))
+          ;;(put-text-property cbeg cend 'face (list :background faber :foreground (web-mode-colorize-foreground "#9acd32")))
+          (message "%s" (propertize faber 'face (list :foreground (contrast-color faber) :background faber)))
+          ))
+      )))
+(colorize6hex)
+
 (global-set-key (kbd "C-c C-d C-c") 'colorize6hex)
 
 (defun g/pl/fmt (fmtexect &optional major-mode)
@@ -114,20 +118,20 @@
            (pebu (format "*%s %s *" fmtexect target))
            (err (make-temp-file fmtexect nil (sha1 (buffer-file-name)))) ;; (secure-hash "sha256" (buffer-file-name))))
            )
-    (if (and (file-readable-p target)
-             (file-regular-p target))
-        (let* (
-              (eco (format "%d" (call-process fmtexect nil (list buffer err) t target)))
-              (ets (format "%d" (file-attribute-size (file-attributes err)))))
-          (if (and (not( equal "0" eco))
-                   (not(equal "0" ets)))
-              (progn
-                (set-buffer (get-buffer-create pebu t))
-                (insert-file-contents err nil nil nil t)
-                ;;     (set-buffer-major-mode major-mode)
-                (read-only-mode nil)
-                (pop-to-buffer (get-buffer-create pebu t) 'display-buffer-same-window nil)
-                (display-buffer (current-buffer)))))))))
+      (if (and (file-readable-p target)
+               (file-regular-p target))
+          (let* (
+                 (eco (format "%d" (call-process fmtexect nil (list buffer err) t target)))
+                 (ets (format "%d" (file-attribute-size (file-attributes err)))))
+            (if (and (not( equal "0" eco))
+                     (not(equal "0" ets)))
+                (progn
+                  (set-buffer (get-buffer-create pebu t))
+                  (insert-file-contents err nil nil nil t)
+                  ;;     (set-buffer-major-mode major-mode)
+                  (read-only-mode nil)
+                  (pop-to-buffer (get-buffer-create pebu t) 'display-buffer-same-window nil)
+                  (display-buffer (current-buffer)))))))))
 
 (defun g/pl/fmt/prettier/ts ()
   "."
@@ -241,21 +245,22 @@
 CONTENTS.
 "
   (let* (
-         (data (secure-hash (symbol-value algo) contents))
-         (end (length data))
-         (beg (- end hwm)))
-    (format "%s:%s" (list (symbol-name algo) (substring data beg end)))))
+         (data (secure-hash algo contents))
+         (end  (length data))
+         (beg  (- end hwm)))
+    (format "%s:%s"  (symbol-name algo) (substring data beg end))))
 
 
 (defun g/bchs ()
   "."
-  (let (data (buffer-substring-no-properties (point-min) (point-max)))
+  (let ((data (buffer-substring-no-properties (point-min) (point-max))))
     (format "%s %s %s"
-     (list (g/hashtail (list 'sha256 data 8))
-           (g/hashtail (list 'sha1 data 8))
-           (g/hashtail (list 'md5 data 8)))
-     )))
+            (g/hashtail 'sha256 8 data)
+            (g/hashtail 'sha1 8 data)
+            (g/hashtail 'md5 8 data)
+            )))
 
+(message "%s" (g/bchs))
 
 (defun g/mark-indicator()
   "."
@@ -265,14 +270,7 @@ CONTENTS.
                    ""))))
   )
 
-(defun g/mt(p)
-  "P."
-  (interactive)
-  (progn
-    (setq p (replace-regexp-in-string "[o-t]" "🧾" p))
-    (setq p (replace-regexp-in-string "[s-w]" "🖍️" p))
-    (setq p (replace-regexp-in-string "[x-A]" "⚱️" p))
-    p))
+(defun g/mt(p) "P." (interactive) (progn (setq p (replace-regexp-in-string "[o-t]" "🧾" p)) (setq p (replace-regexp-in-string "[s-w]" "🖍️" p)) (setq p (replace-regexp-in-string "[x-A]" "⚱️" p)) p))
 
 (defun g/aclᎦ(f)
   "F."
@@ -299,24 +297,32 @@ CONTENTS.
     (cond ((stringp ffb)
 	   (let* ((acls (split-string ffb "-+" t "[^a-z]"))
 		  (aclsl (proper-list-p acls)))
-	     (cond (= 1 aclsl) (format "%s"     (g/aclᎦ (car acls)))
-		   (= 2 aclsl) (format "%s%s"   (g/aclᎦ(car acls) (g/acl木 (elt 1 acls))))
-		   (= 3 aclsl) (format "%s%s%s" (g/aclᎦ(car acls) (g/acl木 (elt 1 acls)) (g/aclら(elt 1 acls)))))))
-	 "")))
-
+	     (cond ((= 1 aclsl) (format "%s"     (g/aclᎦ (car acls))))
+		   ((= 2 aclsl) (format "%s%s"   (g/aclᎦ(car acls) (g/acl木 (elt 1 acls)))))
+		   ((= 3 aclsl) (format "%s%s%s" (g/aclᎦ(car acls) (g/acl木 (elt 1 acls)) (g/aclら(elt 1 acls)))))))
+	   nil ""))))
+(message "%s" (contrast-color "#ffcc00"))
 
 (defun g/tick-non-file-buffer()
   "."
   (list
-   (format "%s" (car mode-name))
+   (g/tick-mode-name)
    "\t"
    '(:eval (g/mark-indicator))
    "%e"
   ))
 
+(defun g/tick-mode-name()
+  (downcase (cond ((listp mode-name) (car mode-name))
+                  ((stringp mode-name) mode-name)
+                  ((t (format "%S" mode-name)))
+                  )
+            )
+  )
+
 (defun g/tick-file-buffer()
   "."
-  (let ((display (downcase (format "%s-mode" (car mode-name)))))
+  (let ((display (downcase (format "%s-mode" (g/tick-mode-name)))))
     (list
      display
      "\t"
@@ -329,13 +335,13 @@ CONTENTS.
      '(:eval (g/bchs))
      )))
 
-
 (defun g/tick-mode-line ()
   "."
   (interactive)
   (let* ((narrow
-          (cond ((listp mode-name) (g/tick-file-buffer))
-                ((stringp mode-name) (g/tick-non-file-buffer))))
+          (if (buffer-file-name)
+              (g/tick-file-buffer)
+          (g/tick-non-file-buffer)))
          (wide (list
                 mode-line-front-space
                 narrow
