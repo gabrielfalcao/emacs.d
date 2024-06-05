@@ -101,7 +101,7 @@
         (let* ((cbeg (match-beginning 1))
               (cend (match-end 1))
               (faber (buffer-substring-no-properties cbeg cend)))
-          ;;(put-text-property cbeg cend 'face (list :background faber :foreground (web-mode-colorize-foreground "#9acd32")))
+          (put-text-property cbeg cend 'face (list :foreground (contrast-color faber) :background faber))
           (message "%s" (propertize faber 'face (list :foreground (contrast-color faber) :background faber)))
           ))
       )))
@@ -266,7 +266,10 @@ CONTENTS.
   "."
   (list
    '(:eval (list (if mark-active
-                     (propertize (format " ⇒ mark %S %S" (marker-position (mark-marker)) (point)) 'face (list :color "#F49101"))
+                     (propertize
+                      (format " ⇒ %S %S ⇐ "
+                              (marker-position (mark-marker)) (point))
+                      'face (list :background "#F6CA51" :foreground (contrast-color "#F6CA51")))
                    ""))))
   )
 
@@ -301,15 +304,14 @@ CONTENTS.
 		   ((= 2 aclsl) (format "%s%s"   (g/aclᎦ(car acls) (g/acl木 (elt 1 acls)))))
 		   ((= 3 aclsl) (format "%s%s%s" (g/aclᎦ(car acls) (g/acl木 (elt 1 acls)) (g/aclら(elt 1 acls)))))))
 	   nil ""))))
-(message "%s" (contrast-color "#ffcc00"))
 
 (defun g/tick-non-file-buffer()
   "."
   (list
    (g/tick-mode-name)
    "\t"
-   '(:eval (g/mark-indicator))
    "%e"
+   '(:eval (g/mark-indicator))
   ))
 
 (defun g/tick-mode-name()
@@ -328,11 +330,11 @@ CONTENTS.
      "\t"
      '(:eval (g/fm))
      '(:eval (g/bfan))
-     "𝐗%l\t𝐘%c\t%I ⊲ %i\t"
-     '(:eval (g/mark-indicator))
+     "𝐗%l\t𝐘%c\t%I ⊲ %i bytes\t"
      "%e"
      "%t"
      '(:eval (g/bchs))
+     '(:eval (g/mark-indicator))
      )))
 
 (defun g/tick-mode-line ()
