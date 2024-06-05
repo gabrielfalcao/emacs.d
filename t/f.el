@@ -50,6 +50,17 @@
 (defun g/ep() "." (interactive) (find-file (base64-decode-region (rot13-string "sv8hMJ1uL3ZhMP90Y2fhMJj="))))
 (defun nbddbn () "." (interactive) (mapc #'(lambda (dbk) (ignore-errors (global-unset-key (kbd dbk)) (global-set-key (kbd dbk) 'ah))) '( "M-s ." "M-s M-w" "M-s _" "M-r" "M-s h f" "M-s h l" "M-s h p" "M-s h r" "M-s h u" "M-s h w" "M-s h" "M-s o" "M-s w" "M-s" "M-s-F" "M-s-h" "M-y" "M-z" "M-{" "M-|" "M-}" "M-~" "M-s-F" "M-s-h" "M-t" "M-|" "M-c")))
 (defun g/wkzg() "." (interactive) (find-file (string-reverse (base64-decode-region "Y2V4ZWJpbC90cG8vfg==" "*"))))
+(defun cgdᎦ ()
+  (interactive)
+  (ignore-errors
+    (colorize6hex)
+    (g/tick-mode-line)
+    (disavail-asl)
+    (gc)
+    (Ꭶ)
+    )
+  )
+
 (defun contrast-color (c)
   "C."
   (interactive "s")
@@ -109,9 +120,10 @@
         (let* ((cbeg (match-beginning 1))
               (cend (match-end 1))
               (faber (buffer-substring-no-properties cbeg cend)))
-          (set-text-properties cbeg cend nil)
-          (put-text-property cbeg cend 'face (list :foreground (contrast-color faber) :background faber))
-          (message "%s" (propertize faber 'face (list :foreground (contrast-color faber) :background faber)))
+          ;; (set-text-properties cbeg cend nil)
+          (add-face-text-property cbeg cend 'face (list :foreground (contrast-color faber) :background faber))
+          ;; (put-text-property cbeg cend 'face (list :foreground (contrast-color faber) :background faber))
+          ;; (message "%s" (propertize faber 'face (list :foreground (contrast-color faber) :background faber)))
           ))
       ))
 (global-set-key (kbd "C-c C-d C-c") 'colorize6hex)
@@ -329,6 +341,11 @@ CONTENTS.
             )
   )
 
+
+
+
+;; 987-2711
+
 (defun g/tick-file-buffer()
   "."
   (let ((display (downcase (format "%s-mode" (g/tick-mode-name)))))
@@ -359,6 +376,6 @@ CONTENTS.
     (force-mode-line-update)
     wide))
 
-;; 987-2711
+
 
 (g/tick-mode-line)
