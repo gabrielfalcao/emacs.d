@@ -339,6 +339,14 @@ CONTENTS.
 		   ((= 3 aclsl) (format "%s%s%s" (Ꭶ/aclᎦ(car acls) (Ꭶ/acl木 (elt 1 acls)) (Ꭶ/aclら(elt 1 acls)))))))
 	   nil ""))))
 
+
+
+
+
+
+;; 987-2711
+
+
 (defun Ꭶ/tick-non-file-buffer()
   "."
   (list
@@ -365,10 +373,6 @@ CONTENTS.
                                                      ((t (format "%S" mode-name)))
                                                      )
                                                )))))
-
-
-
-;; 987-2711
 
 (defun Ꭶ/tick-file-buffer()
   "."

@@ -162,5 +162,4 @@
 (setq ns-function-modifier 'control)
 (setq ns-option-modifier 'meta)
 (setq ns-command-modifier 'meta)
-
 ;;;
