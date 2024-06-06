@@ -15,7 +15,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (utf8ftu)
 
-(g/purge-key
+(Ꭶ/purge-key
  '(
    "C-c C-x"
    "M-o M-g"
@@ -37,39 +37,39 @@
  )
 
 
-(g/set-key (μεταψομμα ",") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3Qvay5lbA==")))
-(g/set-key (μεταψομμα "f") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3QvZi5lbA==")))
-(g/set-key (μεταψομμα "8") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3QvOE8xLmVs")))
-(g/set-key (μεταψομμα "5") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3QvNU8xLmVs")))
-(g/set-key (μεταψομμα "o") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3Qvb3JpLmVs")))
+(Ꭶ/set-key (μεταψομμα ",") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3Qvay5lbA==")))
+(Ꭶ/set-key (μεταψομμα "f") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3QvZi5lbA==")))
+(Ꭶ/set-key (μεταψομμα "8") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3QvOE8xLmVs")))
+(Ꭶ/set-key (μεταψομμα "5") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3QvNU8xLmVs")))
+(Ꭶ/set-key (μεταψομμα "o") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3Qvb3JpLmVs")))
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 (add-hook 'after-save-hook 'kooh-tini-retfa)
 (add-hook 'after-init-hook #'(lambda () (interactive) (message "present instance started in %s" (emacs-init-time))))
-(g/set-key '("C-x C-x" "C-x C-z") 'elevate)
+(Ꭶ/set-key '("C-x C-x" "C-x C-z") 'elevate)
 
-(g/set-key '("C-x C--") 'text-scale-adjust)
-(g/set-key '("C-x C-+") 'text-scale-adjust)
-(g/set-key '("C-x -") 'text-scale-adjust)
-(g/set-key '("C-x +") 'text-scale-adjust)
-(g/set-key '("C-c C-l") 'collapse-lines-region)
-(g/set-key '("C-c C-t C-m C-l") 'kooh-tini-retfa)
-(g/set-key '("C-c C-x C-f") 'show-face-at-point)
-(g/set-key '("C-c C-w" "C-c M-w") 'clipboard-kill-ring-save)
-(g/set-key '("C-c C-y" "C-c M-y") 'clipboard-yank)
-(g/set-key '("C-x C-q" "C-c M-y") 'keyboard-quit)
-(g/set-key '("C-x C-d C-h") 'info)
-(g/set-key  "C-c C-u C-d C-a"
+(Ꭶ/set-key '("C-x C--") 'text-scale-adjust)
+(Ꭶ/set-key '("C-x C-+") 'text-scale-adjust)
+(Ꭶ/set-key '("C-x -") 'text-scale-adjust)
+(Ꭶ/set-key '("C-x +") 'text-scale-adjust)
+(Ꭶ/set-key '("C-c C-l") 'collapse-lines-region)
+(Ꭶ/set-key '("C-c C-t C-m C-l") 'kooh-tini-retfa)
+(Ꭶ/set-key '("C-c C-x C-f") 'show-face-at-point)
+(Ꭶ/set-key '("C-c C-w" "C-c M-w") 'clipboard-kill-ring-save)
+(Ꭶ/set-key '("C-c C-y" "C-c M-y") 'clipboard-yank)
+(Ꭶ/set-key '("C-x C-q" "C-c M-y") 'keyboard-quit)
+(Ꭶ/set-key '("C-x C-d C-h") 'info)
+(Ꭶ/set-key  "C-c C-u C-d C-a"
             #'(lambda ()
                 (interactive) (when (read-only-mode -8) (message "%s unlocked" (buffer-name)))))
 (global-set-key (kbd "C-c C-c C-r") 'collapse-lines-region)
 
-;; (g/set-key '("M-, M-8" "M-, 8")#'(lambda () (interactive) (rot13(fpuervo) "OE8x"))) ;; https://deezer.page.link/HUJ1z8CfsudS2he96
-;; (g/set-key '("M-, M-5" "M-, 5")#'(lambda () (interactive) (schreib "NU8x")))
-;; (g/set-key '("M-, M-t" "M-, t")#'(lambda () (interactive) (schreib "b3Jp")))
+;; (Ꭶ/set-key '("M-, M-8" "M-, 8")#'(lambda () (interactive) (rot13(fpuervo) "OE8x"))) ;; https://deezer.page.link/HUJ1z8CfsudS2he96
+;; (Ꭶ/set-key '("M-, M-5" "M-, 5")#'(lambda () (interactive) (schreib "NU8x")))
+;; (Ꭶ/set-key '("M-, M-t" "M-, t")#'(lambda () (interactive) (schreib "b3Jp")))
 
-(g/set-key "C-x C-d C-s" 'describe-symbol)
-(g/set-key "C-x C-d C-g" 'shortdoc-display-group)
-(g/set-key "C-x C-d C-X"
+(Ꭶ/set-key "C-x C-d C-s" 'describe-symbol)
+(Ꭶ/set-key "C-x C-d C-g" 'shortdoc-display-group)
+(Ꭶ/set-key "C-x C-d C-X"
            #'(lambda (beg end) (interactive "r")
                (save-buffer
                 (let ((tgtcode (replace-regexp-in-string "\\(\\s-\\|\\)+" " " (buffer-substring beg end))))
@@ -82,65 +82,65 @@
                     (warn "(%s) nil in evalin': \n```%s``` " (secure-hash 'sha256 tgtcode) tgtcode))
                   ))))
 
-(g/set-key '("C-p" "M-p") #'(lambda () (interactive) (scroll-up 1)))
-(g/set-key '("C-n" "M-n") #'(lambda () (interactive) (scroll-down 1)))
-(g/set-key '("C-n" "M-n") #'(lambda () (interactive) (scroll-down 1)))
-(g/set-key '("<backtab>") #'(lambda () (interactive) (other-frame 1)))
+(Ꭶ/set-key '("C-p" "M-p") #'(lambda () (interactive) (scroll-up 1)))
+(Ꭶ/set-key '("C-n" "M-n") #'(lambda () (interactive) (scroll-down 1)))
+(Ꭶ/set-key '("C-n" "M-n") #'(lambda () (interactive) (scroll-down 1)))
+(Ꭶ/set-key '("<backtab>") #'(lambda () (interactive) (other-frame 1)))
 
 
 
-(g/set-key '("C-x C-SPC" "C-c C-SPC") 'rectangle-mark-mode)
-(g/set-key "C-x C-e e" 'g/ep)
-(g/set-key "C-x C-e b" 'g/wkzg)
-(g/set-key "M-s" 'save-buffer)
-(g/set-key "C-c C-p" #'(lambda () (interactive) (message "cur %d" (point))))
-(g/set-key '("M-f") 'forward-word)
-(g/set-key '("M-b") 'backward-word)
-(g/set-key '("C-Ꮎ" "C-n") 'next-line)
-(g/set-key '("C-p" "C-Ꮑ") 'previous-line)
-(g/set-key '("C-a" "C-Ꭰ") 'move-beginning-of-line)
-(g/set-key '("C-e" "C-Ꭱ") 'move-end-of-line)
-(g/set-key '("C-k" "C-Ꮈ") 'kill-line)
-(g/set-key '("C-<" "C-Ꮲ") 'decrease-left-margin)
-(g/set-key '("C-Ꮄ" "C->") 'increase-left-margin)
+(Ꭶ/set-key '("C-x C-SPC" "C-c C-SPC") 'rectangle-mark-mode)
+(Ꭶ/set-key "C-x C-e e" 'g/ep)
+(Ꭶ/set-key "C-x C-e b" 'g/wkzg)
+(Ꭶ/set-key "M-s" 'save-buffer)
+(Ꭶ/set-key "C-c C-p" #'(lambda () (interactive) (message "cur %d" (point))))
+(Ꭶ/set-key '("M-f") 'forward-word)
+(Ꭶ/set-key '("M-b") 'backward-word)
+(Ꭶ/set-key '("C-Ꮎ" "C-n") 'next-line)
+(Ꭶ/set-key '("C-p" "C-Ꮑ") 'previous-line)
+(Ꭶ/set-key '("C-a" "C-Ꭰ") 'move-beginning-of-line)
+(Ꭶ/set-key '("C-e" "C-Ꭱ") 'move-end-of-line)
+(Ꭶ/set-key '("C-k" "C-Ꮈ") 'kill-line)
+(Ꭶ/set-key '("C-<" "C-Ꮲ") 'decrease-left-margin)
+(Ꭶ/set-key '("C-Ꮄ" "C->") 'increase-left-margin)
 
-(g/set-key "C-c C-r" 'ruskify-region)
-(g/set-key '("C-x C-2" "C-x C-e C-g") 'make-frame-command)
-(g/set-key '("C-x C-e C-o") 'other-frame)
-(g/set-key "<f12>" 'g/build)
-(g/set-key '("C-c C-n" "C-x C-n") 'uncomment-region)
-(g/set-key '("C-c c" "C-#") 'comment-region)
-(g/set-key '("C-c C-x C-e" "C-c C-d C-e"
+(Ꭶ/set-key "C-c C-r" 'ruskify-region)
+(Ꭶ/set-key '("C-x C-2" "C-x C-e C-g") 'make-frame-command)
+(Ꭶ/set-key '("C-x C-e C-o") 'other-frame)
+(Ꭶ/set-key "<f12>" 'g/build)
+(Ꭶ/set-key '("C-c C-n" "C-x C-n") 'uncomment-region)
+(Ꭶ/set-key '("C-c c" "C-#") 'comment-region)
+(Ꭶ/set-key '("C-c C-x C-e" "C-c C-d C-e"
              "C-c C-e C-b" "C-x C-d C-e")
            'base64-encode-region)
-(g/set-key '("C-c C-x C-e" "C-c C-d C-d"
+(Ꭶ/set-key '("C-c C-x C-e" "C-c C-d C-d"
              "C-x C-d C-d")
            'base64-decode-region)
 
-(g/set-key "C-c C-e C-3" 'rot13-region)
+(Ꭶ/set-key "C-c C-e C-3" 'rot13-region)
 (progn
   (put 'upcase-region 'disabled nil)
-  (g/set-key '("C-x C-k" "C-c C-k") #'upcase-region))
+  (Ꭶ/set-key '("C-x C-k" "C-c C-k") #'upcase-region))
 
 (progn
   (put 'downcase-region 'disabled nil)
-  (g/set-key "C-x C-l" #'downcase-region)
-  (g/set-key "C-c C-l" #'downcase-region))
+  (Ꭶ/set-key "C-x C-l" #'downcase-region)
+  (Ꭶ/set-key "C-c C-l" #'downcase-region))
 
-(g/set-key   '("C-z" "M-z" "C-_") 'undo      )
-(g/set-key   '("M-r") 'replace-regexp        )
-(g/set-key   '("C-g" "C-q") 'keyboard-quit   )
-(g/set-key   '("M-u" "M-l" "M-ESC") 'ah      )
-(g/set-key   "C-s"   'isearch-forward-regexp )
-(g/set-key   "C-S-s" 'isearch-backward-regexp)
-(g/set-key   "M-G" #'(lambda () (interactive) (insert "Ꭶ")))
-(g/set-key   "M-g g" 'goto-line)
-(g/set-key   "M-g M-g" 'goto-line)
-(g/set-key   "M-O" #'(lambda () (interactive) (insert "ॐ")))
-(g/set-key   "C-x C-e m" 'morse-region)
-(g/set-key   "C-x C-d m" 'unmorse-region)
-(g/set-key   "C-\\" 'morse-region)
-(g/set-key   "C-|" 'unmorse-region)
+(Ꭶ/set-key   '("C-z" "M-z" "C-_") 'undo      )
+(Ꭶ/set-key   '("M-r") 'replace-regexp        )
+(Ꭶ/set-key   '("C-g" "C-q") 'keyboard-quit   )
+(Ꭶ/set-key   '("M-u" "M-l" "M-ESC") 'ah      )
+(Ꭶ/set-key   "C-s"   'isearch-forward-regexp )
+(Ꭶ/set-key   "C-S-s" 'isearch-backward-regexp)
+(Ꭶ/set-key   "M-G" #'(lambda () (interactive) (insert "Ꭶ")))
+(Ꭶ/set-key   "M-g g" 'goto-line)
+(Ꭶ/set-key   "M-g M-g" 'goto-line)
+(Ꭶ/set-key   "M-O" #'(lambda () (interactive) (insert "ॐ")))
+(Ꭶ/set-key   "C-x C-e m" 'morse-region)
+(Ꭶ/set-key   "C-x C-d m" 'unmorse-region)
+(Ꭶ/set-key   "C-\\" 'morse-region)
+(Ꭶ/set-key   "C-|" 'unmorse-region)
 (setq        ring-bell-function               'ignore)
 (global-set-key [kp-delete] 'delete-char)
 

@@ -15,12 +15,13 @@
 ;;   VG,_________,a8     "'VBG    888
 ;;    "8ggggggggg8"       'V88888V"
 ;;       """"""""            """"'
+(defun Ꭶ/mode-line-foreground ()
+  (interactive)
+  "#F6CA51")
 
-
-
-
-
-
+(defun Ꭶ/mode-line-background ()
+  (interactive)
+  "#333")
 
 (defun Ꭶ()
   "ॐ"
@@ -39,8 +40,8 @@
          (ᎦoperatorsᎦ               "#F682FF")
          (ᎦnumberᎦ                  "#FC580C")
          (ᎦnormalᎦ                  "#DEDEDE")
-         (Ꭶmode-line-fgᎦ            "#F6CA51")
-         (Ꭶmode-line-bgᎦ               "#333")
+         (Ꭶmode-line-fgᎦ            (Ꭶ/mode-line-foreground))
+         (Ꭶmode-line-bgᎦ            (Ꭶ/mode-line-background))
          (Ꭶmode-line-inactive-bgᎦ   "#211F17")
          (Ꭶmode-line-inactive-bgᎦ   "#312F27")
          (Ꭶmode-line-inactive-fgᎦ   "#A66A00")

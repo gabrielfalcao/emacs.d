@@ -47,14 +47,15 @@
 (defun ruskify-region (beg end) "." (interactive "*r") (replace-region-contents beg end (lambda () (reverse (buffer-substring-no-properties beg end)))))
 (defun kooh-tini-retfa () "." (interactive)  (global-company-mode) (disavail-asl) (gc)
        (Ꭶ))
-(defun g/ep() "." (interactive) (find-file (base64-decode-region (rot13-string "sv8hMJ1uL3ZhMP90Y2fhMJj="))))
+(defun Ꭶ/ep() "." (interactive) (find-file (base64-decode-region (rot13-string "sv8hMJ1uL3ZhMP90Y2fhMJj="))))
 (defun nbddbn () "." (interactive) (mapc #'(lambda (dbk) (ignore-errors (global-unset-key (kbd dbk)) (global-set-key (kbd dbk) 'ah))) '( "M-s ." "M-s M-w" "M-s _" "M-r" "M-s h f" "M-s h l" "M-s h p" "M-s h r" "M-s h u" "M-s h w" "M-s h" "M-s o" "M-s w" "M-s" "M-s-F" "M-s-h" "M-y" "M-z" "M-{" "M-|" "M-}" "M-~" "M-s-F" "M-s-h" "M-t" "M-|" "M-c")))
-(defun g/wkzg() "." (interactive) (find-file (string-reverse (base64-decode-region "Y2V4ZWJpbC90cG8vfg==" "*"))))
+(defun Ꭶ/wkzg() "." (interactive) (find-file (string-reverse (base64-decode-region "Y2V4ZWJpbC90cG8vfg==" "*"))))
 (defun cgdᎦ ()
   (interactive)
   (ignore-errors
     (colorize6hex)
-    (g/tick-mode-line)
+
+    (Ꭶ/tick-mode-line)
     (disavail-asl)
     (gc)
     (Ꭶ)
@@ -62,6 +63,11 @@
   )
 
 (defun contrast-color (c)
+  "C."
+  (interactive "s")
+  (compute-bright-dark-from-color-value c "#FFF" "#111"))
+
+(defun compute-bright-dark-from-color-value (c bright dark)
   "C."
   (interactive "s")
   (let* ((values (x-color-values c))
@@ -93,8 +99,8 @@
             256
             )
            )
-        "#FFF"
-      "#111")
+        bright
+      dark)
     )
   )
 
@@ -110,6 +116,7 @@
 
 (defun colorize6hex()
   (interactive)
+  (save-excursion
     (let (begb hwmb cbeg cend faber)
       (setq begb (point-min))
       (setq hwmb (point-max))
@@ -118,17 +125,17 @@
           (and (re-search-forward "\\([#][a-f0-9]\\{3\,6\\}\\)" hwmb t)
                (<= (point) hwmb))
         (let* ((cbeg (match-beginning 1))
-              (cend (match-end 1))
-              (faber (buffer-substring-no-properties cbeg cend)))
-          ;; (set-text-properties cbeg cend nil)
-          (add-face-text-property cbeg cend 'face (list :foreground (contrast-color faber) :background faber))
-          ;; (put-text-property cbeg cend 'face (list :foreground (contrast-color faber) :background faber))
-          ;; (message "%s" (propertize faber 'face (list :foreground (contrast-color faber) :background faber)))
+               (cend (match-end 1))
+               (faber (buffer-substring-no-properties cbeg cend)))
+          (add-face-text-property cbeg cend '(:foreground (contrast-color faber) :background faber))
+          ;; (add-face-text-property cbeg cend 'face (list :foreground (contrast-color faber) :background faber))
+          ;; (add-face-text-property cbeg cend 'face (list :foreground (contrast-color faber) :background faber))
           ))
-      ))
+      )))
+
 (global-set-key (kbd "C-c C-d C-c") 'colorize6hex)
 
-(defun g/pl/fmt (fmtexect &optional major-mode)
+(defun Ꭶ/pl/fmt (fmtexect &optional major-mode)
   (if (buffer-modified-p (current-buffer))
       (error "%s ought to be saved"  (buffer-name))
     (let* (
@@ -152,15 +159,15 @@
                   (pop-to-buffer (get-buffer-create pebu t) 'display-buffer-same-window nil)
                   (display-buffer (current-buffer)))))))))
 
-(defun g/pl/fmt/prettier/ts ()
+(defun Ꭶ/pl/fmt/prettier/ts ()
   "."
   (interactive)
-  (g/pl/fmt "prettier" "typescript-mode"))
+  (Ꭶ/pl/fmt "prettier" "typescript-mode"))
 
-(defun g/pl/fmt/prettier/js ()
+(defun Ꭶ/pl/fmt/prettier/js ()
   "."
   (interactive)
-  (g/pl/fmt "prettier" "javascript-mode"))
+  (Ꭶ/pl/fmt "prettier" "javascript-mode"))
 
 (defun utf8ftu ()
   (interactive)
@@ -186,21 +193,21 @@
              (message "%s eval'd" (buffer-file-name)))
     (message "\"%s\" aint no el" (buffer-name))))
 
-(defun g/purge-key (pt)
+(defun Ꭶ/purge-key (pt)
   "PT."
   (if (or (vectorp pt) (listp pt))
-      (mapc 'g/purge-key pt)
+      (mapc 'Ꭶ/purge-key pt)
     (let ((key (kbd pt)))
       (define-key (current-global-map) key nil))))
 
-(defun g/set-key (pt cg)
+(defun Ꭶ/set-key (pt cg)
   "PT CG."
   (if (or (vectorp pt) (listp pt))
       (mapc #'(lambda (pt)
-                (g/set-key pt cg))
+                (Ꭶ/set-key pt cg))
             pt)
     (let ((key (kbd pt)))
-      (g/purge-key pt)
+      (Ꭶ/purge-key pt)
       (define-key (current-global-map) key cg))))
 
 
@@ -251,7 +258,7 @@
   (interactive)
   (message "%S" (face-at-point)))
 
-(defun g/bfan ()
+(defun Ꭶ/bfan ()
   "."
   (let ((file-name (file-relative-name (buffer-file-name))))
     (if (equal file-name (buffer-name))
@@ -259,29 +266,37 @@
       (format "%s (%s)" (buffer-name) (file-name)))))
 
 
-(defun g/hashtail (algo hwm contents)
-  "HWM inspo https://zeromq.org/socket-api/#high-water-mark
+
+(defun Ꭶ/hashnurtail (algo hwm contents)
+  "HWM inspo https://zeromq.orᎦ/socket-api/#high-water-mark
 CONTENTS.
 "
   (let* (
          (data (secure-hash algo contents))
          (end  (length data))
          (beg  (- end hwm)))
-    (format "%s:%s"  (symbol-name algo) (substring data beg end))))
+    (substring data beg end)))
 
 
-(defun g/bchs ()
+(defun Ꭶ/hashtail (algo hwm contents)
+  "HWM inspo https://zeromq.orᎦ/socket-api/#high-water-mark
+CONTENTS.
+"
+    (format "%s:%s"  (symbol-name algo) (Ꭶ/hashnurtail algo hwm contents)))
+
+
+(defun Ꭶ/bchs ()
   "."
   (let ((data (buffer-substring-no-properties (point-min) (point-max))))
     (format "%s %s %s"
-            (g/hashtail 'sha256 8 data)
-            (g/hashtail 'sha1 8 data)
-            (g/hashtail 'md5 8 data)
+            (Ꭶ/hashtail 'sha256 8 data)
+            (Ꭶ/hashtail 'sha1 8 data)
+            (Ꭶ/hashtail 'md5 8 data)
             )))
 
-(message "%s" (g/bchs))
+(message "%s" (Ꭶ/bchs))
 
-(defun g/mark-indicator()
+(defun Ꭶ/mark-indicator()
   "."
   (list
    '(:eval (list (if mark-active
@@ -292,82 +307,91 @@ CONTENTS.
                    ""))))
   )
 
-(defun g/mt(p) "P." (interactive) (progn (setq p (replace-regexp-in-string "[o-t]" "🧾" p)) (setq p (replace-regexp-in-string "[s-w]" "🖍️" p)) (setq p (replace-regexp-in-string "[x-A]" "⚱️" p)) p))
+(defun Ꭶ/mt(p) "P." (interactive) (progn (setq p (replace-regexp-in-string "[o-t]" "🧾" p)) (setq p (replace-regexp-in-string "[s-w]" "🖍️" p)) (setq p (replace-regexp-in-string "[x-A]" "⚱️" p)) p))
 
-(defun g/aclᎦ(f)
+(defun Ꭶ/aclᎦ(f)
   "F."
   (interactive)
   (if (stringp f)
-      (g/mt (format "🤸🏼‍♂️%s" f)) ""))
+      (Ꭶ/mt (format "🤸🏼‍♂️%s" f)) ""))
 
-(defun g/acl木(f)
+(defun Ꭶ/acl木(f)
   "F."
   (interactive)
   (if (stringp f)
-      (g/mt (format "👯(%s)" f)) ""))
+      (Ꭶ/mt (format "👯(%s)" f)) ""))
 
-(defun g/aclら(f)
+(defun Ꭶ/aclら(f)
   "F."
   (interactive)
   (if (stringp f)
-      (g/mt (format "🎲️(%s)" f)) ""))
+      (Ꭶ/mt (format "🎲️(%s)" f)) ""))
 
-(defun g/fm ()
+(defun Ꭶ/fm ()
   "."
   (interactive)
   (let ((ffb (file-attribute-modes (file-attributes (buffer-file-name)))))
     (cond ((stringp ffb)
 	   (let* ((acls (split-string ffb "-+" t "[^a-z]"))
 		  (aclsl (proper-list-p acls)))
-	     (cond ((= 1 aclsl) (format "%s"     (g/aclᎦ (car acls))))
-		   ((= 2 aclsl) (format "%s%s"   (g/aclᎦ(car acls) (g/acl木 (elt 1 acls)))))
-		   ((= 3 aclsl) (format "%s%s%s" (g/aclᎦ(car acls) (g/acl木 (elt 1 acls)) (g/aclら(elt 1 acls)))))))
+	     (cond ((= 1 aclsl) (format "%s"     (Ꭶ/aclᎦ (car acls))))
+		   ((= 2 aclsl) (format "%s%s"   (Ꭶ/aclᎦ(car acls) (Ꭶ/acl木 (elt 1 acls)))))
+		   ((= 3 aclsl) (format "%s%s%s" (Ꭶ/aclᎦ(car acls) (Ꭶ/acl木 (elt 1 acls)) (Ꭶ/aclら(elt 1 acls)))))))
 	   nil ""))))
 
-(defun g/tick-non-file-buffer()
+(defun Ꭶ/tick-non-file-buffer()
   "."
   (list
-   (g/tick-mode-name)
+   (Ꭶ/tick-mode-name)
    "\t"
    "%e"
-   '(:eval (g/mark-indicator))
+   '(:eval (Ꭶ/mark-indicator))
   ))
 
-(defun g/tick-mode-name()
-  (downcase (cond ((listp mode-name) (car mode-name))
-                  ((stringp mode-name) mode-name)
-                  ((t (format "%S" mode-name)))
-                  )
-            )
-  )
+(defun Ꭶ/tick-mode-line-color (contents)
+  (let* ((foreground (format "#%s" (Ꭶ/hashnurtail 'sha512 6 contents)))
+         (background (compute-bright-dark-from-color-value foreground (Ꭶ/mode-line-foreground) (Ꭶ/mode-line-background))))
+    (propertize
+     (format "%s" contents)
+     'face (list :foreground foreground :background background))))
 
+
+(defun Ꭶ/tick-mode-name()
+  (Ꭶ/tick-mode-line-color
+   (format "%s-mode"
+           (replace-regexp-in-string "^\\(\\w+\\)[^A-Za-z0-9]+.*$" "\\1"
+                                     (downcase (cond ((listp mode-name) (car mode-name))
+                                                     ((stringp mode-name) mode-name)
+                                                     ((t (format "%S" mode-name)))
+                                                     )
+                                               )))))
 
 
 
 ;; 987-2711
 
-(defun g/tick-file-buffer()
+(defun Ꭶ/tick-file-buffer()
   "."
-  (let ((display (downcase (format "%s-mode" (g/tick-mode-name)))))
+  (let ((display (Ꭶ/tick-mode-name)))
     (list
      display
      "\t"
-     '(:eval (g/fm))
-     '(:eval (g/bfan))
+     '(:eval (Ꭶ/fm))
+     '(:eval (Ꭶ/bfan))
      "𝐗%l\t𝐘%c\t%I ⊲ %i bytes\t"
      "%e"
      "%t"
-     '(:eval (g/bchs))
-     '(:eval (g/mark-indicator))
+     '(:eval (Ꭶ/bchs))
+     '(:eval (Ꭶ/mark-indicator))
      )))
 
-(defun g/tick-mode-line ()
+(defun Ꭶ/tick-mode-line ()
   "."
   (interactive)
   (let* ((narrow
           (if (buffer-file-name)
-              (g/tick-file-buffer)
-          (g/tick-non-file-buffer)))
+              (Ꭶ/tick-file-buffer)
+          (Ꭶ/tick-non-file-buffer)))
          (wide (list
                 mode-line-front-space
                 narrow
@@ -378,4 +402,4 @@ CONTENTS.
 
 
 
-(g/tick-mode-line)
+(Ꭶ/tick-mode-line)
