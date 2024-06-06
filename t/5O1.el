@@ -78,6 +78,7 @@
         ("jsx"  . "\\.[tj]sx\\'"))
       )
 (add-to-list 'auto-mode-alist '("/shell.d/" . shell-script-mode))
+(add-to-list 'auto-mode-alist '("/opt[\/]libexec/" . shell-script-mode))
 (add-to-list 'auto-mode-alist '("/bin/[^/.]*" . shell-script-mode))
 (add-to-list 'auto-mode-alist '("/bin/py/[^/.]*" . python-mode))
 (add-to-list 'auto-mode-alist '("/bin/sh/[^/.]*" . shell-script-mode))
@@ -123,8 +124,11 @@
         ("jsx"  . ".*[.]jsx")))
 
 
+(setq sh-mode-map (make-sparse-keymap))
+
 (add-hook 'shell-script-mode-hook
           #'(lambda () (interactive)
+              (setq sh-mode-map (make-sparse-keymap))
               (setq 'sh-basic-offset 6)
               ))
 

@@ -39,6 +39,7 @@
            )
          )
        )
+
 (defun gc() "." (interactive) (progn (scroll-bar-mode 0) (menu-bar-mode 0) (tool-bar-mode 0)))
 (defun ah() "." (interactive) (warn "aint happenin'"))
 (defun disavail-asl() "." (interactive)
@@ -104,7 +105,7 @@
     )
   )
 
-(defun collapse-string (s) "S." (string-trim (replace-regexp-in-string "\\(\\s-+\\|\xa\\)+" " " s)))
+(defun collapse-string (s) "S." (replace-regexp-in-string "\\s-+" " " (string-trim (replace-regexp-in-string "\\(\\s-+\\|\xa\\)+" " " s))))
 
 (defun collapse-lines-region (beg end)
   "BEG END."
@@ -133,8 +134,6 @@
           ))
       )))
 
-(global-set-key (kbd "C-c C-d C-c") 'colorize6hex)
-
 (defun Ꭶ/pl/fmt (fmtexect &optional major-mode)
   (if (buffer-modified-p (current-buffer))
       (error "%s ought to be saved"  (buffer-name))
@@ -147,7 +146,7 @@
       (if (and (file-readable-p target)
                (file-regular-p target))
           (let* (
-                 (eco (format "%d" (call-process fmtexect nil (list buffer err) t target)))
+                 (eco (format "%d" (call-process (format fmtexect target) nil (list buffer err) t target)))
                  (ets (format "%d" (file-attribute-size (file-attributes err)))))
             (if (and (not( equal "0" eco))
                      (not(equal "0" ets)))
@@ -188,7 +187,7 @@
 (defun elevate (b e)
   "B E ."
   (interactive "r")
-  (if (and (equal "el" (file-name-extension (buffer-file-name))) (equal "emacs-lisp-mode" (format "%s" major-mode)))
+  (if (or (string= "el" (file-name-extension (buffer-file-name)))           (string= "emacs-lisp-mode" (Ꭶ/mode-name))          (string= "elisp-mode" (Ꭶ/mode-name)))
       (progn (eval-buffer)
              (message "%s eval'd" (buffer-file-name)))
     (message "\"%s\" aint no el" (buffer-name))))
@@ -198,7 +197,8 @@
   (if (or (vectorp pt) (listp pt))
       (mapc 'Ꭶ/purge-key pt)
     (let ((key (kbd pt)))
-      (define-key (current-global-map) key nil))))
+      (define-key (current-global-map) key nil)
+      )))
 
 (defun Ꭶ/set-key (pt cg)
   "PT CG."
@@ -367,7 +367,7 @@ CONTENTS.
 (defun Ꭶ/tick-mode-name()
   (Ꭶ/tick-mode-line-color
    (format "%s-mode"
-           (replace-regexp-in-string "^\\(\\w+\\)[^A-Za-z0-9]+.*$" "\\1"
+           (replace-regexp-in-string "^\\([a-z0-9-]+\\)[^A-Za-z0-9-]+.*$" "\\1"
                                      (downcase (cond ((listp mode-name) (car mode-name))
                                                      ((stringp mode-name) mode-name)
                                                      ((t (format "%S" mode-name)))
@@ -405,5 +405,39 @@ CONTENTS.
     wide))
 
 
-
 (Ꭶ/tick-mode-line)
+
+
+(defun Ꭶ/mode-name()
+   (format "%s-mode"
+           (replace-regexp-in-string "^\\([a-z0-9-]+\\)[^A-Za-z0-9-]+.*$" "\\1"
+                                     (downcase (cond ((listp mode-name) (car mode-name))
+                                                     ((stringp mode-name) mode-name)
+                                                     ((t (format "%S" mode-name)))
+                                                     )
+                                               ))))
+
+
+(defun g/build ()
+  (interactive "*")
+
+  (cond ((string= "rust-mode" (Ꭶ/mode-name) (Ꭶ/pl/fmt "cargo check"))
+         (string= "typescript-mode" (Ꭶ/mode-name) (Ꭶ/pl/fmt "tsc %s"))
+         (nil t))))
+
+(defun Ꭶ/base64-encode-region (beg end)
+  (interactive "*r")
+  (save-excursion
+    (replace-region-contents
+     beg end
+     (lambda () (collapse-string-nsaa (base64-encode-string (buffer-substring-no-properties beg end)))))))
+
+(defun collapse-string-nsaa (s) "S." (replace-regexp-in-string "\\s-+" "" (collapse-string s)))
+(defun collapse-string-nsaa (s) "S." (replace-regexp-in-string "\\s-+" "" (collapse-string s)))
+(defun collapse-lines-region-nsaa (beg end)
+  "."
+  (interactive "*r")
+  (save-excursion
+    (let ((region (buffer-substring-no-properties beg end)))
+      (replace-region-contents beg end
+                               #'(lambda () (collapse-string-nsaa region))))))

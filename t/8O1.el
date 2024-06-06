@@ -18,6 +18,7 @@
 (Ꭶ/purge-key
  '(
    "C-c C-d"
+   "C-c C-r"
    "C-c C-x"
    "M-o M-g"
    "C-g"
@@ -87,7 +88,7 @@
 (Ꭶ/set-key '("C-n" "M-n") #'(lambda () (interactive) (scroll-down 1)))
 (Ꭶ/set-key '("C-n" "M-n") #'(lambda () (interactive) (scroll-down 1)))
 (Ꭶ/set-key '("<backtab>") #'(lambda () (interactive) (other-frame 1)))
-
+(Ꭶ/set-key '("C-c C-d C-c") 'colorize6hex)
 
 
 (Ꭶ/set-key '("C-x C-SPC" "C-c C-SPC") 'rectangle-mark-mode)
@@ -105,20 +106,20 @@
 (Ꭶ/set-key '("C-<" "C-Ꮲ") 'decrease-left-margin)
 (Ꭶ/set-key '("C-Ꮄ" "C->") 'increase-left-margin)
 
-(Ꭶ/set-key "C-c C-r" 'ruskify-region)
+(Ꭶ/set-key '("C-c C-r" "C-c r") 'ruskify-region)
 (Ꭶ/set-key '("C-x C-2" "C-x C-e C-g") 'make-frame-command)
 (Ꭶ/set-key '("C-x C-e C-o") 'other-frame)
 (Ꭶ/set-key "<f12>" 'g/build)
-(Ꭶ/set-key '("C-c C-n" "C-x C-n") 'uncomment-region)
-(Ꭶ/set-key '("C-c c" "C-#") 'comment-region)
+(Ꭶ/set-key '("C-c C-n" "C-x C-n" "C-c C-M-n") 'uncomment-region)
+(Ꭶ/set-key '("C-c c" "C-#" "C-c C-M-c") 'comment-region)
 (Ꭶ/set-key '("C-c C-x C-e" "C-c C-d C-e"
              "C-c C-e C-b" "C-x C-d C-e")
-           'base64-encode-region)
+           'Ꭶ/base64-encode-region)
 (Ꭶ/set-key '("C-c C-x C-e" "C-c C-d C-d"
              "C-x C-d C-d")
            'base64-decode-region)
 
-(Ꭶ/set-key "C-c C-e C-3" 'rot13-region)
+(Ꭶ/set-key '("C-c C-e C-3" "C-x C-e C-3") 'rot13-region)
 (progn
   (put 'upcase-region 'disabled nil)
   (Ꭶ/set-key '("C-x C-k" "C-c C-k") #'upcase-region))
