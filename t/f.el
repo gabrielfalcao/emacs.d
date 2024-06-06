@@ -330,14 +330,13 @@ CONTENTS.
 (defun Ꭶ/fm ()
   "."
   (interactive)
-  (let ((ffb (file-attribute-modes (file-attributes (buffer-file-name)))))
-    (cond ((stringp ffb)
-	   (let* ((acls (split-string ffb "-+" t "[^a-z]"))
-		  (aclsl (proper-list-p acls)))
-	     (cond ((= 1 aclsl) (format "%s"     (Ꭶ/aclᎦ (car acls))))
-		   ((= 2 aclsl) (format "%s%s"   (Ꭶ/aclᎦ(car acls) (Ꭶ/acl木 (elt 1 acls)))))
-		   ((= 3 aclsl) (format "%s%s%s" (Ꭶ/aclᎦ(car acls) (Ꭶ/acl木 (elt 1 acls)) (Ꭶ/aclら(elt 1 acls)))))))
-	   nil ""))))
+  (let ((ffb (format "%s" (file-attribute-modes (file-attributes (buffer-file-name))))))
+    (let* ((acls (split-string ffb "-+" t "[^a-z]"))
+	   (aclsl (proper-list-p acls)))
+      (cond ((= 1 aclsl) (format "%s"     (Ꭶ/aclᎦ (car acls))))
+	    ((= 2 aclsl) (format "%s%s"   (Ꭶ/aclᎦ(car acls) (Ꭶ/acl木 (elt 1 acls)))))
+	    ((= 3 aclsl) (format "%s%s%s" (Ꭶ/aclᎦ(car acls) (Ꭶ/acl木 (elt 1 acls)) (Ꭶ/aclら(elt 1 acls)))))))
+    ))
 
 
 
@@ -378,9 +377,9 @@ CONTENTS.
   "."
   (let ((display (Ꭶ/tick-mode-name)))
     (list
-     display
-     "\t"
      '(:eval (Ꭶ/fm))
+     '(:eval (Ꭶ/tick-mode-name))
+     "\t"
      '(:eval (Ꭶ/bfan))
      "𝐗%l\t𝐘%c\t%I ⊲ %i bytes\t"
      "%e"
@@ -421,9 +420,9 @@ CONTENTS.
 (defun g/build ()
   (interactive "*")
 
-  (cond ((string= "rust-mode" (Ꭶ/mode-name) (Ꭶ/pl/fmt "cargo check"))
-         (string= "typescript-mode" (Ꭶ/mode-name) (Ꭶ/pl/fmt "tsc %s"))
-         (nil t))))
+  (cond ((string= "rust-mode" (Ꭶ/mode-name)) (Ꭶ/pl/fmt (file-name-concat (getenv "HOME") ".cargo/bin/cargo check")))
+        ((string= "typescript-mode" (Ꭶ/mode-name)) (Ꭶ/pl/fmt "tsc %s"))
+        ((nil t))))
 
 (defun Ꭶ/base64-encode-region (beg end)
   (interactive "*r")
