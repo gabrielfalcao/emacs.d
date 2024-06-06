@@ -262,7 +262,7 @@
   "."
   (let ((file-name (file-relative-name (buffer-file-name))))
     (if (equal file-name (buffer-name))
-        (format "%s\t" file-name)
+        (format "%s" file-name)
       (format "%s (%s)" (buffer-name) (file-name)))))
 
 
@@ -282,7 +282,8 @@ CONTENTS.
   "HWM inspo https://zeromq.orᎦ/socket-api/#high-water-mark
 CONTENTS.
 "
-    (format "%s:%s"  (symbol-name algo) (Ꭶ/hashnurtail algo hwm contents)))
+    ;; (format "%s:%s"  (symbol-name algo) (Ꭶ/hashnurtail algo hwm contents)))
+    (format "%s"  (Ꭶ/hashnurtail algo hwm contents)))
 
 
 (defun Ꭶ/bchs ()
@@ -304,10 +305,11 @@ CONTENTS.
                       (format " ⇒ %S %S ⇐ "
                               (marker-position (mark-marker)) (point))
                       'face (list :background "#F6CA51" :foreground (contrast-color "#F6CA51")))
-                   ""))))
+                   "")))
+   " ")
   )
 
-(defun Ꭶ/mt(p) "P." (interactive) (progn (setq p (replace-regexp-in-string "[o-t]" "🧾" p)) (setq p (replace-regexp-in-string "[s-w]" "🖍️" p)) (setq p (replace-regexp-in-string "[x-A]" "⚱️" p)) p))
+(defun Ꭶ/mt(p) "P." (interactive) (progn (setq p (replace-regexp-in-string "[o-t]" "🧾" p)) (setq p (replace-regexp-in-string "[s-w]" "🖍️" p)) (setq p (replace-regexp-in-string "[xX]" "⚱️" p)) p))
 
 (defun Ꭶ/aclᎦ(f)
   "F."
@@ -342,7 +344,6 @@ CONTENTS.
 
 
 
-
 ;; 987-2711
 
 
@@ -350,43 +351,53 @@ CONTENTS.
   "."
   (list
    (Ꭶ/tick-mode-name)
-   "\t"
+   " "
+   "   𝐗%l 𝐘%c %I ⊲ %i bytes "
    "%e"
+   "%t"
    '(:eval (Ꭶ/mark-indicator))
   ))
 
-(defun Ꭶ/tick-mode-line-color (contents)
-  (let* ((foreground (format "#%s" (Ꭶ/hashnurtail 'sha512 6 contents)))
+(defun Ꭶ/tick-mode-line-colorize (c contents)
+  (let* ((foreground (format "#%s" (Ꭶ/hashnurtail 'sha512 6 c)))
          (background (compute-bright-dark-from-color-value foreground (Ꭶ/mode-line-foreground) (Ꭶ/mode-line-background))))
     (propertize
      (format "%s" contents)
      'face (list :foreground foreground :background background))))
 
 
+(defun Ꭶ/tick-mode-line-color (contents)
+  (Ꭶ/tick-mode-line-colorize contents contents))
+
+
+(defun Ꭶ/tick-mode-name-npptz()
+  (format "%s-mode"
+          (replace-regexp-in-string "^\\([a-z0-9-]+\\)[^A-Za-z0-9-]+.*$" "\\1"
+                                    (downcase (cond ((listp mode-name) (car mode-name))
+                                                    ((stringp mode-name) mode-name)
+                                                    ((t (format "%S" mode-name)))
+                                                    )
+                                              ))))
+
 (defun Ꭶ/tick-mode-name()
   (Ꭶ/tick-mode-line-color
-   (format "%s-mode"
-           (replace-regexp-in-string "^\\([a-z0-9-]+\\)[^A-Za-z0-9-]+.*$" "\\1"
-                                     (downcase (cond ((listp mode-name) (car mode-name))
-                                                     ((stringp mode-name) mode-name)
-                                                     ((t (format "%S" mode-name)))
-                                                     )
-                                               )))))
+   (Ꭶ/tick-mode-name-npptz)))
 
 (defun Ꭶ/tick-file-buffer()
   "."
-  (let ((display (Ꭶ/tick-mode-name)))
-    (list
-     '(:eval (Ꭶ/fm))
-     '(:eval (Ꭶ/tick-mode-name))
-     "\t"
-     '(:eval (Ꭶ/bfan))
-     "𝐗%l\t𝐘%c\t%I ⊲ %i bytes\t"
-     "%e"
-     "%t"
-     '(:eval (Ꭶ/bchs))
-     '(:eval (Ꭶ/mark-indicator))
-     )))
+  (list
+   '(:eval (Ꭶ/mark-indicator))
+   '(:eval (Ꭶ/tick-mode-name))
+   (propertize " ⇒ "
+               'face (list :background (Ꭶ/mode-line-background) :foreground "#79B9Ff"))
+   '(:eval (Ꭶ/tick-mode-line-colorize (Ꭶ/tick-mode-name-npptz) (Ꭶ/bfan)))
+   '(:eval (Ꭶ/fm))
+   '(:eval (Ꭶ/bchs))
+   " "
+   "   𝐗%l 𝐘%c %I ⊲ %i bytes "
+   "%e"
+   "%t"
+   ))
 
 (defun Ꭶ/tick-mode-line ()
   "."
@@ -438,5 +449,6 @@ CONTENTS.
   (interactive "*r")
   (save-excursion
     (let ((region (buffer-substring-no-properties beg end)))
-      (replace-region-contents beg end
-                               #'(lambda () (collapse-string-nsaa region))))))
+      (replace-region-contents
+       beg end
+       #'(lambda () (collapse-string-nsaa region))))))

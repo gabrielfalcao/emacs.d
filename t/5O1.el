@@ -53,6 +53,10 @@
 
 
 (add-hook 'after-init-hook 'cgdᎦ)
+;; (add-hook 'after-revert-hook 'cgdᎦ)
+;; (add-hook 'after-save-hook 'cgdᎦ)
+;; (add-hook 'after-change-functions 'cgdᎦ)
+;; (add-hook 'after-insert-file-functions 'cgdᎦ)
 (add-hook 'write-files-hook 'cgdᎦ)
 (add-hook 'after-find-file 'cgdᎦ)
 (add-hook 'after-change-major-mode-hook 'cgdᎦ)
