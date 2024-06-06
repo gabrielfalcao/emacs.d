@@ -53,7 +53,7 @@
 (defun cgdᎦ ()
   (interactive)
   (ignore-errors
-    (colorize6hex)
+    ;;(colorize6hex)
 
     (Ꭶ/tick-mode-line)
     (disavail-asl)

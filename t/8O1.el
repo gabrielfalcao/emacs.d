@@ -17,6 +17,7 @@
 
 (Ꭶ/purge-key
  '(
+   "C-c C-d"
    "C-c C-x"
    "M-o M-g"
    "C-g"
