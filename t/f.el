@@ -77,7 +77,7 @@
          )
 
     (if
-        (> 128.0
+        (> #x0f
            (floor
             (+ (+ (* float-pi fp)
                (* sp (* float-pi
@@ -91,12 +91,12 @@
                   )
                )
                (* (/ (+ tp
-                        (/ (/ float-pi float-e) 100))
+                        (/ (/ float-pi float-e) #x64))
                      (* float-pi float-pi)
                      )
                   )
                )
-            256
+            #x100
             )
            )
         bright
