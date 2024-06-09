@@ -14,6 +14,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(benchmark-progn
 (require 'package)
 (require 'flycheck)
 (setq package-archives nil)
@@ -163,3 +164,4 @@
 (add-hook 'shell-script-mode-hook 'flycheck-mode)
 ;;(message "%s" (string-list-html-like-display  "minor-mode-slist" (minor-mode-slist)))
 (add-hook 'python-mode-hook #'(lambda () (interactive) (setq virtualenv-workon-home (file-name-concat (getcwd) ".venv"))))
+)

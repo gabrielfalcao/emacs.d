@@ -135,38 +135,41 @@
       )))
 
 (defun Ꭶ/pl/fmt (fmtexect &optional major-mode)
-  (if (buffer-modified-p (current-buffer))
-      (error "%s ought to be saved"  (buffer-name))
-    (let* (
-           (target (expand-file-name (buffer-file-name (current-buffer))))
-           (buffer (current-buffer))
-           (pebu (format "*%s %s *" fmtexect target))
-           (err (make-temp-file fmtexect nil (sha1 (buffer-file-name)))) ;; (secure-hash "sha256" (buffer-file-name))))
-           )
-      (if (and (file-readable-p target)
-               (file-regular-p target))
-          (let* (
-                 (eco (format "%d" (call-process (format fmtexect target) nil (list buffer err) t target)))
-                 (ets (format "%d" (file-attribute-size (file-attributes err)))))
-            (if (and (not( equal "0" eco))
-                     (not(equal "0" ets)))
-                (progn
-                  (set-buffer (get-buffer-create pebu t))
-                  (insert-file-contents err nil nil nil t)
-                  ;;     (set-buffer-major-mode major-mode)
-                  (read-only-mode nil)
-                  (pop-to-buffer (get-buffer-create pebu t) 'display-buffer-same-window nil)
-                  (display-buffer (current-buffer)))))))))
+  (error "WIP")
+  ;; (if (buffer-modified-p (current-buffer))
+  ;;     (error "%s ought to be saved"  (buffer-name))
+  ;;   (let* (
+  ;;          (target (expand-file-name (buffer-file-name (current-buffer))))
+  ;;          (buffer (current-buffer))
+  ;;          (pebu (format "*%s %s *" fmtexect target))
+  ;;          (err (make-temp-file fmtexect nil (sha1 (buffer-file-name)))) ;; (secure-hash "sha256" (buffer-file-name))))
+  ;;          )
+  ;;     (if (and (file-readable-p target)
+  ;;              (file-regular-p target))
+  ;;         (let* (
+  ;;                (eco (format "%d" (call-process (format fmtexect target) nil (list buffer err) t target)))
+  ;;                (ets (format "%d" (file-attribute-size (file-attributes err)))))
+  ;;           (if (and (not( equal "0" eco))
+  ;;                    (not(equal "0" ets)))
+  ;;               (progn
+  ;;                 (set-buffer (get-buffer-create pebu t))
+  ;;                 (insert-file-contents err nil nil nil t)
+  ;;                 ;;     (set-buffer-major-mode major-mode)
+  ;;                 (read-only-mode nil)
+  ;;                 (pop-to-buffer (get-buffer-create pebu t) 'display-buffer-same-window nil)
+  ;;                 (display-buffer (current-buffer))))))))
+  )
 
 (defun Ꭶ/pl/fmt/prettier/ts ()
   "."
   (interactive)
-  (Ꭶ/pl/fmt "prettier" "typescript-mode"))
+  (Ꭶ/pl/fmt (expand-file-name "~/.nvm/versions/node/v22.2.0/bin/prettier") 'typescript-mode))
 
 (defun Ꭶ/pl/fmt/prettier/js ()
   "."
   (interactive)
-  (Ꭶ/pl/fmt "prettier" "javascript-mode"))
+  (Ꭶ/pl/fmt (expand-file-name "~/.nvm/versions/node/v22.2.0/bin/prettier") 'javacript-mode))
+
 
 (defun utf8ftu ()
   (interactive)
@@ -187,8 +190,7 @@
 (defun elevate (b e)
   "B E ."
   (interactive "r")
-  (if (or (string= "el" (file-name-extension (buffer-file-name)))           (string= "emacs-lisp-mode" (Ꭶ/mode-name))          (string= "elisp-mode" (Ꭶ/mode-name)))
-      (progn (eval-buffer)
+  (if(or(string="el"(file-name-extension(buffer-file-name)))(string="emacs-lisp-mode"(Ꭶ/mode-name))(string="elisp-mode"(Ꭶ/mode-name))) (progn (eval-buffer)
              (message "%s eval'd" (buffer-file-name)))
     (message "\"%s\" aint no el" (buffer-name))))
 
@@ -341,9 +343,6 @@ CONTENTS.
     ))
 
 
-
-
-
 ;; 987-2711
 
 
@@ -361,6 +360,7 @@ CONTENTS.
 (defun Ꭶ/tick-mode-line-colorize (c contents)
   (let* ((foreground (format "#%s" (Ꭶ/hashnurtail 'sha512 6 c)))
          (background (compute-bright-dark-from-color-value foreground (Ꭶ/mode-line-foreground) (Ꭶ/mode-line-background))))
+    ;;(debug "(Ꭶ/tick-mode-line-colorize %S %S) => %s %s" c contents foreground background)
     (propertize
      (format "%s" contents)
      'face (list :foreground foreground :background background))))
@@ -368,6 +368,7 @@ CONTENTS.
 
 (defun Ꭶ/tick-mode-line-color (contents)
   (Ꭶ/tick-mode-line-colorize contents contents))
+
 
 
 (defun Ꭶ/tick-mode-name-npptz()
@@ -378,7 +379,6 @@ CONTENTS.
                                                     ((t (format "%S" mode-name)))
                                                     )
                                               ))))
-
 (defun Ꭶ/tick-mode-name()
   (Ꭶ/tick-mode-line-color
    (Ꭶ/tick-mode-name-npptz)))
@@ -388,9 +388,8 @@ CONTENTS.
   (list
    '(:eval (Ꭶ/mark-indicator))
    '(:eval (Ꭶ/tick-mode-name))
-   (propertize " ⇒ "
-               'face (list :background (Ꭶ/mode-line-background) :foreground "#79B9Ff"))
-   '(:eval (Ꭶ/tick-mode-line-colorize (Ꭶ/tick-mode-name-npptz) (Ꭶ/bfan)))
+   (propertize " ⇒ " 'face (list :background (Ꭶ/mode-line-background) :foreground "#79B9Ff"))
+   '(:eval (Ꭶ/bfan))
    '(:eval (Ꭶ/fm))
    '(:eval (Ꭶ/bchs))
    " "
@@ -432,7 +431,8 @@ CONTENTS.
   (interactive "*")
 
   (cond ((string= "rust-mode" (Ꭶ/mode-name)) (Ꭶ/pl/fmt (file-name-concat (getenv "HOME") ".cargo/bin/cargo check")))
-        ((string= "typescript-mode" (Ꭶ/mode-name)) (Ꭶ/pl/fmt "tsc %s"))
+        ((string= "typescript-mode" (Ꭶ/mode-name)) (Ꭶ/pl/fmt/prettier/ts))
+        ((string= "javacript-mode" (Ꭶ/mode-name)) (Ꭶ/pl/fmt/prettier/js))
         ((nil t))))
 
 (defun Ꭶ/base64-encode-region (beg end)
@@ -440,15 +440,14 @@ CONTENTS.
   (save-excursion
     (replace-region-contents
      beg end
-     (lambda () (collapse-string-nsaa (base64-encode-string (buffer-substring-no-properties beg end)))))))
+     (lambda () (collapse-string-2 (base64-encode-string (buffer-substring-no-properties beg end)))))))
 
-(defun collapse-string-nsaa (s) "S." (replace-regexp-in-string "\\s-+" "" (collapse-string s)))
-(defun collapse-string-nsaa (s) "S." (replace-regexp-in-string "\\s-+" "" (collapse-string s)))
-(defun collapse-lines-region-nsaa (beg end)
+(defun collapse-string-2 (s) "S." (replace-regexp-in-string "\\s-+" "" (collapse-string s)))
+(defun collapse-lines-region-2 (beg end)
   "."
   (interactive "*r")
   (save-excursion
     (let ((region (buffer-substring-no-properties beg end)))
       (replace-region-contents
        beg end
-       #'(lambda () (collapse-string-nsaa region))))))
+       #'(lambda () (collapse-string-2 region))))))
