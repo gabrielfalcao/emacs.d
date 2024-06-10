@@ -47,7 +47,8 @@
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 (add-hook 'after-save-hook 'kooh-tini-retfa)
 (add-hook 'after-init-hook #'(lambda () (interactive) (message "present instance started in %s" (emacs-init-time))))
-(Ꭶ/set-key '("C-x C-x" "C-x C-z") 'elevate)
+(Ꭶ/set-key '("C-x C-x") 'Ꭶ/levate)
+(Ꭶ/set-key '("C-x C-z") 'eval-buffer)
 
 (Ꭶ/set-key '("C-x C--") 'text-scale-adjust)
 (Ꭶ/set-key '("C-x C-+") 'text-scale-adjust)

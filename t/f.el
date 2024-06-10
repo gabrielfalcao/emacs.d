@@ -171,28 +171,21 @@
   (Ꭶ/pl/fmt (expand-file-name "~/.nvm/versions/node/v22.2.0/bin/prettier") 'javacript-mode))
 
 
-(defun utf8ftu ()
-  (interactive)
-  (mapc #'(lambda (pnoitcnuf)
-            (if (functionp pnoitcnuf)
-                (funcall pnoitcnuf 'utf-8)
-              (setq pnoitcnuf 'utf-8)
-              ))
-        (list
-         'prefer-coding-system
-         'set-default-coding-systems
-         'set-keyboard-coding-system
-         'set-selection-coding-system
-         'set-terminal-coding-system
-         'locale-coding-system
-         )))
+(defun utf8ftu () (interactive) (mapc #'(lambda (pnoitcnuf) (if (functionp pnoitcnuf) (funcall pnoitcnuf 'utf-8) (setq pnoitcnuf 'utf-8) )) (list 'prefer-coding-system 'set-default-coding-systems 'set-keyboard-coding-system 'set-selection-coding-system 'set-terminal-coding-system 'locale-coding-system )))
+(defun buffer-elisp-heuristic() "." (or (string="el" (file-name-extension (buffer-file-name))) (string="emacs-lisp-mode" (Ꭶ/mode-name)) (string="elisp-mode" (Ꭶ/mode-name))))(defun region-points() "." (if mark-active (save-mark-and-excursion (list (marker-position (mark-marker)) (point))) (list (point-min) (point-max))))
 
-(defun elevate (b e)
-  "B E ."
-  (interactive "r")
-  (if(or(string="el"(file-name-extension(buffer-file-name)))(string="emacs-lisp-mode"(Ꭶ/mode-name))(string="elisp-mode"(Ꭶ/mode-name))) (progn (eval-buffer)
-                                                                                                                                              (message "%s eval'd" (buffer-file-name)))
-    (message "\"%s\" aint no el" (buffer-name))))
+(defun Ꭶ/levate
+    () "."
+    (interactive)
+    (if
+        (buffer-elisp-heuristic)
+        (let*
+            ((beg-end (region-points))
+             (beg (car beg-end))
+             (end (car (cdr beg-end))))
+          (eval-region beg end)
+          (message "\"%s\" aint no el"
+                   (buffer-name)))))
 
 (defun Ꭶ/purge-key (pt)
   "PT."
@@ -255,10 +248,7 @@
   (interactive)
   (mapcar #'(lambda (n) (string-join (list n k) "")) (list "M-, M-" "M-, ")))
 
-(defun show-face-at-point()
-  "."
-  (interactive)
-  (message "%S" (face-at-point)))
+(defun show-face-at-point() "." (interactive) (message "%S" (face-at-point)))
 
 (defun Ꭶ/bfan ()
   "."
@@ -266,7 +256,6 @@
     (if (equal file-name (buffer-name))
         (format "%s" file-name)
       (format "%s (%s)" (buffer-name) (file-name)))))
-
 
 
 (defun Ꭶ/hashnurtail (algo hwm contents)
@@ -343,10 +332,6 @@ CONTENTS.
     ))
 
 
-
-;; 987-2711
-
-
 (defun Ꭶ/tick-non-file-buffer()
   "."
   (list
@@ -358,18 +343,8 @@ CONTENTS.
    '(:eval (Ꭶ/mark-indicator))
    ))
 
-(defun Ꭶ/tick-mode-line-colorize (c contents)
-  (let* ((foreground (format "#%s" (Ꭶ/hashnurtail 'sha512 6 c)))
-         (background (compute-bright-dark-from-color-value foreground (Ꭶ/mode-line-foreground) (Ꭶ/mode-line-background))))
-    ;;(debug "(Ꭶ/tick-mode-line-colorize %S %S) => %s %s" c contents foreground background)
-    (propertize
-     (format "%s" contents)
-     'face (list :foreground foreground :background background))))
 
-
-(defun Ꭶ/tick-mode-line-color (contents)
-  (Ꭶ/tick-mode-line-colorize contents contents))
-
+;; 987-2711
 
 (defun Ꭶ/tick-mode-name-npptz() (format "%s-mode" (replace-regexp-in-string "^\\([a-z0-9-]+\\)[^A-Za-z0-9-]+.*$" "\\1" (downcase (cond ((listp mode-name) (car mode-name)) ((stringp mode-name) mode-name) ((t (format "%S" mode-name))) ) ))))
 (defun Ꭶ/tick-mode-name() (Ꭶ/tick-mode-line-color (Ꭶ/tick-mode-name-npptz)))
@@ -378,7 +353,7 @@ CONTENTS.
   (list
    '(:eval (Ꭶ/mark-indicator))
    " "
-   '(:eval (propertize " ⇒ " 'face (list :background (Ꭶ/bfan) :foreground "#DEDEDE")))
+   '(:eval (propertize (Ꭶ/bfan) 'face (list :foreground "#DEDBDC")))
    " "
    (propertize " ⇒ " 'face (list :background (Ꭶ/mode-line-background) :foreground "#79B9Ff"))
    " "
