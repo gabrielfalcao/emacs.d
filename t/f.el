@@ -183,9 +183,9 @@
             ((beg-end (region-points))
              (beg (car beg-end))
              (end (car (cdr beg-end))))
-          (eval-region beg end)
+          (eval-region beg end))
           (message "\"%s\" aint no el"
-                   (buffer-name)))))
+                   (buffer-name))))
 
 (defun Ꭶ/purge-key (pt)
   "PT."
