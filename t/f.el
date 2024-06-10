@@ -16,9 +16,9 @@
 
 (defmacro set-region-contents-with-fn(beg end fn)
   (list 'save-excursion
-    (list 'let (list 'region (list 'buffer-substring-no-properties beg end))
-          (list 'replace-region-contents beg end
-                '(list 'lambda (list) (list fn 'region))))))
+        (list 'let (list 'region (list 'buffer-substring-no-properties beg end))
+              (list 'replace-region-contents beg end
+                    '(list 'lambda (list) (list fn 'region))))))
 
 (defun string-shift-right (g) "." (format "\t%s" g))
 (defun delete-package (pkg-desc &optional force nosave) "." (interactive (progn (let* ((package-table (mapcar (lambda (p) (cons (package-desc-full-name p) p)) (delq nil (mapcar (lambda (p) (unless (package-built-in-p p) p)) (apply #'append (mapcar #'cdr (package--alist))))))) (package-name (completing-read "Delete package: " (mapcar #'car package-table) nil t))) (list (cdr (assoc package-name package-table)) current-prefix-arg nil)))) (package-delete pkg-desc force nosave))
@@ -31,11 +31,11 @@
          (let ((end (copy-marker end)))
            (
             while
-               (progn
-                 (goto-char start)
-                 (re-search-forward "^\\(.*\\)\n\\(\\(.*\n\\)*\\)\\1\n" end t))
-             (replace-match "\\1\n\\2")
-             )
+            (progn
+              (goto-char start)
+              (re-search-forward "^\\(.*\\)\n\\(\\(.*\n\\)*\\)\\1\n" end t))
+            (replace-match "\\1\n\\2")
+            )
            )
          )
        )
@@ -81,16 +81,16 @@
         (> #x0f
            (floor
             (+ (+ (* float-pi fp)
-               (* sp (* float-pi
-                     (- (+ float-pi float-pi)
-                        (+ (/ float-pi float-e)
-                           (* float-pi
-                              (/ float-pi 1.998879))
+                  (* sp (* float-pi
+                           (- (+ float-pi float-pi)
+                              (+ (/ float-pi float-e)
+                                 (* float-pi
+                                    (/ float-pi 1.998879))
+                                 )
+                              )
                            )
-                        )
                      )
                   )
-               )
                (* (/ (+ tp
                         (/ (/ float-pi float-e) #x64))
                      (* float-pi float-pi)
@@ -178,20 +178,20 @@
                 (funcall pnoitcnuf 'utf-8)
               (setq pnoitcnuf 'utf-8)
               ))
-  (list
-   'prefer-coding-system
-   'set-default-coding-systems
-   'set-keyboard-coding-system
-   'set-selection-coding-system
-   'set-terminal-coding-system
-   'locale-coding-system
-   )))
+        (list
+         'prefer-coding-system
+         'set-default-coding-systems
+         'set-keyboard-coding-system
+         'set-selection-coding-system
+         'set-terminal-coding-system
+         'locale-coding-system
+         )))
 
 (defun elevate (b e)
   "B E ."
   (interactive "r")
   (if(or(string="el"(file-name-extension(buffer-file-name)))(string="emacs-lisp-mode"(Ꭶ/mode-name))(string="elisp-mode"(Ꭶ/mode-name))) (progn (eval-buffer)
-             (message "%s eval'd" (buffer-file-name)))
+                                                                                                                                              (message "%s eval'd" (buffer-file-name)))
     (message "\"%s\" aint no el" (buffer-name))))
 
 (defun Ꭶ/purge-key (pt)
@@ -284,8 +284,8 @@ CONTENTS.
   "HWM inspo https://zeromq.orᎦ/socket-api/#high-water-mark
 CONTENTS.
 "
-    ;; (format "%s:%s"  (symbol-name algo) (Ꭶ/hashnurtail algo hwm contents)))
-    (format "%s"  (Ꭶ/hashnurtail algo hwm contents)))
+  ;; (format "%s:%s"  (symbol-name algo) (Ꭶ/hashnurtail algo hwm contents)))
+  (format "%s"  (Ꭶ/hashnurtail algo hwm contents)))
 
 
 (defun Ꭶ/bchs ()
@@ -311,7 +311,7 @@ CONTENTS.
    " ")
   )
 
-(defun Ꭶ/mt(p) "P." (interactive) (progn (setq p (replace-regexp-in-string "[o-t]" "🧾" p)) (setq p (replace-regexp-in-string "[s-w]" "🖍️" p)) (setq p (replace-regexp-in-string "[xX]" "⚱️" p)) p))
+(defun Ꭶ/mt(p) "P." (interactive) (let (p) (setq p (replace-regexp-in-string "[o-t]" "🧾" p)) (setq p (replace-regexp-in-string "[s-w]" "🖍️" p)) (setq p (replace-regexp-in-string "[xX]" "⚱️" p))) p)
 
 (defun Ꭶ/aclᎦ(f)
   "F."
@@ -343,6 +343,7 @@ CONTENTS.
     ))
 
 
+
 ;; 987-2711
 
 
@@ -355,7 +356,7 @@ CONTENTS.
    "%e"
    "%t"
    '(:eval (Ꭶ/mark-indicator))
-  ))
+   ))
 
 (defun Ꭶ/tick-mode-line-colorize (c contents)
   (let* ((foreground (format "#%s" (Ꭶ/hashnurtail 'sha512 6 c)))
@@ -370,27 +371,21 @@ CONTENTS.
   (Ꭶ/tick-mode-line-colorize contents contents))
 
 
-
-(defun Ꭶ/tick-mode-name-npptz()
-  (format "%s-mode"
-          (replace-regexp-in-string "^\\([a-z0-9-]+\\)[^A-Za-z0-9-]+.*$" "\\1"
-                                    (downcase (cond ((listp mode-name) (car mode-name))
-                                                    ((stringp mode-name) mode-name)
-                                                    ((t (format "%S" mode-name)))
-                                                    )
-                                              ))))
-(defun Ꭶ/tick-mode-name()
-  (Ꭶ/tick-mode-line-color
-   (Ꭶ/tick-mode-name-npptz)))
-
+(defun Ꭶ/tick-mode-name-npptz() (format "%s-mode" (replace-regexp-in-string "^\\([a-z0-9-]+\\)[^A-Za-z0-9-]+.*$" "\\1" (downcase (cond ((listp mode-name) (car mode-name)) ((stringp mode-name) mode-name) ((t (format "%S" mode-name))) ) ))))
+(defun Ꭶ/tick-mode-name() (Ꭶ/tick-mode-line-color (Ꭶ/tick-mode-name-npptz)))
 (defun Ꭶ/tick-file-buffer()
   "."
   (list
    '(:eval (Ꭶ/mark-indicator))
-   '(:eval (Ꭶ/tick-mode-name))
+   " "
+   '(:eval (propertize " ⇒ " 'face (list :background (Ꭶ/bfan) :foreground "#DEDEDE")))
+   " "
    (propertize " ⇒ " 'face (list :background (Ꭶ/mode-line-background) :foreground "#79B9Ff"))
-   '(:eval (Ꭶ/bfan))
+   " "
+   '(:eval (Ꭶ/tick-mode-name))
+   " "
    '(:eval (Ꭶ/fm))
+   " "
    '(:eval (Ꭶ/bchs))
    " "
    "   𝐗%l 𝐘%c %I ⊲ %i bytes "
@@ -404,7 +399,7 @@ CONTENTS.
   (let* ((narrow
           (if (buffer-file-name)
               (Ꭶ/tick-file-buffer)
-          (Ꭶ/tick-non-file-buffer)))
+            (Ꭶ/tick-non-file-buffer)))
          (wide (list
                 mode-line-front-space
                 narrow
@@ -418,13 +413,13 @@ CONTENTS.
 
 
 (defun Ꭶ/mode-name()
-   (format "%s-mode"
-           (replace-regexp-in-string "^\\([a-z0-9-]+\\)[^A-Za-z0-9-]+.*$" "\\1"
-                                     (downcase (cond ((listp mode-name) (car mode-name))
-                                                     ((stringp mode-name) mode-name)
-                                                     ((t (format "%S" mode-name)))
-                                                     )
-                                               ))))
+  (format "%s-mode"
+          (replace-regexp-in-string "^\\([a-z0-9-]+\\)[^A-Za-z0-9-]+.*$" "\\1"
+                                    (downcase (cond ((listp mode-name) (car mode-name))
+                                                    ((stringp mode-name) mode-name)
+                                                    ((t (format "%S" mode-name)))
+                                                    )
+                                              ))))
 
 
 (defun g/build ()
