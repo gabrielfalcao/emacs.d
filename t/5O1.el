@@ -131,7 +131,6 @@
 
 
 (setq sh-mode-map (make-sparse-keymap))
-(add-hook 'emacs-lisp-mode-hook 'elisp-format-buffer)
 (add-hook 'shell-script-mode-hook
           #'(lambda () (interactive)
               (setq sh-mode-map (make-sparse-keymap))
