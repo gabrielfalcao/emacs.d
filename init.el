@@ -13,4 +13,4 @@
   (set-face-attribute 'mode-line nil :background background :foreground foreground)
   (set-face-attribute 'mode-line-inactive nil :background background :foreground foreground
                       :box '(:line-width (0 . 0))))
-(progn (add-to-list 'load-path "~/.emacs.d/t") (load-library "k"))
+(progn (add-to-list 'load-path "~/.emacs.d/3pty") (add-to-list 'load-path "~/.emacs.d/t") (load-library "k") (require 'elisp-format))

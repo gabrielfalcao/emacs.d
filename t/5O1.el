@@ -51,9 +51,8 @@
 (ignore-errors
   (server-mode 9))
 
-(setq  large-file-warning-threshold 9000000 make-backup-files nil)
-
-
+(setq large-file-warning-threshold 9000000 make-backup-files nil)
+(setq rust-format-on-save t rust-rustfmt-bin "~/.cargo/bin/rustfmt" rust-rustfmt-switches '("--edition" "2021" "--color" "always" "--unstable-features" "--check"))
 
 (add-hook 'after-init-hook 'cgdᎦ)
 ;; (add-hook 'after-revert-hook 'cgdᎦ)
@@ -132,7 +131,7 @@
 
 
 (setq sh-mode-map (make-sparse-keymap))
-
+(add-hook 'emacs-lisp-mode-hook 'elisp-format-buffer)
 (add-hook 'shell-script-mode-hook
           #'(lambda () (interactive)
               (setq sh-mode-map (make-sparse-keymap))
