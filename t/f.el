@@ -384,8 +384,6 @@ CONTENTS.
     wide))
 
 
-(Ꭶ/tick-mode-line)
-
 
 (defun Ꭶ/mode-name()
   (format "%s-mode"
