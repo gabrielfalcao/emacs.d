@@ -249,7 +249,8 @@
              (beg (car beg-end))
              (end (car (cdr beg-end))))
         (eval-region beg end)
-        (message "\"%s\" aint no el" (buffer-name)))))
+        (message "\"%s\" eval'd" (buffer-name)))
+    (message "\"%s\" aint no el" (buffer-name))))
 
 (defun Ꭶ/purge-key (pt)
   "PT."
@@ -288,7 +289,6 @@
   "."
   (interactive)
   (message "%S" (face-at-point)))
-
 
 (defun nogosky()
   (interactive)
@@ -390,17 +390,17 @@ CONTENTS.
   (if (stringp f)
       (Ꭶ/mt (format "🎲️(%s)" f)) ""))
 
+(defun Ꭶ/tick-mode-line-colorize (c contents)
+  (let* ((foreground (format "#%s" (Ꭶ/hashnurtail 'sha512 6 c)))
+         (background (compute-bright-dark-from-color-value foreground (Ꭶ/mode-line-foreground) (Ꭶ/mode-line-background))))
+    ;;(debug "(Ꭶ/tick-mode-line-colorize %S %S) => %s %s" c contents foreground background)
+    (propertize
+     (format "%s" contents)
+     'face (list :foreground foreground :background background))))
 
 
-
-
-
-
-
-
-
-
-
+(defun Ꭶ/tick-mode-line-color (contents)
+  (Ꭶ/tick-mode-line-colorize contents contents))
 
 (defun Ꭶ/tick-non-file-buffer()
   "."
