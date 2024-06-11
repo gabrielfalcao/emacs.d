@@ -5,7 +5,7 @@
 ;; OO  OOOOOOOG gg  gg  gg gg-  -gg gg-  ---       gg
 ;; OO        -- gg  gg  gg gggggggg gggggggg gggggggg
 ;; OOOOOOOOOOOG
-(setq mode-line-format (list (base64-decode-string "SGkgbWFzdGVyIGdhYnJpZWxmYWxjYW8gcGxlYXNlIHdhaXQuLi4=")))
+(setq mode-line-format (list (base64-decode-string "V2VsY29tZSBHcmFuZE1hc3RlciBnYWJyaWVsLmRlbW91cmEgcGxlYXNlIHdhaXQgYXMgdGhlIHN5c3RlbSByZW5kZXJzIGl0c2VsZiBwcmVwYXJlZCBmb3IgdGhpbmUgY3JhZnRzLi4u")))
 (setq server-socket-dir "~/.emacs.d/socket" server-log t)
 (let ((foreground "#A79C83")
       (background "#333"))

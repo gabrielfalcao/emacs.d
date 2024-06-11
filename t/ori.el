@@ -57,11 +57,10 @@
          (ᎦoperatorsᎦ               "#F479C4")
          (ᎦoperatorsᎦ               "#79B9Ff")
          (ᎦoperatorsᎦ               "#EF5AAA")
-         (ᎦconstantᎦ                "#F07EF8")
+         (ᎦconstantᎦ                "#FF79C6")
          (ᎦcommentsᎦ                "#A79C83")
 	 (ᎦselᎦ                     Ꭶmode-line-fgᎦ)
-         (ᎦcursorᎦ                  ᎦselᎦ)
-         )
+         (ᎦcursorᎦ                  ᎦselᎦ))
 
     (require 'linum)
     (require 'make-mode)
@@ -156,19 +155,24 @@
     (set-face-attribute 'fill-column-indicator nil :foreground "#111")
     (set-face-attribute 'warning nil :foreground ᎦwarningᎦ :background ᎦbackgroundᎦ)
     (set-face-attribute 'underline :underline)
-    ;; (set-face-attribute 'flycheck-warning nil  :underline '(:style wave :color ᎦadmonitionᎦ))
-    ;; (set-face-attribute 'flycheck-note nil     :underline '(:style wave :color Ꭶmethod-declarationᎦ))
-    ;; (set-face-attribute 'flycheck-info nil     :underline '(:style wave :color Ꭶtype-faceᎦ))
 
     (set-face-attribute 'compilation-mode-line-fail nil :background "#EEE" :background "#222")
     (set-face-attribute 'lazy-highlight nil :background Ꭶcurrent-lineᎦ :foreground ᎦselᎦ)
     (when (require 'ert)
-      (set-face-attribute 'ert-test-result-expected nil :background "#3cc14c" :foreground ᎦbackgroundᎦ)
-      (set-face-attribute 'ert-test-result-unexpected nil :background ᎦerrorᎦ :foreground ᎦbackgroundᎦ)
-      (set-face-attribute 'escape-glyph nil :background ᎦbackgroundᎦ :foreground ᎦerrorᎦ)
-      (set-face-attribute 'homoglyph nil :background ᎦbackgroundᎦ :foreground ᎦadmonitionᎦ)
-      (set-face-attribute 'fill-column-indicator nil :background ᎦbackgroundᎦ)
-      )
+      (progn
+        (set-face-attribute 'ert-test-result-expected nil :background "#3cc14c" :foreground ᎦbackgroundᎦ)
+        (set-face-attribute 'ert-test-result-unexpected nil :background ᎦerrorᎦ :foreground ᎦbackgroundᎦ)
+        (set-face-attribute 'escape-glyph nil :background ᎦbackgroundᎦ :foreground ᎦerrorᎦ)
+        (set-face-attribute 'homoglyph nil :background ᎦbackgroundᎦ :foreground ᎦadmonitionᎦ)
+        (set-face-attribute 'fill-column-indicator nil :background ᎦbackgroundᎦ)))
+
+    (when
+        (require 'web-mode)
+      (progn
+        (set-face-attribute 'web-mode-json-key-face nil :foreground ᎦkeywordsᎦ)
+        (set-face-attribute 'web-mode-json-string-face nil :foreground ᎦvariableᎦ)
+        (set-face-attribute 'web-mode-json-context-face nil :foreground "#79B9FF")))
+
     (mapc #'(lambda (s)
               (set-face-attribute s nil :background "#000" :foreground "#000"))
           (list
@@ -179,10 +183,7 @@
            'window-divider
            'window-divider-first-pixel
            'window-divider-last-pixel
-           'mode-line-highlight
-           ))
-    )
-  )
+           'mode-line-highlight))))
 
 
 (add-hook 'after-init-hook 'Ꭶ)

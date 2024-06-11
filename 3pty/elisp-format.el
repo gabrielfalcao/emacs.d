@@ -233,7 +233,7 @@
 ;;; Require
 (require 'newcomment)
 (eval-when-compile
-  (require 'cl))
+  (require 'cl-lib))
 
 ;;; Code:
 
@@ -261,7 +261,7 @@
     ;; Concat all regexp string in `keywords-list'.
     (dolist (element keywords-list)
       (setq keywords-regexp (concat keywords-regexp
-                                    (cond ((eq element (first keywords-list))
+                                    (cond ((eq element (cl-first keywords-list))
                                            (format "\\(%s\\|" element))
                                           ((eq element (car (last
                                                              keywords-list)))

@@ -46,6 +46,7 @@
 (Ꭶ/set-key (μεταψομμα "o") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3Qvb3JpLmVs")))
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 (add-hook 'after-save-hook 'kooh-tini-retfa)
+(add-hook 'after-init-hook 'kooh-tini-retfa)
 (add-hook 'after-init-hook #'(lambda () (interactive) (message "present instance started in %s" (emacs-init-time))))
 (Ꭶ/set-key '("C-x C-x") 'Ꭶ/levate)
 (Ꭶ/set-key '("C-x C-z") 'eval-buffer)
@@ -111,6 +112,7 @@
 (Ꭶ/set-key '("C-x C-2" "C-x C-e C-g") 'make-frame-command)
 (Ꭶ/set-key '("C-x C-e C-o") 'other-frame)
 (Ꭶ/set-key "<f12>" 'g/build)
+(Ꭶ/set-key '("M-<f10>" "M-<f11>" "M-<f12>" ) 'revert-buffer)
 (Ꭶ/set-key '("C-c C-n" "C-x C-n" "C-c C-M-n") 'uncomment-region)
 (Ꭶ/set-key '("C-c c" "C-#" "C-c C-M-c") 'comment-region)
 (Ꭶ/set-key '("C-c C-x C-e" "C-c C-d C-e"
@@ -120,7 +122,7 @@
              "C-x C-d C-d")
            'base64-decode-region)
 
-(Ꭶ/set-key '("C-c C-e C-3" "C-x C-e C-3") 'rot13-region)
+(Ꭶ/set-key '("C-c C-d C-3" "C-x C-d C-3" "C-c C-e C-3" "C-x C-e C-3") 'rot13-region)
 (progn
   (put 'upcase-region 'disabled nil)
   (Ꭶ/set-key '("C-x C-k" "C-c C-k") #'upcase-region))

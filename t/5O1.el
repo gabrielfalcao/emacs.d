@@ -52,7 +52,7 @@
   (server-mode 9))
 
 (setq large-file-warning-threshold 9000000 make-backup-files nil)
-(setq rust-format-on-save t rust-rustfmt-bin "~/.cargo/bin/rustfmt" rust-rustfmt-switches '("--edition" "2021" "--color" "always" "--unstable-features" "--check"))
+(setq rust-format-on-save nil rust-rustfmt-bin "~/.cargo/bin/rustfmt" rust-rustfmt-switches '("--edition" "2021" "--color" "always" "--unstable-features"))
 
 (add-hook 'after-init-hook 'cgdᎦ)
 ;; (add-hook 'after-revert-hook 'cgdᎦ)
@@ -70,7 +70,7 @@
 (eval-after-load "vc" '(remove-hook 'find-file-hook 'vc-find-file-hook))
 
 
-(setq kill-ring-max (logxor #x10d3 #o2176)
+(setq kill-ring-max #xffffff
       company-tooltip-align-annotations t
       rust-cargo-default-arguments " --offline "
       web-mode-engines-alist '(("jsx"  . "\\.[tj]sx?"))
