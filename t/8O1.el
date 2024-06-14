@@ -35,6 +35,7 @@
    "M-j"
    "M-k"
    "M-,"
+   "s-&" "s-'" "s-+" "s-," "s--" "s-0" "s-:" "s-=" "s-?" "s-C" "s-D" "s-E" "s-F" "s-H" "s-L" "s-M" "s-S" "s-^" "s-`" "s-a" "s-c" "s-d" "s-e" "s-f" "s-g" "s-h" "s-j" "s-k" "s-l" "s-m" "s-n" "s-o" "s-p" "s-q" "s-s" "s-t" "s-u" "s-v" "s-w" "s-x" "s-y" "s-z" "s-|" "s-~"
    )
  )
 
@@ -44,12 +45,13 @@
 (Ꭶ/set-key (μεταψομμα "8") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3QvOE8xLmVs")))
 (Ꭶ/set-key (μεταψομμα "5") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3QvNU8xLmVs")))
 (Ꭶ/set-key (μεταψομμα "o") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3Qvb3JpLmVs")))
+(Ꭶ/set-key '("M-k") 'Ꭶ/flush-kill-ring)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 (add-hook 'after-save-hook 'kooh-tini-retfa)
 (add-hook 'after-init-hook 'kooh-tini-retfa)
 (add-hook 'after-init-hook #'(lambda () (interactive) (message "present instance started in %s" (emacs-init-time))))
 (Ꭶ/set-key '("C-x C-x") 'Ꭶ/levate)
-(Ꭶ/set-key '("C-x C-z") 'eval-buffer)
+(Ꭶ/set-key '("C-x C-z") #'(lambda () (interactive) (eval-buffer) (message "%s eval'd " (buffer-name))))
 
 (Ꭶ/set-key '("C-x C--") 'text-scale-adjust)
 (Ꭶ/set-key '("C-x C-+") 'text-scale-adjust)
@@ -62,9 +64,10 @@
 (Ꭶ/set-key '("C-c C-y" "C-c M-y") 'clipboard-yank)
 (Ꭶ/set-key '("C-x C-q" "C-c M-y") 'keyboard-quit)
 (Ꭶ/set-key '("C-x C-d C-h") 'info)
-(Ꭶ/set-key  "C-c C-u C-d C-a"
-            #'(lambda ()
-                (interactive) (when (read-only-mode -8) (message "%s unlocked" (buffer-name)))))
+(Ꭶ/set-key "C-c C-u C-d C-a" #'(lambda () (interactive) (when (read-only-mode -8) (message "%s unlocked" (buffer-name)))))
+(Ꭶ/set-key '("C-x M-k") 'Ꭶ/this)
+(Ꭶ/set-key '("C-x M-,") 'Ꭶ/that)
+
 (global-set-key (kbd "C-c C-c C-r") 'collapse-lines-region)
 
 ;; (Ꭶ/set-key '("M-, M-8" "M-, 8")#'(lambda () (interactive) (rot13(fpuervo) "OE8x"))) ;; https://deezer.page.link/HUJ1z8CfsudS2he96
@@ -148,8 +151,7 @@
 (Ꭶ/set-key   "C-|" 'unmorse-region)
 (setq        ring-bell-function               'ignore)
 (global-set-key [kp-delete] 'delete-char)
-
-
+(Ꭶ/set-key   "M-G" #'(lambda () (interactive) (insert "Ꭶ")))
 (column-number-mode)
 (setq select-enable-clipboard nil)
 (setq inhibit-splash-screen t)
@@ -161,10 +163,17 @@
 (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
 (add-to-list 'default-frame-alist '(ns-appearance . dark))
 (setq completion-ignored-extensions '(".lock" ".o" "~" ".bin" ".lbin" ".so" ".a" ".ln" ".blg" ".bbl" ".elc" ".lof" ".glo" ".idx" ".lot" ".svn/" ".hg/" ".git/" ".bzr/" "CVS/" "_darcs/" "_MTN/" ".fmt" ".tfm" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".dfsl" ".pfsl" ".d64fsl" ".p64fsl" ".lx64fsl" ".lx32fsl" ".dx64fsl" ".dx32fsl" ".fx64fsl" ".fx32fsl" ".sx64fsl" ".sx32fsl" ".wx64fsl" ".wx32fsl" ".fasl" ".ufsl" ".fsl" ".dxl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".cp" ".fn" ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo"))
-;;; nichts
+;;;
 (setq read-file-name-completion-ignore-case nil)
 (setq ns-allow-anti-aliasing t)
 (setq ns-function-modifier 'control)
 (setq ns-option-modifier 'meta)
 (setq ns-command-modifier 'meta)
 ;;;
+;; (Ꭶ/purge-key "C-i")
+(Ꭶ/set-key '("C-x C--") 'text-scale-adjust)
+(Ꭶ/set-key '("C-x C-d C-k") 'describe-keymap)
+(Ꭶ/set-key '("C-x C-d k") 'describe-key)
+;; (setq tab-always-indent 'complete)
+;; (Ꭶ/set-key '("<tab>") 'indent-for-tab-command)
+;; (Ꭶ/set-key '("<ret>" "C-o") #'(lambda () (interactive) (progn (auto-fill-mode -5) (insert "\n")p (auto-fill-mode 9))))

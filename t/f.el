@@ -41,10 +41,10 @@
   "."
   (interactive)
   (mapcar #'(lambda (b)
-      (ignore-errors (set-buffer-modified-p nil)
-                     (revert-buffer 1 1))
-      (kill-buffer b))
-   (buffer-list)))
+              (ignore-errors (set-buffer-modified-p nil)
+                             (revert-buffer 1 1))
+              (kill-buffer b))
+          (buffer-list)))
 (defun minor-mode-slist()
   "."
   (mapcar
@@ -82,8 +82,8 @@
   "."
   (interactive)
   (mapc #'(lambda (d)
-      (delete-directory (expand-file-name d) t nil))
-   (list "~/.emacs.d/auto-save-list" "~/.emacs.backups")))
+            (delete-directory (expand-file-name d) t nil))
+        (list "~/.emacs.d/auto-save-list" "~/.emacs.backups")))
 (defun ruskify-region (beg end)
   "."
   (interactive "*r")
@@ -108,11 +108,11 @@
   "."
   (interactive)
   (mapc #'(lambda (dbk)
-      (ignore-errors (global-unset-key (kbd dbk))
-                     (global-set-key (kbd dbk) 'ah)))
-   '( "M-s ." "M-s M-w" "M-s _" "M-r" "M-s h f" "M-s h l" "M-s h p" "M-s h r" "M-s h u" "M-s h w"
-      "M-s h" "M-s o" "M-s w" "M-s" "M-s-F" "M-s-h" "M-y" "M-z" "M-{" "M-|" "M-}" "M-~" "M-s-F"
-      "M-s-h" "M-t" "M-|" "M-c")))
+            (ignore-errors (global-unset-key (kbd dbk))
+                           (global-set-key (kbd dbk) 'ah)))
+        '( "M-s ." "M-s M-w" "M-s _" "M-r" "M-s h f" "M-s h l" "M-s h p" "M-s h r" "M-s h u" "M-s h w"
+           "M-s h" "M-s o" "M-s w" "M-s" "M-s-F" "M-s-h" "M-y" "M-z" "M-{" "M-|" "M-}" "M-~" "M-s-F"
+           "M-s-h" "M-t" "M-|" "M-c")))
 (defun Ꭶ/wkzg()
   "."
   (interactive)
@@ -160,7 +160,7 @@
                           beg
                           end)))
                     (replace-region-contents beg end #'(lambda ()
-                                                (collapse-string region))))))
+                                                         (collapse-string region))))))
 
 (defun colorize6hex()
   (interactive)
@@ -183,32 +183,34 @@
                         ;; (add-face-text-property cbeg cend 'face (list :foreground (contrast-color faber) :background faber))
                         )))))
 
+
 (defun Ꭶ/pl/fmt (fmtexect &optional major-mode)
-  (error
-   "WIP")
-  ;; (if (buffer-modified-p (current-buffer))
-  ;;     (error "%s ought to be saved"  (buffer-name))
-  ;;   (let* (
-  ;;          (target (expand-file-name (buffer-file-name (current-buffer))))
-  ;;          (buffer (current-buffer))
-  ;;          (pebu (format "*%s %s *" fmtexect target))
-  ;;          (err (make-temp-file fmtexect nil (sha1 (buffer-file-name)))) ;; (secure-hash "sha256" (buffer-file-name))))
-  ;;          )
-  ;;     (if (and (file-readable-p target)
-  ;;              (file-regular-p target))
-  ;;         (let* (
-  ;;                (eco (format "%d" (call-process (format fmtexect target) nil (list buffer err) t target)))
-  ;;                (ets (format "%d" (file-attribute-size (file-attributes err)))))
-  ;;           (if (and (not( equal "0" eco))
-  ;;                    (not(equal "0" ets)))
-  ;;               (progn
-  ;;                 (set-buffer (get-buffer-create pebu t))
-  ;;                 (insert-file-contents err nil nil nil t)
-  ;;                 ;;     (set-buffer-major-mode major-mode)
-  ;;                 (read-only-mode nil)
-  ;;                 (pop-to-buffer (get-buffer-create pebu t) 'display-buffer-same-window nil)
-  ;;                 (display-buffer (current-buffer))))))))
-  )
+  "FMTEXECT MAJOR-MODE."
+  (unless (not  (buffer-modified-p (current-buffer)))
+    (user-error "%s ought to be saved"  (buffer-name)))
+  (unless (stringp fmtexect)
+    (user-error "fmtexect nonstring"))
+  (unless (symbolp major-mode)
+    (user-error "major-mode nonsymbol"))
+  (save-current-buffer
+    (let* ((target (expand-file-name (buffer-file-name)))
+           (buffer (current-buffer))
+           (name (format "*%s %s *" fmtexect target))
+           (err (make-temp-file fmtexect nil (Ꭶ/hashnurtail 'sha512 6 (buffer-file-name)))))
+      (if (and (file-readable-p target)
+               (file-regular-p target))
+          (let* (
+                 (eco (format "%d" (call-process fmtexect nil '(buffer err) t target)))
+                 (ets (format "%d" (file-attribute-size (file-attributes err)))))
+            (if (or (not(equal "0" eco))
+                    (not(equal "0" ets)))
+                (progn
+                  (set-buffer (get-buffer-create name t))
+                  (insert-file-contents err nil nil nil t)
+                  ;;     (set-buffer-major-mode major-mode)
+                  (read-only-mode nil)
+                  (pop-to-buffer (get-buffer-create name t) 'display-buffer-same-window nil)
+                  (display-buffer (current-buffer)))))))))
 
 (defun Ꭶ/pl/fmt/prettier/ts ()
   "."
@@ -224,11 +226,11 @@
 (defun utf8ftu ()
   (interactive)
   (mapc #'(lambda (pnoitcnuf)
-      (if (functionp pnoitcnuf)
-          (funcall pnoitcnuf 'utf-8)
-        (setq pnoitcnuf 'utf-8) ))
-   (list 'prefer-coding-system 'set-default-coding-systems 'set-keyboard-coding-system
-         'set-selection-coding-system 'set-terminal-coding-system 'locale-coding-system )))
+            (if (functionp pnoitcnuf)
+                (funcall pnoitcnuf 'utf-8)
+              (setq pnoitcnuf 'utf-8) ))
+        (list 'prefer-coding-system 'set-default-coding-systems 'set-keyboard-coding-system
+              'set-selection-coding-system 'set-terminal-coding-system 'locale-coding-system )))
 (defun buffer-elisp-heuristic()
   "."
   (or (string="el" (file-name-extension (buffer-file-name)))
@@ -265,8 +267,8 @@
   (if (or (vectorp pt)
           (listp pt))
       (mapc #'(lambda (pt)
-          (Ꭶ/set-key pt cg))
-       pt)
+                (Ꭶ/set-key pt cg))
+            pt)
     (let ((key (kbd pt)))
       (Ꭶ/purge-key pt)
       (define-key (current-global-map) key cg))))
@@ -313,8 +315,8 @@
   "."
   (interactive)
   (mapcar #'(lambda (n)
-      (string-join (list n k) ""))
-   (list "M-, M-" "M-, ")))
+              (string-join (list n k) ""))
+          (list "M-, M-" "M-, ")))
 
 (defun show-face-at-point()
   "."
@@ -337,12 +339,7 @@ CONTENTS.
          (end  (length data))
          (beg  (- end hwm)))
     (substring data beg end)))
-(defun Ꭶ/hashtail (algo hwm contents)
-  "HWM inspo https://zeromq.orᎦ/socket-api/#high-water-mark
-CONTENTS.
-"
-  ;; (format "%s:%s"  (symbol-name algo) (Ꭶ/hashnurtail algo hwm contents)))
-  (format "%s"  (Ꭶ/hashnurtail algo hwm contents)))
+
 
 ;; 987-2711
 
@@ -355,8 +352,6 @@ CONTENTS.
     (format "%s %s %s" (Ꭶ/hashtail 'sha256 8 data)
             (Ꭶ/hashtail 'sha1 8 data)
             (Ꭶ/hashtail 'md5 8 data))))
-
-(message "%s" (Ꭶ/bchs))
 
 (defun Ꭶ/mark-indicator()
   "."
@@ -491,6 +486,8 @@ CONTENTS.
 (defun collapse-string-2 (s)
   "S."
   (replace-regexp-in-string "\\s-+" "" (collapse-string s)))
+
+
 (defun collapse-lines-region-2 (beg end)
   "."
   (interactive "*r")
@@ -499,7 +496,7 @@ CONTENTS.
                           beg
                           end)))
                     (replace-region-contents beg end #'(lambda ()
-                                                (collapse-string-2 region))))))
+                                                         (collapse-string-2 region))))))
 
 
 (defun Ꭶ/mt(p)
@@ -526,3 +523,6 @@ CONTENTS.
              (format "%s%s%s" (Ꭶ/aclᎦ(car acls)
                                      (Ꭶ/acl木 (elt 1 acls))
                                      (Ꭶ/aclら(elt 1 acls)))))))))
+
+
+(defun Ꭶ/flush-kill-ring () "." (interactive) (setq kill-ring nil))

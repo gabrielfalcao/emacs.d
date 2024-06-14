@@ -54,6 +54,7 @@
 (setq large-file-warning-threshold 9000000 make-backup-files nil)
 (setq rust-format-on-save nil rust-rustfmt-bin "~/.cargo/bin/rustfmt" rust-rustfmt-switches '("--edition" "2021" "--color" "always" "--unstable-features"))
 
+(setq replace-regexp-lax-whitespace t case-fold-search nil)
 (add-hook 'after-init-hook 'cgdᎦ)
 ;; (add-hook 'after-revert-hook 'cgdᎦ)
 ;; (add-hook 'after-save-hook 'cgdᎦ)

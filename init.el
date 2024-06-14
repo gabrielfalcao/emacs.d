@@ -5,6 +5,7 @@
 ;; OO  OOOOOOOG gg  gg  gg gg-  -gg gg-  ---       gg
 ;; OO        -- gg  gg  gg gggggggg gggggggg gggggggg
 ;; OOOOOOOOOOOG
+(set-face-attribute 'default nil :font "JetBrains Mono-1" :background "#fff")
 (setq mode-line-format (list (base64-decode-string "V2VsY29tZSBHcmFuZE1hc3RlciBnYWJyaWVsLmRlbW91cmEgcGxlYXNlIHdhaXQgYXMgdGhlIHN5c3RlbSByZW5kZXJzIGl0c2VsZiBwcmVwYXJlZCBmb3IgdGhpbmUgY3JhZnRzLi4u")))
 (setq server-socket-dir "~/.emacs.d/socket" server-log t)
 (let ((foreground "#A79C83")
@@ -13,4 +14,4 @@
   (set-face-attribute 'mode-line nil :background background :foreground foreground)
   (set-face-attribute 'mode-line-inactive nil :background background :foreground foreground
                       :box '(:line-width (0 . 0))))
-(progn (add-to-list 'load-path "~/.emacs.d/3pty") (add-to-list 'load-path "~/.emacs.d/t") (load-library "k") (require 'elisp-format))
+(progn (add-to-list 'load-path "~/.emacs.d/3pty") (add-to-list 'load-path "~/.emacs.d/t") (load-library "k"))

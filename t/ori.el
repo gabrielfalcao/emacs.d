@@ -59,7 +59,7 @@
          (ᎦoperatorsᎦ               "#EF5AAA")
          (ᎦconstantᎦ                "#FF79C6")
          (ᎦcommentsᎦ                "#A79C83")
-	 (ᎦselᎦ                     Ꭶmode-line-fgᎦ)
+	 (ᎦselᎦ                     "#F5BF08")
          (ᎦcursorᎦ                  ᎦselᎦ))
 
     (require 'linum)
@@ -172,6 +172,13 @@
         (set-face-attribute 'web-mode-json-key-face nil :foreground ᎦkeywordsᎦ)
         (set-face-attribute 'web-mode-json-string-face nil :foreground ᎦvariableᎦ)
         (set-face-attribute 'web-mode-json-context-face nil :foreground "#79B9FF")))
+
+    (when
+        (require 'markdown-mode)
+      (progn
+        (set-face-attribute 'markdown-markup-face nil :foreground ᎦvariableᎦ))
+        (set-face-attribute 'markdown-link-face nil :foreground "#79B9FF")
+      )
 
     (mapc #'(lambda (s)
               (set-face-attribute s nil :background "#000" :foreground "#000"))

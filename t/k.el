@@ -27,3 +27,11 @@
 (load-library "f")
 (load-library "8O1")
 (load-library "5O1")
+
+(defun Ꭶ/this () "." (interactive) (load-library "k"))
+;
+(defun Ꭶ/that () "." (interactive) (load-file "~/.emacs.d/init.el"))
+
+(defvar Ꭶ/keymap (copy-keymap global-map))
+
+;;(defun ᎦL3VuZG8ta2V5bWFwLWNoYW5nZXMgKCkgIi4iIChpbnRlcmFjdGl2ZSkgKHNldHEgZ2xvYmFsLW1hcCAoY29weS1rZXltYXAgᎦ/keymap)))
