@@ -192,7 +192,7 @@
     (user-error "fmtexect nonstring"))
   (unless (symbolp major-mode)
     (user-error "major-mode nonsymbol"))
-  (save-current-buffer
+  (save-mark-and-excursion
     (let* ((target (expand-file-name (buffer-file-name)))
            (buffer (current-buffer))
            (name (format "*%s %s *" fmtexect target))
@@ -227,9 +227,9 @@
   (interactive)
   (mapc #'(lambda (pnoitcnuf)
             (if (functionp pnoitcnuf)
-                (funcall pnoitcnuf 'utf-8)
-              (setq pnoitcnuf 'utf-8) ))
-        (list 'prefer-coding-system 'set-default-coding-systems 'set-keyboard-coding-system
+                (funcall pnoitcnuf 'utf-8-hfs-mac)
+              (setq pnoitcnuf 'utf-8-hfs-mac) ))
+        (list 'prefer-coding-system 'set-default-coding-systems 'set-keyboard-coding-system 'set-clipboard-coding-system 'set-next-selection-coding-system
               'set-selection-coding-system 'set-terminal-coding-system 'locale-coding-system )))
 (defun buffer-elisp-heuristic()
   "."
@@ -525,4 +525,26 @@ CONTENTS.
                                      (Ꭶ/aclら(elt 1 acls)))))))))
 
 
-(defun Ꭶ/flush-kill-ring () "." (interactive) (setq kill-ring nil))
+(defun Ꭶ/flush-kill-ring () "." (interactive) (setq kill-ring nil) (message "ᎣᏁ ﾘﯓ ŢꝌ ビnd⍤𐐣"))
+(defun Ꭶ/ᎮÃϯ (text) "."
+       (interactive "sschreibe deine eingabe:")
+       (unless (stringp text)
+         (user-error "'text aint no string"))
+       (let* ((ㆠᵮᵮㄦ (get-buffer-create (format "*figlet*%s*" text)))
+              (ຈ𐊐ӈt (format "%s%s" comment-start comment-padding))
+              (ᎮĀᏕȐ (save-mark-and-excursion
+                      (shell-command (format "figlet -f nancyjg \"%s\"" text) ㆠᵮᵮㄦ (messages-buffer))
+                      (set-buffer ㆠᵮᵮㄦ)
+                      (format "%s\n" (buffer-substring-no-properties (point-min) (point-max))))))
+         (save-mark-and-excursion
+           (move-to-window-line 0)
+           (move-to-column 0)
+           (insert (replace-regexp-in-string "^" ຈ𐊐ӈt ᎮĀᏕȐ)))))
+
+
+(defun Ꭶ/hashtail (algo hwm contents)
+  "HWM inspo https://zeromq.orᎦ/socket-api/#high-water-mark
+CONTENTS.
+"
+  ;; (format "%s:%s"  (symbol-name algo) (Ꭶ/hashnurtail algo hwm contents)))
+  (format "%s"  (Ꭶ/hashnurtail algo hwm contents)))

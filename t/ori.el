@@ -40,8 +40,6 @@
          (ᎦoperatorsᎦ               "#F682FF")
          (ᎦnumberᎦ                  "#FC580C")
          (ᎦnormalᎦ                  "#DEDEDE")
-         (Ꭶmode-line-fgᎦ            (Ꭶ/mode-line-foreground))
-         (Ꭶmode-line-bgᎦ            (Ꭶ/mode-line-background))
          (Ꭶmode-line-inactive-bgᎦ   "#211F17")
          (Ꭶmode-line-inactive-bgᎦ   "#312F27")
          (Ꭶmode-line-inactive-fgᎦ   "#A66A00")
@@ -96,8 +94,8 @@
     (set-face-attribute 'default nil :foreground ᎦnormalᎦ :background ᎦbackgroundᎦ)
     (set-face-attribute 'button nil :foreground ᎦkeywordsᎦ :underline t)
     (set-face-attribute 'default nil :background ᎦbackgroundᎦ :foreground ᎦnormalᎦ)
-    (set-face-attribute 'header-line nil :background Ꭶmode-line-bgᎦ :foreground ᎦnormalᎦ)
-    (set-face-attribute 'highlight nil :background Ꭶcurrent-lineᎦ :foreground Ꭶmode-line-fgᎦ)
+    (set-face-attribute 'header-line nil :background (Ꭶ/mode-line-background) :foreground ᎦnormalᎦ)
+    (set-face-attribute 'highlight nil :background Ꭶcurrent-lineᎦ :foreground (Ꭶ/mode-line-foreground))
     (set-face-attribute 'info-xref nil :foreground "#27CE79" :underline nil :bold nil)
     (set-face-attribute 'info-xref-visited nil
                         :foreground "#787878"
@@ -105,9 +103,9 @@
                         :underline "#D87101"
                         :bold t)
 
-    (set-face-attribute 'info-menu-star nil :foreground Ꭶmode-line-fgᎦ :underline nil :bold t)
+    (set-face-attribute 'info-menu-star nil :foreground (Ꭶ/mode-line-foreground) :underline nil :bold t)
     (set-face-attribute 'info-header-xref nil  :foreground ᎦkeywordsᎦ :underline t)
-    (set-face-attribute 'show-paren-match nil :background Ꭶmode-line-fgᎦ :foreground ᎦbackgroundᎦ :weight 'bold)
+    (set-face-attribute 'show-paren-match nil :background (Ꭶ/mode-line-foreground) :foreground ᎦbackgroundᎦ :weight 'bold)
     (set-face-attribute 'show-paren-match-expression nil :background Ꭶtype-faceᎦ  :weight 'bold)
     (set-face-attribute 'show-paren-mismatch nil :background ᎦerrorᎦ  :foreground ᎦnormalᎦ :weight 'bold)
     (set-face-attribute 'region nil :background ᎦselᎦ :foreground ᎦbackgroundᎦ)
@@ -143,12 +141,12 @@
     (set-face-attribute 'line-number-minor-tick nil :background ᎦbackgroundᎦ :foreground ᎦstringᎦ)
     (set-face-attribute 'minibuffer-prompt nil :foreground ᎦvariableᎦ)
     (set-face-attribute 'rectangle-preview nil :background Ꭶline-numberᎦ)
-    (set-face-attribute 'mode-line nil :background Ꭶmode-line-bgᎦ :foreground Ꭶmode-line-fgᎦ)
+    (set-face-attribute 'mode-line nil :background (Ꭶ/mode-line-background) :foreground (Ꭶ/mode-line-foreground))
     (set-face-attribute 'mode-line-inactive nil :background Ꭶmode-line-inactive-bgᎦ :foreground Ꭶmode-line-inactive-fgᎦ
                         :box '(:line-width (0 . 0)))
     (set-face-attribute 'mode-line-emphasis nil :bold nil :background nil :foreground nil)
     (set-face-attribute 'vertical-border nil :background nil :foreground nil)
-    (set-face-attribute 'isearch nil :background Ꭶmode-line-fgᎦ :foreground Ꭶmode-line-bgᎦ)
+    (set-face-attribute 'isearch nil :background (Ꭶ/mode-line-foreground) :foreground (Ꭶ/mode-line-background))
     (set-face-attribute 'isearch-fail nil :background ᎦerrorᎦ :foreground ᎦbackgroundᎦ)
     (set-face-attribute 'error nil :background ᎦerrorᎦ :foreground "#333")
     (set-face-attribute 'shadow nil :foreground "#333")
