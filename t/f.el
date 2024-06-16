@@ -525,21 +525,26 @@ CONTENTS.
                                      (Ꭶ/aclら(elt 1 acls)))))))))
 
 
-(defun Ꭶ/flush-kill-ring () "." (interactive) (setq kill-ring nil) (message "ᎣᏁ ﾘﯓ ŢꝌ ビnd⍤𐐣"))
-(defun Ꭶ/ᎮÃϯ (text) "."
+(defun Ꭶ/flush-kill-ring () "." (interactive) (setq kill-ring nil) (message "ᎣᏁ ﾘﯓ ŢꝌ ビnd⍤𐐣"))
+(defun Ꭶ/ᎮÃϯ (text) "."
        (interactive "sschreibe deine eingabe:")
        (unless (stringp text)
          (user-error "'text aint no string"))
-       (let* ((ㆠᵮᵮㄦ (get-buffer-create (format "*figlet*%s*" text)))
-              (ຈ𐊐ӈt (format "%s%s" comment-start comment-padding))
-              (ᎮĀᏕȐ (save-mark-and-excursion
-                      (shell-command (format "figlet -f nancyjg \"%s\"" text) ㆠᵮᵮㄦ (messages-buffer))
+
+       (let* ((ᎭΣξ (string= "#!" (buffer-substring-no-properties (point-min) (+ (point-min) 2))))
+              (ㆠᵮᵮㄦ (get-buffer-create (format "*figlet*%s*" text)))
+              (ຈ𐊐ӈt (concat (string-trim comment-start) (string-trim comment-start) comment-padding))
+              (ᎮĀᏕȐ (save-mark-and-excursion
+                      (shell-command (format "figlet -f nancyjg \"%s\"" text) ㆠᵮᵮㄦ nil)
                       (set-buffer ㆠᵮᵮㄦ)
-                      (format "%s\n" (buffer-substring-no-properties (point-min) (point-max))))))
+                      (delete-blank-lines)
+                      (flush-lines "^\s-*$")
+                      (replace-regexp-in-string "^" ຈ𐊐ӈt
+                                                (buffer-substring-no-properties (point-min) (point-max))))))
          (save-mark-and-excursion
-           (move-to-window-line 0)
+           (move-to-window-line (or ᎭΣξ 1 0))
            (move-to-column 0)
-           (insert (replace-regexp-in-string "^" ຈ𐊐ӈt ᎮĀᏕȐ)))))
+           (insert  (format "%s\n" ᎮĀᏕȐ)))))
 
 
 (defun Ꭶ/hashtail (algo hwm contents)
