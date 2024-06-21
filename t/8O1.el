@@ -32,6 +32,7 @@
    "C-x C-d"
    "C-x C-u"
    "C-x C-d"
+   "C-x C-p"
    "M-j"
    "M-t"
    "M-k"
@@ -138,6 +139,9 @@
 
 (Ꭶ/set-key   '("C-z" "M-z" "C-_") 'undo      )
 (Ꭶ/set-key   '("M-r") 'replace-regexp        )
+(Ꭶ/set-key   '("C-c M-s") 'replace-string    )
+(Ꭶ/set-key   '("M-a") 'ignore                )
+(Ꭶ/set-key   '("M-c") 'ignore                )
 (Ꭶ/set-key   '("C-g" "C-q") 'keyboard-quit   )
 (Ꭶ/set-key   '("M-u" "M-l" "M-ESC") 'ah      )
 (Ꭶ/set-key   "C-s"   'isearch-forward-regexp )

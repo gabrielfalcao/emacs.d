@@ -117,7 +117,8 @@
   "."
   (interactive)
   (find-file (string-reverse (base64-decode-region "Y2V4ZWJpbC90cG8vfg==" "*"))))
-(defun cgdᎦ ()
+
+(defun cᎦdgᎦ (&rest substrate)
   (interactive)
   (ignore-errors
     (colorize6hex)
@@ -186,7 +187,6 @@
                         ;; #ffcc00
                         )))))
 
-
 (defun Ꭶ/pl/fmt (fmtexect &optional major-mode)
   "FMTEXECT MAJOR-MODE."
   (unless (not  (buffer-modified-p (current-buffer)))
@@ -224,7 +224,6 @@
   "."
   (interactive)
   (Ꭶ/pl/fmt (expand-file-name "~/.nvm/versions/node/v22.2.0/bin/prettier") 'javacript-mode))
-
 
 (defun utf8ftu ()
   (interactive)
@@ -328,11 +327,12 @@
 
 (defun Ꭶ/bfan ()
   "."
-  (let ((file-name (file-relative-name (buffer-file-name))))
-    (if (equal file-name (buffer-name))
-        (format "%s" file-name)
-      (format "%s (%s)" (buffer-name)
-              (file-name)))))
+  (or (when (equal (buffer-file-name) (buffer-name))
+        (format "%s" (file-relative-name (buffer-file-name))))
+      (format "%s %s" (buffer-name)
+              (propertize (format "[%s]" (file-relative-name (buffer-file-name)))
+                          'face (list :foreground "#F6CA51"
+                          )))))
 
 (defun Ꭶ/hashnurtail (algo hwm contents)
   "HWM inspo https://zeromq.orᎦ/socket-api/#high-water-mark
