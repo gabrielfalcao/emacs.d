@@ -120,7 +120,7 @@
 (defun cgdᎦ ()
   (interactive)
   (ignore-errors
-    ;;(colorize6hex)
+    (colorize6hex)
     (Ꭶ/tick-mode-line)
     (disavail-asl)
     (gc)
@@ -175,12 +175,15 @@
                              (faber
                               (buffer-substring-no-properties
                                cbeg
-                               cend)))
-                        (add-face-text-property cbeg cend
-                                                '(:foreground (contrast-color faber)
-                                                              :background faber))
+                               cend))
+                             (x2133 (progn
+                                   (mapcar #'(lambda (y) (if (eq t (overlay-get y 'bcc007)) (delete-overlay y)))
+                                           (overlays-in cbeg cend))
+                                   (make-overlay cbeg cend))))
+                        (overlay-put x2133 'bcc t)
+                        (overlay-put x2133 'face (list :foreground (contrast-color faber) :background faber))
                         ;; (add-face-text-property cbeg cend 'face (list :foreground (contrast-color faber) :background faber))
-                        ;; (add-face-text-property cbeg cend 'face (list :foreground (contrast-color faber) :background faber))
+                        ;; #ffcc00
                         )))))
 
 
@@ -525,31 +528,56 @@ CONTENTS.
                                      (Ꭶ/aclら(elt 1 acls)))))))))
 
 
-(defun Ꭶ/flush-kill-ring () "." (interactive) (setq kill-ring nil) (message "ᎣᏁ ﾘﯓ ŢꝌ ビnd⍤𐐣"))
+(defun Ꭶ/flush-kill-ring () "." (interactive) (setq kill-ring nil file-name-history nil) (message "ᎣᏁ ﾘﯓ ŢꝌ ビnd⍤𐐣"))
 (defun Ꭶ/ᎮÃϯ (text) "."
-       (interactive "sschreibe deine eingabe:")
-       (unless (stringp text)
-         (user-error "'text aint no string"))
-
-       (let* ((ᎭΣξ (string= "#!" (buffer-substring-no-properties (point-min) (+ (point-min) 2))))
-              (ㆠᵮᵮㄦ (get-buffer-create (format "*figlet*%s*" text)))
-              (ຈ𐊐ӈt (concat (string-trim comment-start) (string-trim comment-start) comment-padding))
-              (ᎮĀᏕȐ (save-mark-and-excursion
-                      (shell-command (format "figlet -f nancyjg \"%s\"" text) ㆠᵮᵮㄦ nil)
-                      (set-buffer ㆠᵮᵮㄦ)
-                      (delete-blank-lines)
-                      (flush-lines "^\s-*$")
-                      (replace-regexp-in-string "^" ຈ𐊐ӈt
-                                                (buffer-substring-no-properties (point-min) (point-max))))))
-         (save-mark-and-excursion
-           (move-to-window-line (or ᎭΣξ 1 0))
-           (move-to-column 0)
-           (insert  (format "%s\n" ᎮĀᏕȐ)))))
+       (interactive "sschreibe deine eingabe: ")
+       (if (not (stringp text))
+           (user-error "'text aint no string")
+         (let* ((ᎭΣξ (string= "#!" (buffer-substring-no-properties (point-min) (+ (point-min) 2))))
+                (ㆠᵮᵮㄦ (get-buffer-create (format "*figlet*%s*" text)))
+                (ຈ𐊐ӈt (concat (string-trim (or comment-start "#")) (string-trim (or comment-start "#")) comment-padding))
+                (ᎮĀᏕȐ (save-mark-and-excursion
+                        (shell-command (format "figlet -f nancyjg \"%s\"" text) ㆠᵮᵮㄦ nil)
+                        (set-buffer ㆠᵮᵮㄦ)
+                        (delete-blank-lines)
+                        (flush-lines "^\s-*$")
+                        (replace-regexp-in-string "^" ຈ𐊐ӈt
+                                                  (buffer-substring-no-properties (point-min) (point-max))))))
+           (save-mark-and-excursion
+             (move-to-window-line (or ᎭΣξ 1 0))
+             (move-to-column 0)
+             (insert  (format "%s\n" ᎮĀᏕȐ)))
+           (kill-buffer ㆠᵮᵮㄦ))))
 
 
 (defun Ꭶ/hashtail (algo hwm contents)
-  "HWM inspo https://zeromq.orᎦ/socket-api/#high-water-mark
+  "HWM inspo https://zeromq.org/socket-api/#high-water-mark
 CONTENTS.
 "
   ;; (format "%s:%s"  (symbol-name algo) (Ꭶ/hashnurtail algo hwm contents)))
   (format "%s"  (Ꭶ/hashnurtail algo hwm contents)))
+
+(defun load-theme () "." (interactive) (ah))
+
+(defun server-reboot () "." (interactive) (server-force-delete) (server-mode 9))
+
+
+(defun Ꭶ/hash (algo) "." (interactive "S")
+       (unless (memq algo (secure-hash-algorithms))
+         (user-error (format "\"%s\" aint no valid secure-hash algo" algo)))
+       (let* ((pipa (region-points))
+              (pi (car pipa))
+              (pa (car (cdr pipa)))
+              (bs (buffer-substring-no-properties pi pa))
+              (hg (secure-hash algo bs)))
+         (message "%S" hg)
+         hg))
+
+(defun Ꭶ/sec-hash-region (algo) "." (interactive "S")
+       (let* ((pipa (region-points))
+              (pi (car pipa))
+              (pa (car (cdr pipa)))
+              (bs (buffer-substring-no-properties pi pa))
+              (hg (secure-hash algo bs)))
+         (replace-region-contents pi pa
+                                  (lambda () hg))))

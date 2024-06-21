@@ -48,8 +48,7 @@
 (setq python-indent-offset 6)
 (setq company-idle-delay 0)
 (setq company-show-quick-access t)
-(ignore-errors
-  (server-mode 9))
+(ignore-errors (server-reboot))
 
 (setq large-file-warning-threshold 9000000 make-backup-files nil)
 (setq rust-format-on-save nil rust-rustfmt-bin "~/.cargo/bin/rustfmt" rust-rustfmt-switches '("--edition" "2021" "--color" "always" "--unstable-features"))
@@ -132,11 +131,7 @@
 
 
 (setq sh-mode-map (make-sparse-keymap))
-(add-hook 'shell-script-mode-hook
-          #'(lambda () (interactive)
-              (setq sh-mode-map (make-sparse-keymap))
-              (setq 'sh-basic-offset 6)
-              ))
+(add-hook 'shell-script-mode-hook #'(lambda () (interactive) (setq sh-mode-map (make-sparse-keymap)) (setq 'sh-basic-offset 6)))
 
 
 (add-hook 'web-mode-hook
