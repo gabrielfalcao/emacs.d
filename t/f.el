@@ -328,11 +328,11 @@
 (defun Ꭶ/bfan ()
   "."
   (or (when (equal (buffer-file-name) (buffer-name))
-        (format "%s" (file-relative-name (buffer-file-name))))
-      (format "%s %s" (buffer-name)
-              (propertize (format "[%s]" (file-relative-name (buffer-file-name)))
-                          'face (list :foreground "#F6CA51"
-                          )))))
+        (format "%s" (buffer-file-name-relative)))
+      (format "%s %s"
+              (Ꭶ/vwf (buffer-name) "#DEDBDC")
+              (Ꭶ/vwf (format "[%s]" (buffer-file-name-relative)) "#F6CA51" ))))
+
 
 (defun Ꭶ/hashnurtail (algo hwm contents)
   "HWM inspo https://zeromq.orᎦ/socket-api/#high-water-mark
@@ -428,7 +428,7 @@ CONTENTS.
   (list
    '(:eval (Ꭶ/mark-indicator))
    " "
-   '(:eval (propertize (Ꭶ/bfan) 'face (list :foreground "#DEDBDC")))
+   '(:eval (Ꭶ/bfan))
    " " (propertize " ⇒ " 'face (list :background (Ꭶ/mode-line-background)
                                      :foreground "#79B9FF"))
    " "
@@ -581,3 +581,16 @@ CONTENTS.
               (hg (secure-hash algo bs)))
          (replace-region-contents pi pa
                                   (lambda () hg))))
+
+(defun Ꭶ/text-properties()
+  "."
+  (interactive)
+  (message "%S" (text-properties-at (car (region-points)))))
+
+(defun buffer-file-name-relative ()
+  "."
+  (format "%s" (file-relative-name (buffer-file-name))))
+
+(defun Ꭶ/vwf (text faber)
+  "."
+  (propertize text 'face (list :foreground faber)))

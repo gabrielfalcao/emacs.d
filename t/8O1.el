@@ -36,7 +36,7 @@
    "M-j"
    "M-t"
    "M-k"
-   "M-,"
+   "M-," "M-;"
    "s-&" "s-'" "s-+" "s-," "s--" "s-0" "s-:" "s-=" "s-?" "s-C" "s-D" "s-E" "s-F" "s-H" "s-L" "s-M" "s-S" "s-^" "s-`" "s-a" "s-c" "s-d" "s-e" "s-f" "s-g" "s-h" "s-j" "s-k" "s-l" "s-m" "s-n" "s-o" "s-p" "s-q" "s-s" "s-t" "s-u" "s-v" "s-w" "s-x" "s-y" "s-z" "s-|" "s-~"
    )
  )
