@@ -37,7 +37,7 @@
    "M-t"
    "M-k"
    "M-," "M-;"
-   "s-&" "s-'" "s-+" "s-," "s--" "s-0" "s-:" "s-=" "s-?" "s-C" "s-D" "s-E" "s-F" "s-H" "s-L" "s-M" "s-S" "s-^" "s-`" "s-a" "s-c" "s-d" "s-e" "s-f" "s-g" "s-h" "s-j" "s-k" "s-l" "s-m" "s-n" "s-o" "s-p" "s-q" "s-s" "s-t" "s-u" "s-v" "s-w" "s-x" "s-y" "s-z" "s-|" "s-~"
+   "s-&" "s-'" "s-+" "s-," "s--" "s-0" "s-:" "s-=" "s-?" "s-C" "s-D" "s-E" "s-F" "s-H" "s-L" "s-M" "s-S" "s-^" "s-`" "s-a" "s-c" "s-d" "s-e" "s-f" "s-g" "s-h" "s-j" "s-k" "s-l" "s-m" "s-n" "s-o" "s-p" "s-q" "s-s" "s-t" "s-u" "s-v" "s-w" "s-x" "s-y" "s-z" "s-|" "s-~" "M-r"
    )
  )
 
@@ -64,11 +64,11 @@
 (Ꭶ/set-key '("C-c C-x C-f") 'show-face-at-point)
 (Ꭶ/set-key '("C-c C-w" "C-c M-w") 'clipboard-kill-ring-save)
 (Ꭶ/set-key '("C-c C-y" "C-c M-y") 'clipboard-yank)
-(Ꭶ/set-key '("C-x C-q" "C-c M-y") 'keyboard-quit)
+(Ꭶ/set-key '("C-x C-q" "C-c M-y" "C-γ") 'keyboard-quit)
 (Ꭶ/set-key '("C-x C-d C-h") 'info)
 (Ꭶ/set-key "C-c C-u C-d C-a" #'(lambda () (interactive) (when (read-only-mode -8) (message "%s unlocked" (buffer-name)))))
-(Ꭶ/set-key '("C-x M-k") 'Ꭶ/this)
-(Ꭶ/set-key '("C-x M-,") 'Ꭶ/that)
+
+(Ꭶ/set-key '("C-x M-k") 'Ꭶ/this)(Ꭶ/set-key '("C-x M-,") 'Ꭶ/that)
 
 (global-set-key (kbd "C-c C-c C-r") 'collapse-lines-region)
 
@@ -138,7 +138,7 @@
   (Ꭶ/set-key "C-c C-l" #'downcase-region))
 
 (Ꭶ/set-key   '("C-z" "M-z" "C-_") 'undo      )
-(Ꭶ/set-key   '("M-r") 'replace-regexp        )
+(Ꭶ/set-key   '("M-ρ" "C-r") 'replace-regexp  )
 (Ꭶ/set-key   '("C-c M-s") 'replace-string    )
 (Ꭶ/set-key   '("M-a") 'ignore                )
 (Ꭶ/set-key   '("M-c") 'ignore                )
@@ -195,7 +195,107 @@
 (Ꭶ/set-key
  '("M-T" "M-t")
  #'(lambda () (interactive)
-     (ert-delete-all-tests)
-     (compile-defun)
-     (ert t)
- ))
+     (or (when (equal "elisp-mode" (Ꭶ/mode-name))
+           (progn
+             (ert-delete-all-tests)
+             (compile-defun)
+             (ert t)))
+         (ignore))))
+
+(Ꭶ/set-key   '(
+               "C-f"
+               "C-ก"
+               "C-྄"
+               "C-Ꭹ"
+               "C-ф"
+               "C-φ"
+               )
+             'forward-char)
+(Ꭶ/set-key   '(
+               "C-b"
+               "C-ิ"
+               "C-བ"
+               "C-Ꭸ"
+               "C-б"
+               "C-β"
+               )
+             'backward-char)
+(Ꭶ/set-key   '(
+               "C-n"
+               "C-ค"
+               "C-ན"
+               "C-Ꮎ"
+               "C-н"
+               "C-ν"
+               )
+             'next-line)
+(Ꭶ/set-key   '(
+               "C-p"
+               "C-แ"
+               "C-པ"
+               "C-Ꮑ"
+               "C-п"
+               "C-π"
+               )
+             'previous-line)
+(Ꭶ/set-key   '(
+               "M-f"
+               "M-ก"
+               "M-྄"
+               "M-Ꭹ"
+               "M-ф"
+               "M-φ"
+               )
+             'forward-word)
+(Ꭶ/set-key   '(
+               "M-b"
+               "M-ิ"
+               "M-བ"
+               "M-Ꭸ"
+               "M-б"
+               "M-β"
+               )
+             'backward-word)
+(Ꭶ/set-key   '(
+               "C-a"
+               "C-้"
+               "C-འ"
+               "C-Ꭰ"
+               "C-а"
+               "C-α"
+               )
+             'beginning-of-line)
+(Ꭶ/set-key   '(
+               "C-e"
+               "C-ย"
+               "C-ེ"
+               "C-Ꭱ"
+               "C-е"
+               "C-ε"
+               )
+             'end-of-line)
+(Ꭶ/set-key   '(
+               "M-<"
+               "M-ฟ"
+               "M-Ꮲ"
+               "M-<"
+               "M-<"
+               )
+             'beginning-of-buffer)
+(Ꭶ/set-key   '(
+               "M->"
+               "M-ฉ"
+               "M->"
+               "M-Ꮄ"
+               "M->"
+               )
+             'end-of-buffer)
+(Ꭶ/set-key   '(
+               "C-k"
+               "C-น"
+               "C-ཀ"
+               "C-Ꮈ"
+               "C-к"
+               "C-κ"
+               )
+             'kill-line)
