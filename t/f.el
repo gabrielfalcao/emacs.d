@@ -254,7 +254,7 @@
         (Ꭶ/vwf (buffer-name) "#C6DBDC"))
       (format "%s %s"
               (Ꭶ/vwf (buffer-name) "#C2F3D7")
-              (Ꭶ/vwf (format "[%s]" (buffer-file-name-relative)) "#F6CA51" ))))
+              (Ꭶ/vwf (format "[%s]" (buffer-file-name-relative)) "#FF4018" ))))
 
 (defun Ꭶ/hashnurtail (algo hwm contents)
   "HWM inspo https://zeromq.orᎦ/socket-api/#high-water-mark
@@ -296,7 +296,7 @@ CONTENTS.
                (propertize
                 (format " ⇒ %S %S ⇐ "
                         (marker-position (mark-marker)) (point))
-                'face (list :background "#F6CA51" :foreground (contrast-color "#F6CA51")))
+                'face (list :background "#FF4018" :foreground (contrast-color "#FF4018")))
              "")))
    " "))
 
@@ -353,7 +353,7 @@ CONTENTS.
    " "
    '(:eval (Ꭶ/bfan))
    " " (propertize " ⇒ " 'face (list :background (Ꭶ/mode-line-background)
-                                     :foreground "#79B9FF"))
+                                     :foreground "#F10958"))
    " "
    '(:eval (Ꭶ/tick-mode-name))
    " "
