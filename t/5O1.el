@@ -48,21 +48,22 @@
 (setq python-indent-offset 6)
 (setq company-idle-delay 0)
 (setq company-show-quick-access t)
-(ignore-errors (server-reboot))
+(ignore-errors
+  (server-mode 9))
 
 (setq large-file-warning-threshold 9000000 make-backup-files nil)
 (setq rust-format-on-save nil rust-rustfmt-bin "~/.cargo/bin/rustfmt" rust-rustfmt-switches '("--edition" "2021" "--color" "always" "--unstable-features"))
 
 (setq replace-regexp-lax-whitespace t case-fold-search nil)
-(add-hook 'after-init-hook 'cᎦdgᎦ)
-(add-hook 'after-revert-hook 'cᎦdgᎦ)
-(add-hook 'after-save-hook 'cᎦdgᎦ)
-(add-hook 'after-change-functions 'cᎦdgᎦ)
-;; (add-hook 'after-insert-file-functions 'cᎦdgᎦ)
-(add-hook 'write-files-hook 'cᎦdgᎦ)
-(add-hook 'after-find-file 'cᎦdgᎦ)
-(add-hook 'after-change-major-mode-hook 'cᎦdgᎦ)
-(add-hook 'after-set-visited-file-name-hook 'cᎦdgᎦ)
+(add-hook 'after-init-hook 'cgdᎦ)
+;; (add-hook 'after-revert-hook 'cgdᎦ)
+;; (add-hook 'after-save-hook 'cgdᎦ)
+;; (add-hook 'after-change-functions 'cgdᎦ)
+;; (add-hook 'after-insert-file-functions 'cgdᎦ)
+(add-hook 'write-files-hook 'cgdᎦ)
+(add-hook 'after-find-file 'cgdᎦ)
+(add-hook 'after-change-major-mode-hook 'cgdᎦ)
+(add-hook 'after-set-visited-file-name-hook 'cgdᎦ)
 (setq inhibit-local-variables-regexps (append '("\\[.]sh" "\\[.]json\w?" "\\[.][tj]sx?") inhibit-local-variables-regexps ))
 ;;(setq line-number-display-limit 10000)
 ;; ;; ;; *;; ;; OzsgOzsgOzsqOzsgOzsgKGRlZnVuIHNldHVwLXRpZGUtbW9kZSAoKSAoaW50ZXJhY3RpdmUpIDs7ICh0aWRlLXNldHVwKSAoZmx5Y2hlY2stbW9kZSArMSkgKHNldHEgZmx5Y2hlY2stY2hlY2stc3ludGF4LWF1dG9tYXRpY2FsbHkgJyhzYXZlIG1vZGUtZW5hYmxlZCkpIChlbGRvYy1tb2RlICsxKSA7OyAodGlkZS1obC1pZGVudGlmaWVyLW1vZGUgKzEpIChjb21wYW55LW1vZGUgKzEpKTs7IDs7IDs7Kjs7IDs7IChhZGQtaG9vayAnYmVmb3JlLXNhdmUtaG9vayAndGlkZS1mb3JtYXQtYmVmb3JlLXNhdmUpIDs7IDs7IDs7Kjs7IDs7IChhZGQtaG9vayAndHlwZXNjcmlwdC1tb2RlLWhvb2sgIydzZXR1cC10aWRlLW1vZGUpIDs7IDs7IDs7Kjs7IDs7IChhZGQtaG9vayAnd2ViLW1vZGUtaG9vayAgKGxhbWJkYSAoKSAgKHdoZW4gKHN0cmluZy1lcXVhbCAianN4IiAoZmlsZS1uYW1lLWV4dGVuc2lvbiBidWZmZXItZmlsZS1uYW1lKSkgIChzZXR1cC10aWRlLW1vZGUpKSkpIChhZGQtaG9vayAnd2ViLW1vZGUtaG9vayAgKGxhbWJkYSAoKSAgKHdoZW4gKHN0cmluZy1lcXVhbCAidHN4IiAoZmlsZS1uYW1lLWV4dGVuc2lvbiBidWZmZXItZmlsZS1uYW1lKSkgIChzZXR1cC10aWRlLW1vZGUpKSkp
@@ -131,7 +132,11 @@
 
 
 (setq sh-mode-map (make-sparse-keymap))
-(add-hook 'shell-script-mode-hook #'(lambda () (interactive) (setq sh-mode-map (make-sparse-keymap)) (setq 'sh-basic-offset 6)))
+(add-hook 'shell-script-mode-hook
+          #'(lambda () (interactive)
+              (setq sh-mode-map (make-sparse-keymap))
+              (setq 'sh-basic-offset 6)
+              ))
 
 
 (add-hook 'web-mode-hook

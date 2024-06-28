@@ -32,11 +32,9 @@
    "C-x C-d"
    "C-x C-u"
    "C-x C-d"
-   "C-x C-p"
    "M-j"
-   "M-t"
    "M-k"
-   "M-," "M-;"
+   "M-,"
    "s-&" "s-'" "s-+" "s-," "s--" "s-0" "s-:" "s-=" "s-?" "s-C" "s-D" "s-E" "s-F" "s-H" "s-L" "s-M" "s-S" "s-^" "s-`" "s-a" "s-c" "s-d" "s-e" "s-f" "s-g" "s-h" "s-j" "s-k" "s-l" "s-m" "s-n" "s-o" "s-p" "s-q" "s-s" "s-t" "s-u" "s-v" "s-w" "s-x" "s-y" "s-z" "s-|" "s-~"
    )
  )
@@ -139,9 +137,6 @@
 
 (Ꭶ/set-key   '("C-z" "M-z" "C-_") 'undo      )
 (Ꭶ/set-key   '("M-r") 'replace-regexp        )
-(Ꭶ/set-key   '("C-c M-s") 'replace-string    )
-(Ꭶ/set-key   '("M-a") 'ignore                )
-(Ꭶ/set-key   '("M-c") 'ignore                )
 (Ꭶ/set-key   '("C-g" "C-q") 'keyboard-quit   )
 (Ꭶ/set-key   '("M-u" "M-l" "M-ESC") 'ah      )
 (Ꭶ/set-key   "C-s"   'isearch-forward-regexp )
@@ -150,7 +145,7 @@
 (Ꭶ/set-key   "M-g g" 'goto-line)
 (Ꭶ/set-key   "M-g M-g" 'goto-line)
 (Ꭶ/set-key   "M-O" #'(lambda () (interactive) (insert "ॐ")))
-(Ꭶ/set-key   "M-H" 'Ꭶ/ᎮÃϯ)
+(Ꭶ/set-key   "M-H" 'Ꭶ/ᎮÃϯ)
 (Ꭶ/set-key   "C-x C-e m" 'morse-region)
 (Ꭶ/set-key   "C-x C-d m" 'unmorse-region)
 (Ꭶ/set-key   "C-\\" 'morse-region)
@@ -192,10 +187,3 @@
 (Ꭶ/set-key (mapcar 'base64-decode-string '( "Qy14IEMtNSBt" "Qy14IEMtNSBDLW0=" )) #'(lambda () (interactive) (insert "Ꮉ")))
 (Ꭶ/set-key (mapcar 'base64-decode-string '( "Qy14IEMtNSBl" "Qy14IEMtNSBDLWU=" )) #'(lambda () (interactive) (insert "Ꭾ")))
 ;; (Ꭶ/set-key (mapcar 'base64-decode-string '( "Qy14IEMtNSBl" "Qy14IEMtNSBDLWU=" ) ;;ϯ
-(Ꭶ/set-key
- '("M-T" "M-t")
- #'(lambda () (interactive)
-     (ert-delete-all-tests)
-     (compile-defun)
-     (ert t)
- ))
