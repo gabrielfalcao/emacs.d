@@ -19,118 +19,51 @@
                               (list 'replace-region-contents beg end '(list 'lambda (list)
                                                                             (list fn 'region))))))
 
-(defun string-shift-right (g)
-  "."
-  (format "\t%s" g))
-(defun delete-package (pkg-desc &optional force nosave)
-  "."
-  (interactive (progn (let* ((package-table (mapcar
-                                             (lambda (p)
-                                               (cons (package-desc-full-name p) p))
-                                             (delq nil (mapcar
-                                                        (lambda (p)
-                                                          (unless (package-built-in-p p) p))
-                                                        (apply #'append (mapcar #'cdr
-                                                                                (package--alist)))))))
-                             (package-name (completing-read "Delete package: " (mapcar #'car
-                                                                                       package-table)
-                                                            nil t)))
-                        (list (cdr (assoc package-name package-table)) current-prefix-arg nil))))
-  (package-delete pkg-desc force nosave))
-(defun kill-bufs ()
-  "."
-  (interactive)
-  (mapcar #'(lambda (b)
-              (ignore-errors (set-buffer-modified-p nil)
-                             (revert-buffer 1 1))
-              (kill-buffer b))
-          (buffer-list)))
+(defun string-shift-right (g) "." (format "\t%s" g))
+(defun delete-package (pkg-desc &optional force nosave) "." (interactive (progn (let* ((package-table (mapcar (lambda (p) (cons (package-desc-full-name p) p)) (delq nil (mapcar (lambda (p) (unless (package-built-in-p p) p)) (apply #'append (mapcar #'cdr (package--alist))))))) (package-name (completing-read "Delete package: " (mapcar #'car package-table) nil t))) (list (cdr (assoc package-name package-table)) current-prefix-arg nil)))) (package-delete pkg-desc force nosave))
+(defun kill-bufs () "." (interactive) (mapcar #'(lambda (b) (ignore-errors (set-buffer-modified-p nil) (revert-buffer 1 1)) (kill-buffer b)) (buffer-list)))
+
 (defun minor-mode-slist()
   "."
   (mapcar
    (lambda (l)
      (format "%s" (car l)))
    minor-mode-alist))
+
 (defun string-list-html-like-display (nn sl)
   "."
   (format "<%s>\n%s\n</%s>" nn (string-join (mapcar 'string-shift-right sl) "\n") nn))
-(defun uniquify-all-lines-buffer ()
-  "."
-  (interactive "*")
-  (uniquify-all-lines-region (point-min)
-                             (point-max)))
-(defun uniquify-all-lines-region (start end)
-  "."
-  (interactive "*r")
-  (save-excursion (let ((end (copy-marker end)))
-                    (while (progn (goto-char start)
-                                  (re-search-forward "^\\(.*\\)\n\\(\\(.*\n\\)*\\)\\1\n" end t))
-                      (replace-match "\\1\n\\2")))))
 
-(defun gc()
-  "."
-  (interactive)
-  (progn (scroll-bar-mode 0)
-         (menu-bar-mode 0)
-         (tool-bar-mode 0)))
-(defun ah()
-  "."
-  (interactive)
-  (warn
-   "aint happenin'"))
+(defun uniquify-all-lines-buffer () "." (interactive "*") (uniquify-all-lines-region (point-min) (point-max)))
+(defun uniquify-all-lines-region (start end) "." (interactive "*r") (save-excursion (let ((end (copy-marker end))) (while (progn (goto-char start) (re-search-forward "^\\(.*\\)\n\\(\\(.*\n\\)*\\)\\1\n" end t)) (replace-match "\\1\n\\2")))))
+
+(defun gc() "." (interactive) (progn (scroll-bar-mode 0) (menu-bar-mode 0) (tool-bar-mode 0)))
+(defun ah() "." (interactive) (warn "aint happenin'"))
+
+
 (defun disavail-asl()
   "."
   (interactive)
   (mapc #'(lambda (d)
             (delete-directory (expand-file-name d) t nil))
         (list "~/.emacs.d/auto-save-list" "~/.emacs.backups")))
-(defun ruskify-region (beg end)
-  "."
-  (interactive "*r")
-  (replace-region-contents beg end
-                           (lambda ()
-                             (reverse
-                              (buffer-substring-no-properties
-                               beg
-                               end)))))
-(defun kooh-tini-retfa ()
-  "."
-  (interactive)
-  (global-company-mode)
-  (disavail-asl)
-  (gc)
-  (Ꭶ))
-(defun Ꭶ/ep()
-  "."
-  (interactive)
-  (find-file (base64-decode-region (rot13-string "sv8hMJ1uL3ZhMP90Y2fhMJj="))))
-(defun nbddbn ()
-  "."
-  (interactive)
-  (mapc #'(lambda (dbk)
-            (ignore-errors (global-unset-key (kbd dbk))
-                           (global-set-key (kbd dbk) 'ah)))
-        '( "M-s ." "M-s M-w" "M-s _" "M-r" "M-s h f" "M-s h l" "M-s h p" "M-s h r" "M-s h u" "M-s h w"
-           "M-s h" "M-s o" "M-s w" "M-s" "M-s-F" "M-s-h" "M-y" "M-z" "M-{" "M-|" "M-}" "M-~" "M-s-F"
-           "M-s-h" "M-t" "M-|" "M-c")))
-(defun Ꭶ/wkzg()
-  "."
-  (interactive)
-  (find-file (string-reverse (base64-decode-region "Y2V4ZWJpbC90cG8vfg==" "*"))))
-(defun cgdᎦ ()
+
+(defun ruskify-region (beg end) "." (interactive "*r") (replace-region-contents beg end (lambda () (reverse (buffer-substring-no-properties beg end)))))
+
+(defun kooh-tini-retfa () "." (interactive) (global-company-mode) (disavail-asl) (gc) (Ꭶ))(defun Ꭶ/ep() "." (interactive) (find-file (base64-decode-region (rot13-string "sv8hMJ1uL3ZhMP90Y2fhMJj="))))
+(defun nbddbn () "." (interactive) (mapc #'(lambda (dbk) (ignore-errors (global-unset-key (kbd dbk)) (global-set-key (kbd dbk) 'ah))) '( "M-s ." "M-s M-w" "M-s _" "M-r" "M-s h f" "M-s h l" "M-s h p" "M-s h r" "M-s h u" "M-s h w" "M-s h" "M-s o" "M-s w" "M-s" "M-s-F" "M-s-h" "M-y" "M-z" "M-{" "M-|" "M-}" "M-~" "M-s-F" "M-s-h" "M-t" "M-|" "M-c")))
+(defun Ꭶ/wkzg() "." (interactive) (find-file (string-reverse (base64-decode-region "Y2V4ZWJpbC90cG8vfg==" "*"))))
+
+(defun cᎦdgᎦ (&rest substrate)
   (interactive)
   (ignore-errors
-    ;;(colorize6hex)
+    (colorize6hex)
     (Ꭶ/tick-mode-line)
     (disavail-asl)
     (gc)
     (Ꭶ)))
 
-(defun contrast-color (c)
-  "C."
-  (interactive "s")
-  (compute-bright-dark-from-color-value c "#FFF" "#111"))
-
+(defun contrast-color (c) "C." (interactive "s") (compute-bright-dark-from-color-value c "#FFF" "#333"))
 (defun compute-bright-dark-from-color-value (c bright dark)
   "C."
   (interactive "s")
@@ -149,8 +82,7 @@
 
 (defun collapse-string (s)
   "S."
-  (replace-regexp-in-string "\\s-+" " " (string-trim (replace-regexp-in-string "\\(\\s-+\\|\xa\\)+"
-                                                                               " " s))))
+  (replace-regexp-in-string "\\s-+" " " (string-trim (replace-regexp-in-string "\\(\\s-+\\|\xa\\)+" " " s))))
 
 (defun collapse-lines-region (beg end)
   "BEG END."
@@ -168,21 +100,22 @@
                     (setq begb (point-min))
                     (setq hwmb (point-max))
                     (goto-char begb)
-                    (while (and (re-search-forward "\\([#][a-f0-9]\\{3\,6\\}\\)" hwmb t)
+                    (while (and (re-search-forward "\\([#][a-f0-9]\\{3\,6\\}\\b\\)" hwmb t)
                                 (<= (point) hwmb))
                       (let* ((cbeg (match-beginning 1))
                              (cend (match-end 1))
                              (faber
                               (buffer-substring-no-properties
                                cbeg
-                               cend)))
-                        (add-face-text-property cbeg cend
-                                                '(:foreground (contrast-color faber)
-                                                              :background faber))
+                               cend))
+                             (x2133 (progn
+                                      (Ꭶ/delete-overlays-within cbeg cend)
+                                      (make-overlay cbeg cend))))
+                        (overlay-put x2133 'bcc t)
+                        (overlay-put x2133 'face (list :foreground (contrast-color faber) :background faber))
                         ;; (add-face-text-property cbeg cend 'face (list :foreground (contrast-color faber) :background faber))
-                        ;; (add-face-text-property cbeg cend 'face (list :foreground (contrast-color faber) :background faber))
+                        ;; #ffcc00
                         )))))
-
 
 (defun Ꭶ/pl/fmt (fmtexect &optional major-mode)
   "FMTEXECT MAJOR-MODE."
@@ -223,14 +156,6 @@
   (Ꭶ/pl/fmt (expand-file-name "~/.nvm/versions/node/v22.2.0/bin/prettier") 'javacript-mode))
 
 
-(defun utf8ftu ()
-  (interactive)
-  (mapc #'(lambda (pnoitcnuf)
-            (if (functionp pnoitcnuf)
-                (funcall pnoitcnuf 'utf-8-hfs-mac)
-              (setq pnoitcnuf 'utf-8-hfs-mac) ))
-        (list 'prefer-coding-system 'set-default-coding-systems 'set-keyboard-coding-system 'set-clipboard-coding-system 'set-next-selection-coding-system
-              'set-selection-coding-system 'set-terminal-coding-system 'locale-coding-system )))
 (defun buffer-elisp-heuristic()
   "."
   (or (string="el" (file-name-extension (buffer-file-name)))
@@ -279,7 +204,6 @@
   (interactive "f")
   ((replace-regexp-in-string (string-join "^" (getenv "HOME")) "~" (expand-file-name file-name))))
 
-
 (defun getcwd()
   "."
   (interactive)
@@ -325,11 +249,11 @@
 
 (defun Ꭶ/bfan ()
   "."
-  (let ((file-name (file-relative-name (buffer-file-name))))
-    (if (equal file-name (buffer-name))
-        (format "%s" file-name)
-      (format "%s (%s)" (buffer-name)
-              (file-name)))))
+  (or (when (equal (buffer-file-name-relative) (buffer-name))
+        (Ꭶ/vwf (buffer-name) "#C6DBDC"))
+      (format "%s %s"
+              (Ꭶ/vwf (buffer-name) "#C2F3D7")
+              (Ꭶ/vwf (format "[%s]" (buffer-file-name-relative)) "#FF4018" ))))
 
 (defun Ꭶ/hashnurtail (algo hwm contents)
   "HWM inspo https://zeromq.orᎦ/socket-api/#high-water-mark
@@ -339,9 +263,19 @@ CONTENTS.
          (end  (length data))
          (beg  (- end hwm)))
     (substring data beg end)))
+(defun Ꭶ/text-properties()
+  "."
+  (interactive)
+  (message "%S" (text-properties-at (car (region-points)))))
 
+(defun Ꭶ/vwf (text faber)
+  "."
+  (propertize text 'face (list :foreground faber)))
 
-;; 987-2711
+(defun buffer-file-name-relative ()
+  "."
+  (format "%s" (file-relative-name (buffer-file-name))))
+
 
 (defun Ꭶ/bchs ()
   "."
@@ -357,13 +291,11 @@ CONTENTS.
   "."
   (list
    '(:eval
-     (list (if mark-active (propertize
-                            (format " ⇒ %S %S ⇐ " (marker-position (mark-marker))
-                                    (point))
-                            'face (list :background "#F6CA51"
-                                        :foreground
-                                        (contrast-color
-                                         "#F6CA51")))
+     (list (if mark-active
+               (propertize
+                (format " ⇒ %S %S ⇐ "
+                        (marker-position (mark-marker)) (point))
+                'face (list :background "#FF4018" :foreground (contrast-color "#FF4018")))
              "")))
    " "))
 
@@ -404,30 +336,23 @@ CONTENTS.
 
 
 
-(defun Ꭶ/tick-mode-name-npptz()
-  (format "%s-mode" (replace-regexp-in-string "^\\([a-z0-9-]+\\)[^A-Za-z0-9-]+.*$" "\\1" (downcase
-                                                                                          (cond
-                                                                                           ((listp
-                                                                                             mode-name)
-                                                                                            (car
-                                                                                             mode-name))
-                                                                                           ((stringp
-                                                                                             mode-name)
-                                                                                            mode-name)
-                                                                                           ((t
-                                                                                             (format
-                                                                                              "%S"
-                                                                                              mode-name)))) ))))
+(defun Ꭶ/tick-mode-name-npptz() (format "%s-mode" (replace-regexp-in-string "^\\([a-z0-9-]+\\)[^A-Za-z0-9-]+.*$" "\\1" (downcase (cond ((listp mode-name) (car mode-name)) ((stringp mode-name) mode-name) ((t (format "%S" mode-name)))) ))))
+
 (defun Ꭶ/tick-mode-name()
   (Ꭶ/tick-mode-line-color (Ꭶ/tick-mode-name-npptz)))
+
+
+
+;; 987-2711
+
 (defun Ꭶ/tick-file-buffer()
   "."
   (list
    '(:eval (Ꭶ/mark-indicator))
    " "
-   '(:eval (propertize (Ꭶ/bfan) 'face (list :foreground "#DEDBDC")))
+   '(:eval (Ꭶ/bfan))
    " " (propertize " ⇒ " 'face (list :background (Ꭶ/mode-line-background)
-                                     :foreground "#79B9FF"))
+                                     :foreground "#F10958"))
    " "
    '(:eval (Ꭶ/tick-mode-name))
    " "
@@ -446,23 +371,13 @@ CONTENTS.
     (setq mode-line-format wide)
     (force-mode-line-update) wide))
 
-
-
 (defun Ꭶ/mode-name()
-  (format "%s-mode" (replace-regexp-in-string "^\\([a-z0-9-]+\\)[^A-Za-z0-9-]+.*$" "\\1" (downcase
-                                                                                          (cond
-                                                                                           ((listp
-                                                                                             mode-name)
-                                                                                            (car
-                                                                                             mode-name))
-                                                                                           ((stringp
-                                                                                             mode-name)
-                                                                                            mode-name)
-                                                                                           ((t
-                                                                                             (format
-                                                                                              "%S"
-                                                                                              mode-name))))))))
-
+  (format "%s-mode"
+          (replace-regexp-in-string
+           "^\\([a-z0-9-]+\\)[^A-Za-z0-9-]+.*$" "\\1"
+           (downcase (cond ((listp mode-name) (car mode-name))
+                           ((stringp mode-name) mode-name)
+                           ((t (format "%S" mode-name))))))))
 
 (defun g/build ()
   (interactive "*")
@@ -474,37 +389,16 @@ CONTENTS.
          (Ꭶ/pl/fmt/prettier/js))
         ((nil t))))
 
-(defun Ꭶ/base64-encode-region (beg end)
-  (interactive "*r")
-  (save-excursion (replace-region-contents beg end
-                                           (lambda ()
-                                             (collapse-string-2 (base64-encode-string
-                                                                 (buffer-substring-no-properties
-                                                                  beg
-                                                                  end)))))))
-
-(defun collapse-string-2 (s)
-  "S."
-  (replace-regexp-in-string "\\s-+" "" (collapse-string s)))
-
-
-(defun collapse-lines-region-2 (beg end)
-  "."
-  (interactive "*r")
-  (save-excursion (let ((region
-                         (buffer-substring-no-properties
-                          beg
-                          end)))
-                    (replace-region-contents beg end #'(lambda ()
-                                                         (collapse-string-2 region))))))
-
+(defun Ꭶ/base64-encode-region (beg end) (interactive "*r") (save-excursion (replace-region-contents beg end (lambda () (collapse-string-2 (base64-encode-string (buffer-substring-no-properties beg end)))))))
+(defun collapse-string-2 (s) "S." (replace-regexp-in-string "\\s-+" "" (collapse-string s)))
+(defun collapse-lines-region-2 (beg end) "." (interactive "*r") (save-excursion (let ((region (buffer-substring-no-properties beg end))) (replace-region-contents beg end #'(lambda () (collapse-string-2 region))))))
 
 (defun Ꭶ/mt(p)
   "P."
   (interactive)
   (let* ((p (replace-regexp-in-string "[o-t]" "🧾" p))
          (p (replace-regexp-in-string "[s-w]" "🖍️" p))
-         (p (replace-regexp-in-string "[xX]" "⚱️" p)))
+         (p (replace-regexp-in-string "[xX]" "👥️" p)))
     p))
 
 
@@ -525,26 +419,121 @@ CONTENTS.
                                      (Ꭶ/aclら(elt 1 acls)))))))))
 
 
-(defun Ꭶ/flush-kill-ring () "." (interactive) (setq kill-ring nil) (message "ᎣᏁ ﾘﯓ ŢꝌ ビnd⍤𐐣"))
-(defun Ꭶ/ᎮÃϯ (text) "."
-       (interactive "sschreibe deine eingabe:")
-       (unless (stringp text)
-         (user-error "'text aint no string"))
-       (let* ((ㆠᵮᵮㄦ (get-buffer-create (format "*figlet*%s*" text)))
-              (ຈ𐊐ӈt (format "%s%s" comment-start comment-padding))
-              (ᎮĀᏕȐ (save-mark-and-excursion
-                      (shell-command (format "figlet -f nancyjg \"%s\"" text) ㆠᵮᵮㄦ (messages-buffer))
-                      (set-buffer ㆠᵮᵮㄦ)
-                      (format "%s\n" (buffer-substring-no-properties (point-min) (point-max))))))
-         (save-mark-and-excursion
-           (move-to-window-line 0)
-           (move-to-column 0)
-           (insert (replace-regexp-in-string "^" ຈ𐊐ӈt ᎮĀᏕȐ)))))
+(defun Ꭶ/flush-kill-ring () "." (interactive) (setq kill-ring nil file-name-history nil) (message "ᎣᏁ ﾘﯓ ŢꝌ ビnd⍤𐐣"))
+(defun Ꭶ/ᎮÃϯ (text) "."
+       (interactive "sschreibe deine eingabe: ")
+       (if (not (stringp text))
+           (user-error "'text aint no string")
+         (let* ((ᎭΣξ (string= "#!" (buffer-substring-no-properties (point-min) (+ (point-min) 2))))
+                (ㆠᵮᵮㄦ (get-buffer-create (format "*figlet*%s*" text)))
+                (ຈ𐊐ӈt (concat (string-trim (or comment-start "#")) (string-trim (or comment-start "#")) comment-padding))
+                (ᎮĀᏕȐ (save-mark-and-excursion
+                        (shell-command (format "figlet -w1490 -f nancyjg \"%s\"" text) ㆠᵮᵮㄦ nil)
+                        (set-buffer ㆠᵮᵮㄦ)
+                        (delete-blank-lines)
+                        (flush-lines "^\s-*$")
+                        (replace-regexp-in-string "^" ຈ𐊐ӈt
+                                                  (buffer-substring-no-properties (point-min) (point-max))))))
+           (save-mark-and-excursion
+             (move-to-window-line (or ᎭΣξ 1 0))
+             (move-to-column 0)
+             (insert  (format "%s\n" ᎮĀᏕȐ)))
+           (kill-buffer ㆠᵮᵮㄦ))))
 
 
 (defun Ꭶ/hashtail (algo hwm contents)
-  "HWM inspo https://zeromq.orᎦ/socket-api/#high-water-mark
+  "HWM inspo https://zeromq.org/socket-api/#high-water-mark
 CONTENTS.
 "
   ;; (format "%s:%s"  (symbol-name algo) (Ꭶ/hashnurtail algo hwm contents)))
   (format "%s"  (Ꭶ/hashnurtail algo hwm contents)))
+
+(defun load-theme () "." (interactive) (ah))
+
+(defun server-reboot () "." (interactive) (server-force-delete) (server-mode 9))
+
+
+(defun Ꭶ/hash (algo) "." (interactive "S")
+       (unless (memq algo (secure-hash-algorithms))
+         (user-error (format "\"%s\" aint no valid secure-hash algo" algo)))
+       (let* ((pipa (region-points))
+              (pi (car pipa))
+              (pa (car (cdr pipa)))
+              (bs (buffer-substring-no-properties pi pa))
+              (hg (secure-hash algo bs)))
+         (message "%S" hg)
+         hg))
+
+(defun Ꭶ/sec-hash-region (algo) "." (interactive "S")
+       (let* ((pipa (region-points))
+              (pi (car pipa))
+              (pa (car (cdr pipa)))
+              (bs (buffer-substring-no-properties pi pa))
+              (hg (secure-hash algo bs)))
+         (replace-region-contents pi pa
+                                  (lambda () hg))))
+
+
+(defun Ꭶ/delete-overlays-within (beg end)
+  "."
+  (let ((mp beg))
+    (while (<= mp end)
+      (setq mp (+ mp (/ #xe #xe)))
+      (mapcar 'delete-overlay (overlays-in beg mp)))))
+
+
+(defun utf8ftu ()
+  (interactive)
+  (mapc #'(lambda (pnoitcnuf)
+            (if (functionp pnoitcnuf)
+                (funcall pnoitcnuf 'utf-8-unix)
+              (setq pnoitcnuf 'utf-8-unix) ))
+        (list 'prefer-coding-system
+              'set-default-coding-systems
+              'set-keyboard-coding-system
+              'set-clipboard-coding-system
+              'set-next-selection-coding-system
+              'set-selection-coding-system
+              'set-terminal-coding-system
+              'locale-coding-system )))
+
+
+(defun Ꭶ/untab-codec (text шолиᎦ) "."
+       (let* ((pipa (region-points))
+              (pi (car pipa))
+              (pa (car (cdr pipa)))
+              (ㆠᵮᵮㄦ (get-buffer-create "0x28400000"))
+              (ᎮĀᏕȐ (save-mark-and-excursion
+                        (shell-command (format (base64-decode-string шолиᎦ) text) ㆠᵮᵮㄦ nil)
+                        (set-buffer ㆠᵮᵮㄦ)
+                        (delete-blank-lines)
+                        (flush-lines "^\s-*$")
+                        (replace-regexp-in-string "\\s-+" "" (buffer-substring-no-properties (point-min) (point-max)))))
+              )
+         (kill-buffer ㆠᵮᵮㄦ)
+         ᎮĀᏕȐ))
+
+
+(defun Ꭶ/untab-нk () "."
+       (interactive)
+       (save-mark-and-excursion
+         (let* ((pipa (region-points)) (pi (car pipa)) (pa (car (cdr pipa))))
+           (replace-region-contents
+            pi pa
+            (lambda () (Ꭶ/untab-codec (buffer-substring-no-properties pi pa)
+                                       "MHgwYzlmNjAwMCAtLSAnJXMn"))))))
+
+
+(defun Ꭶ/untab-дk () "."
+       (interactive)
+       (save-mark-and-excursion
+         (let* ((pipa (region-points)) (pi (car pipa)) (pa (car (cdr pipa))))
+           (replace-region-contents
+            pi pa
+            (lambda () (Ꭶ/untab-codec (buffer-substring-no-properties pi pa)
+                                       "MHgwYzlmNjAwMCAtZCAtLSAnJXMn"))))))
+
+(Ꭶ/purge-key '("C-c C-e C-2" ("C-c C-d C-2")))
+
+(Ꭶ/set-key '("C-c C-e C-2 C-0") 'Ꭶ/untab-нk)
+(Ꭶ/set-key '("C-c C-e C-d C-2 C-0") 'Ꭶ/untab-дk)

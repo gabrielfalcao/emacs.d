@@ -17,7 +17,7 @@
 ;;       """"""""            """"'
 (defun Ꭶ/mode-line-foreground ()
   (interactive)
-  "#F6CA51")
+  "#F16018")
 
 (defun Ꭶ/mode-line-background ()
   (interactive)
