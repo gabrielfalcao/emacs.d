@@ -1,0 +1,15 @@
+(define-package "lcr" "20221012.742" "lightweight coroutines"
+  '((dash "2.12.0")
+    (emacs "25.1"))
+  :commit "6c345112ffb59f3e7babca6c83942f686b5f554b" :authors
+  '(("Jean-Philippe Bernardy" . "jeanphilippe.bernardy@gmail.com"))
+  :maintainers
+  '(("Jean-Philippe Bernardy" . "jeanphilippe.bernardy@gmail.com"))
+  :maintainer
+  '("Jean-Philippe Bernardy" . "jeanphilippe.bernardy@gmail.com")
+  :keywords
+  '("tools")
+  :url "https://github.com/jyp/lcr")
+;; Local Variables:
+;; no-byte-compile: t
+;; End:
