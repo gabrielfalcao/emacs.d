@@ -119,6 +119,7 @@
 (add-to-list 'auto-mode-alist '("^---$" . yaml-mode))
 (add-to-list 'auto-mode-alist '("nginx.conf$" . nginx-mode))
 (add-hook 'after-change-major-mode-hook #'(lambda () (prettify-symbols-mode)))
+(add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
 
 ;; (add-hook 'typescript-mode-hook 'prettier-js-mode)
 ;; (add-hook 'web-mode-hook 'prettier-js-mode)
