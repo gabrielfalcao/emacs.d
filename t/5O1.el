@@ -124,6 +124,9 @@
 ;; (add-hook 'typescript-mode-hook 'prettier-js-mode)
 ;; (add-hook 'web-mode-hook 'prettier-js-mode)
 ;; (add-hook 'web-mode-hook 'prettier-js-mode)
+(add-hook 'python-mode-hook #'(lambda ()
+                                (interactive)
+                                (define-key python-mode-map (kbd "C-c C-f") 'blacken-buffer)))
 
 (setq whitespace-style 'empty)
 (setq web-mode-content-types-alist

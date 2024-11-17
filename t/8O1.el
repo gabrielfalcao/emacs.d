@@ -220,6 +220,17 @@
                "C-β"
                )
              'backward-char)
+(Ꭶ/set-extra-key '(
+               "C-d"
+              "C-δ"
+               )
+             'delete-char)
+(Ꭶ/set-extra-key '(
+                     "C-υ"
+                     "C-Ꮿ"
+                     )
+                   'yank)
+
 (Ꭶ/set-key   '(
                "C-n"
                "C-ค"

@@ -28,6 +28,7 @@
 (load-library "8O1")
 (load-library "5O1")
 (load-library "ninja-mode")
+(load-library "cmake-mode")
 
 (defun Ꭶ/this () "." (interactive) (load-library "k"))
 ;
@@ -38,3 +39,8 @@
 ;;(defun ᎦL3VuZG8ta2V5bWFwLWNoYW5nZXMgKCkgIi4iIChpbnRlcmFjdGl2ZSkgKHNldHEgZ2xvYmFsLW1hcCAoY29weS1rZXltYXAgᎦ/keymap)))
 
 (Ꭶ/tick-mode-line)
+
+(defalias 'plus #'+)
+(defalias 'quotient #'/)
+(defalias 'times #'*)
+(defalias 'difference #'-)

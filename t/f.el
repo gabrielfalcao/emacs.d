@@ -198,6 +198,16 @@
       (Ꭶ/purge-key pt)
       (define-key (current-global-map) key cg))))
 
+(defun Ꭶ/set-extra-key (pt cg)
+  "PT CG."
+  (if (or (vectorp pt)
+          (listp pt))
+      (mapc #'(lambda (pt)
+                (Ꭶ/set-extra-key pt cg))
+            pt)
+    (let ((key (kbd pt)))
+      (define-key (current-global-map) key cg))))
+
 
 (defun fold-file-name(file-name)
   "."
@@ -508,7 +518,7 @@ CONTENTS.
                         (set-buffer ㆠᵮᵮㄦ)
                         (delete-blank-lines)
                         (flush-lines "^\s-*$")
-                        (replace-regexp-in-string "\\s-+" "" (buffer-substring-no-properties (point-min) (point-max)))))
+                        (buffer-substring-no-properties (point-min) (point-max))))
               )
          (kill-buffer ㆠᵮᵮㄦ)
          ᎮĀᏕȐ))
