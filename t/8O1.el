@@ -123,7 +123,7 @@
 (Ꭶ/set-key '("C-c C-x C-e" "C-c C-d C-e"
              "C-c C-e C-b" "C-x C-d C-e")
            'Ꭶ/base64-encode-region)
-(Ꭶ/set-key '("C-c C-x C-e" "C-c C-d C-d"
+(Ꭶ/set-key '("C-c C-x C-d" "C-c C-d C-d"
              "C-x C-d C-d")
            'base64-decode-region)
 

@@ -91,6 +91,7 @@
 (add-to-list 'auto-mode-alist '("Dockerfile.*" . dockefile-mode))
 (add-to-list 'auto-mode-alist '("Makefile[.].*" . makefile-mode))
 (add-to-list 'auto-mode-alist '("Pipfile" . toml-mode))
+(add-to-list 'auto-mode-alist '("pyproject.toml" . toml-mode))
 (add-to-list 'auto-mode-alist '("Pipfile.lock" . toml-mode))
 (add-to-list 'auto-mode-alist '("\\.babelrc" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.bash$" . shell-script-mode))
@@ -120,13 +121,17 @@
 (add-to-list 'auto-mode-alist '("nginx.conf$" . nginx-mode))
 (add-hook 'after-change-major-mode-hook #'(lambda () (prettify-symbols-mode)))
 (add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
+(add-to-list 'auto-mode-alist '("\\.frm$" . visual-basic-mode))
+(add-to-list 'auto-mode-alist '("\\.vbp$" . visual-basic-mode))
 
-;; (add-hook 'typescript-mode-hook 'prettier-js-mode)
 ;; (add-hook 'web-mode-hook 'prettier-js-mode)
 ;; (add-hook 'web-mode-hook 'prettier-js-mode)
 (add-hook 'python-mode-hook #'(lambda ()
                                 (interactive)
                                 (define-key python-mode-map (kbd "C-c C-f") 'blacken-buffer)))
+(add-hook 'typescript-mode-hook  #'(lambda ()
+                                (interactive)
+                                (define-key typescript-mode-map (kbd "C-c C-f") 'prettier-write-buffer)))
 
 (setq whitespace-style 'empty)
 (setq web-mode-content-types-alist
