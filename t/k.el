@@ -28,7 +28,9 @@
 (load-library "8O1")
 (load-library "5O1")
 (load-library "ninja-mode")
+(load-library "cobol-mode")
 (load-library "cmake-mode")
+(load-library "visual-basic-mode")
 
 (defun Ꭶ/this () "." (interactive) (load-library "k"))
 ;
