@@ -131,7 +131,10 @@
                                 (define-key python-mode-map (kbd "C-c C-f") 'blacken-buffer)))
 (add-hook 'typescript-mode-hook  #'(lambda ()
                                 (interactive)
-                                (define-key typescript-mode-map (kbd "C-c C-f") 'prettier-write-buffer)))
+                                (define-key typescript-mode-map (kbd "C-c C-f") 'Ꭶ/pl/fmt/prettierjs)))
+(add-hook 'javascript-mode-hook  #'(lambda ()
+                                (interactive)
+                                (define-key typescript-mode-map (kbd "C-c C-f") 'Ꭶ/pl/fmt/prettierjs)))
 
 (setq whitespace-style 'empty)
 (setq web-mode-content-types-alist

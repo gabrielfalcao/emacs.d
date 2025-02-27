@@ -117,14 +117,12 @@
                         ;; #ffcc00
                         )))))
 
-(defun Ꭶ/pl/fmt (fmtexect &optional major-mode)
+(defun Ꭶ/pl/fmt (fmtexect)
   "FMTEXECT MAJOR-MODE."
   (unless (not  (buffer-modified-p (current-buffer)))
     (user-error "%s ought to be saved"  (buffer-name)))
   (unless (stringp fmtexect)
     (user-error "fmtexect nonstring"))
-  (unless (symbolp major-mode)
-    (user-error "major-mode nonsymbol"))
   (save-mark-and-excursion
     (let* ((target (expand-file-name (buffer-file-name)))
            (buffer (current-buffer))
@@ -132,28 +130,27 @@
            (err (make-temp-file fmtexect nil (Ꭶ/hashnurtail 'sha512 6 (buffer-file-name)))))
       (if (and (file-readable-p target)
                (file-regular-p target))
-          (let* (
-                 (eco (format "%d" (call-process fmtexect nil '(buffer err) t target)))
-                 (ets (format "%d" (file-attribute-size (file-attributes err)))))
-            (if (or (not(equal "0" eco))
-                    (not(equal "0" ets)))
-                (progn
-                  (set-buffer (get-buffer-create name t))
-                  (insert-file-contents err nil nil nil t)
-                  ;;     (set-buffer-major-mode major-mode)
-                  (read-only-mode nil)
-                  (pop-to-buffer (get-buffer-create name t) 'display-buffer-same-window nil)
-                  (display-buffer (current-buffer)))))))))
+          (progn
+            (unless (stringp err)
+              (user-error "err nonstring"))
+            (let* (
+                   (eco (format "%d" (call-process fmtexect nil '(buffer err) t target)))
+                   (ets (format "%d" (file-attribute-size (file-attributes err)))))
+              (if (or (not(equal "0" eco))
+                      (not(equal "0" ets)))
+                  (progn
+                    (message "%s" err)))))))))
+                    ;; (set-buffer (get-buffer-create name t))
+                    ;; (insert-file-contents err nil nil nil t)
+                    ;; (read-only-mode nil)
+                    ;; (pop-to-buffer (get-buffer-create name t) 'display-buffer-same-window nil)
+                    ;; (display-buffer (current-buffer))))))))))
 
-(defun Ꭶ/pl/fmt/prettier/ts ()
+(defun Ꭶ/pl/fmt/prettierjs ()
   "."
   (interactive)
-  (Ꭶ/pl/fmt (expand-file-name "~/.nvm/versions/node/v22.2.0/bin/prettier") 'typescript-mode))
+  (Ꭶ/pl/fmt (expand-file-name "~/.emacs.d/libexec/prettier")))
 
-(defun Ꭶ/pl/fmt/prettier/js ()
-  "."
-  (interactive)
-  (Ꭶ/pl/fmt (expand-file-name "~/.nvm/versions/node/v22.2.0/bin/prettier") 'javacript-mode))
 
 
 (defun buffer-elisp-heuristic()
@@ -161,6 +158,7 @@
   (or (string="el" (file-name-extension (buffer-file-name)))
       (string="emacs-lisp-mode" (Ꭶ/mode-name))
       (string="elisp-mode" (Ꭶ/mode-name))))
+
 (defun region-points()
   "."
   (if mark-active (save-mark-and-excursion (list (marker-position (mark-marker))
@@ -179,34 +177,34 @@
         (message "\"%s\" eval'd" (buffer-name)))
     (message "\"%s\" aint no el" (buffer-name))))
 
-(defun Ꭶ/purge-key (pt)
-  "PT."
-  (if (or (vectorp pt)
-          (listp pt))
-      (mapc 'Ꭶ/purge-key pt)
-    (let ((key (kbd pt)))
+(defun Ꭶ/purge-key (key)
+  "KEY."
+  (if (or (vectorp key)
+          (listp key))
+      (mapc 'Ꭶ/purge-key key)
+    (let ((key (kbd key)))
       (define-key (current-global-map) key nil))))
 
-(defun Ꭶ/set-key (pt cg)
-  "PT CG."
-  (if (or (vectorp pt)
-          (listp pt))
-      (mapc #'(lambda (pt)
-                (Ꭶ/set-key pt cg))
-            pt)
-    (let ((key (kbd pt)))
-      (Ꭶ/purge-key pt)
-      (define-key (current-global-map) key cg))))
+(defun Ꭶ/set-key (key function)
+  "KEY FUNCTION."
+  (if (or (vectorp key)
+          (listp key))
+      (mapc #'(lambda (key)
+                (Ꭶ/set-key key function))
+            key)
+    (let ((key (kbd key)))
+      (Ꭶ/purge-key key)
+      (define-key (current-global-map) key function))))
 
-(defun Ꭶ/set-extra-key (pt cg)
-  "PT CG."
-  (if (or (vectorp pt)
-          (listp pt))
-      (mapc #'(lambda (pt)
-                (Ꭶ/set-extra-key pt cg))
-            pt)
-    (let ((key (kbd pt)))
-      (define-key (current-global-map) key cg))))
+(defun Ꭶ/set-extra-key (key function)
+  "KEY FUNCTION."
+  (if (or (vectorp key)
+          (listp key))
+      (mapc #'(lambda (key)
+                (Ꭶ/set-extra-key key function))
+            key)
+    (let ((key (kbd key)))
+      (define-key (current-global-map) key function))))
 
 
 (defun fold-file-name(file-name)
@@ -273,6 +271,7 @@ CONTENTS.
          (end  (length data))
          (beg  (- end hwm)))
     (substring data beg end)))
+
 (defun Ꭶ/text-properties()
   "."
   (interactive)
@@ -303,8 +302,10 @@ CONTENTS.
    '(:eval
      (list (if mark-active
                (propertize
-                (format " ⇒ %S %S ⇐ "
-                        (marker-position (mark-marker)) (point))
+                (format " ⇒ %S %S [%S] ⇐ "
+                        (marker-position (mark-marker)) (point)
+                        (count-lines (marker-position (mark-marker)) (point))
+                        )
                 'face (list :background "#FF4018" :foreground (contrast-color "#FF4018")))
              "")))
    " "))
@@ -394,9 +395,9 @@ CONTENTS.
   (cond ((string= "rust-mode" (Ꭶ/mode-name))
          (Ꭶ/pl/fmt (file-name-concat (getenv "HOME") ".cargo/bin/cargo check")))
         ((string= "typescript-mode" (Ꭶ/mode-name))
-         (Ꭶ/pl/fmt/prettier/ts))
+         (Ꭶ/pl/fmt/prettierjs))
         ((string= "javacript-mode" (Ꭶ/mode-name))
-         (Ꭶ/pl/fmt/prettier/js))
+         (Ꭶ/pl/fmt/prettierjs))
         ((nil t))))
 
 (defun Ꭶ/base64-encode-region (beg end) (interactive "*r") (save-excursion (replace-region-contents beg end (lambda () (collapse-string-2 (base64-encode-string (buffer-substring-no-properties beg end)))))))
