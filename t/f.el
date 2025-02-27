@@ -177,34 +177,38 @@
         (message "\"%s\" eval'd" (buffer-name)))
     (message "\"%s\" aint no el" (buffer-name))))
 
-(defun Ꭶ/purge-key (key)
+(defun Ꭶ/undefine-key (key)
   "KEY."
-  (if (or (vectorp key)
+  (if (or (arrayp key)
+          (vectorp key)
           (listp key))
-      (mapc 'Ꭶ/purge-key key)
-    (let ((key (kbd key)))
-      (define-key (current-global-map) key nil))))
+      (mapc 'Ꭶ/undefine-key key)
+    (let ((keycode (if (integerp key) key (kbd key))))
+      (if keycode
+          (define-key (current-global-map) keycode nil)))))
 
-(defun Ꭶ/set-key (key function)
-  "KEY FUNCTION."
-  (if (or (vectorp key)
+(defun Ꭶ/set-key (key def)
+  "KEY DEF."
+  (if (or (arrayp key)
+          (vectorp key)
           (listp key))
       (mapc #'(lambda (key)
-                (Ꭶ/set-key key function))
+                (Ꭶ/set-key key def))
             key)
-    (let ((key (kbd key)))
-      (Ꭶ/purge-key key)
-      (define-key (current-global-map) key function))))
+    (let ((keycode (if (integerp key) key (kbd key))))
+      (Ꭶ/undefine-key keycode)
+      (define-key (current-global-map) keycode def))))
 
-(defun Ꭶ/set-extra-key (key function)
-  "KEY FUNCTION."
-  (if (or (vectorp key)
+(defun Ꭶ/set-extra-key (key def)
+  "KEY DEF."
+  (if (or (arrayp key)
+          (vectorp key)
           (listp key))
       (mapc #'(lambda (key)
-                (Ꭶ/set-extra-key key function))
+                (Ꭶ/set-extra-key key def))
             key)
-    (let ((key (kbd key)))
-      (define-key (current-global-map) key function))))
+    (let ((keycode (if (integerp key) key (kbd key))))
+      (define-key (current-global-map) keycode def))))
 
 
 (defun fold-file-name(file-name)
@@ -544,7 +548,7 @@ CONTENTS.
             (lambda () (Ꭶ/untab-codec (buffer-substring-no-properties pi pa)
                                        "MHgwYzlmNjAwMCAtZCAtLSAnJXMn"))))))
 
-(Ꭶ/purge-key '("C-c C-e C-2" ("C-c C-d C-2")))
+;;(Ꭶ/undefine-key '("C-c C-e C-2" ("C-c C-d C-2")))
 
 (Ꭶ/set-key '("C-c C-e C-2 C-0") 'Ꭶ/untab-нk)
 (Ꭶ/set-key '("C-c C-e C-d C-2 C-0") 'Ꭶ/untab-дk)
