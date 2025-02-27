@@ -179,39 +179,60 @@
 
 (defun Ꭶ/undefine-key (key)
   "KEY."
-  (cond (
-         ((or (stringp key)
-              (arrayp key)
-              (integerp key))
-          (progn
-            (Ꭶ/undefine-key (current-global-map) keycode nil)
-            (define-key (current-global-map) keycode nil)
-            ))
-         ((or (vectorp key)
-              (listp key))
-          (cdr (mapc 'Ꭶ/undefine-key key))))))
+  (when (not (or (stringp key)
+                  (vectorp key)
+                  (arrayp key)
+                  (consp key)
+                  (listp key)))
+    (user-error "key %S has invalid type: %s" key (type-of key)))
+  (when (stringp key)
+      (define-key (current-global-map) (kbd key) nil)
+
+  (when (or (consp key)
+            (vectorp key)
+            (arrayp key)
+            (listp key))
+    (cdr (mapc 'Ꭶ/undefine-key key)))))
 
 (defun Ꭶ/set-key (key def)
   "KEY DEF."
-  (cond (
-         ((or (stringp key)
-              (arrayp key)
-              (integerp key))
-          (define-key (current-global-map) keycode def))
-         ((or (vectorp key)
-              (listp key))
-          (cdr (mapc 'Ꭶ/set-key key))))))
-  
+  (when (not  (or (stringp key)
+                  (vectorp key)
+                  (arrayp key)
+                  (consp key)
+                  (listp key)))
+    (user-error "key %S has invalid type: %s" key (type-of key)))
+
+  (when (stringp key)
+    (progn
+      (Ꭶ/undefine-key key)
+      (define-key (current-global-map) (kbd key) def)
+      ))
+  (when (or (consp key)
+            (arrayp key)
+            (vectorp key)
+            (listp key))
+    (cdr (mapc #'(lambda (key) (Ꭶ/set-key key def)) key))))
+
+
 (defun Ꭶ/set-extra-key (key def)
   "KEY DEF."
-  (cond (
-         ((or (stringp key)
-              (arrayp key)
-              (integerp key))
-          (define-key (current-global-map) keycode def))
-         ((or (vectorp key)
-              (listp key))
-          (cdr (mapc 'Ꭶ/set-extra-key key))))))
+  (when (not (or (stringp key)
+                  (vectorp key)
+                  (arrayp key)
+                  (consp key)
+                  (listp key)))
+    (user-error "key %S has invalid type: %s" key (type-of key)))
+  (when (stringp key)
+    (progn
+      (define-key (current-global-map) (kbd key) def)
+      ))
+  (when (or (consp key)
+            (vectorp key)
+            (arrayp key)
+            (listp key))
+    (cdr (mapc #'(lambda (key) (Ꭶ/set-extra-key key def)) key))))
+
 
 
 (defun fold-file-name(file-name)
@@ -551,10 +572,10 @@ CONTENTS.
             (lambda () (Ꭶ/untab-codec (buffer-substring-no-properties pi pa)
                                        "MHgwYzlmNjAwMCAtZCAtLSAnJXMn"))))))
 
-;;(Ꭶ/undefine-key '("C-c C-e C-2" ("C-c C-d C-2")))
+;;(Ꭶ/undefine-key (list "C-c C-e C-2" "C-c C-d C-2"))
 
 (progn
-  (Ꭶ/set-key '("C-c C-e C-2 C-0") 'Ꭶ/untab-нk)
-  (Ꭶ/set-key '("C-c C-e C-d C-2 C-0") 'Ꭶ/untab-дk))
+  (Ꭶ/set-key (list "C-c C-e C-2 C-0") 'Ꭶ/untab-нk)
+  (Ꭶ/set-key (list "C-c C-e C-d C-2 C-0") 'Ꭶ/untab-дk))
 
 ;; OzsgKGRlZnVuIGNvbW1lbnQtb3V0LWppbmphMnRlcmEtYnVmZmVyCjs7ICAgICAoY29tbWVudC1zdGFydCBjb21tZW50LWVuZCkgIi4iCjs7ICAgICAoaW50ZXJhY3RpdmUgIioiKQo7OyAgICAgKGNvbW1lbnQtb3V0LWppbmphMnRlcmEtcmVnaW9uLXJzIChwb2ludC1taW4pIChwb2ludC1tYXgpIGNvbW1lbnQtc3RhcnQgY29tbWVudC1lbmQpKQoKOzsgKGRlZnVuIGNvbW1lbnQtb3V0LWppbmphMnRlcmEtcmVnaW9uIChzdGFydCBlbmQgY29tbWVudC1zdGFydCBjb21tZW50LWVuZCkgIi4iIChpbnRlcmFjdGl2ZSAiKnIiKQo7OyAgICAgICAgKHNhdmUtZXhjdXJzaW9uIChsZXQgKChlbmQgKGNvcHktbWFya2VyIGVuZCkpKQo7OyAgICAgICAgICAgICAgICAgICAgICAgICAgKHdoaWxlIChwcm9nbiAoZ290by1jaGFyIHN0YXJ0KQo7OyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAocmUtc2VhcmNoLWZvcndhcmQgICJcXChbe11bJV0uKlslXVt9XVxcKSIgZW5kIHQpKQo7OyAgICAgICAgICAgICAgICAgICAgICAgICAgICAocmVwbGFjZS1tYXRjaCAoY29uY2F0IGNvbW1lbnQtc3RhcnQgKG9yIGNvbW1lbnQtZW5kICIiKSkpKSkpKQoKOzsgKGRlZnVuIHVuY29tbWVudC1qaW5qYTJ0ZXJhLWJ1ZmZlci1ycyAoKSAiLiIgKGludGVyYWN0aXZlICIqIikKOzsgICAgICAgICh1bmNvbW1lbnQtamluamEydGVyYS1yZWdpb24gKHBvaW50LW1pbikgKHBvaW50LW1heCkgIi8qIiAiKi8iKSkKCgo7OyAoZGVmdW4gdW5jb21tZW50LWppbmphMnRlcmEtYnVmZmVyCjs7ICAgICAoY29tbWVudC1zdGFydCBjb21tZW50LWVuZCkgIi4iCjs7ICAgICAoaW50ZXJhY3RpdmUgIioiKQo7OyAgICAgKHVuY29tbWVudC1qaW5qYTJ0ZXJhLXJlZ2lvbi1ycyAocG9pbnQtbWluKSAocG9pbnQtbWF4KSBjb21tZW50LXN0YXJ0IGNvbW1lbnQtZW5kKSkKCjs7IChkZWZ1biB1bmNvbW1lbnQtamluamEydGVyYS1yZWdpb24gKHN0YXJ0IGVuZCBjb21tZW50LXN0YXJ0IGNvbW1lbnQtZW5kKSAiLiIgKGludGVyYWN0aXZlICIqciIpCjs7ICAgICAgICAoc2F2ZS1leGN1cnNpb24gKGxldCAoKGVuZCAoY29weS1tYXJrZXIgZW5kKSkpCjs7ICAgICAgICAgICAgICAgICAgICAgICAgICAod2hpbGUgKHByb2duIChnb3RvLWNoYXIgc3RhcnQpCjs7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIChyZS1zZWFyY2gtZm9yd2FyZCAiXFwoW3tdWyVdLipbJV1bfV1cXCkiIGVuZCB0KSkKOzsgICAgICAgICAgICAgICAgICAgICAgICAgICAgKHJlcGxhY2UtbWF0Y2ggKGNvbmNhdCBjb21tZW50LXN0YXJ0IChvciBjb21tZW50LWVuZCAiIikpKSkpKSkKCjs7IChkZWZ1biB1bmNvbW1lbnQtamluamEydGVyYS1idWZmZXItcnMgKCkgIi4iIChpbnRlcmFjdGl2ZSAiKiIpCjs7ICAgICAgICAodW5jb21tZW50LWppbmphMnRlcmEtcmVnaW9uIChwb2ludC1taW4pIChwb2ludC1tYXgpICIvKiIgIiovIikpCg==
