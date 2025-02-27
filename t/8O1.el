@@ -15,7 +15,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (utf8ftu)
 
-(Ꭶ/purge-key
+(Ꭶ/undefine-key
  '(
    "C-c C-d"
    "C-c C-r"
@@ -174,7 +174,7 @@
 (setq ns-option-modifier 'meta)
 (setq ns-command-modifier 'meta)
 ;;;
-;; (Ꭶ/purge-key "C-i")
+;; (Ꭶ/undefine-key "C-i")
 (Ꭶ/set-key '("C-x C--") 'text-scale-adjust)
 (Ꭶ/set-key '("C-x C-d C-k") 'describe-key)
 (Ꭶ/set-key '("C-x C-d k") 'describe-keymap)
