@@ -46,3 +46,4 @@
 (defalias 'quotient #'/)
 (defalias 'times #'*)
 (defalias 'difference #'-)
+(delete-minibuffer-contents)
