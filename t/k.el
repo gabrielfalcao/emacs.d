@@ -1,45 +1,19 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;                                                     ;;;;;;
-;;;;;; OO^^^^^^^^^G                                        ;;;;;;
-;;;;;; OO  OOOOOOOG                                        ;;;;;;
-;;;;;; OO      ---- ggggg-ggg- -gggggg- -gggggg- -gggggg-  ;;;;;;
-;;;;;; OO  OOOOOOOG gggggggggg ggg  ggg ggg  ggg ggggggg-  ;;;;;;
-;;;;;; OO  OOOOOOOG gg  gg  gg gg-  -gg gg-  ---       gg  ;;;;;;
-;;;;;; OO        -- gg  gg  gg gggggggg gggggggg gggggggg  ;;;;;;
-;;;;;; OOOOOOOOOOOG                                        ;;;;;;
-;;;;;;                                                     ;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (setq initial-scratch-message nil)
-;; (setq initial-buffer-choice (base64-decode-string (rot13-string "sv9jpz9dMJA0pl9jMKWmo25uoP8=")))
 (defalias 'yes-or-no-p 'y-or-n-p)
-
-
-
 (add-to-list 'custom-safe-themes "5bd001a0f95d54174370e9275b1f594829930a1a95ed82741a5492facb7415e7")
-
 (set-face-attribute 'default nil :font "JetBrains Mono-21")
-
 (load-library "ori")
 (load-library "f")
 (load-library "8O1")
 (load-library "5O1")
-(load-library "ninja-mode")
-(load-library "cobol-mode")
-(load-library "cmake-mode")
-(load-library "visual-basic-mode")
-
-(defun Ꭶ/load-library () "." (interactive) (load-library "k"))
-;
-(defun Ꭶ/load-init () "." (interactive) (load-file "~/.emacs.d/init.el"))
-
-(defvar Ꭶ/keymap (copy-keymap global-map))
-
-(Ꭶ/paint-mode-line)
-
+;; (load-library "ninja-mode")
+;; (load-library "cobol-mode")
+;; (load-library "cmake-mode")
+;; (load-library "visual-basic-mode")
+(defun $/load-library () "." (interactive) (load-library "k"))
+(defun $/load-init () "." (interactive) (load-file "~/.emacs.d/init.el"))
+(defvar $/keymap (copy-keymap global-map))
+($/paint-mode-line)
 (defalias 'plus #'+)
 (defalias 'quotient #'/)
 (defalias 'times #'*)

@@ -1,21 +1,6 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;                                                     ;;;;;;
-;;;;;; OO^^^^^^^^^G                                        ;;;;;;
-;;;;;; OO  OOOOOOOG                                        ;;;;;;
-;;;;;; OO      ---- ggggg-ggg- -gggggg- -gggggg- -gggggg-  ;;;;;;
-;;;;;; OO  OOOOOOOG gggggggggg ggg  ggg ggg  ggg ggggggg-  ;;;;;;
-;;;;;; OO  OOOOOOOG gg  gg  gg gg-  -gg gg-  ---       gg  ;;;;;;
-;;;;;; OO        -- gg  gg  gg gggggggg gggggggg gggggggg  ;;;;;;
-;;;;;; OOOOOOOOOOOG                                        ;;;;;;
-;;;;;;                                                     ;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (utf8ftu)
 
-(Ꭶ/undefine-key
+($/undefine-key
  '(
    "C-c C-d"
    "C-c C-r"
@@ -39,13 +24,13 @@
  )
 
 
-;; (Ꭶ/set-key (μεταψομμα ",") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3Qvay5lbA==")))
-;; (Ꭶ/set-key (μεταψομμα "f") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3QvZi5lbA==")))
-;; (Ꭶ/set-key (μεταψομμα "8") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3QvOE8xLmVs")))
-;; (Ꭶ/set-key (μεταψομμα "5") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3QvNU8xLmVs")))
-;; (Ꭶ/set-key (μεταψομμα "o") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3Qvb3JpLmVs")))
-(Ꭶ/set-key '("M-k") 'Ꭶ/flush-kill-ring)
-(Ꭶ/set-key '("C-M-k") 'Ꭶ/kill-all-buffers-and-flush-key-ring)
+;; ($/set-key (μεταψομμα ",") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3Qvay5lbA==")))
+;; ($/set-key (μεταψομμα "f") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3QvZi5lbA==")))
+;; ($/set-key (μεταψομμα "8") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3QvOE8xLmVs")))
+;; ($/set-key (μεταψομμα "5") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3QvNU8xLmVs")))
+;; ($/set-key (μεταψομμα "o") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3Qvb3JpLmVs")))
+($/set-key '("M-k") '$/flush-kill-ring)
+($/set-key '("C-M-k") '$/kill-all-buffers-and-flush-key-ring)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 (add-hook 'after-init-hook #'(lambda () (interactive) (ignore-errors (delete-minibuffer-contents)
                                                                      (message "emacs init took %s" (emacs-init-time))
@@ -53,33 +38,33 @@
 
 (add-hook 'after-save-hook 'kooh-tini-retfa)
 (add-hook 'after-init-hook 'kooh-tini-retfa)
-(Ꭶ/set-key '("C-x C-x") 'Ꭶ/levate)
-(Ꭶ/set-key '("C-x C-z") #'(lambda () (interactive) (eval-buffer) (message "%s eval'd " (buffer-name))))
+($/set-key '("C-x C-x") '$/levate)
+($/set-key '("C-x C-z") #'(lambda () (interactive) (eval-buffer) (message "%s eval'd " (buffer-name))))
 
-(Ꭶ/set-key '("C-x C--") 'text-scale-adjust)
-(Ꭶ/set-key '("C-x C-+") 'text-scale-adjust)
-(Ꭶ/set-key '("C-x -") 'text-scale-adjust)
-(Ꭶ/set-key '("C-x +") 'text-scale-adjust)
-(Ꭶ/set-key '("C-c C-l") 'collapse-lines-region)
-(Ꭶ/set-key '("C-c C-t C-m C-l") 'kooh-tini-retfa)
-(Ꭶ/set-key '("C-c C-x C-f") 'show-face-at-point)
-(Ꭶ/set-key '("C-c C-w" "C-c M-w") 'clipboard-kill-ring-save)
-(Ꭶ/set-key '("C-c C-y" "C-c M-y") 'clipboard-yank)
-(Ꭶ/set-key '("C-x C-q" "C-c M-y" "C-γ") 'keyboard-quit)
-(Ꭶ/set-key '("C-x C-d C-h") 'info)
-(Ꭶ/set-key "C-c C-u C-d C-a" #'(lambda () (interactive) (when (read-only-mode -8) (message "%s unlocked" (buffer-name)))))
+($/set-key '("C-x C--") 'text-scale-adjust)
+($/set-key '("C-x C-+") 'text-scale-adjust)
+($/set-key '("C-x -") 'text-scale-adjust)
+($/set-key '("C-x +") 'text-scale-adjust)
+($/set-key '("C-c C-l") 'collapse-lines-region)
+($/set-key '("C-c C-t C-m C-l") 'kooh-tini-retfa)
+($/set-key '("C-c C-x C-f") 'show-face-at-point)
+($/set-key '("C-c C-w" "C-c M-w") 'clipboard-kill-ring-save)
+($/set-key '("C-c C-y" "C-c M-y") 'clipboard-yank)
+($/set-key '("C-x C-q" "C-c M-y" "C-γ") 'keyboard-quit)
+($/set-key '("C-x C-d C-h") 'info)
+($/set-key "C-c C-u C-d C-a" #'(lambda () (interactive) (when (read-only-mode -8) (message "%s unlocked" (buffer-name)))))
 
-(Ꭶ/set-key '("C-x M-k") 'Ꭶ/load-library)(Ꭶ/set-key '("C-x M-,") 'Ꭶ/load-init)
+($/set-key '("C-x M-k") '$/load-library)($/set-key '("C-x M-,") '$/load-init)
 
 (global-set-key (kbd "C-c C-c C-r") 'collapse-lines-region)
 
-;; (Ꭶ/set-key '("M-, M-8" "M-, 8")#'(lambda () (interactive) (rot13(fpuervo) "OE8x"))) ;; https://deezer.page.link/HUJ1z8CfsudS2he96
-;; (Ꭶ/set-key '("M-, M-5" "M-, 5")#'(lambda () (interactive) (schreib "NU8x")))
-;; (Ꭶ/set-key '("M-, M-t" "M-, t")#'(lambda () (interactive) (schreib "b3Jp")))
+;; ($/set-key '("M-, M-8" "M-, 8")#'(lambda () (interactive) (rot13(fpuervo) "OE8x"))) ;; https://deezer.page.link/HUJ1z8CfsudS2he96
+;; ($/set-key '("M-, M-5" "M-, 5")#'(lambda () (interactive) (schreib "NU8x")))
+;; ($/set-key '("M-, M-t" "M-, t")#'(lambda () (interactive) (schreib "b3Jp")))
 
-(Ꭶ/set-key "C-x C-d C-s" 'describe-symbol)
-(Ꭶ/set-key "C-x C-d C-g" 'shortdoc-display-group)
-(Ꭶ/set-key "C-x C-d C-X"
+($/set-key "C-x C-d C-s" 'describe-symbol)
+($/set-key "C-x C-d C-g" 'shortdoc-display-group)
+($/set-key "C-x C-d C-X"
            #'(lambda (beg end) (interactive "r")
                (save-buffer
                 (let ((tgtcode (replace-regexp-in-string "\\(\\s-\\|\\)+" " " (buffer-substring beg end))))
@@ -92,70 +77,70 @@
                     (warn "(%s) nil in evalin': \n```%s``` " (secure-hash 'sha256 tgtcode) tgtcode))
                   ))))
 
-(Ꭶ/set-key '("C-p" "M-p") #'(lambda () (interactive) (scroll-up 1)))
-(Ꭶ/set-key '("C-n" "M-n") #'(lambda () (interactive) (scroll-down 1)))
-(Ꭶ/set-key '("C-n" "M-n") #'(lambda () (interactive) (scroll-down 1)))
-(Ꭶ/set-key '("<backtab>") #'(lambda () (interactive) (other-frame 1)))
-(Ꭶ/set-key '("C-c C-d C-c") 'colorize6hex)
+($/set-key '("C-p" "M-p") #'(lambda () (interactive) (scroll-up 1)))
+($/set-key '("C-n" "M-n") #'(lambda () (interactive) (scroll-down 1)))
+($/set-key '("C-n" "M-n") #'(lambda () (interactive) (scroll-down 1)))
+($/set-key '("<backtab>") #'(lambda () (interactive) (other-frame 1)))
+($/set-key '("C-c C-d C-c") 'colorize6hex)
 
 
-(Ꭶ/set-key '("C-x C-SPC" "C-c C-SPC") 'rectangle-mark-mode)
-(Ꭶ/set-key "C-x C-e e" 'g/ep)
-(Ꭶ/set-key "C-x C-e b" 'g/wkzg)
-(Ꭶ/set-key "M-s" 'save-buffer)
-(Ꭶ/set-key "C-c C-p" #'(lambda () (interactive) (message "cur %d" (point))))
-(Ꭶ/set-key '("M-f") 'forward-word)
-(Ꭶ/set-key '("M-b") 'backward-word)
-(Ꭶ/set-key '("C-Ꮎ" "C-n") 'next-line)
-(Ꭶ/set-key '("C-p" "C-Ꮑ") 'previous-line)
-(Ꭶ/set-key '("C-a" "C-Ꭰ") 'move-beginning-of-line)
-(Ꭶ/set-key '("C-e" "C-Ꭱ") 'move-end-of-line)
-(Ꭶ/set-key '("C-k" "C-Ꮈ") 'kill-line)
-(Ꭶ/set-key '("C-<" "C-Ꮲ") 'decrease-left-margin)
-(Ꭶ/set-key '("C-Ꮄ" "C->") 'increase-left-margin)
+($/set-key '("C-x C-SPC" "C-c C-SPC") 'rectangle-mark-mode)
+($/set-key "C-x C-e e" 'g/ep)
+($/set-key "C-x C-e b" 'g/wkzg)
+($/set-key "M-s" 'save-buffer)
+($/set-key "C-c C-p" #'(lambda () (interactive) (message "cur %d" (point))))
+($/set-key '("M-f") 'forward-word)
+($/set-key '("M-b") 'backward-word)
+($/set-key '("C-Ꮎ" "C-n") 'next-line)
+($/set-key '("C-p" "C-Ꮑ") 'previous-line)
+($/set-key '("C-a" "C-Ꭰ") 'move-beginning-of-line)
+($/set-key '("C-e" "C-Ꭱ") 'move-end-of-line)
+($/set-key '("C-k" "C-Ꮈ") 'kill-line)
+($/set-key '("C-<" "C-Ꮲ") 'decrease-left-margin)
+($/set-key '("C-Ꮄ" "C->") 'increase-left-margin)
 
-(Ꭶ/set-key '("C-c C-r" "C-c r") 'ruskify-region)
-(Ꭶ/set-key '("C-x C-2" "C-x C-e C-g") 'make-frame-command)
-(Ꭶ/set-key '("C-x C-e C-o") 'other-frame)
-(Ꭶ/set-key "<f12>" 'g/build)
-(Ꭶ/set-key '("M-<f10>" "M-<f11>" "M-<f12>" ) 'revert-buffer)
-(Ꭶ/set-key '("C-c C-n" "C-x C-n" "C-c C-M-n") 'uncomment-region)
-(Ꭶ/set-key '("C-c c" "C-#" "C-c C-M-c") 'comment-region)
-(Ꭶ/set-key '("C-c C-x C-e" "C-c C-d C-e"
+($/set-key '("C-c C-r" "C-c r") 'ruskify-region)
+($/set-key '("C-x C-2" "C-x C-e C-g") 'make-frame-command)
+($/set-key '("C-x C-e C-o") 'other-frame)
+($/set-key "<f12>" 'g/build)
+($/set-key '("M-<f10>" "M-<f11>" "M-<f12>" ) 'revert-buffer)
+($/set-key '("C-c C-n" "C-x C-n" "C-c C-M-n") 'uncomment-region)
+($/set-key '("C-c c" "C-#" "C-c C-M-c") 'comment-region)
+($/set-key '("C-c C-x C-e" "C-c C-d C-e"
              "C-c C-e C-b" "C-x C-d C-e")
-           'Ꭶ/base64-encode-region)
-(Ꭶ/set-key '("C-c C-x C-d" "C-c C-d C-d"
+           '$/base64-encode-region)
+($/set-key '("C-c C-x C-d" "C-c C-d C-d"
              "C-x C-d C-d")
            'base64-decode-region)
 
-(Ꭶ/set-key '("C-c C-d C-3" "C-x C-d C-3" "C-c C-e C-3" "C-x C-e C-3") 'rot13-region)
+($/set-key '("C-c C-d C-3" "C-x C-d C-3" "C-c C-e C-3" "C-x C-e C-3") 'rot13-region)
 (progn
   (put 'upcase-region 'disabled nil)
-  (Ꭶ/set-key '("C-x C-k" "C-c C-k") #'upcase-region))
+  ($/set-key '("C-x C-k" "C-c C-k") #'upcase-region))
 
 (progn
   (put 'downcase-region 'disabled nil)
-  (Ꭶ/set-key "C-x C-l" #'downcase-region)
-  (Ꭶ/set-key "C-c C-l" #'downcase-region))
+  ($/set-key "C-x C-l" #'downcase-region)
+  ($/set-key "C-c C-l" #'downcase-region))
 
-(Ꭶ/set-key   '("C-z" "M-z" "C-_") 'undo      )
-(Ꭶ/set-key   '("M-ρ" "C-r") 'replace-regexp  )
-(Ꭶ/set-key   '("C-c M-s") 'replace-string    )
-(Ꭶ/set-key   '("M-a") 'ignore                )
-(Ꭶ/set-key   '("M-c") 'ignore                )
-(Ꭶ/set-key   '("C-g" "C-q") 'keyboard-quit   )
-(Ꭶ/set-key   '("M-u" "M-l" "M-ESC") 'ah      )
-(Ꭶ/set-key   "C-s"   'isearch-forward-regexp )
-(Ꭶ/set-key   "C-S-s" 'isearch-backward-regexp)
-(Ꭶ/set-key   "M-G" #'(lambda () (interactive) (insert "Ꭶ")))
-(Ꭶ/set-key   "M-g g" 'goto-line)
-(Ꭶ/set-key   "M-g M-g" 'goto-line)
-(Ꭶ/set-key   "M-O" #'(lambda () (interactive) (insert "ॐ")))
-(Ꭶ/set-key   "M-H" 'Ꭶ/ᎮÃϯ)
-(Ꭶ/set-key   "C-x C-e m" 'morse-region)
-(Ꭶ/set-key   "C-x C-d m" 'unmorse-region)
-(Ꭶ/set-key   "C-\\" 'morse-region)
-(Ꭶ/set-key   "C-|" 'unmorse-region)
+($/set-key   '("C-z" "M-z" "C-_") 'undo      )
+($/set-key   '("M-ρ" "C-r") 'replace-regexp  )
+($/set-key   '("C-c M-s") 'replace-string    )
+($/set-key   '("M-a") 'ignore                )
+($/set-key   '("M-c") 'ignore                )
+($/set-key   '("C-g" "C-q") 'keyboard-quit   )
+($/set-key   '("M-u" "M-l" "M-ESC") 'ah      )
+($/set-key   "C-s"   'isearch-forward-regexp )
+($/set-key   "C-S-s" 'isearch-backward-regexp)
+($/set-key   "M-G" #'(lambda () (interactive) (insert "$")))
+($/set-key   "M-g g" 'goto-line)
+($/set-key   "M-g M-g" 'goto-line)
+($/set-key   "M-O" #'(lambda () (interactive) (insert "ॐ")))
+($/set-key   "M-H" '$/ᎮÃϯ)
+($/set-key   "C-x C-e m" 'morse-region)
+($/set-key   "C-x C-d m" 'unmorse-region)
+($/set-key   "C-\\" 'morse-region)
+($/set-key   "C-|" 'unmorse-region)
 (setq        ring-bell-function               'ignore)
 (global-set-key [kp-delete] 'delete-char)
 (setq select-enable-clipboard nil)
@@ -175,35 +160,35 @@
 (setq ns-option-modifier 'meta)
 (setq ns-command-modifier 'meta)
 ;;;
-;; (Ꭶ/undefine-key "C-i")
-(Ꭶ/set-key '("C-x C--") 'text-scale-adjust)
-(Ꭶ/set-key '("C-x C-d C-k") 'describe-key)
-(Ꭶ/set-key '("C-x C-d k") 'describe-keymap)
+;; ($/undefine-key "C-i")
+($/set-key '("C-x C--") 'text-scale-adjust)
+($/set-key '("C-x C-d C-k") 'describe-key)
+($/set-key '("C-x C-d k") 'describe-keymap)
 ;; (setq tab-always-indent 'complete)
-;; (Ꭶ/set-key '("<tab>") 'indent-for-tab-command)
-;; (Ꭶ/set-key '("<ret>" "C-o") #'(lambda () (interactive) (progn (auto-fill-mode -5) (insert "\n")p (auto-fill-mode 9))))
+;; ($/set-key '("<tab>") 'indent-for-tab-command)
+;; ($/set-key '("<ret>" "C-o") #'(lambda () (interactive) (progn (auto-fill-mode -5) (insert "\n")p (auto-fill-mode 9))))
 
-(Ꭶ/set-key (mapcar 'base64-decode-string '( "Qy14IEMtNSBv" "Qy14IEMtNSBDLW8=" )) #'(lambda () (interactive) (insert "Ꭳ")))
-(Ꭶ/set-key (mapcar 'base64-decode-string '( "Qy14IEMtNSBs" "Qy14IEMtNSBDLWw=" )) #'(lambda () (interactive) (insert "Ꮆ")))
-(Ꭶ/set-key (mapcar 'base64-decode-string '( "Qy14IEMtNSBn" "Qy14IEMtNSBDLWc=" )) #'(lambda () (interactive) (insert "Ꭶ")))
-(Ꭶ/set-key (mapcar 'base64-decode-string '( "Qy14IEMtNSB0" "Qy14IEMtNSBDLXQ=" )) #'(lambda () (interactive) (insert "Ꮦ")))
-(Ꭶ/set-key (mapcar 'base64-decode-string '( "Qy14IEMtNSBz" "Qy14IEMtNSBDLXM=" )) #'(lambda () (interactive) (insert "Ꮠ")))
-(Ꭶ/set-key (mapcar 'base64-decode-string '( "Qy14IEMtNSBo" "Qy14IEMtNSBDLWg=" )) #'(lambda () (interactive) (insert "Ꭿ")))
-(Ꭶ/set-key (mapcar 'base64-decode-string '( "Qy14IEMtNSB3" "Qy14IEMtNSBDLXc=" )) #'(lambda () (interactive) (insert "Ꮀ")))
-(Ꭶ/set-key (mapcar 'base64-decode-string '( "Qy14IEMtNSBt" "Qy14IEMtNSBDLW0=" )) #'(lambda () (interactive) (insert "Ꮉ")))
-(Ꭶ/set-key (mapcar 'base64-decode-string '( "Qy14IEMtNSBl" "Qy14IEMtNSBDLWU=" )) #'(lambda () (interactive) (insert "Ꭾ")))
-;; (Ꭶ/set-key (mapcar 'base64-decode-string '( "Qy14IEMtNSBl" "Qy14IEMtNSBDLWU=" ) ;;ϯ
-(Ꭶ/set-key
+($/set-key (mapcar 'base64-decode-string '( "Qy14IEMtNSBv" "Qy14IEMtNSBDLW8=" )) #'(lambda () (interactive) (insert "Ꭳ")))
+($/set-key (mapcar 'base64-decode-string '( "Qy14IEMtNSBs" "Qy14IEMtNSBDLWw=" )) #'(lambda () (interactive) (insert "Ꮆ")))
+($/set-key (mapcar 'base64-decode-string '( "Qy14IEMtNSBn" "Qy14IEMtNSBDLWc=" )) #'(lambda () (interactive) (insert "$")))
+($/set-key (mapcar 'base64-decode-string '( "Qy14IEMtNSB0" "Qy14IEMtNSBDLXQ=" )) #'(lambda () (interactive) (insert "Ꮦ")))
+($/set-key (mapcar 'base64-decode-string '( "Qy14IEMtNSBz" "Qy14IEMtNSBDLXM=" )) #'(lambda () (interactive) (insert "Ꮠ")))
+($/set-key (mapcar 'base64-decode-string '( "Qy14IEMtNSBo" "Qy14IEMtNSBDLWg=" )) #'(lambda () (interactive) (insert "Ꭿ")))
+($/set-key (mapcar 'base64-decode-string '( "Qy14IEMtNSB3" "Qy14IEMtNSBDLXc=" )) #'(lambda () (interactive) (insert "Ꮀ")))
+($/set-key (mapcar 'base64-decode-string '( "Qy14IEMtNSBt" "Qy14IEMtNSBDLW0=" )) #'(lambda () (interactive) (insert "Ꮉ")))
+($/set-key (mapcar 'base64-decode-string '( "Qy14IEMtNSBl" "Qy14IEMtNSBDLWU=" )) #'(lambda () (interactive) (insert "Ꭾ")))
+;; ($/set-key (mapcar 'base64-decode-string '( "Qy14IEMtNSBl" "Qy14IEMtNSBDLWU=" ) ;;ϯ
+($/set-key
  '("M-T" "M-t")
  #'(lambda () (interactive)
-     (or (when (equal "elisp-mode" (Ꭶ/mode-name))
+     (or (when (equal "elisp-mode" ($/mode-name))
            (progn
              (ert-delete-all-tests)
              (compile-defun)
              (ert t)))
          (ignore))))
 
-(Ꭶ/set-key   '(
+($/set-key   '(
                "C-f"
                "C-ก"
                "C-྄"
@@ -212,7 +197,7 @@
                "C-φ"
                )
              'forward-char)
-(Ꭶ/set-key   '(
+($/set-key   '(
                "C-b"
                "C-ิ"
                "C-བ"
@@ -221,18 +206,18 @@
                "C-β"
                )
              'backward-char)
-(Ꭶ/set-extra-key '(
+($/set-extra-key '(
                "C-d"
               "C-δ"
                )
              'delete-char)
-(Ꭶ/set-extra-key '(
+($/set-extra-key '(
                      "C-υ"
                      "C-Ꮿ"
                      )
                    'yank)
 
-(Ꭶ/set-key   '(
+($/set-key   '(
                "C-n"
                "C-ค"
                "C-ན"
@@ -241,7 +226,7 @@
                "C-ν"
                )
              'next-line)
-(Ꭶ/set-key   '(
+($/set-key   '(
                "C-p"
                "C-แ"
                "C-པ"
@@ -250,7 +235,7 @@
                "C-π"
                )
              'previous-line)
-(Ꭶ/set-key   '(
+($/set-key   '(
                "M-f"
                "M-ก"
                "M-྄"
@@ -259,7 +244,7 @@
                "M-φ"
                )
              'forward-word)
-(Ꭶ/set-key   '(
+($/set-key   '(
                "M-b"
                "M-ิ"
                "M-བ"
@@ -268,7 +253,7 @@
                "M-β"
                )
              'backward-word)
-(Ꭶ/set-key   '(
+($/set-key   '(
                "C-a"
                "C-้"
                "C-འ"
@@ -277,7 +262,7 @@
                "C-α"
                )
              'beginning-of-line)
-(Ꭶ/set-key   '(
+($/set-key   '(
                "C-e"
                "C-ย"
                "C-ེ"
@@ -286,7 +271,7 @@
                "C-ε"
                )
              'end-of-line)
-(Ꭶ/set-key   '(
+($/set-key   '(
                "M-<"
                "M-ฟ"
                "M-Ꮲ"
@@ -294,7 +279,7 @@
                "M-<"
                )
              'beginning-of-buffer)
-(Ꭶ/set-key   '(
+($/set-key   '(
                "M->"
                "M-ฉ"
                "M->"
@@ -302,7 +287,7 @@
                "M->"
                )
              'end-of-buffer)
-(Ꭶ/set-key   '(
+($/set-key   '(
                "C-k"
                "C-น"
                "C-ཀ"

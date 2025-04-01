@@ -1,22 +1,7 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;                                                     ;;;;;;
-;;;;;; OO^^^^^^^^^G                                        ;;;;;;
-;;;;;; OO  OOOOOOOG                                        ;;;;;;
-;;;;;; OO      ---- ggggg-ggg- -gggggg- -gggggg- -gggggg-  ;;;;;;
-;;;;;; OO  OOOOOOOG gggggggggg ggg  ggg ggg  ggg ggggggg-  ;;;;;;
-;;;;;; OO  OOOOOOOG gg  gg  gg gg-  -gg gg-  ---       gg  ;;;;;;
-;;;;;; OO        -- gg  gg  gg gggggggg gggggggg gggggggg  ;;;;;;
-;;;;;; OOOOOOOOOOOG                                        ;;;;;;
-;;;;;;                                                     ;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (benchmark-progn
 (require 'package)
 (require 'flycheck)
+(line-number-mode t)
 (setq package-archives nil)
 (setq global-flycheck-mode t)
 
@@ -37,7 +22,6 @@
 (require 'typescript-mode)
 (require 'whitespace)
 (require 'blacken)
-(require 'linum)
 (require 'make-mode)
 (require 'ibuffer)
 (require 'calendar)
@@ -54,15 +38,15 @@
 (setq rust-format-on-save nil rust-rustfmt-bin "~/.cargo/bin/rustfmt" rust-rustfmt-switches '("--edition" "2021" "--color" "always" "--unstable-features"))
 
 (setq replace-regexp-lax-whitespace t case-fold-search nil)
-(add-hook 'after-init-hook 'cᎦdgᎦ)
-(add-hook 'after-revert-hook 'cᎦdgᎦ)
-(add-hook 'after-save-hook 'cᎦdgᎦ)
-(add-hook 'after-change-functions 'cᎦdgᎦ)
-;; (add-hook 'after-insert-file-functions 'cᎦdgᎦ)
-(add-hook 'write-files-hook 'cᎦdgᎦ)
-(add-hook 'after-find-file 'cᎦdgᎦ)
-(add-hook 'after-change-major-mode-hook 'cᎦdgᎦ)
-(add-hook 'after-set-visited-file-name-hook 'cᎦdgᎦ)
+(add-hook 'after-init-hook 'c$dg$)
+(add-hook 'after-revert-hook 'c$dg$)
+(add-hook 'after-save-hook 'c$dg$)
+(add-hook 'after-change-functions 'c$dg$)
+;; (add-hook 'after-insert-file-functions 'c$dg$)
+(add-hook 'write-files-hook 'c$dg$)
+(add-hook 'after-find-file 'c$dg$)
+(add-hook 'after-change-major-mode-hook 'c$dg$)
+(add-hook 'after-set-visited-file-name-hook 'c$dg$)
 (setq inhibit-local-variables-regexps (append '("\\[.]sh" "\\[.]json\w?" "\\[.][tj]sx?") inhibit-local-variables-regexps ))
 ;;(setq line-number-display-limit 10000)
 ;; ;; ;; *;; ;; OzsgOzsgOzsqOzsgOzsgKGRlZnVuIHNldHVwLXRpZGUtbW9kZSAoKSAoaW50ZXJhY3RpdmUpIDs7ICh0aWRlLXNldHVwKSAoZmx5Y2hlY2stbW9kZSArMSkgKHNldHEgZmx5Y2hlY2stY2hlY2stc3ludGF4LWF1dG9tYXRpY2FsbHkgJyhzYXZlIG1vZGUtZW5hYmxlZCkpIChlbGRvYy1tb2RlICsxKSA7OyAodGlkZS1obC1pZGVudGlmaWVyLW1vZGUgKzEpIChjb21wYW55LW1vZGUgKzEpKTs7IDs7IDs7Kjs7IDs7IChhZGQtaG9vayAnYmVmb3JlLXNhdmUtaG9vayAndGlkZS1mb3JtYXQtYmVmb3JlLXNhdmUpIDs7IDs7IDs7Kjs7IDs7IChhZGQtaG9vayAndHlwZXNjcmlwdC1tb2RlLWhvb2sgIydzZXR1cC10aWRlLW1vZGUpIDs7IDs7IDs7Kjs7IDs7IChhZGQtaG9vayAnd2ViLW1vZGUtaG9vayAgKGxhbWJkYSAoKSAgKHdoZW4gKHN0cmluZy1lcXVhbCAianN4IiAoZmlsZS1uYW1lLWV4dGVuc2lvbiBidWZmZXItZmlsZS1uYW1lKSkgIChzZXR1cC10aWRlLW1vZGUpKSkpIChhZGQtaG9vayAnd2ViLW1vZGUtaG9vayAgKGxhbWJkYSAoKSAgKHdoZW4gKHN0cmluZy1lcXVhbCAidHN4IiAoZmlsZS1uYW1lLWV4dGVuc2lvbiBidWZmZXItZmlsZS1uYW1lKSkgIChzZXR1cC10aWRlLW1vZGUpKSkp
@@ -131,10 +115,10 @@
                                 (define-key python-mode-map (kbd "C-c C-f") 'blacken-buffer)))
 (add-hook 'typescript-mode-hook  #'(lambda ()
                                 (interactive)
-                                (define-key typescript-mode-map (kbd "C-c C-f") 'Ꭶ/pl/fmt/prettierjs)))
+                                (define-key typescript-mode-map (kbd "C-c C-f") '$/pl/fmt/prettierjs)))
 (add-hook 'javascript-mode-hook  #'(lambda ()
                                 (interactive)
-                                (define-key typescript-mode-map (kbd "C-c C-f") 'Ꭶ/pl/fmt/prettierjs)))
+                                (define-key typescript-mode-map (kbd "C-c C-f") '$/pl/fmt/prettierjs)))
 
 (setq whitespace-style 'empty)
 (setq web-mode-content-types-alist

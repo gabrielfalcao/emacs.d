@@ -1,6 +1,6 @@
-(deftheme nogosky  "Like unlike dislike ॐᎦ dislike unlike Like")
+(deftheme spolsky  ".")
 (custom-theme-set-variables
-  'nogosky
+  'spolsky
   '(linum-format " %8d "))
 (let ((*background*         "#161A1F")
       (*comments*           "#8C8C8C")
@@ -25,7 +25,7 @@
       (*variable*           "#FD971F")
       (*visual-selection*   "#555"))
   (custom-theme-set-faces
-   'nogosky
+   'spolsky
    `(bold ((t (:bold t))))
    `(button ((t (:foreground, *keywords* :underline t))))
    `(default ((t (:background, *background* :foreground, *normal*))))
@@ -71,4 +71,4 @@
 (when (and (boundp 'custom-theme-load-path) load-file-name)
   (add-to-list 'custom-theme-load-path
                (file-name-as-directory (file-name-directory load-file-name))))
-(provide-theme 'nogosky)
+(provide-theme 'spolsky)
