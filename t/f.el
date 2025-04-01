@@ -21,29 +21,27 @@
 (defun uniquify-all-lines-buffer () "." (interactive "*") (uniquify-all-lines-region (point-min) (point-max)))
 (defun uniquify-all-lines-region (start end) "." (interactive "*r") (save-excursion (let ((end (copy-marker end))) (while (progn (goto-char start) (re-search-forward "^\\(.*\\)\n\\(\\(.*\n\\)*\\)\\1\n" end t)) (replace-match "\\1\n\\2")))))
 
-(defun gc() "." (interactive) (progn (scroll-bar-mode 0) (menu-bar-mode 0) (tool-bar-mode 0)))
-(defun ah() "." (interactive) (warn "aint happenin'"))
+(defun disable-bars() "." (interactive) (progn (scroll-bar-mode 0) (menu-bar-mode 0) (tool-bar-mode 0)))
 
-
-(defun disavail-asl()
+(defun disable-auto-save-list()
   "."
   (interactive)
   (mapc #'(lambda (d)
             (delete-directory (expand-file-name d) t nil))
         (list "~/.emacs.d/auto-save-list" "~/.emacs.backups")))
 
-(defun ruskify-region (beg end) "." (interactive "*r") (replace-region-contents beg end (lambda () (reverse (buffer-substring-no-properties beg end)))))
+(defun reverse-string (beg end) "." (interactive "*r") (replace-region-contents beg end (lambda () (reverse (buffer-substring-no-properties beg end)))))
 
-(defun $$$$$ () "." (interactive) (global-company-mode) (disavail-asl) (gc) ($$$$$$$))(defun $/ep() "." (interactive) (find-file "~/.emacs.d/t/k.el"))
+(defun $$$$$ () "." (interactive) (global-company-mode) (disable-auto-save-list) (disable-bars) ($$$$$$$$))(defun $/ep() "." (interactive) (find-file "~/.emacs.d/t/k.el"))
 
 (defun c$dg$ (&rest substrate)
   (interactive)
   (ignore-errors
-    (colorize6hex)
+    (colorize-hexadecimal-text)
     ($/paint-mode-line)
-    (disavail-asl)
-    (gc)
-    ($)))
+    (disable-auto-save-list)
+    (disable-bars)
+    ($$$$$)))
 
 (defun contrast-color (c) "C." (interactive "s") (compute-bright-dark-from-color-value c "#FFF" "#333"))
 (defun compute-bright-dark-from-color-value (c bright dark)
@@ -76,7 +74,7 @@
                     (replace-region-contents beg end #'(lambda ()
                                                          (collapse-string region))))))
 
-(defun colorize6hex()
+(defun colorize-hexadecimal-text()
   (interactive)
   (save-excursion (let (begb hwmb cbeg cend faber)
                     (setq begb (point-min))
@@ -444,14 +442,13 @@
 
 
 (defun $/flush-kill-ring () "." (interactive) (setq kill-ring nil file-name-history nil) (ignore-errors (message "ᎣᏁ ﾘﯓ ŢꝌ ビnd⍤𐐣")))
-(defun $/kill-all-buffers-and-flush-key-ring () "." (interactive) (ignore-errors (kill-bufs) ($/flush-kill-ring)))
+(defun $/kill-all-buffers-and-flush-kill-ring () "." (interactive) (ignore-errors (kill-bufs) ($/flush-kill-ring)))
 
 (defun $/string-hash-take-last-n-chars (algo hwm contents)
   "."
   ;; (format "%s:%s"  (symbol-name algo) ($/hash-take-last-n-chars algo hwm contents)))
   (format "%s"  ($/hash-take-last-n-chars algo hwm contents)))
 
-(defun load-theme () "." (interactive) (ah))
 
 (defun server-reboot () "." (interactive) (server-force-delete) (server-mode 9))
 
@@ -537,9 +534,6 @@
                                        "MHgwYzlmNjAwMCAtZCAtLSAnJXMn"))))))
 
 ;;($/undefine-key (list "C-c C-e C-2" "C-c C-d C-2"))
-
 (progn
   ($/set-key (list "C-c C-e C-2 C-0") '$/encrypt-chacha20-hardcoded)
   ($/set-key (list "C-c C-e C-d C-2 C-0") '$/decrypt-chacha20-hardcoded))
-
-;; OzsgKGRlZnVuIGNvbW1lbnQtb3V0LWppbmphMnRlcmEtYnVmZmVyCjs7ICAgICAoY29tbWVudC1zdGFydCBjb21tZW50LWVuZCkgIi4iCjs7ICAgICAoaW50ZXJhY3RpdmUgIioiKQo7OyAgICAgKGNvbW1lbnQtb3V0LWppbmphMnRlcmEtcmVnaW9uLXJzIChwb2ludC1taW4pIChwb2ludC1tYXgpIGNvbW1lbnQtc3RhcnQgY29tbWVudC1lbmQpKQoKOzsgKGRlZnVuIGNvbW1lbnQtb3V0LWppbmphMnRlcmEtcmVnaW9uIChzdGFydCBlbmQgY29tbWVudC1zdGFydCBjb21tZW50LWVuZCkgIi4iIChpbnRlcmFjdGl2ZSAiKnIiKQo7OyAgICAgICAgKHNhdmUtZXhjdXJzaW9uIChsZXQgKChlbmQgKGNvcHktbWFya2VyIGVuZCkpKQo7OyAgICAgICAgICAgICAgICAgICAgICAgICAgKHdoaWxlIChwcm9nbiAoZ290by1jaGFyIHN0YXJ0KQo7OyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAocmUtc2VhcmNoLWZvcndhcmQgICJcXChbe11bJV0uKlslXVt9XVxcKSIgZW5kIHQpKQo7OyAgICAgICAgICAgICAgICAgICAgICAgICAgICAocmVwbGFjZS1tYXRjaCAoY29uY2F0IGNvbW1lbnQtc3RhcnQgKG9yIGNvbW1lbnQtZW5kICIiKSkpKSkpKQoKOzsgKGRlZnVuIHVuY29tbWVudC1qaW5qYTJ0ZXJhLWJ1ZmZlci1ycyAoKSAiLiIgKGludGVyYWN0aXZlICIqIikKOzsgICAgICAgICh1bmNvbW1lbnQtamluamEydGVyYS1yZWdpb24gKHBvaW50LW1pbikgKHBvaW50LW1heCkgIi8qIiAiKi8iKSkKCgo7OyAoZGVmdW4gdW5jb21tZW50LWppbmphMnRlcmEtYnVmZmVyCjs7ICAgICAoY29tbWVudC1zdGFydCBjb21tZW50LWVuZCkgIi4iCjs7ICAgICAoaW50ZXJhY3RpdmUgIioiKQo7OyAgICAgKHVuY29tbWVudC1qaW5qYTJ0ZXJhLXJlZ2lvbi1ycyAocG9pbnQtbWluKSAocG9pbnQtbWF4KSBjb21tZW50LXN0YXJ0IGNvbW1lbnQtZW5kKSkKCjs7IChkZWZ1biB1bmNvbW1lbnQtamluamEydGVyYS1yZWdpb24gKHN0YXJ0IGVuZCBjb21tZW50LXN0YXJ0IGNvbW1lbnQtZW5kKSAiLiIgKGludGVyYWN0aXZlICIqciIpCjs7ICAgICAgICAoc2F2ZS1leGN1cnNpb24gKGxldCAoKGVuZCAoY29weS1tYXJrZXIgZW5kKSkpCjs7ICAgICAgICAgICAgICAgICAgICAgICAgICAod2hpbGUgKHByb2duIChnb3RvLWNoYXIgc3RhcnQpCjs7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIChyZS1zZWFyY2gtZm9yd2FyZCAiXFwoW3tdWyVdLipbJV1bfV1cXCkiIGVuZCB0KSkKOzsgICAgICAgICAgICAgICAgICAgICAgICAgICAgKHJlcGxhY2UtbWF0Y2ggKGNvbmNhdCBjb21tZW50LXN0YXJ0IChvciBjb21tZW50LWVuZCAiIikpKSkpKSkKCjs7IChkZWZ1biB1bmNvbW1lbnQtamluamEydGVyYS1idWZmZXItcnMgKCkgIi4iIChpbnRlcmFjdGl2ZSAiKiIpCjs7ICAgICAgICAodW5jb21tZW50LWppbmphMnRlcmEtcmVnaW9uIChwb2ludC1taW4pIChwb2ludC1tYXgpICIvKiIgIiovIikpCg==

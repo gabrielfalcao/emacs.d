@@ -30,7 +30,7 @@
 ($/set-key (meta-comma "5") #'(lambda () (interactive) (find-file "~/.emacs.d/t/5O1.el")))
 ($/set-key (meta-comma "o") #'(lambda () (interactive) (find-file "~/.emacs.d/t/ori.el")))
 ($/set-key '("M-k") '$/flush-kill-ring)
-($/set-key '("C-M-k") '$/kill-all-buffers-and-flush-key-ring)
+($/set-key '("C-M-k") '$/kill-all-buffers-and-flush-kill-ring)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 (add-hook 'after-save-hook '$$$$$)
 (add-hook 'after-init-hook '$$$$$)
@@ -78,7 +78,7 @@
 ($/set-key '("C-n" "M-n") #'(lambda () (interactive) (scroll-down 1)))
 ($/set-key '("C-n" "M-n") #'(lambda () (interactive) (scroll-down 1)))
 ($/set-key '("<backtab>") #'(lambda () (interactive) (other-frame 1)))
-($/set-key '("C-c C-d C-c") 'colorize6hex)
+($/set-key '("C-c C-d C-c") 'colorize-hexadecimal-text)
 
 
 ($/set-key '("C-x C-SPC" "C-c C-SPC") 'rectangle-mark-mode)
@@ -95,7 +95,7 @@
 ($/set-key '("C-<" "C-Ꮲ") 'decrease-left-margin)
 ($/set-key '("C-Ꮄ" "C->") 'increase-left-margin)
 
-($/set-key '("C-c C-r" "C-c r") 'ruskify-region)
+($/set-key '("C-c C-r" "C-c r") 'reverse-string)
 ($/set-key '("C-x C-2" "C-x C-e C-g") 'make-frame-command)
 ($/set-key '("C-x C-e C-o") 'other-frame)
 ($/set-key "<f12>" 'g/build)
@@ -125,7 +125,7 @@
 ($/set-key   '("M-a") 'ignore                )
 ($/set-key   '("M-c") 'ignore                )
 ($/set-key   '("C-g" "C-q") 'keyboard-quit   )
-($/set-key   '("M-u" "M-l" "M-ESC") 'ah      )
+
 ($/set-key   "C-s"   'isearch-forward-regexp )
 ($/set-key   "C-S-s" 'isearch-backward-regexp)
 ($/set-key   "M-G" #'(lambda () (interactive) (insert "$")))
