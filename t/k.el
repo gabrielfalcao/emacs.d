@@ -18,4 +18,5 @@
 (defalias 'quotient #'/)
 (defalias 'times #'*)
 (defalias 'difference #'-)
-(line-number-mode t)
+(line-number-mode)
+(tool-bar-mode nil)

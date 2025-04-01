@@ -6,7 +6,7 @@
   (interactive)
   "#333")
 
-(defun $$$$$$$()
+(defun $$$$$$$$()
   "."
   (interactive)
 
@@ -43,12 +43,13 @@
 	 ($sel$                     "#F5BF08")
          ($cursor$                  $sel$))
 
-    (line-number-mode t)
+    (line-number-mode nil)
     (require 'make-mode)
     (require 'ibuffer)
     (require 'calendar)
     (require 'rect)
     (require 'compile)
+    (require 'tramp-cmds)
     (setq ns-allow-anti-aliasing t)
     (setq ns-function-modifier 'control)
     (setq ns-option-modifier 'meta)
@@ -59,8 +60,7 @@
     (setq-default truncate-lines t)
     (global-font-lock-mode 1)
     (transient-mark-mode 1)
-
-
+    (tramp-cleanup-all-connections)
 
     (set-face-attribute 'default nil :font "JetBrains Mono Thin-20")
     (set-face-attribute 'info-menu-header nil :foreground "#DB5045" :underline nil :bold t :font "JetBrains Mono Thin-20")
@@ -172,6 +172,6 @@
            'mode-line-highlight))))
 
 
-(add-hook 'after-init-hook '$$$$$$$)
-(add-hook 'after-save-hook '$$$$$$$)
-($$$$$$$)
+(add-hook 'after-init-hook '$$$$$$$$)
+(add-hook 'after-save-hook '$$$$$$$$)
+($$$$$$$$)

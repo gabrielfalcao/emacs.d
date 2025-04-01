@@ -21,6 +21,7 @@
  ;; If there is more than one, they won't work right.
  )
 
-;; (delete-minibuffer-contents)
-;; (kill-buffer "*Messages*")
-(line-number-mode t)
+;;(delete-minibuffer-contents)
+(kill-buffer "*Messages*")
+(line-number-mode)
+(tool-bar-mode nil)
