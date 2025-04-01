@@ -34,9 +34,7 @@
 
 (defun ruskify-region (beg end) "." (interactive "*r") (replace-region-contents beg end (lambda () (reverse (buffer-substring-no-properties beg end)))))
 
-(defun kooh-tini-retfa () "." (interactive) (global-company-mode) (disavail-asl) (gc) ($))(defun $/ep() "." (interactive) (find-file (base64-decode-region (rot13-string "sv8hMJ1uL3ZhMP90Y2fhMJj="))))
-(defun nbddbn () "." (interactive) (mapc #'(lambda (dbk) (ignore-errors (global-unset-key (kbd dbk)) (global-set-key (kbd dbk) 'ah))) '( "M-s ." "M-s M-w" "M-s _" "M-r" "M-s h f" "M-s h l" "M-s h p" "M-s h r" "M-s h u" "M-s h w" "M-s h" "M-s o" "M-s w" "M-s" "M-s-F" "M-s-h" "M-y" "M-z" "M-{" "M-|" "M-}" "M-~" "M-s-F" "M-s-h" "M-t" "M-|" "M-c")))
-(defun $/wkzg() "." (interactive) (find-file (string-reverse (base64-decode-region "Y2V4ZWJpbC90cG8vfg==" "*"))))
+(defun $$$$$ () "." (interactive) (global-company-mode) (disavail-asl) (gc) ($$$$$$$))(defun $/ep() "." (interactive) (find-file "~/.emacs.d/t/k.el"))
 
 (defun c$dg$ (&rest substrate)
   (interactive)
@@ -97,8 +95,6 @@
                                       (make-overlay cbeg cend))))
                         (overlay-put x2133 'bcc t)
                         (overlay-put x2133 'face (list :foreground (contrast-color faber) :background faber))
-                        ;; (add-face-text-property cbeg cend 'face (list :foreground (contrast-color faber) :background faber))
-                        ;; #ffcc00
                         )))))
 
 (defun $/pl/fmt (fmtexect)
@@ -111,7 +107,7 @@
     (let* ((target (expand-file-name (buffer-file-name)))
            (buffer (current-buffer))
            (name (format "*%s %s *" fmtexect target))
-           (err (make-temp-file fmtexect nil ($/hashnurtail 'sha512 6 (buffer-file-name)))))
+           (err (make-temp-file fmtexect nil ($/hash-take-last-n-chars 'sha512 6 (buffer-file-name)))))
       (if (and (file-readable-p target)
                (file-regular-p target))
           (progn
@@ -287,13 +283,11 @@
               ($/vwf (buffer-name) "#C2F3D7")
               ($/vwf (format "[%s]" (buffer-file-name-relative)) "#FF4018" ))))
 
-(defun $/hashnurtail (algo hwm contents)
-  "HWM inspo https://zeromq.or$/socket-api/#high-water-mark
-CONTENTS.
-"
+(defun $/hash-take-last-n-chars (algo count contents)
+  "."
   (let* ((data (secure-hash algo contents))
          (end  (length data))
-         (beg  (- end hwm)))
+         (beg  (- end count)))
     (substring data beg end)))
 
 (defun $/text-properties()
@@ -353,7 +347,7 @@ CONTENTS.
       ($/mt (format "🎲️(%s)" f)) ""))
 
 (defun $/paint-mode-line-colorize (c contents)
-  (let* ((foreground (format "#%s" ($/hashnurtail 'sha512 6 c)))
+  (let* ((foreground (format "#%s" ($/hash-take-last-n-chars 'sha512 6 c)))
          (background (compute-bright-dark-from-color-value foreground ($/mode-line-foreground) ($/mode-line-background))))
     ;;(debug "($/paint-mode-line-colorize %S %S) => %s %s" c contents foreground background)
     (propertize
@@ -364,23 +358,23 @@ CONTENTS.
 (defun $/paint-mode-line-color (contents)
   ($/paint-mode-line-colorize contents contents))
 
-(defun $/tick-non-file-buffer()
+(defun $/paint-non-file-buffer()
   "."
-  (list ($/tick-mode-name) " " "   𝐗%l 𝐘%c %I ⊲ %i bytes " "%e" "%t"
+  (list ($/paint-mode-name) " " "   𝐗%l 𝐘%c %I ⊲ %i bytes " "%e" "%t"
         '(:eval ($/mark-indicator))))
 
 
 
-(defun $/tick-mode-name-npptz() (format "%s-mode" (replace-regexp-in-string "^\\([a-z0-9-]+\\)[^A-Za-z0-9-]+.*$" "\\1" (downcase (cond ((listp mode-name) (car mode-name)) ((stringp mode-name) mode-name) ((t (format "%S" mode-name)))) ))))
+(defun $/paint-mode-name-npptz() (format "%s-mode" (replace-regexp-in-string "^\\([a-z0-9-]+\\)[^A-Za-z0-9-]+.*$" "\\1" (downcase (cond ((listp mode-name) (car mode-name)) ((stringp mode-name) mode-name) ((t (format "%S" mode-name)))) ))))
 
-(defun $/tick-mode-name()
-  ($/paint-mode-line-color ($/tick-mode-name-npptz)))
+(defun $/paint-mode-name()
+  ($/paint-mode-line-color ($/paint-mode-name-npptz)))
 
 
 
 ;; 987-2711
 
-(defun $/tick-file-buffer()
+(defun $/paint-file-buffer()
   "."
   (list
    '(:eval ($/mark-indicator))
@@ -389,7 +383,7 @@ CONTENTS.
    " " (propertize " ⇒ " 'face (list :background ($/mode-line-background)
                                      :foreground "#F10958"))
    " "
-   '(:eval ($/tick-mode-name))
+   '(:eval ($/paint-mode-name))
    " "
    '(:eval ($/fm))
    " "
@@ -400,8 +394,8 @@ CONTENTS.
   "."
   (interactive)
   (let* ((narrow (if (buffer-file-name)
-                     ($/tick-file-buffer)
-                   ($/tick-non-file-buffer)))
+                     ($/paint-file-buffer)
+                   ($/paint-non-file-buffer)))
          (wide (list mode-line-front-space narrow mode-line-end-spaces)))
     (setq mode-line-format wide)
     (force-mode-line-update) wide))
@@ -461,20 +455,20 @@ CONTENTS.
        (interactive "sschreibe deine eingabe: ")
        (if (not (stringp text))
            (user-error "'text aint no string")
-         (let* ((ᎭΣξ (string= "#!" (buffer-substring-no-properties (point-min) (+ (point-min) 2))))
+         (let* ((hashbang (string= "#!" (buffer-substring-no-properties (point-min) (+ (point-min) 2))))
                 (tmp (get-buffer-create (format "*figlet*%s*" text)))
-                (ຈ𐊐ӈt (concat (string-trim (or comment-start "#")) (string-trim (or comment-start "#")) comment-padding))
-                (ᎮĀᏕȐ (save-mark-and-excursion
+                (comment (concat (string-trim (or comment-start "#")) (string-trim (or comment-start "#")) comment-padding))
+                (shell-result (save-mark-and-excursion
                         (shell-command (format "figlet -w1490 -f nancyjg \"%s\"" text) tmp nil)
                         (set-buffer tmp)
                         (delete-blank-lines)
                         (flush-lines "^\s-*$")
-                        (replace-regexp-in-string "^" ຈ𐊐ӈt
+                        (replace-regexp-in-string "^" comment
                                                   (buffer-substring-no-properties (point-min) (point-max))))))
            (save-mark-and-excursion
-             (move-to-window-line (or ᎭΣξ 1 0))
+             (move-to-window-line (or hashbang 1 0))
              (move-to-column 0)
-             (insert  (format "%s\n" ᎮĀᏕȐ)))
+             (insert  (format "%s\n" shell-result)))
            (kill-buffer tmp))))
 
 
@@ -482,8 +476,8 @@ CONTENTS.
   "HWM inspo https://zeromq.org/socket-api/#high-water-mark
 CONTENTS.
 "
-  ;; (format "%s:%s"  (symbol-name algo) ($/hashnurtail algo hwm contents)))
-  (format "%s"  ($/hashnurtail algo hwm contents)))
+  ;; (format "%s:%s"  (symbol-name algo) ($/hash-take-last-n-chars algo hwm contents)))
+  (format "%s"  ($/hash-take-last-n-chars algo hwm contents)))
 
 (defun load-theme () "." (interactive) (ah))
 
@@ -519,7 +513,7 @@ CONTENTS.
       (mapcar 'delete-overlay (overlays-in beg mp)))))
 
 
-(defun utf8ftu ()
+(defun setup-utf8 ()
   (interactive)
   (mapc #'(lambda (pnoitcnuf)
             (if (functionp pnoitcnuf)
@@ -540,7 +534,7 @@ CONTENTS.
               (pi (car pipa))
               (pa (car (cdr pipa)))
               (tmp (get-buffer-create "tmp"))
-              (ᎮĀᏕȐ (save-mark-and-excursion
+              (shell-result (save-mark-and-excursion
                         (shell-command (format (base64-decode-string шоли$) text) tmp nil)
                         (set-buffer tmp)
                         (delete-blank-lines)
@@ -548,7 +542,7 @@ CONTENTS.
                         (buffer-substring-no-properties (point-min) (point-max))))
               )
          (kill-buffer tmp)
-         ᎮĀᏕȐ))
+         shell-result))
 
 
 (defun $/encrypt-chacha20-hardcoded () "."

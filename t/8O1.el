@@ -1,4 +1,4 @@
-(utf8ftu)
+(setup-utf8)
 
 ($/undefine-key
  '(
@@ -36,8 +36,8 @@
                                                                      (message "emacs init took %s" (emacs-init-time))
                                                                      )))
 
-(add-hook 'after-save-hook 'kooh-tini-retfa)
-(add-hook 'after-init-hook 'kooh-tini-retfa)
+(add-hook 'after-save-hook '$$$$$)
+(add-hook 'after-init-hook '$$$$$)
 ($/set-key '("C-x C-x") '$/levate)
 ($/set-key '("C-x C-z") #'(lambda () (interactive) (eval-buffer) (message "%s eval'd " (buffer-name))))
 
@@ -46,7 +46,7 @@
 ($/set-key '("C-x -") 'text-scale-adjust)
 ($/set-key '("C-x +") 'text-scale-adjust)
 ($/set-key '("C-c C-l") 'collapse-lines-region)
-($/set-key '("C-c C-t C-m C-l") 'kooh-tini-retfa)
+($/set-key '("C-c C-t C-m C-l") '$$$$$)
 ($/set-key '("C-c C-x C-f") 'show-face-at-point)
 ($/set-key '("C-c C-w" "C-c M-w") 'clipboard-kill-ring-save)
 ($/set-key '("C-c C-y" "C-c M-y") 'clipboard-yank)
@@ -86,7 +86,6 @@
 
 ($/set-key '("C-x C-SPC" "C-c C-SPC") 'rectangle-mark-mode)
 ($/set-key "C-x C-e e" 'g/ep)
-($/set-key "C-x C-e b" 'g/wkzg)
 ($/set-key "M-s" 'save-buffer)
 ($/set-key "C-c C-p" #'(lambda () (interactive) (message "cur %d" (point))))
 ($/set-key '("M-f") 'forward-word)
