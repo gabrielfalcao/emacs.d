@@ -1,20 +1,3 @@
-;;       ________             ~
-;;     ,88888GG8Ga,  8G    d8888     d8G'
-;;   ,d8G"      "V8G 18     88     d88G'
-;;   a8"         'Vd  VG        ,ad8"
-;;   "            )8   "8aaaaa8888G"
-;;               ,dG     """"""
-;;              ,a8"   ________
-;;      "8gggggggO1  ,d88888888888G,
-;;       "8'    'a8G,88"           "V8)
-;;               "V8G'               d8)
-;;                'VdG               ,88'
-;;                 )8G               d88'
-;; 8(G             ,dG              (8G'
-;; "18            ,a8"             d88'
-;;   VG,_________,a8     "'VBG    888
-;;    "8ggggggggg8"       'V88888V"
-;;       """"""""            """"'
 (defun Ꭶ/mode-line-foreground ()
   (interactive)
   "#F16018")
@@ -24,7 +7,7 @@
   "#333")
 
 (defun Ꭶ()
-  "ॐ"
+  "."
   (interactive)
 
   (let* ((ᎦselᎦ                     "#C6DCFC")
@@ -130,7 +113,7 @@
     (set-face-attribute 'font-lock-type-face nil :foreground Ꭶtype-faceᎦ)
     (set-face-attribute 'font-lock-variable-name-face nil :foreground ᎦvariableᎦ)
     (set-face-attribute 'font-lock-warning-face nil :foreground ᎦadmonitionᎦ :background ᎦbackgroundᎦ)
-    (set-face-attribute 'fringe nil :background ᎦbackgroundᎦ :foreground ᎦbackgroundᎦ :box '(:width 0))
+    (set-face-attribute 'fringe nil :background ᎦbackgroundᎦ :foreground ᎦbackgroundᎦ)
     (set-face-attribute 'holiday nil :background ᎦadmonitionᎦ :foreground ᎦbackgroundᎦ)
     (set-face-attribute 'calendar-weekday-header nil :background ᎦbackgroundᎦ :foreground Ꭶmode-line-inactive-bgᎦ)
     ;; (set-face-attribute 'line-number nil :background ᎦbackgroundᎦ :foreground Ꭶcurrent-line-numberᎦ)
@@ -142,10 +125,9 @@
     (set-face-attribute 'minibuffer-prompt nil :foreground ᎦvariableᎦ)
     (set-face-attribute 'rectangle-preview nil :background Ꭶline-numberᎦ)
     (set-face-attribute 'mode-line nil :background (Ꭶ/mode-line-background) :foreground (Ꭶ/mode-line-foreground))
-    (set-face-attribute 'mode-line-inactive nil :background Ꭶmode-line-inactive-bgᎦ :foreground Ꭶmode-line-inactive-fgᎦ
-                        :box '(:line-width (0 . 0)))
-    (set-face-attribute 'mode-line-emphasis nil :bold nil :background nil :foreground nil)
-    (set-face-attribute 'vertical-border nil :background nil :foreground nil)
+    (set-face-attribute 'mode-line-inactive nil :background Ꭶmode-line-inactive-bgᎦ :foreground Ꭶmode-line-inactive-fgᎦ)
+    (set-face-attribute 'mode-line-emphasis nil :bold nil)
+    (set-face-attribute 'vertical-border nil)
     (set-face-attribute 'isearch nil :background (Ꭶ/mode-line-foreground) :foreground (Ꭶ/mode-line-background))
     (set-face-attribute 'isearch-fail nil :background ᎦerrorᎦ :foreground ᎦbackgroundᎦ)
     (set-face-attribute 'error nil :background ᎦerrorᎦ :foreground "#333")

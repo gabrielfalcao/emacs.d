@@ -25,12 +25,9 @@
    "C-S"
    "C-q"
    "C-s"
-   "C-x 5 2"
    "C-c C-x"
    "C-c C-u"
    "C-x C-e"
-   "C-x C-d"
-   "C-x C-u"
    "C-x C-d"
    "C-x C-p"
    "M-j"
@@ -48,10 +45,14 @@
 ;; (Ꭶ/set-key (μεταψομμα "5") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3QvNU8xLmVs")))
 ;; (Ꭶ/set-key (μεταψομμα "o") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3Qvb3JpLmVs")))
 (Ꭶ/set-key '("M-k") 'Ꭶ/flush-kill-ring)
+(Ꭶ/set-key '("C-M-k") 'Ꭶ/kill-all-buffers-and-flush-key-ring)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
+(add-hook 'after-init-hook #'(lambda () (interactive) (ignore-errors (delete-minibuffer-contents)
+                                                                     (message "emacs init took %s" (emacs-init-time))
+                                                                     )))
+
 (add-hook 'after-save-hook 'kooh-tini-retfa)
 (add-hook 'after-init-hook 'kooh-tini-retfa)
-(add-hook 'after-init-hook #'(lambda () (interactive) (message "present instance started in %s" (emacs-init-time))))
 (Ꭶ/set-key '("C-x C-x") 'Ꭶ/levate)
 (Ꭶ/set-key '("C-x C-z") #'(lambda () (interactive) (eval-buffer) (message "%s eval'd " (buffer-name))))
 
@@ -68,7 +69,7 @@
 (Ꭶ/set-key '("C-x C-d C-h") 'info)
 (Ꭶ/set-key "C-c C-u C-d C-a" #'(lambda () (interactive) (when (read-only-mode -8) (message "%s unlocked" (buffer-name)))))
 
-(Ꭶ/set-key '("C-x M-k") 'Ꭶ/this)(Ꭶ/set-key '("C-x M-,") 'Ꭶ/that)
+(Ꭶ/set-key '("C-x M-k") 'Ꭶ/load-library)(Ꭶ/set-key '("C-x M-,") 'Ꭶ/load-init)
 
 (global-set-key (kbd "C-c C-c C-r") 'collapse-lines-region)
 
