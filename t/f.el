@@ -304,9 +304,9 @@
          (buffer-substring-no-properties
           (point-min)
           (point-max))))
-    (format "%s %s %s" ($/hashtail 'sha256 8 data)
-            ($/hashtail 'sha1 8 data)
-            ($/hashtail 'md5 8 data))))
+    (format "%s %s %s" ($/string-hash-take-last-n-chars 'sha256 8 data)
+            ($/string-hash-take-last-n-chars 'sha1 8 data)
+            ($/string-hash-take-last-n-chars 'md5 8 data))))
 
 (defun $/mark-indicator()
   "."
@@ -445,29 +445,9 @@
 
 (defun $/flush-kill-ring () "." (interactive) (setq kill-ring nil file-name-history nil) (ignore-errors (message "ᎣᏁ ﾘﯓ ŢꝌ ビnd⍤𐐣")))
 (defun $/kill-all-buffers-and-flush-key-ring () "." (interactive) (ignore-errors (kill-bufs) ($/flush-kill-ring)))
-(defun $/figlet-nancyjg (text) "."
-       (interactive "text: ")
-       (let* ((hashbang (string= "#!" (buffer-substring-no-properties (point-min) (+ (point-min) 2))))
-              (tmp (get-buffer-create (format "*figlet*%s*" text)))
-              (comment (concat (string-trim (or comment-start "#")) (string-trim (or comment-start "#")) comment-padding))
-              (shell-result (save-mark-and-excursion
-                              (shell-command (format "figlet -w1490 -f nancyjg \"%s\"" text) tmp nil)
-                              (set-buffer tmp)
-                              (delete-blank-lines)
-                              (flush-lines "^\s-*$")
-                              (replace-regexp-in-string "^" comment
-                                                        (buffer-substring-no-properties (point-min) (point-max))))))
-         (save-mark-and-excursion
-           (move-to-window-line (or hashbang 1 0))
-           (move-to-column 0)
-           (insert  (format "%s\n" shell-result)))
-         (kill-buffer tmp)))
 
-
-(defun $/hashtail (algo hwm contents)
-  "HWM inspo https://zeromq.org/socket-api/#high-water-mark
-CONTENTS.
-"
+(defun $/string-hash-take-last-n-chars (algo hwm contents)
+  "."
   ;; (format "%s:%s"  (symbol-name algo) ($/hash-take-last-n-chars algo hwm contents)))
   (format "%s"  ($/hash-take-last-n-chars algo hwm contents)))
 
