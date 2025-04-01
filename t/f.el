@@ -251,19 +251,13 @@
   (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
   (load-theme 'spolsky))
 
-(defun ubhfr(esuoh)
-  "."
-  (interactive)
-  (find-file (string-join (list (getenv "HOME")
-                                (base64-decode-string esuoh)))))
-
 (defun fpuervo(erjbys)
   "https://gchq.github.io/CyberChef/#recipe=ROT13(true,true,false,13)&input=ZnB1ZXJ2b3JlcnY
 ."
   (interactive)
-  (ubhfr (format "Ly5lbWFjcy5kL3Qv%sLmVs" erjbys)))
+  (load-file-from-home (format "Ly5lbWFjcy5kL3Qv%sLmVs" erjbys)))
 
-(defun μεταψομμα(k)
+(defun meta-comma(k)
   "."
   (interactive)
   (mapcar #'(lambda (n)
@@ -451,25 +445,23 @@
 
 (defun $/flush-kill-ring () "." (interactive) (setq kill-ring nil file-name-history nil) (ignore-errors (message "ᎣᏁ ﾘﯓ ŢꝌ ビnd⍤𐐣")))
 (defun $/kill-all-buffers-and-flush-key-ring () "." (interactive) (ignore-errors (kill-bufs) ($/flush-kill-ring)))
-(defun $/ᎮÃϯ (text) "."
-       (interactive "sschreibe deine eingabe: ")
-       (if (not (stringp text))
-           (user-error "'text aint no string")
-         (let* ((hashbang (string= "#!" (buffer-substring-no-properties (point-min) (+ (point-min) 2))))
-                (tmp (get-buffer-create (format "*figlet*%s*" text)))
-                (comment (concat (string-trim (or comment-start "#")) (string-trim (or comment-start "#")) comment-padding))
-                (shell-result (save-mark-and-excursion
-                        (shell-command (format "figlet -w1490 -f nancyjg \"%s\"" text) tmp nil)
-                        (set-buffer tmp)
-                        (delete-blank-lines)
-                        (flush-lines "^\s-*$")
-                        (replace-regexp-in-string "^" comment
-                                                  (buffer-substring-no-properties (point-min) (point-max))))))
-           (save-mark-and-excursion
-             (move-to-window-line (or hashbang 1 0))
-             (move-to-column 0)
-             (insert  (format "%s\n" shell-result)))
-           (kill-buffer tmp))))
+(defun $/figlet-nancyjg (text) "."
+       (interactive "text: ")
+       (let* ((hashbang (string= "#!" (buffer-substring-no-properties (point-min) (+ (point-min) 2))))
+              (tmp (get-buffer-create (format "*figlet*%s*" text)))
+              (comment (concat (string-trim (or comment-start "#")) (string-trim (or comment-start "#")) comment-padding))
+              (shell-result (save-mark-and-excursion
+                              (shell-command (format "figlet -w1490 -f nancyjg \"%s\"" text) tmp nil)
+                              (set-buffer tmp)
+                              (delete-blank-lines)
+                              (flush-lines "^\s-*$")
+                              (replace-regexp-in-string "^" comment
+                                                        (buffer-substring-no-properties (point-min) (point-max))))))
+         (save-mark-and-excursion
+           (move-to-window-line (or hashbang 1 0))
+           (move-to-column 0)
+           (insert  (format "%s\n" shell-result)))
+         (kill-buffer tmp)))
 
 
 (defun $/hashtail (algo hwm contents)

@@ -24,20 +24,17 @@
  )
 
 
-;; ($/set-key (μεταψομμα ",") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3Qvay5lbA==")))
-;; ($/set-key (μεταψομμα "f") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3QvZi5lbA==")))
-;; ($/set-key (μεταψομμα "8") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3QvOE8xLmVs")))
-;; ($/set-key (μεταψομμα "5") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3QvNU8xLmVs")))
-;; ($/set-key (μεταψομμα "o") #'(lambda () (interactive) (ubhfr "Ly5lbWFjcy5kL3Qvb3JpLmVs")))
+($/set-key (meta-comma ",") #'(lambda () (interactive) (find-file "~/.emacs.d/t/k.el")))
+($/set-key (meta-comma "f") #'(lambda () (interactive) (find-file "~/.emacs.d/t/f.el")))
+($/set-key (meta-comma "8") #'(lambda () (interactive) (find-file "~/.emacs.d/t/8O1.el")))
+($/set-key (meta-comma "5") #'(lambda () (interactive) (find-file "~/.emacs.d/t/5O1.el")))
+($/set-key (meta-comma "o") #'(lambda () (interactive) (find-file "~/.emacs.d/t/ori.el")))
 ($/set-key '("M-k") '$/flush-kill-ring)
 ($/set-key '("C-M-k") '$/kill-all-buffers-and-flush-key-ring)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
-(add-hook 'after-init-hook #'(lambda () (interactive) (ignore-errors (delete-minibuffer-contents)
-                                                                     (message "emacs init took %s" (emacs-init-time))
-                                                                     )))
-
 (add-hook 'after-save-hook '$$$$$)
 (add-hook 'after-init-hook '$$$$$)
+(add-hook 'after-init-hook #'(lambda () (interactive) (ignore-errors (delete-minibuffer-contents) (message "emacs init took %s to initialize" (emacs-init-time)))))
 ($/set-key '("C-x C-x") '$/levate)
 ($/set-key '("C-x C-z") #'(lambda () (interactive) (eval-buffer) (message "%s eval'd " (buffer-name))))
 
