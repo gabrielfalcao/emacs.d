@@ -58,7 +58,7 @@
   (interactive)
   (ignore-errors
     (colorize6hex)
-    (Ꭶ/tick-mode-line)
+    (Ꭶ/paint-mode-line)
     (disavail-asl)
     (gc)
     (Ꭶ)))
@@ -211,7 +211,7 @@
     (progn
       (Ꭶ/undefine-key key)
       (global-set-key key)))
-  
+
   (when (stringp key)
     (progn
       (Ꭶ/undefine-key key)
@@ -235,7 +235,7 @@
     (user-error "key %S has invalid type: %s" key (type-of key)))
   (when (integerp key)
     (global-set-key key def))
-  
+
   (when (stringp key)
     (global-set-key (kbd key) def)
     )
@@ -368,17 +368,17 @@ CONTENTS.
   (if (stringp f)
       (Ꭶ/mt (format "🎲️(%s)" f)) ""))
 
-(defun Ꭶ/tick-mode-line-colorize (c contents)
+(defun Ꭶ/paint-mode-line-colorize (c contents)
   (let* ((foreground (format "#%s" (Ꭶ/hashnurtail 'sha512 6 c)))
          (background (compute-bright-dark-from-color-value foreground (Ꭶ/mode-line-foreground) (Ꭶ/mode-line-background))))
-    ;;(debug "(Ꭶ/tick-mode-line-colorize %S %S) => %s %s" c contents foreground background)
+    ;;(debug "(Ꭶ/paint-mode-line-colorize %S %S) => %s %s" c contents foreground background)
     (propertize
      (format "%s" contents)
      'face (list :foreground foreground :background background))))
 
 
-(defun Ꭶ/tick-mode-line-color (contents)
-  (Ꭶ/tick-mode-line-colorize contents contents))
+(defun Ꭶ/paint-mode-line-color (contents)
+  (Ꭶ/paint-mode-line-colorize contents contents))
 
 (defun Ꭶ/tick-non-file-buffer()
   "."
@@ -390,7 +390,7 @@ CONTENTS.
 (defun Ꭶ/tick-mode-name-npptz() (format "%s-mode" (replace-regexp-in-string "^\\([a-z0-9-]+\\)[^A-Za-z0-9-]+.*$" "\\1" (downcase (cond ((listp mode-name) (car mode-name)) ((stringp mode-name) mode-name) ((t (format "%S" mode-name)))) ))))
 
 (defun Ꭶ/tick-mode-name()
-  (Ꭶ/tick-mode-line-color (Ꭶ/tick-mode-name-npptz)))
+  (Ꭶ/paint-mode-line-color (Ꭶ/tick-mode-name-npptz)))
 
 
 
@@ -412,7 +412,7 @@ CONTENTS.
    '(:eval (Ꭶ/bchs))
    " " "   𝐗%l 𝐘%c %I ⊲ %i bytes " "%e" "%t"))
 
-(defun Ꭶ/tick-mode-line ()
+(defun Ꭶ/paint-mode-line ()
   "."
   (interactive)
   (let* ((narrow (if (buffer-file-name)
@@ -470,7 +470,8 @@ CONTENTS.
                                      (Ꭶ/aclら(elt 1 acls)))))))))
 
 
-(defun Ꭶ/flush-kill-ring () "." (interactive) (setq kill-ring nil file-name-history nil) (message "ᎣᏁ ﾘﯓ ŢꝌ ビnd⍤𐐣"))
+(defun Ꭶ/flush-kill-ring () "." (interactive) (setq kill-ring nil file-name-history nil) (ignore-errors (message "ᎣᏁ ﾘﯓ ŢꝌ ビnd⍤𐐣")))
+(defun Ꭶ/kill-all-buffers-and-flush-key-ring () "." (interactive) (ignore-errors (kill-bufs) (Ꭶ/flush-kill-ring)))
 (defun Ꭶ/ᎮÃϯ (text) "."
        (interactive "sschreibe deine eingabe: ")
        (if (not (stringp text))
@@ -553,7 +554,7 @@ CONTENTS.
        (let* ((pipa (region-points))
               (pi (car pipa))
               (pa (car (cdr pipa)))
-              (ㆠᵮᵮㄦ (get-buffer-create "0x28400000"))
+              (ㆠᵮᵮㄦ (get-buffer-create "ㆠᵮᵮㄦ"))
               (ᎮĀᏕȐ (save-mark-and-excursion
                         (shell-command (format (base64-decode-string шолиᎦ) text) ㆠᵮᵮㄦ nil)
                         (set-buffer ㆠᵮᵮㄦ)
