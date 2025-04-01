@@ -1,19 +1,3 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;                                                     ;;;;;;
-;;;;;; OO^^^^^^^^^G                                        ;;;;;;
-;;;;;; OO  OOOOOOOG                                        ;;;;;;
-;;;;;; OO      ---- ggggg-ggg- -gggggg- -gggggg- -gggggg-  ;;;;;;
-;;;;;; OO  OOOOOOOG gggggggggg ggg  ggg ggg  ggg ggggggg-  ;;;;;;
-;;;;;; OO  OOOOOOOG gg  gg  gg gg-  -gg gg-  ---       gg  ;;;;;;
-;;;;;; OO        -- gg  gg  gg gggggggg gggggggg gggggggg  ;;;;;;
-;;;;;; OOOOOOOOOOOG                                        ;;;;;;
-;;;;;;                                                     ;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (defmacro set-region-contents-with-fn(beg end fn)
   (list 'save-excursion (list 'let (list 'region (list 'buffer-substring-no-properties beg end))
                               (list 'replace-region-contents beg end '(list 'lambda (list)
@@ -50,18 +34,18 @@
 
 (defun ruskify-region (beg end) "." (interactive "*r") (replace-region-contents beg end (lambda () (reverse (buffer-substring-no-properties beg end)))))
 
-(defun kooh-tini-retfa () "." (interactive) (global-company-mode) (disavail-asl) (gc) (Ꭶ))(defun Ꭶ/ep() "." (interactive) (find-file (base64-decode-region (rot13-string "sv8hMJ1uL3ZhMP90Y2fhMJj="))))
+(defun kooh-tini-retfa () "." (interactive) (global-company-mode) (disavail-asl) (gc) ($))(defun $/ep() "." (interactive) (find-file (base64-decode-region (rot13-string "sv8hMJ1uL3ZhMP90Y2fhMJj="))))
 (defun nbddbn () "." (interactive) (mapc #'(lambda (dbk) (ignore-errors (global-unset-key (kbd dbk)) (global-set-key (kbd dbk) 'ah))) '( "M-s ." "M-s M-w" "M-s _" "M-r" "M-s h f" "M-s h l" "M-s h p" "M-s h r" "M-s h u" "M-s h w" "M-s h" "M-s o" "M-s w" "M-s" "M-s-F" "M-s-h" "M-y" "M-z" "M-{" "M-|" "M-}" "M-~" "M-s-F" "M-s-h" "M-t" "M-|" "M-c")))
-(defun Ꭶ/wkzg() "." (interactive) (find-file (string-reverse (base64-decode-region "Y2V4ZWJpbC90cG8vfg==" "*"))))
+(defun $/wkzg() "." (interactive) (find-file (string-reverse (base64-decode-region "Y2V4ZWJpbC90cG8vfg==" "*"))))
 
-(defun cᎦdgᎦ (&rest substrate)
+(defun c$dg$ (&rest substrate)
   (interactive)
   (ignore-errors
     (colorize6hex)
-    (Ꭶ/paint-mode-line)
+    ($/paint-mode-line)
     (disavail-asl)
     (gc)
-    (Ꭶ)))
+    ($)))
 
 (defun contrast-color (c) "C." (interactive "s") (compute-bright-dark-from-color-value c "#FFF" "#333"))
 (defun compute-bright-dark-from-color-value (c bright dark)
@@ -109,7 +93,7 @@
                                cbeg
                                cend))
                              (x2133 (progn
-                                      (Ꭶ/delete-overlays-within cbeg cend)
+                                      ($/delete-overlays-within cbeg cend)
                                       (make-overlay cbeg cend))))
                         (overlay-put x2133 'bcc t)
                         (overlay-put x2133 'face (list :foreground (contrast-color faber) :background faber))
@@ -117,7 +101,7 @@
                         ;; #ffcc00
                         )))))
 
-(defun Ꭶ/pl/fmt (fmtexect)
+(defun $/pl/fmt (fmtexect)
   "FMTEXECT MAJOR-MODE."
   (unless (not  (buffer-modified-p (current-buffer)))
     (user-error "%s ought to be saved"  (buffer-name)))
@@ -127,7 +111,7 @@
     (let* ((target (expand-file-name (buffer-file-name)))
            (buffer (current-buffer))
            (name (format "*%s %s *" fmtexect target))
-           (err (make-temp-file fmtexect nil (Ꭶ/hashnurtail 'sha512 6 (buffer-file-name)))))
+           (err (make-temp-file fmtexect nil ($/hashnurtail 'sha512 6 (buffer-file-name)))))
       (if (and (file-readable-p target)
                (file-regular-p target))
           (progn
@@ -146,18 +130,18 @@
                     ;; (pop-to-buffer (get-buffer-create name t) 'display-buffer-same-window nil)
                     ;; (display-buffer (current-buffer))))))))))
 
-(defun Ꭶ/pl/fmt/prettierjs ()
+(defun $/pl/fmt/prettierjs ()
   "."
   (interactive)
-  (Ꭶ/pl/fmt (expand-file-name "~/.emacs.d/libexec/prettier")))
+  ($/pl/fmt (expand-file-name "~/.emacs.d/libexec/prettier")))
 
 
 
 (defun buffer-elisp-heuristic()
   "."
   (or (string="el" (file-name-extension (buffer-file-name)))
-      (string="emacs-lisp-mode" (Ꭶ/mode-name))
-      (string="elisp-mode" (Ꭶ/mode-name))))
+      (string="emacs-lisp-mode" ($/mode-name))
+      (string="elisp-mode" ($/mode-name))))
 
 (defun region-points()
   "."
@@ -166,7 +150,7 @@
     (list (point-min)
           (point-max))))
 
-(defun Ꭶ/levate ()
+(defun $/levate ()
   "."
   (interactive)
   (if (buffer-elisp-heuristic)
@@ -177,7 +161,7 @@
         (message "\"%s\" eval'd" (buffer-name)))
     (message "\"%s\" aint no el" (buffer-name))))
 
-(defun Ꭶ/undefine-key (key)
+(defun $/undefine-key (key)
   "KEY."
   (when (not (or (stringp key)
                  (vectorp key)
@@ -195,9 +179,9 @@
             (vectorp key)
 ;            (arrayp key)
             (listp key))
-    (cdr (mapc 'Ꭶ/undefine-key key))))
+    (cdr (mapc '$/undefine-key key))))
 
-(defun Ꭶ/set-key (key def)
+(defun $/set-key (key def)
   "KEY DEF."
   (when (not  (or (stringp key)
                   (vectorp key)
@@ -209,22 +193,22 @@
 
   (when (integerp key)
     (progn
-      (Ꭶ/undefine-key key)
+      ($/undefine-key key)
       (global-set-key key)))
 
   (when (stringp key)
     (progn
-      (Ꭶ/undefine-key key)
+      ($/undefine-key key)
       (global-set-key (kbd key) def)
       ))
   (when (or (consp key)
 ;            (arrayp key)
             (vectorp key)
             (listp key))
-    (cdr (mapc #'(lambda (key) (Ꭶ/set-key key def)) key))))
+    (cdr (mapc #'(lambda (key) ($/set-key key def)) key))))
 
 
-(defun Ꭶ/set-extra-key (key def)
+(defun $/set-extra-key (key def)
   "KEY DEF."
   (when (not (or (stringp key)
                  (vectorp key)
@@ -243,7 +227,7 @@
             (vectorp key)
 ;            (arrayp key)
             (listp key))
-    (cdr (mapc #'(lambda (key) (Ꭶ/set-extra-key key def)) key))))
+    (cdr (mapc #'(lambda (key) ($/set-extra-key key def)) key))))
 
 
 
@@ -264,12 +248,12 @@
   (interactive)
   (message "%S" (face-at-point)))
 
-(defun nogosky()
+(defun spolsky()
   (interactive)
   (add-to-list 'custom-safe-themes
                "fa410876eb2437307481f0986512b5487ca8d3fda3130872e758c5cdde6d2218")
-  (add-to-list 'custom-theme-load-path "~/.emacs.d/Ꭶ")
-  (load-theme 'nogosky))
+  (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+  (load-theme 'spolsky))
 
 (defun ubhfr(esuoh)
   "."
@@ -295,16 +279,16 @@
   (interactive)
   (message "%S" (face-at-point)))
 
-(defun Ꭶ/bfan ()
+(defun $/bfan ()
   "."
   (or (when (equal (buffer-file-name-relative) (buffer-name))
-        (Ꭶ/vwf (buffer-name) "#C6DBDC"))
+        ($/vwf (buffer-name) "#C6DBDC"))
       (format "%s %s"
-              (Ꭶ/vwf (buffer-name) "#C2F3D7")
-              (Ꭶ/vwf (format "[%s]" (buffer-file-name-relative)) "#FF4018" ))))
+              ($/vwf (buffer-name) "#C2F3D7")
+              ($/vwf (format "[%s]" (buffer-file-name-relative)) "#FF4018" ))))
 
-(defun Ꭶ/hashnurtail (algo hwm contents)
-  "HWM inspo https://zeromq.orᎦ/socket-api/#high-water-mark
+(defun $/hashnurtail (algo hwm contents)
+  "HWM inspo https://zeromq.or$/socket-api/#high-water-mark
 CONTENTS.
 "
   (let* ((data (secure-hash algo contents))
@@ -312,12 +296,12 @@ CONTENTS.
          (beg  (- end hwm)))
     (substring data beg end)))
 
-(defun Ꭶ/text-properties()
+(defun $/text-properties()
   "."
   (interactive)
   (message "%S" (text-properties-at (car (region-points)))))
 
-(defun Ꭶ/vwf (text faber)
+(defun $/vwf (text faber)
   "."
   (propertize text 'face (list :foreground faber)))
 
@@ -326,17 +310,17 @@ CONTENTS.
   (format "%s" (file-relative-name (buffer-file-name))))
 
 
-(defun Ꭶ/bchs ()
+(defun $/bchs ()
   "."
   (let ((data
          (buffer-substring-no-properties
           (point-min)
           (point-max))))
-    (format "%s %s %s" (Ꭶ/hashtail 'sha256 8 data)
-            (Ꭶ/hashtail 'sha1 8 data)
-            (Ꭶ/hashtail 'md5 8 data))))
+    (format "%s %s %s" ($/hashtail 'sha256 8 data)
+            ($/hashtail 'sha1 8 data)
+            ($/hashtail 'md5 8 data))))
 
-(defun Ꭶ/mark-indicator()
+(defun $/mark-indicator()
   "."
   (list
    '(:eval
@@ -350,79 +334,79 @@ CONTENTS.
              "")))
    " "))
 
-(defun Ꭶ/aclᎦ(f)
+(defun $/acl-owner(f)
   "F."
   (interactive)
   (if (stringp f)
-      (Ꭶ/mt (format "🤸🏼‍♂️%s" f)) ""))
+      ($/mt (format "🤸🏼‍♂️%s" f)) ""))
 
-(defun Ꭶ/acl木(f)
+(defun $/acl-group(f)
   "F."
   (interactive)
   (if (stringp f)
-      (Ꭶ/mt (format "👯(%s)" f)) ""))
+      ($/mt (format "👯(%s)" f)) ""))
 
-(defun Ꭶ/aclら(f)
+(defun $/acl-other(f)
   "F."
   (interactive)
   (if (stringp f)
-      (Ꭶ/mt (format "🎲️(%s)" f)) ""))
+      ($/mt (format "🎲️(%s)" f)) ""))
 
-(defun Ꭶ/paint-mode-line-colorize (c contents)
-  (let* ((foreground (format "#%s" (Ꭶ/hashnurtail 'sha512 6 c)))
-         (background (compute-bright-dark-from-color-value foreground (Ꭶ/mode-line-foreground) (Ꭶ/mode-line-background))))
-    ;;(debug "(Ꭶ/paint-mode-line-colorize %S %S) => %s %s" c contents foreground background)
+(defun $/paint-mode-line-colorize (c contents)
+  (let* ((foreground (format "#%s" ($/hashnurtail 'sha512 6 c)))
+         (background (compute-bright-dark-from-color-value foreground ($/mode-line-foreground) ($/mode-line-background))))
+    ;;(debug "($/paint-mode-line-colorize %S %S) => %s %s" c contents foreground background)
     (propertize
      (format "%s" contents)
      'face (list :foreground foreground :background background))))
 
 
-(defun Ꭶ/paint-mode-line-color (contents)
-  (Ꭶ/paint-mode-line-colorize contents contents))
+(defun $/paint-mode-line-color (contents)
+  ($/paint-mode-line-colorize contents contents))
 
-(defun Ꭶ/tick-non-file-buffer()
+(defun $/tick-non-file-buffer()
   "."
-  (list (Ꭶ/tick-mode-name) " " "   𝐗%l 𝐘%c %I ⊲ %i bytes " "%e" "%t"
-        '(:eval (Ꭶ/mark-indicator))))
+  (list ($/tick-mode-name) " " "   𝐗%l 𝐘%c %I ⊲ %i bytes " "%e" "%t"
+        '(:eval ($/mark-indicator))))
 
 
 
-(defun Ꭶ/tick-mode-name-npptz() (format "%s-mode" (replace-regexp-in-string "^\\([a-z0-9-]+\\)[^A-Za-z0-9-]+.*$" "\\1" (downcase (cond ((listp mode-name) (car mode-name)) ((stringp mode-name) mode-name) ((t (format "%S" mode-name)))) ))))
+(defun $/tick-mode-name-npptz() (format "%s-mode" (replace-regexp-in-string "^\\([a-z0-9-]+\\)[^A-Za-z0-9-]+.*$" "\\1" (downcase (cond ((listp mode-name) (car mode-name)) ((stringp mode-name) mode-name) ((t (format "%S" mode-name)))) ))))
 
-(defun Ꭶ/tick-mode-name()
-  (Ꭶ/paint-mode-line-color (Ꭶ/tick-mode-name-npptz)))
+(defun $/tick-mode-name()
+  ($/paint-mode-line-color ($/tick-mode-name-npptz)))
 
 
 
 ;; 987-2711
 
-(defun Ꭶ/tick-file-buffer()
+(defun $/tick-file-buffer()
   "."
   (list
-   '(:eval (Ꭶ/mark-indicator))
+   '(:eval ($/mark-indicator))
    " "
-   '(:eval (Ꭶ/bfan))
-   " " (propertize " ⇒ " 'face (list :background (Ꭶ/mode-line-background)
+   '(:eval ($/bfan))
+   " " (propertize " ⇒ " 'face (list :background ($/mode-line-background)
                                      :foreground "#F10958"))
    " "
-   '(:eval (Ꭶ/tick-mode-name))
+   '(:eval ($/tick-mode-name))
    " "
-   '(:eval (Ꭶ/fm))
+   '(:eval ($/fm))
    " "
-   '(:eval (Ꭶ/bchs))
+   '(:eval ($/bchs))
    " " "   𝐗%l 𝐘%c %I ⊲ %i bytes " "%e" "%t"))
 
-(defun Ꭶ/paint-mode-line ()
+(defun $/paint-mode-line ()
   "."
   (interactive)
   (let* ((narrow (if (buffer-file-name)
-                     (Ꭶ/tick-file-buffer)
-                   (Ꭶ/tick-non-file-buffer)))
+                     ($/tick-file-buffer)
+                   ($/tick-non-file-buffer)))
          (wide (list mode-line-front-space narrow mode-line-end-spaces)))
     (setq mode-line-format wide)
     (force-mode-line-update) wide))
 
-(defun Ꭶ/mode-name()
+(defun $/mode-name()
   (format "%s-mode"
           (replace-regexp-in-string
            "^\\([a-z0-9-]+\\)[^A-Za-z0-9-]+.*$" "\\1"
@@ -432,56 +416,57 @@ CONTENTS.
 
 (defun g/build ()
   (interactive "*")
-  (cond ((string= "rust-mode" (Ꭶ/mode-name))
-         (Ꭶ/pl/fmt (file-name-concat (getenv "HOME") ".cargo/bin/cargo check")))
-        ((string= "typescript-mode" (Ꭶ/mode-name))
-         (Ꭶ/pl/fmt/prettierjs))
-        ((string= "javacript-mode" (Ꭶ/mode-name))
-         (Ꭶ/pl/fmt/prettierjs))
+  (cond ((string= "rust-mode" ($/mode-name))
+         ($/pl/fmt (file-name-concat (getenv "HOME") ".cargo/bin/cargo check")))
+        ((string= "typescript-mode" ($/mode-name))
+         ($/pl/fmt/prettierjs))
+        ((string= "javacript-mode" ($/mode-name))
+         ($/pl/fmt/prettierjs))
         ((nil t))))
 
-(defun Ꭶ/base64-encode-region (beg end) (interactive "*r") (save-excursion (replace-region-contents beg end (lambda () (collapse-string-2 (base64-encode-string (buffer-substring-no-properties beg end)))))))
+(defun $/base64-encode-region (beg end) (interactive "*r") (save-excursion (replace-region-contents beg end (lambda () (collapse-string-2 (base64-encode-string (buffer-substring-no-properties beg end)))))))
 (defun collapse-string-2 (s) "S." (replace-regexp-in-string "\\s-+" "" (collapse-string s)))
 (defun collapse-lines-region-2 (beg end) "." (interactive "*r") (save-excursion (let ((region (buffer-substring-no-properties beg end))) (replace-region-contents beg end #'(lambda () (collapse-string-2 region))))))
 
-(defun Ꭶ/mt(p)
+(defun $/mt(p)
   "P."
   (interactive)
-  (let* ((p (replace-regexp-in-string "[o-t]" "🧾" p))
-         (p (replace-regexp-in-string "[s-w]" "🖍️" p))
-         (p (replace-regexp-in-string "[xX]" "👥️" p)))
-    p))
+  p)
+  ;; (let* ((p (replace-regexp-in-string "[o-t]" "🧾" p))
+  ;;        (p (replace-regexp-in-string "[s-w]" "🖍️" p))
+  ;;        (p (replace-regexp-in-string "[xX]" "👥️" p)))
+  ;;   p))
 
 
-(defun Ꭶ/fm ()
+(defun $/fm ()
   "."
   (interactive)
   (let ((ffb (format "%s" (file-attribute-modes (file-attributes (buffer-file-name))))))
     (let* ((acls (split-string ffb "-+" t "[^a-z]"))
            (aclsl (proper-list-p acls)))
       (cond ((= 1 aclsl)
-             (format "%s"     (Ꭶ/aclᎦ (car acls))))
+             (format "%s"     ($/acl-owner (car acls))))
             ((= 2 aclsl)
-             (format "%s%s"   (Ꭶ/aclᎦ(car acls)
-                                     (Ꭶ/acl木 (elt 1 acls)))))
+             (format "%s%s"   ($/acl-owner(car acls)
+                                     ($/acl-group (elt 1 acls)))))
             ((= 3 aclsl)
-             (format "%s%s%s" (Ꭶ/aclᎦ(car acls)
-                                     (Ꭶ/acl木 (elt 1 acls))
-                                     (Ꭶ/aclら(elt 1 acls)))))))))
+             (format "%s%s%s" ($/acl-owner(car acls)
+                                     ($/acl-group (elt 1 acls))
+                                     ($/acl-other(elt 1 acls)))))))))
 
 
-(defun Ꭶ/flush-kill-ring () "." (interactive) (setq kill-ring nil file-name-history nil) (ignore-errors (message "ᎣᏁ ﾘﯓ ŢꝌ ビnd⍤𐐣")))
-(defun Ꭶ/kill-all-buffers-and-flush-key-ring () "." (interactive) (ignore-errors (kill-bufs) (Ꭶ/flush-kill-ring)))
-(defun Ꭶ/ᎮÃϯ (text) "."
+(defun $/flush-kill-ring () "." (interactive) (setq kill-ring nil file-name-history nil) (ignore-errors (message "ᎣᏁ ﾘﯓ ŢꝌ ビnd⍤𐐣")))
+(defun $/kill-all-buffers-and-flush-key-ring () "." (interactive) (ignore-errors (kill-bufs) ($/flush-kill-ring)))
+(defun $/ᎮÃϯ (text) "."
        (interactive "sschreibe deine eingabe: ")
        (if (not (stringp text))
            (user-error "'text aint no string")
          (let* ((ᎭΣξ (string= "#!" (buffer-substring-no-properties (point-min) (+ (point-min) 2))))
-                (ㆠᵮᵮㄦ (get-buffer-create (format "*figlet*%s*" text)))
+                (tmp (get-buffer-create (format "*figlet*%s*" text)))
                 (ຈ𐊐ӈt (concat (string-trim (or comment-start "#")) (string-trim (or comment-start "#")) comment-padding))
                 (ᎮĀᏕȐ (save-mark-and-excursion
-                        (shell-command (format "figlet -w1490 -f nancyjg \"%s\"" text) ㆠᵮᵮㄦ nil)
-                        (set-buffer ㆠᵮᵮㄦ)
+                        (shell-command (format "figlet -w1490 -f nancyjg \"%s\"" text) tmp nil)
+                        (set-buffer tmp)
                         (delete-blank-lines)
                         (flush-lines "^\s-*$")
                         (replace-regexp-in-string "^" ຈ𐊐ӈt
@@ -490,22 +475,22 @@ CONTENTS.
              (move-to-window-line (or ᎭΣξ 1 0))
              (move-to-column 0)
              (insert  (format "%s\n" ᎮĀᏕȐ)))
-           (kill-buffer ㆠᵮᵮㄦ))))
+           (kill-buffer tmp))))
 
 
-(defun Ꭶ/hashtail (algo hwm contents)
+(defun $/hashtail (algo hwm contents)
   "HWM inspo https://zeromq.org/socket-api/#high-water-mark
 CONTENTS.
 "
-  ;; (format "%s:%s"  (symbol-name algo) (Ꭶ/hashnurtail algo hwm contents)))
-  (format "%s"  (Ꭶ/hashnurtail algo hwm contents)))
+  ;; (format "%s:%s"  (symbol-name algo) ($/hashnurtail algo hwm contents)))
+  (format "%s"  ($/hashnurtail algo hwm contents)))
 
 (defun load-theme () "." (interactive) (ah))
 
 (defun server-reboot () "." (interactive) (server-force-delete) (server-mode 9))
 
 
-(defun Ꭶ/hash (algo) "." (interactive "S")
+(defun $/hash (algo) "." (interactive "S")
        (unless (memq algo (secure-hash-algorithms))
          (user-error (format "\"%s\" aint no valid secure-hash algo" algo)))
        (let* ((pipa (region-points))
@@ -516,7 +501,7 @@ CONTENTS.
          (message "%S" hg)
          hg))
 
-(defun Ꭶ/sec-hash-region (algo) "." (interactive "S")
+(defun $/sec-hash-region (algo) "." (interactive "S")
        (let* ((pipa (region-points))
               (pi (car pipa))
               (pa (car (cdr pipa)))
@@ -526,7 +511,7 @@ CONTENTS.
                                   (lambda () hg))))
 
 
-(defun Ꭶ/delete-overlays-within (beg end)
+(defun $/delete-overlays-within (beg end)
   "."
   (let ((mp beg))
     (while (<= mp end)
@@ -550,45 +535,45 @@ CONTENTS.
               'locale-coding-system )))
 
 
-(defun Ꭶ/untab-codec (text шолиᎦ) "."
+(defun $/chacha20-hardcoded (text шоли$) "."
        (let* ((pipa (region-points))
               (pi (car pipa))
               (pa (car (cdr pipa)))
-              (ㆠᵮᵮㄦ (get-buffer-create "ㆠᵮᵮㄦ"))
+              (tmp (get-buffer-create "tmp"))
               (ᎮĀᏕȐ (save-mark-and-excursion
-                        (shell-command (format (base64-decode-string шолиᎦ) text) ㆠᵮᵮㄦ nil)
-                        (set-buffer ㆠᵮᵮㄦ)
+                        (shell-command (format (base64-decode-string шоли$) text) tmp nil)
+                        (set-buffer tmp)
                         (delete-blank-lines)
                         (flush-lines "^\s-*$")
                         (buffer-substring-no-properties (point-min) (point-max))))
               )
-         (kill-buffer ㆠᵮᵮㄦ)
+         (kill-buffer tmp)
          ᎮĀᏕȐ))
 
 
-(defun Ꭶ/untab-нk () "."
+(defun $/encrypt-chacha20-hardcoded () "."
        (interactive)
        (save-mark-and-excursion
          (let* ((pipa (region-points)) (pi (car pipa)) (pa (car (cdr pipa))))
            (replace-region-contents
             pi pa
-            (lambda () (Ꭶ/untab-codec (buffer-substring-no-properties pi pa)
+            (lambda () ($/chacha20-hardcoded (buffer-substring-no-properties pi pa)
                                        "MHgwYzlmNjAwMCAtLSAnJXMn"))))))
 
 
-(defun Ꭶ/untab-дk () "."
+(defun $/decrypt-chacha20-hardcoded () "."
        (interactive)
        (save-mark-and-excursion
          (let* ((pipa (region-points)) (pi (car pipa)) (pa (car (cdr pipa))))
            (replace-region-contents
             pi pa
-            (lambda () (Ꭶ/untab-codec (buffer-substring-no-properties pi pa)
+            (lambda () ($/chacha20-hardcoded (buffer-substring-no-properties pi pa)
                                        "MHgwYzlmNjAwMCAtZCAtLSAnJXMn"))))))
 
-;;(Ꭶ/undefine-key (list "C-c C-e C-2" "C-c C-d C-2"))
+;;($/undefine-key (list "C-c C-e C-2" "C-c C-d C-2"))
 
 (progn
-  (Ꭶ/set-key (list "C-c C-e C-2 C-0") 'Ꭶ/untab-нk)
-  (Ꭶ/set-key (list "C-c C-e C-d C-2 C-0") 'Ꭶ/untab-дk))
+  ($/set-key (list "C-c C-e C-2 C-0") '$/encrypt-chacha20-hardcoded)
+  ($/set-key (list "C-c C-e C-d C-2 C-0") '$/decrypt-chacha20-hardcoded))
 
 ;; OzsgKGRlZnVuIGNvbW1lbnQtb3V0LWppbmphMnRlcmEtYnVmZmVyCjs7ICAgICAoY29tbWVudC1zdGFydCBjb21tZW50LWVuZCkgIi4iCjs7ICAgICAoaW50ZXJhY3RpdmUgIioiKQo7OyAgICAgKGNvbW1lbnQtb3V0LWppbmphMnRlcmEtcmVnaW9uLXJzIChwb2ludC1taW4pIChwb2ludC1tYXgpIGNvbW1lbnQtc3RhcnQgY29tbWVudC1lbmQpKQoKOzsgKGRlZnVuIGNvbW1lbnQtb3V0LWppbmphMnRlcmEtcmVnaW9uIChzdGFydCBlbmQgY29tbWVudC1zdGFydCBjb21tZW50LWVuZCkgIi4iIChpbnRlcmFjdGl2ZSAiKnIiKQo7OyAgICAgICAgKHNhdmUtZXhjdXJzaW9uIChsZXQgKChlbmQgKGNvcHktbWFya2VyIGVuZCkpKQo7OyAgICAgICAgICAgICAgICAgICAgICAgICAgKHdoaWxlIChwcm9nbiAoZ290by1jaGFyIHN0YXJ0KQo7OyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAocmUtc2VhcmNoLWZvcndhcmQgICJcXChbe11bJV0uKlslXVt9XVxcKSIgZW5kIHQpKQo7OyAgICAgICAgICAgICAgICAgICAgICAgICAgICAocmVwbGFjZS1tYXRjaCAoY29uY2F0IGNvbW1lbnQtc3RhcnQgKG9yIGNvbW1lbnQtZW5kICIiKSkpKSkpKQoKOzsgKGRlZnVuIHVuY29tbWVudC1qaW5qYTJ0ZXJhLWJ1ZmZlci1ycyAoKSAiLiIgKGludGVyYWN0aXZlICIqIikKOzsgICAgICAgICh1bmNvbW1lbnQtamluamEydGVyYS1yZWdpb24gKHBvaW50LW1pbikgKHBvaW50LW1heCkgIi8qIiAiKi8iKSkKCgo7OyAoZGVmdW4gdW5jb21tZW50LWppbmphMnRlcmEtYnVmZmVyCjs7ICAgICAoY29tbWVudC1zdGFydCBjb21tZW50LWVuZCkgIi4iCjs7ICAgICAoaW50ZXJhY3RpdmUgIioiKQo7OyAgICAgKHVuY29tbWVudC1qaW5qYTJ0ZXJhLXJlZ2lvbi1ycyAocG9pbnQtbWluKSAocG9pbnQtbWF4KSBjb21tZW50LXN0YXJ0IGNvbW1lbnQtZW5kKSkKCjs7IChkZWZ1biB1bmNvbW1lbnQtamluamEydGVyYS1yZWdpb24gKHN0YXJ0IGVuZCBjb21tZW50LXN0YXJ0IGNvbW1lbnQtZW5kKSAiLiIgKGludGVyYWN0aXZlICIqciIpCjs7ICAgICAgICAoc2F2ZS1leGN1cnNpb24gKGxldCAoKGVuZCAoY29weS1tYXJrZXIgZW5kKSkpCjs7ICAgICAgICAgICAgICAgICAgICAgICAgICAod2hpbGUgKHByb2duIChnb3RvLWNoYXIgc3RhcnQpCjs7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIChyZS1zZWFyY2gtZm9yd2FyZCAiXFwoW3tdWyVdLipbJV1bfV1cXCkiIGVuZCB0KSkKOzsgICAgICAgICAgICAgICAgICAgICAgICAgICAgKHJlcGxhY2UtbWF0Y2ggKGNvbmNhdCBjb21tZW50LXN0YXJ0IChvciBjb21tZW50LWVuZCAiIikpKSkpKSkKCjs7IChkZWZ1biB1bmNvbW1lbnQtamluamEydGVyYS1idWZmZXItcnMgKCkgIi4iIChpbnRlcmFjdGl2ZSAiKiIpCjs7ICAgICAgICAodW5jb21tZW50LWppbmphMnRlcmEtcmVnaW9uIChwb2ludC1taW4pIChwb2ludC1tYXgpICIvKiIgIiovIikpCg==
