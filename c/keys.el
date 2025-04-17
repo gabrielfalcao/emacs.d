@@ -195,3 +195,12 @@
                "C-k"
                )
              'kill-line)
+
+(progn
+  (put 'upcase-region 'disabled nil)
+  ($/set-key '("C-x C-u" "C-c C-u") #'upcase-region))
+
+(progn
+  (put 'downcase-region 'disabled nil)
+  ($/set-key "C-x C-l" #'downcase-region)
+  ($/set-key "C-c C-l" #'downcase-region))

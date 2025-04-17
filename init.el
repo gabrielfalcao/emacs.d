@@ -6,7 +6,7 @@
   (set-face-attribute 'default nil :foreground foreground :background background :font "JetBrains Mono-20")
   (set-face-attribute 'mode-line nil :background background :foreground foreground)
   (set-face-attribute 'mode-line-inactive nil :background background :foreground foreground))
-(progn (add-to-list 'load-path "~/.emacs.d/3pty") (add-to-list 'load-path "~/.emacs.d/t") (load-library "k"))
+(progn (add-to-list 'load-path "~/.emacs.d/3pty") (add-to-list 'load-path "~/.emacs.d/c") (load-library "boot"))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
