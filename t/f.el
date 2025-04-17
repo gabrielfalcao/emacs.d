@@ -324,19 +324,19 @@
   "F."
   (interactive)
   (if (stringp f)
-      ($/mt (format "🤸🏼‍♂️%s" f)) ""))
+      ($/mt (format "(%s)" f)) ""))
 
 (defun $/acl-group(f)
   "F."
   (interactive)
   (if (stringp f)
-      ($/mt (format "👯(%s)" f)) ""))
+      ($/mt (format "(%s)" f)) ""))
 
 (defun $/acl-other(f)
   "F."
   (interactive)
   (if (stringp f)
-      ($/mt (format "🎲️(%s)" f)) ""))
+      ($/mt (format "(%s)" f)) ""))
 
 (defun $/paint-mode-line-colorize (c contents)
   (let* ((foreground (format "#%s" ($/hash-take-last-n-chars 'sha512 6 c)))
@@ -357,10 +357,10 @@
 
 
 
-(defun $/paint-mode-name-npptz() (format "%s-mode" (replace-regexp-in-string "^\\([a-z0-9-]+\\)[^A-Za-z0-9-]+.*$" "\\1" (downcase (cond ((listp mode-name) (car mode-name)) ((stringp mode-name) mode-name) ((t (format "%S" mode-name)))) ))))
+(defun $/paint-mode-name-string() (format "%s-mode" (replace-regexp-in-string "^\\([a-z0-9-]+\\)[^A-Za-z0-9-]+.*$" "\\1" (downcase (cond ((listp mode-name) (car mode-name)) ((stringp mode-name) mode-name) ((t (format "%S" mode-name)))) ))))
 
 (defun $/paint-mode-name()
-  ($/paint-mode-line-color ($/paint-mode-name-npptz)))
+  ($/paint-mode-line-color ($/paint-mode-name-string)))
 
 
 
@@ -441,7 +441,7 @@
                                      ($/acl-other(elt 1 acls)))))))))
 
 
-(defun $/flush-kill-ring () "." (interactive) (setq kill-ring nil file-name-history nil) (ignore-errors (message "ᎣᏁ ﾘﯓ ŢꝌ ビnd⍤𐐣")))
+(defun $/flush-kill-ring () "." (interactive) (setq kill-ring nil file-name-history nil))
 (defun $/kill-all-buffers-and-flush-kill-ring () "." (interactive) (ignore-errors (kill-bufs) ($/flush-kill-ring)))
 
 (defun $/string-hash-take-last-n-chars (algo hwm contents)
