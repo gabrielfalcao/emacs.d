@@ -5,16 +5,16 @@
    "C-c C-d"
    "C-c C-r"
    "C-c C-x"
-   "M-o M-g"
+   ;; "M-o M-g"
    "C-g"
    "C-S"
    "C-q"
    "C-s"
    "C-c C-x"
-   "C-c C-u"
+   ;; "C-c C-u"
    "C-x C-e"
    "C-x C-d"
-   "C-x C-p"
+   ;; "C-x C-p"
    "M-j"
    "M-t"
    "M-k"
@@ -110,15 +110,6 @@
            'base64-decode-region)
 
 ($/set-key '("C-c C-d C-3" "C-x C-d C-3" "C-c C-e C-3" "C-x C-e C-3") 'rot13-region)
-(progn
-  (put 'upcase-region 'disabled nil)
-  ($/set-key '("C-x C-k" "C-c C-k") #'upcase-region))
-
-(progn
-  (put 'downcase-region 'disabled nil)
-  ($/set-key "C-x C-l" #'downcase-region)
-  ($/set-key "C-c C-l" #'downcase-region))
-
 ($/set-key   '("C-z" "M-z" "C-_") 'undo      )
 ($/set-key   '("M-ρ" "C-r") 'replace-regexp  )
 ($/set-key   '("C-c M-s") 'replace-string    )
@@ -129,14 +120,8 @@
 ($/set-key   "C-s"   'isearch-forward-regexp )
 ($/set-key   "C-S-s" 'isearch-backward-regexp)
 ($/set-key   "M-G" #'(lambda () (interactive) (insert "$")))
-($/set-key   "M-g g" 'goto-line)
-($/set-key   "M-g M-g" 'goto-line)
-($/set-key   "M-O" #'(lambda () (interactive) (insert "ॐ")))
-($/set-key   "M-H" '$/ᎮÃϯ)
-($/set-key   "C-x C-e m" 'morse-region)
-($/set-key   "C-x C-d m" 'unmorse-region)
-($/set-key   "C-\\" 'morse-region)
-($/set-key   "C-|" 'unmorse-region)
+($/set-key   '("M-g g" "M-g M-g") 'goto-line)
+
 (setq        ring-bell-function               'ignore)
 (global-set-key [kp-delete] 'delete-char)
 (setq select-enable-clipboard nil)
@@ -155,140 +140,58 @@
 (setq ns-function-modifier 'control)
 (setq ns-option-modifier 'meta)
 (setq ns-command-modifier 'meta)
-;;;
-;; ($/undefine-key "C-i")
+
+
 ($/set-key '("C-x C--") 'text-scale-adjust)
 ($/set-key '("C-x C-d C-k") 'describe-key)
 ($/set-key '("C-x C-d k") 'describe-keymap)
 ;; (setq tab-always-indent 'complete)
 ;; ($/set-key '("<tab>") 'indent-for-tab-command)
-;; ($/set-key '("<ret>" "C-o") #'(lambda () (interactive) (progn (auto-fill-mode -5) (insert "\n")p (auto-fill-mode 9))))
+($/set-key '("C-x j") #'(lambda () (interactive) (progn (auto-fill-mode -5) (insert "\n"))))
 
-($/set-key (mapcar 'base64-decode-string '( "Qy14IEMtNSBv" "Qy14IEMtNSBDLW8=" )) #'(lambda () (interactive) (insert "Ꭳ")))
-($/set-key (mapcar 'base64-decode-string '( "Qy14IEMtNSBs" "Qy14IEMtNSBDLWw=" )) #'(lambda () (interactive) (insert "Ꮆ")))
-($/set-key (mapcar 'base64-decode-string '( "Qy14IEMtNSBn" "Qy14IEMtNSBDLWc=" )) #'(lambda () (interactive) (insert "$")))
-($/set-key (mapcar 'base64-decode-string '( "Qy14IEMtNSB0" "Qy14IEMtNSBDLXQ=" )) #'(lambda () (interactive) (insert "Ꮦ")))
-($/set-key (mapcar 'base64-decode-string '( "Qy14IEMtNSBz" "Qy14IEMtNSBDLXM=" )) #'(lambda () (interactive) (insert "Ꮠ")))
-($/set-key (mapcar 'base64-decode-string '( "Qy14IEMtNSBo" "Qy14IEMtNSBDLWg=" )) #'(lambda () (interactive) (insert "Ꭿ")))
-($/set-key (mapcar 'base64-decode-string '( "Qy14IEMtNSB3" "Qy14IEMtNSBDLXc=" )) #'(lambda () (interactive) (insert "Ꮀ")))
-($/set-key (mapcar 'base64-decode-string '( "Qy14IEMtNSBt" "Qy14IEMtNSBDLW0=" )) #'(lambda () (interactive) (insert "Ꮉ")))
-($/set-key (mapcar 'base64-decode-string '( "Qy14IEMtNSBl" "Qy14IEMtNSBDLWU=" )) #'(lambda () (interactive) (insert "Ꭾ")))
-;; ($/set-key (mapcar 'base64-decode-string '( "Qy14IEMtNSBl" "Qy14IEMtNSBDLWU=" ) ;;ϯ
-($/set-key
- '("M-T" "M-t")
- #'(lambda () (interactive)
-     (or (when (equal "elisp-mode" ($/mode-name))
-           (progn
-             (ert-delete-all-tests)
-             (compile-defun)
-             (ert t)))
-         (ignore))))
 
 ($/set-key   '(
                "C-f"
-               "C-ก"
-               "C-྄"
-               "C-Ꭹ"
-               "C-ф"
-               "C-φ"
                )
              'forward-char)
 ($/set-key   '(
                "C-b"
-               "C-ิ"
-               "C-བ"
-               "C-Ꭸ"
-               "C-б"
-               "C-β"
                )
              'backward-char)
-($/set-extra-key '(
-               "C-d"
-              "C-δ"
-               )
-             'delete-char)
-($/set-extra-key '(
-                     "C-υ"
-                     "C-Ꮿ"
-                     )
-                   'yank)
 
 ($/set-key   '(
                "C-n"
-               "C-ค"
-               "C-ན"
-               "C-Ꮎ"
-               "C-н"
-               "C-ν"
                )
              'next-line)
 ($/set-key   '(
                "C-p"
-               "C-แ"
-               "C-པ"
-               "C-Ꮑ"
-               "C-п"
-               "C-π"
                )
              'previous-line)
 ($/set-key   '(
                "M-f"
-               "M-ก"
-               "M-྄"
-               "M-Ꭹ"
-               "M-ф"
-               "M-φ"
                )
              'forward-word)
 ($/set-key   '(
                "M-b"
-               "M-ิ"
-               "M-བ"
-               "M-Ꭸ"
-               "M-б"
-               "M-β"
                )
              'backward-word)
 ($/set-key   '(
                "C-a"
-               "C-้"
-               "C-འ"
-               "C-Ꭰ"
-               "C-а"
-               "C-α"
                )
              'beginning-of-line)
 ($/set-key   '(
                "C-e"
-               "C-ย"
-               "C-ེ"
-               "C-Ꭱ"
-               "C-е"
-               "C-ε"
                )
              'end-of-line)
 ($/set-key   '(
-               "M-<"
-               "M-ฟ"
-               "M-Ꮲ"
-               "M-<"
                "M-<"
                )
              'beginning-of-buffer)
 ($/set-key   '(
                "M->"
-               "M-ฉ"
-               "M->"
-               "M-Ꮄ"
-               "M->"
                )
              'end-of-buffer)
 ($/set-key   '(
                "C-k"
-               "C-น"
-               "C-ཀ"
-               "C-Ꮈ"
-               "C-к"
-               "C-κ"
                )
              'kill-line)
