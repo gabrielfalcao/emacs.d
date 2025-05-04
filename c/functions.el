@@ -561,7 +561,15 @@
                                                      "\\(^[\"']+\\|[\"']+$\\)" ""
                                                      (replace-regexp-in-string
                                                       "\\(^,+\\|,+$\\)" ""
-                                                      region)
-                                                     )))
-
-                         )))))
+                                                      (replace-regexp-in-string
+                                                       "\\s-+" "
+"
+                                                       (replace-regexp-in-string
+                                                        "^\\s-+" ""
+                                                        (replace-regexp-in-string
+                                                        "\\s-+$" ""
+                                                        region)))
+                                                      ))))
+                         ))
+                    (flush-lines "^$" beg end)
+                    )))
