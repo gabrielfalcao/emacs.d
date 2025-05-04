@@ -21,7 +21,7 @@
 (defun uniquify-all-lines-buffer () "." (interactive "*") (uniquify-all-lines-region (point-min) (point-max)))
 (defun uniquify-all-lines-region (start end) "." (interactive "*r") (save-excursion (let ((end (copy-marker end))) (while (progn (goto-char start) (re-search-forward "^\\(.*\\)\n\\(\\(.*\n\\)*\\)\\1\n" end t)) (replace-match "\\1\n\\2")))))
 
-(defun disable-bars() "." (interactive) (progn (scroll-bar-mode 0) (menu-bar-mode 0) (tool-bar-mode 0)))
+(defun disable-bars() "." (interactive) (progn (scroll-bar-mode nil) (menu-bar-mode nil) (tool-bar-mode nil)))
 
 (defun disable-auto-save-list()
   "."
@@ -133,9 +133,10 @@
 
 (defun buffer-elisp-heuristic()
   "."
-  (or (string="el" (file-name-extension (buffer-file-name)))
-      (string="emacs-lisp-mode" ($/mode-name))
-      (string="elisp-mode" ($/mode-name))))
+  (or (string="emacs-lisp-mode" ($/mode-name))
+      (string="elisp-mode" ($/mode-name))
+      (string="el" (file-name-extension (buffer-file-name)))
+      ))
 
 (defun region-points()
   "."
@@ -270,10 +271,14 @@
 (defun $/bfan ()
   "."
   (or (when (equal (buffer-file-name-relative) (buffer-name))
-        ($/vwf (buffer-name) "#C6DBDC"))
+        ($/paint-buffer-name))
       (format "%s %s"
-              ($/vwf (buffer-name) "#C2F3D7")
-              ($/vwf (format "[%s]" (buffer-file-name-relative)) "#FF4018" ))))
+              ($/paint-buffer-name)
+              ($/colorize-face-fg (format "[%s]" (buffer-file-name-relative)) "#FF4018" ))))
+
+(defun $/paint-buffer-name ()
+  "."
+  ($/colorize-face-fg (buffer-name) "#C6DBDC"))
 
 (defun $/hash-take-last-n-chars (algo count contents)
   "."
@@ -287,7 +292,7 @@
   (interactive)
   (message "%S" (text-properties-at (car (region-points)))))
 
-(defun $/vwf (text faber)
+(defun $/colorize-face-fg (text faber)
   "."
   (propertize text 'face (list :foreground faber)))
 
@@ -352,7 +357,7 @@
 
 (defun $/paint-non-file-buffer()
   "."
-  (list ($/paint-mode-name) " " "   𝐗%l 𝐘%c %I ⊲ %i bytes " "%e" "%t"
+  (list ($/paint-mode-name) " " ($/paint-buffer-name) " " "   𝐗%l 𝐘%c %I ⊲ %i bytes " "%e" "%t"
         '(:eval ($/mark-indicator))))
 
 
@@ -537,3 +542,26 @@
 (progn
   ($/set-key (list "C-c C-e C-2 C-0") '$/encrypt-chacha20-hardcoded)
   ($/set-key (list "C-c C-e C-d C-2 C-0") '$/decrypt-chacha20-hardcoded))
+
+
+(defun string-list-region (beg end)
+  "BEG END."
+  (interactive "*r")
+  (save-excursion (let ((region
+                         (buffer-substring-no-properties
+                          beg
+                          end)))
+                    (replace-region-contents
+                     beg end
+                     #'(lambda ()
+                         (replace-regexp-in-string "$" ","
+                                                   (replace-regexp-in-string
+                                                    "\\(^\\|$\\)" "\""
+                                                    (replace-regexp-in-string
+                                                     "\\(^[\"']+\\|[\"']+$\\)" ""
+                                                     (replace-regexp-in-string
+                                                      "\\(^,+\\|,+$\\)" ""
+                                                      region)
+                                                     )))
+
+                         )))))
