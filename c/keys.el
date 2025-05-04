@@ -2,6 +2,7 @@
 
 ($/undefine-key
  '(
+   "C-x C-z"
    "C-c C-d"
    "C-c C-r"
    "C-c C-x"
@@ -49,7 +50,7 @@
 ($/set-key '("C-c C-y" "C-c M-y") 'clipboard-yank)
 ($/set-key '("C-x C-q" "C-c M-y" "C-γ") 'keyboard-quit)
 ($/set-key '("C-x C-d C-h") 'info)
-($/set-key "C-c C-u C-d C-a" #'(lambda () (interactive) (when (read-only-mode -8) (message "%s unlocked" (buffer-name)))))
+;; ($/set-key "C-c C-u C-d C-a" #'(lambda () (interactive) (when (read-only-mode -8) (message "%s unlocked" (buffer-name)))))
 
 ($/set-key '("C-x M-k") '$/load-library)($/set-key '("C-x M-,") '$/load-init)
 
@@ -121,6 +122,7 @@
 ($/set-key   "C-S-s" 'isearch-backward-regexp)
 ($/set-key   "M-G" #'(lambda () (interactive) (insert "$")))
 ($/set-key   '("M-g g" "M-g M-g") 'goto-line)
+($/set-key   "C-x C-z" #'(lambda () (interactive) (insert "\n")))
 
 (setq        ring-bell-function               'ignore)
 (global-set-key [kp-delete] 'delete-char)
