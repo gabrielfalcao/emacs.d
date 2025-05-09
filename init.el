@@ -24,4 +24,5 @@
 ;;(delete-minibuffer-contents)
 (kill-buffer "*Messages*")
 (line-number-mode)
-(tool-bar-mode nil)
+(disable-bars)
+(toggle-frame-maximized)

@@ -21,7 +21,7 @@
 (defun uniquify-all-lines-buffer () "." (interactive "*") (uniquify-all-lines-region (point-min) (point-max)))
 (defun uniquify-all-lines-region (start end) "." (interactive "*r") (save-excursion (let ((end (copy-marker end))) (while (progn (goto-char start) (re-search-forward "^\\(.*\\)\n\\(\\(.*\n\\)*\\)\\1\n" end t)) (replace-match "\\1\n\\2")))))
 
-(defun disable-bars() "." (interactive) (progn (scroll-bar-mode nil) (menu-bar-mode nil) (tool-bar-mode nil)))
+(defun disable-bars() "." (interactive) (progn (scroll-bar-mode 0) (menu-bar-mode 0) (tool-bar-mode 0)))
 
 (defun disable-auto-save-list()
   "."
@@ -562,8 +562,7 @@
                                                      (replace-regexp-in-string
                                                       "\\(^,+\\|,+$\\)" ""
                                                       (replace-regexp-in-string
-                                                       "\\s-+" "
-"
+                                                       "\\s-+" "\n"
                                                        (replace-regexp-in-string
                                                         "^\\s-+" ""
                                                         (replace-regexp-in-string
@@ -573,3 +572,187 @@
                          ))
                     (flush-lines "^$" beg end)
                     )))
+
+
+(defun refactor-test-node-info-buffer ()
+  "."
+  (interactive "*")
+  (fix-node-info-region (point-min) (point-max))
+  (rust-format-buffer)
+  (remove-trailing-commas-buffer)
+  )
+
+
+(defun refactor-test-node-info-region (beg end)
+  "BEG END."
+  (interactive "*r")
+  (save-excursion
+    (let ((region (buffer-substring-no-properties beg end)))
+      (replace-region-contents
+       beg end
+       #'(lambda ()
+           (refactor-node-info-string region)))
+      (flush-lines "^$" beg end)
+      (indent-region beg end)
+      )))
+
+(defun refactor-node-info-string (string)
+  "STRING."
+  (regex-fix-node-names
+   (regex-fix-value-names
+    (regex-fix-operation-names
+     (regex-fix-begin-names
+      (regex-fix-vec
+       (regex-fix-node-info-all
+        string)))))))
+
+
+(defun regex-fix-node-names (string)
+  "STRING."
+  (replace-regexp-in-string
+   "^\\(\\s-+\\)\\b\\(Expression\\|Ident\\|Operation\\|FunctionDeclaration\\|Args\\|Block\\|Value\\|Begin\\|End\\)\\b[(]"
+   "\\1Node::\\2("
+   string))
+
+
+(defun regex-fix-operation-names (string)
+  "STRING."
+  (replace-regexp-in-string
+   "^\\(\\s-+\\)\\b\\(Not\\|Add\\|Sub\\|Mul\\|Div\\|Assign\\)\\b[(]"
+   "\\1Operation::\\2("
+   string))
+
+
+(defun regex-fix-value-names (string)
+  "STRING."
+  (replace-regexp-in-string
+   "^\\(\\s-+\\)\b\\(Boolean\\|Integer\\|String\\|Null\\)\b[(]"
+   "\\1Value::\\2("
+   string))
+
+
+(defun regex-fix-begin-names (string)
+  "STRING."
+  (replace-regexp-in-string
+   "^\\(\\s-+\\)\\(Block\\|Function\\)[(]"
+   "\\1Begin::\\2("
+   string))
+
+(defun regex-fix-node-info (string)
+  "STRING."
+  (replace-regexp-in-string
+   "^\\s-+NodeInfo\\s-+[{]\\(.\\|\n\\)*?string:\\s-+\"\\([^\"]+\\)\",\n\\(.\\|\n\\)*?start_pos: -*\\(.\\|\n\\)*?line:\\s-+\\([0-9]+\\)\\(.\\|\n\\)*?column:\\s-+\\([0-9]+\\)\\(.\\|\n\\)+*?end_pos: -*\\(.\\|\n\\)*?line:\\s-+\\([0-9]+\\)\\(.\\|\n\\)*?column:\\s-+\\([0-9]+\\)\\(.\\|\n\\)+?\\(.\\|\n\\)+?[}]\\(.\\|\n\\)+?[}]\\(.\\|\n\\)+?[}],?\\([^)]+\\|\n\\| -+\\)"
+   "stub_node_info(&input, \"\\2\", (\\5, \\7), (\\10, \\12))"
+   string))
+
+(defun regex-fix-node-info-all (string)
+  "STRING."
+  (let ((fixed (regex-fix-node-info string)))
+    (if (not (string= fixed string))
+        (regex-fix-node-info-all fixed)
+        fixed)))
+
+
+
+(defun regex-fix-vec (string)
+  "STRING."
+  (replace-regexp-in-string
+   "\\s-*\\((\\|[[]\\|[^#]\\)\\s-*[[]" "\\1vec!["
+   (replace-regexp-in-string
+    "vec![[]" "["
+    string)))
+
+
+(defun regex-single-space-all-whitespace-and-newlines (string)
+  "STRING."
+  (replace-regexp-in-string
+   "\\s-+$" ""
+  (replace-regexp-in-string
+   "^\\s-+" ""
+  (replace-regexp-in-string
+   "\\(\\s-\\|\n\\)+" " "
+     string))))
+
+
+(defun single-space-all-whitespace-and-newlines-region (beg end)
+  "BEG END."
+  (interactive "*r")
+  (save-excursion
+    (let ((region (buffer-substring-no-properties beg end)))
+      (replace-region-contents
+       beg end
+       #'(lambda ()
+           (regex-single-space-all-whitespace-and-newlines
+            region)))
+      (flush-lines "^$" beg end)
+      )))
+
+;; (defun regex-remove-trailing-commas (string)
+;;   "STRING."
+;;   (replace-regexp-in-string
+;;    ")\\(\\s-\\|\n\\)*,\\(\\s-\\|\n\\)*)" "))"
+;;    (replace-regexp-in-string
+;;     "]\\(\\s-\\|\n\\)*,\\(\\s-\\|\n\\)*]" "]]"
+;;     (replace-regexp-in-string
+;;      "}\\(\\s-\\|\n\\)*,\\(\\s-\\|\n\\)*}" "}}"
+;;      string))))
+
+(defun regex-remove-trailing-commas (string)
+  "STRING."
+  (replace-regexp-in-string
+   "\\([)]\\|[]]\\|[}]\\)\\(\\s-\\|\n\\)*,\\(\\s-\\|\n\\)*\\([)]\\|[]]\\|[}]\\)"
+   "\\1\\4"
+     string))
+
+(defun regex-remove-trailing-commas-all (string)
+  "STRING."
+  (let ((fixed (regex-remove-trailing-commas string)))
+    (if (not (string= fixed string))
+        (regex-remove-trailing-commas-all fixed)
+        fixed)))
+
+(defun remove-trailing-commas-region (beg end)
+  "BEG END."
+  (interactive "*r")
+  (save-excursion
+    (let ((region (buffer-substring-no-properties beg end)))
+      (replace-region-contents
+       beg end
+       #'(lambda ()
+           (regex-remove-trailing-commas-all region)))
+      )))
+
+(defun remove-trailing-commas-buffer ()
+  "." (interactive "*")
+  (remove-trailing-commas-region (point-min) (point-max)))
+
+
+(defun regex-remove-duplicate-new-lines (string)
+  "STRING."
+  (replace-regexp-in-string
+   "\\s-+$" ""
+  (replace-regexp-in-string
+   "^\\s-+" ""
+  (replace-regexp-in-string
+   "\\(\\s-*\n\\s-*\\|\n\\)+" "\n\n"
+     string))))
+
+
+(defun remove-duplicate-new-lines-region (beg end)
+  "BEG END."
+  (interactive "*r")
+  (save-excursion
+    (let ((region (buffer-substring-no-properties beg end)))
+      (replace-region-contents
+       beg end
+       #'(lambda ()
+           (regex-remove-duplicate-new-lines
+            region)))
+      )))
+
+(defun remove-duplicate-new-lines-buffer ()
+  "." (interactive "*")
+  (remove-duplicate-new-lines-region (point-min) (point-max)))
+
+
+(disable-bars)

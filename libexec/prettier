@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+
+if 1>/dev/null $HOME/.nvm/versions/node/v22.12.0/bin/prettier -w "$@"; then
+    echo 0
+else
+    echo 1
+fi
