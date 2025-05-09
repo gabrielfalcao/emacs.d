@@ -4,6 +4,9 @@
 (line-number-mode t)
 (setq package-archives nil)
 (setq global-flycheck-mode t)
+(with-eval-after-load 'flycheck
+  (require 'flycheck-pest)
+  (flycheck-pest-setup))
 
 (require 'web-mode)
 (require 'company)
@@ -108,6 +111,7 @@
 (add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
 (add-to-list 'auto-mode-alist '("\\.frm$" . visual-basic-mode))
 (add-to-list 'auto-mode-alist '("\\.vbp$" . visual-basic-mode))
+(add-to-list 'auto-mode-alist '("\\.pest$" . pest-mode))
 
 ;; (add-hook 'web-mode-hook 'prettier-js-mode)
 ;; (add-hook 'web-mode-hook 'prettier-js-mode)
@@ -155,6 +159,7 @@
 ;; (flycheck-define-checker sh-shellcheck :command ("shellcheck" "-x" "-f" "checkstyle" "-s" (eval (symbol-name sh-shell)) source) :modes shell-script-mode :error-parser flycheck-parse-checkstyle)
 (add-hook 'sh-mode-hook 'flycheck-mode)
 (add-hook 'shell-script-mode-hook 'flycheck-mode)
+(add-hook 'pest-mode-hook 'flycheck-mode)
 
 )
 

@@ -1,0 +1,2 @@
+(defalias 'fix-node-info
+  (kmacro "C-s N o d e I n f o SPC { M-b C-SPC C-n C-n C-a C-s s t r i n g : SPC \" C-b C-w s t u b _ i n <backspace> <backspace> n o d e _ i n t <backspace> f o ( & i n p u t , SPC C-e C-b C-SPC C-n C-a C-s l i n e C-f C-w , SPC ( C-s c o l u m n M-b C-SPC M-f C-f C-f C-w M-f C-k ) , C-SPC C-n C-a C-s l i n e C-f C-w ( C-s c o l M-f C-f C-SPC M-b C-w M-f C-k ) ) ) , C-n C-a C-SPC C-n C-s } , ) , C-f C-w"))
