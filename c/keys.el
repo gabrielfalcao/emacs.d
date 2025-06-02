@@ -9,6 +9,8 @@
    ;; "M-o M-g"
    "C-g"
    "C-S"
+   "C-S-d"
+   "C-S-i"
    "C-q"
    "C-s"
    "C-c C-x"
@@ -36,6 +38,8 @@
 (add-hook 'after-save-hook '$$$$$)
 (add-hook 'after-init-hook '$$$$$)
 (add-hook 'after-init-hook #'(lambda () (interactive) (ignore-errors (delete-minibuffer-contents) (message "emacs init took %s to initialize" (emacs-init-time)))))
+($/set-key '("C-S-d") 'decr-next-number)
+($/set-key '("C-S-i") 'incr-next-number)
 ($/set-key '("C-x C-x") '$/levate)
 ($/set-key '("C-x C-z") #'(lambda () (interactive) (eval-buffer) (message "%s eval'd " (buffer-name))))
 

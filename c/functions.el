@@ -1,8 +1,3 @@
-(defmacro set-region-contents-with-fn(beg end fn)
-  (list 'save-excursion (list 'let (list 'region (list 'buffer-substring-no-properties beg end))
-                              (list 'replace-region-contents beg end '(list 'lambda (list)
-                                                                            (list fn 'region))))))
-
 (defun string-shift-right (g) "." (format "\t%s" g))
 (defun delete-package (pkg-desc &optional force nosave) "." (interactive (progn (let* ((package-table (mapcar (lambda (p) (cons (package-desc-full-name p) p)) (delq nil (mapcar (lambda (p) (unless (package-built-in-p p) p)) (apply #'append (mapcar #'cdr (package--alist))))))) (package-name (completing-read "Delete package: " (mapcar #'car package-table) nil t))) (list (cdr (assoc package-name package-table)) current-prefix-arg nil)))) (package-delete pkg-desc force nosave))
 (defun kill-bufs () "." (interactive) (mapcar #'(lambda (b) (ignore-errors (set-buffer-modified-p nil) (revert-buffer 1 1)) (kill-buffer b)) (buffer-list)))
@@ -577,9 +572,11 @@
 (defun refactor-test-node-info-buffer ()
   "."
   (interactive "*")
-  (fix-node-info-region (point-min) (point-max))
+  (refactor-test-node-info-region (point-min) (point-max))
   (rust-format-buffer)
   (remove-trailing-commas-buffer)
+  (fix-vec-buffer)
+  (rust-format-buffer)
   )
 
 
@@ -598,69 +595,114 @@
 
 (defun refactor-node-info-string (string)
   "STRING."
-  (regex-fix-node-names
+  (regex-fix-vec
    (regex-fix-value-names
     (regex-fix-operation-names
      (regex-fix-begin-names
-      (regex-fix-vec
-       (regex-fix-node-info-all
-        string)))))))
+      (regex-fix-node-names
+       (regex-fix-node-info
+        string)))))
+   )
+  )
 
 
 (defun regex-fix-node-names (string)
   "STRING."
-  (replace-regexp-in-string
-   "^\\(\\s-+\\)\\b\\(Expression\\|Ident\\|Operation\\|FunctionDeclaration\\|Args\\|Block\\|Value\\|Begin\\|End\\)\\b[(]"
-   "\\1Node::\\2("
-   string))
+  (let ((fixed
+         (replace-regexp-in-string
+   "\\(^\\s-*\\|\\s-*(\\s-*\\)\\(Expression\\|Ident\\|Operation\\|FunctionDeclaration\\|Args\\|Block\\|Value\\|Begin\\|End\\)"
+   "\\1Node"
+   string)))
+    (if (not (string= fixed string))
+        (regex-fix-node-names fixed)
+      fixed
+      )))
 
 
 (defun regex-fix-operation-names (string)
   "STRING."
-  (replace-regexp-in-string
-   "^\\(\\s-+\\)\\b\\(Not\\|Add\\|Sub\\|Mul\\|Div\\|Assign\\)\\b[(]"
-   "\\1Operation::\\2("
-   string))
+  (let ((fixed
+         (replace-regexp-in-string
+          "Node::Operation(\\(Node::\\)?\\(Not\\|Add\\|Sub\\|Mul\\|Div\\|Assign\\|Pow\\|Negate\\)"
+          "Node::Operation(Operation::\\2"
+          (replace-regexp-in-string
+           "\\(^\\s-*\\|\\s-*(\\s-*\\)\\(Not\\|Add\\|Sub\\|Mul\\|Div\\|Assign\\|Pow\\|Negate\\)"
+           "\\1Operation::\\2"
+           string))))
+    (if (not (string= fixed string))
+        (regex-fix-operation-names fixed)
+      fixed
+      )))
+
 
 
 (defun regex-fix-value-names (string)
   "STRING."
-  (replace-regexp-in-string
-   "^\\(\\s-+\\)\b\\(Boolean\\|Integer\\|String\\|Null\\)\b[(]"
-   "\\1Value::\\2("
-   string))
+  (let ((fixed
+         (replace-regexp-in-string
+          "Node::Value(\\(Node::\\)?\\(Boolean\\|Integer\\|String\\|Null\\)"
+          "Node::Value(Value::\\2"
+          (replace-regexp-in-string
+           "\\(^\\s-*\\|\\s-*(\\s-*\\)\\(Boolean\\|Integer\\|String\\|Null\\)"
+           "\\1Value::\\2"
+           string))))
+        (if (not (string= fixed string))
+            (regex-fix-value-names fixed)
+          fixed
+          )))
 
 
 (defun regex-fix-begin-names (string)
   "STRING."
-  (replace-regexp-in-string
-   "^\\(\\s-+\\)\\(Block\\|Function\\)[(]"
-   "\\1Begin::\\2("
-   string))
+  (let ((fixed
+         (replace-regexp-in-string
+          "Node::Begin(\\(Node::\\)?\\(Block\\|Function\\)"
+          "Node::Begin(Begin::\\2"
+          (replace-regexp-in-string
+           "\\(^\\s-*\\|\\s-*(\\s-*\\)\\(Block\\|Function\\)"
+           "\\1Begin::\\2"
+           string))))
+    (if (not (string= fixed string))
+        (regex-fix-begin-names fixed)
+      fixed
+      )))
 
 (defun regex-fix-node-info (string)
   "STRING."
-  (replace-regexp-in-string
+  (let ((fixed
+         (replace-regexp-in-string
    "^\\s-+NodeInfo\\s-+[{]\\(.\\|\n\\)*?string:\\s-+\"\\([^\"]+\\)\",\n\\(.\\|\n\\)*?start_pos: -*\\(.\\|\n\\)*?line:\\s-+\\([0-9]+\\)\\(.\\|\n\\)*?column:\\s-+\\([0-9]+\\)\\(.\\|\n\\)+*?end_pos: -*\\(.\\|\n\\)*?line:\\s-+\\([0-9]+\\)\\(.\\|\n\\)*?column:\\s-+\\([0-9]+\\)\\(.\\|\n\\)+?\\(.\\|\n\\)+?[}]\\(.\\|\n\\)+?[}]\\(.\\|\n\\)+?[}],?\\([^)]+\\|\n\\| -+\\)"
    "stub_node_info(&input, \"\\2\", (\\5, \\7), (\\10, \\12))"
-   string))
-
-(defun regex-fix-node-info-all (string)
-  "STRING."
-  (let ((fixed (regex-fix-node-info string)))
+   string)))
     (if (not (string= fixed string))
-        (regex-fix-node-info-all fixed)
+        (regex-fix-node-info fixed)
         fixed)))
 
 
 
 (defun regex-fix-vec (string)
   "STRING."
+  ;; (replace-regexp-in-string
+  ;;  "\\s-*\\((\\|[^#]\\)\\s-*[[]" "\\1vec!["
   (replace-regexp-in-string
-   "\\s-*\\((\\|[[]\\|[^#]\\)\\s-*[[]" "\\1vec!["
-   (replace-regexp-in-string
-    "vec![[]" "["
-    string)))
+   "\\(^\\s-+\\|\\s-+\\|[^!#]\\|(\\)[[]\\(^\\s-+\\|\\s-+\\|[^!#]\\|(\\)"
+   "\\1vec![\\2"
+    string))
+
+(defun fix-vec-region (beg end)
+  "BEG END."
+  (interactive "*r")
+  (save-excursion
+    (let ((region (buffer-substring-no-properties beg end)))
+      (replace-region-contents
+       beg end
+       #'(lambda ()
+           (regex-fix-vec region)))
+      )))
+
+(defun fix-vec-buffer ()
+  "." (interactive "*")
+  (fix-vec-region (point-min) (point-max)))
 
 
 (defun regex-single-space-all-whitespace-and-newlines (string)
@@ -756,3 +798,380 @@
 
 
 (disable-bars)
+
+
+(defun fix-begin-names-region (beg end)
+  "BEG END."
+  (interactive "*r")
+  (save-excursion
+    (let ((region (buffer-substring-no-properties beg end)))
+      (replace-region-contents
+       beg end
+       #'(lambda ()
+           (regex-fix-begin-names region)))
+      )))
+
+(defun fix-begin-names-buffer ()
+  "." (interactive "*")
+  (fix-begin-names-region (point-min) (point-max)))
+
+
+(defun fix-node-info-region (beg end)
+  "BEG END."
+  (interactive "*r")
+  (save-excursion
+    (let ((region (buffer-substring-no-properties beg end)))
+      (replace-region-contents
+       beg end
+       #'(lambda ()
+           (regex-fix-node-info region)))
+      )))
+
+(defun fix-node-info-buffer ()
+  "." (interactive "*")
+  (fix-node-info-all-region (point-min) (point-max)))
+
+
+(defun regex-cargo-dependencies-normalize (string)
+  "STRING."
+  (replace-regexp-in-string
+   "^\\([a-z][a-z0-9_-]+\\)\\(\\s-*\\|\n\\)*[=]\\(\\s-*\\|\n\\)*\"\\([0-9.]+\\)\""
+   "\\1 = { version = \"\\4\" }" string))
+
+
+
+(defun cargo-dependencies-normalize-region(beg end)
+  "BEG END."
+  (interactive "*r")
+  (save-excursion
+    (let ((region (buffer-substring-no-properties beg end)))
+      (replace-region-contents
+       beg end
+       #'(lambda ()
+           (regex-cargo-dependencies-normalize region)))
+      )))
+
+
+
+(defun regex-tm-theme (string)
+  "STRING."
+  (setq case-fold-search nil)
+  (let ((result (replace-regexp-in-string
+
+                  string)))
+    (setq case-fold-search t)
+    result))
+
+
+
+(defun tm-theme-region(beg end)
+  "BEG END."
+  (interactive "*r")
+  (save-excursion
+    (goto-char beg)
+    (while (re-search-forward "^\\(\\w+.*\\)$" nil t)
+      (replace-match (format "set.themes.insert(\"%s\".to_string(), theme_from_bytes(include_bytes!(\"./%s.tmTheme\")));" (match-string 0) (match-string 0)) t)
+      )
+    ))
+
+
+
+;; (defun regex-cargo-dependencies-to-cargo-add (string)
+;;   "STRING."
+;;   ;; ;; ICA7OyA7O3F1YXNpIDs7Il5cXChbYS16XVthLXowLTlfLV0rXFwpXFwoXFxzLVxcfFxuXFwpKj9bPV1cXChcXHMtXFx8XG5cXCkqP1t7XVxcKC5cXHxcblxcKSo/XFwodmVyc2lvblxccy0qPVxccy0qXCJbMC05Ll0rP1wiXFwpLFxcKFxccy1cXHxcblxcKSo/XFwoZmVhdHVyZXNcXChcXHMtXFx8XG5cXCkqPz1cXChcXHMtXFx8XG5cXCkqP1tbXVxcKFxcKFxccy1cXHxcblxcfFthLXowLTlcIl8tXSs/XFwoXFxzLSosXFxzLSokXFwpXFwpKlxcfFxuXFwpKlxcKVxccy0qW11dXFxzLSpbfV1cXHMtKiIKICA7OyA7OzsgKHJlcGxhY2UtcmVnZXhwLWluLXN0cmluZwogIDs7IDs7OyAgIl5cXChbYS16XVthLXowLTlfLV0rXFwpXFxzLSpbPV1cXHMtKlt7XS4qJCIKICA7OyA7OzsgICJcXDEgZmVhdHVyZXMgPSAiCiAgOzsgOzs7IChyZXBsYWNlLXJlZ2V4cC1pbi1zdHJpbmcKICA7OyA7OzsgICJeXFwoW2Etel1bYS16MC05Xy1dK1xcKVxccy0qPVxcKFtePV0rXFwpPVteLF0rXFwoXFxzLVxcfFxuXFwpKj8sXFwoXFxzLVxcfFxuXFwpKj9mZWF0dXJlc1xcKFxccy1cXHxcblxcKSo9XFwoXFxzLVxcfFxuXFwpKltbXVxcKC4qXFwpW11dLiokIgogIDs7IDs7OyAgIlxcMSBmZWF0dXJlcyA9IFxcNyIKICA7OyAgKHJlcGxhY2UtcmVnZXhwLWluLXN0cmluZwogIDs7ICAgOzsgOzsiPS4qZmVhdHVyZXMgPSBbW11cXChcblxcfFxccy1cXCkqXFwoXFwoXFwoW15cbl0rXFwoXG4qXFx8XFxzLSpcXClcXClcXClcXChcblxcfFxccy1cXCkqXFwpW11dXFwoXG5cXHxcXHMtXFwpKlt9XVxcKFxuXFx8XFxzLVxcKSoiCiAgOzsgICA7OyAiPS4qW3tdLipmZWF0dXJlc1xccy0qPVxccy0qP1tbXVxcKFxuXFx8XFxzLVxcKSo/XFwoXFwoXFwoW15cbl0rXFwoXG4qXFx8XFxzLSo/XFwpXFwpXFwpXFwoXG5cXHxcXHMtXFwpKj9cXClbXV1cXChcblxcfFxccy1cXCkqP1t9XVxcKFxuXFx8XFxzLVxcKSo/IgogIDs7ICAgOzsgOzsgIj0uKmZlYXR1cmVzXFxzLSo9XFxzLSpbW11cXChcblxcfFxccy1cXCkqXFwoXFwoXFwoW15cbl0rXFwoXG4qXFx8XFxzLSpcXClcXClcXClcXChcblxcfFxccy1cXCkqXFwpW11dXFwoXG5cXHxcXHMtXFwpKlt9XVxcKFxuXFx8XFxzLVxcKSoiCiAgOzsgICAiXlxcKFthLXpdW2EtejAtOV8tXStcXClcXChcXHMtXFx8XG5cXCkqWz1dLipbe10uKmZlYXR1cmVzXFxzLSo9XFxzLSo/W1tdXFwoXG5cXHxcXHMtXFwpKj9cXChcXChcXChbXlxuXStcXChcbipcXHxcXHMtKj9cXClcXClcXClcXChcblxcfFxccy1cXCkqP1xcKVtdXVxcKFxuXFx8XFxzLVxcKSo/W31dXFwoXG5cXHxcXHMtXFwpKj8iCiAgOzsgICAiXFwxIGZlYXR1cmVzID0gXFw2IgogIDs7IChyZXBsYWNlLXJlZ2V4cC1pbi1zdHJpbmcKICA7OyAgIj0uKmZlYXR1cmVzXFxzLSo9XFxzLSpcXChcXChcIlxcfFtbXVxcKVxcKC4qXFwpXCJcXCk/IgogIDs7ICAiID0gZmVhdHVyZXMgPSBcIlxcM1wiIgogIDs7IChyZXBsYWNlLXJlZ2V4cC1pbi1zdHJpbmcKICA7OyAgIl5cXChbYS16MC05Xy1dK1xcKVxccy0qPVxccy0qW3tdLipmZWF0dXJlc1xccy0qPVxccy0qXFwoXCJcXHxbW11cXClcXCguKlxcKVwiLioiCiAgOzsgICIgXFwxIGZlYXR1cmVzID0gXFwzIgo=
+;;   ;; ;; (replace-regexp-in-string
+;;   ;; ;;  "[^]]+\\s-*[}]$"
+;;   ;; (replace-regexp-in-string
+;;   ;;  "\\s-*\\([]]\\|,\\)*\\s-*[}]"
+;;   ;;  "]"
+;;   ;; (replace-regexp-in-string
+;;   ;;  "^\\([a-z0-9_-]+\\)\\s-*[=]\\s-[{].*$"
+;;   ;;  "\\1 features = []"
+;;   ;; (replace-regexp-in-string
+;;   ;;  "^\\([a-z0-9_-]+\\)\\s-*=\\s-*[{].*features\\s-*[=]\\s-*[[]?"
+;;   ;;  "\\1 features = ["
+;;   (replace-regexp-in-string
+;;    "^\\([a-z0-9_-]+\\)\\s-*[=]\\s-*[{]\\s-*version\\s-*=\\s-*\\S-+\\s-*[}]"
+;;    "\\1 features = []"
+;;   (replace-regexp-in-string
+;;    "[[]\\(\n\\|\\s-\\)*\\(.*?,\\|[]]\\)*\\(\n\\|\\s-\\)*[]]"
+;;    " \\2 "
+;;    (replace-regexp-in-string
+;;     "^\\([a-z][a-z0-9_-]+\\)\\(\\s-\\|\n\\)*[=]\\(\\s-\\|\n\\)*[{]\\(\\s-\\|\n\\)*\\(version\\s-*=\\s-*\"[0-9.]+\"\\)\\(\\s-\\|\n\\)[}]"
+;;     "\\1 = { \\5, features = [] }"
+;;     string
+;;     ))))
+;;    ;; )))))
+
+
+
+;; (defun cargo-dependencies-to-cargo-add-region(beg end)
+;;   "BEG END."
+;;   (interactive "*r")
+;;   (save-excursion
+;;     (cargo-dependencies-normalize-region beg end)
+;;     (let ((region (buffer-substring-no-properties beg end)))
+;;       (replace-region-contents
+;;        beg end
+;;        #'(lambda ()
+;;            (regex-cargo-dependencies-to-cargo-add region)))
+;;       )))
+
+
+
+(defun rust-members-region (beg end)
+  "BEG END."
+  (interactive "*r")
+  (save-excursion
+    (let ((region (buffer-substring-no-properties beg end)))
+      (replace-region-contents
+       beg end
+       #'(lambda ()
+           (replace-regexp-in-string
+            "^\\(\\(.\\|\n\\)*\\)$"
+            "{\\1};"
+            (replace-regexp-in-string
+             "^\\s-*///?.*$"
+             ""
+             (replace-regexp-in-string
+              "^\\s-*\\(pub\\s-*\\)?\\((super\\|crate\\|self\\|in\\s-*[^)]+)\\)?\\s-*\\(struct\\|union\\|trait\\|enum\\|fn\\)\\s-*\\([<][^>]*[>]\\)?\\s-*\\([A-Za-z_][a-zA-Z0-9_]+\\).*"
+              "\\5,"
+              (replace-regexp-in-string
+               "^\\s-*\\(\\s-+\\|}\\|use\\|impl\\|extern\\s-*crate\\|\\(pub\\(\s-*\\(in\s-*\\)?[a-z0-9:]+\\)?\\)?\\s-*mod\\|[#][[]\\|)\\).*"
+               ""
+               region))))))))
+  (save-excursion
+    (flush-lines "^$" beg end nil)
+    ))
+
+
+(defun rust-extract-members-regex (package-name string)
+  "STRING."
+  (format "pub use %s::{\n%s\n};" package-name (rust-comma-separated-members-regex string)))
+
+(defun rust-comma-separated-members-regex (string)
+  "STRING."
+  (let ((members (replace-regexp-in-string
+                 "^\\s-*///?.*$"
+                 ""
+                 (replace-regexp-in-string
+                  "^\\s-*\\(pub\\s-*\\)?\\((super\\|crate\\|self\\|in\\s-*[^)]+)\\)?\\s-*\\(struct\\|union\\|trait\\|type\\|enum\\|fn\\)\\s-*\\([<][^>]*[>]\\)?\\s-*\\([A-Za-z_][a-zA-Z0-9_]+\\).*"
+                  "\\5,"
+                  (replace-regexp-in-string
+                   "^\\s-*\\(\\s-+\\|}\\|use\\|impl\\|extern\\s-*crate\\|\\(pub\\(\s-*\\(in\s-*\\)?[a-z0-9:]+\\)?\\)?\\s-*\\(mod\\|macro_\\(rules\\|export\\)[!]?\s-*\\)\\|[#][[]\\|)\\).*[{]?.*$"
+                   ""
+                   string)))))
+    (replace-regexp-in-string
+     "^\\(\\(.\\|\n\\)*\\)$"
+     "\\1"
+     (replace-regexp-in-string
+      "\\(\\s-*\\|\n*\\)+"
+      ""
+      (with-temp-buffer
+        (insert members)
+        (flush-lines "^$" (point-min) (point-max))
+        (buffer-string))))))
+
+(defun rust-path-to-current-file-mod ()
+  (let* ((current-file-name (expand-file-name (buffer-file-name)))
+         (no-extension (file-name-sans-extension current-file-name)))
+         (or (when (string= no-extension "mod")
+               (file-name-directory current-file-name))
+             (when (string= no-extension "lib")
+               (file-name-directory current-file-name))
+             no-extension)))
+
+(defun rust-guess-package-name-of-file (filename)
+  (let* ((current-file-name (expand-file-name filename))
+         (no-extension (file-name-base current-file-name)))
+    (if (string= no-extension "mod")
+        (file-name-base (file-name-directory current-file-name))
+      no-extension)))
+
+
+(defun rust-insert-members-from-file ()
+  "BEG END."
+  (interactive)
+  (let* ((rust-file-name
+          (expand-file-name (read-file-name
+          "insert members of rust file:" (rust-path-to-current-file-mod) nil 'confirm-after-completion)))
+         (package-name (rust-guess-package-name-of-file rust-file-name))
+         (string (with-temp-buffer
+                   (insert-file-contents rust-file-name)
+                   (buffer-string))))
+    (insert (rust-extract-members-regex package-name string))
+    (rust-format-buffer)))
+
+
+(defun fgbg-foreback(beg end)
+  "BEG END."
+  (interactive "*r")
+  (save-excursion
+    (let ((region (buffer-substring-no-properties beg end)))
+      (replace-region-contents
+       beg end
+       #'(lambda ()
+           (replace-regexp-in-string
+            "\\bbg\\b"
+            "back"
+            (replace-regexp-in-string
+             "\\bfg\\b"
+             "fore"
+             region))
+           )))))
+
+
+(defun comment-step-region(beg end)
+  "BEG END."
+  (interactive "*r")
+  (save-excursion
+    (let ((region (buffer-substring-no-properties beg end)))
+      (replace-region-contents
+       beg end
+       #'(lambda ()
+           (replace-regexp-in-string
+            "^\\(\\s-*\\)\\(step\\(_test\\)?!\\)"
+            "\\1 // \\2"
+             region))
+           ))))
+
+
+
+
+(defun decr-next-number()
+  "."
+  (interactive "*")
+
+    (re-search-forward "\\([0-9]+\\)" nil t)
+    (goto-char (match-beginning 1))
+    (let ((pos (point)))
+      (replace-match (format "%s" (- (string-to-number (match-string 1)) 1)) t)
+      (re-search-forward "\\([0-9]+\\)" nil t)
+      (if (eq pos (match-beginning 1))
+          (progn
+            (forward-line)
+            (message (format "forward-line %s" pos)))
+        (progn
+          (goto-char (match-beginning 1))
+          (message (format "goto-char %s" (match-beginning 1))))
+        )))
+
+(defun incr-next-number()
+  "."
+  (interactive "*")
+
+    (re-search-forward "\\([0-9]+\\)" nil t)
+    (goto-char (match-beginning 1))
+    (let ((pos (point)))
+      (replace-match (format "%s" (+ (string-to-number (match-string 1)) 1)) t)
+      (re-search-forward "\\([0-9]+\\)" nil t)
+      (if (eq pos (match-beginning 1))
+          (progn
+            (forward-line)
+            (message (format "forward-line %s" pos)))
+        (progn
+          (goto-char (match-beginning 1))
+          (message (format "goto-char %s" (match-beginning 1))))
+        )))
+
+
+
+
+(defmacro when-buffer-filename-meets(cond &rest body)
+  "REGEXP FN."
+  `(let ((filename (expand-file-name (buffer-file-name))))
+     (if ,cond
+         (progn ,@body)
+       )))
+
+(defmacro when-buffer-meets(cond &rest body)
+  "REGEXP FN."
+  `(if ,cond
+       (progn ,@body)
+     ))
+
+(defmacro when-buffer-filename-matches(regexp &rest body)
+  "REGEXP FN."
+  `(let ((filename (expand-file-name (buffer-file-name))))
+     (if (string-match-p ,regexp filename)
+         (progn ,@body))))
+
+
+(defun git-autocommit-opt-libexec()
+  "."
+  (when-buffer-filename-meets
+   (string-match-p (concat "^" (getenv "HOME") "/opt/libexec") filename)
+   (shell-command-to-string (format "git add -f %s" filename))
+   (shell-command-to-string (format "git commit %s -m '%s'" filename filename))
+   (message (format "auto-commited %s" filename))
+  ))
+
+(defun git-autocommit-emacs-d-c-sources()
+  "."
+  (when-buffer-filename-matches (concat "^" (getenv "HOME") "/.emacs.d/c")
+     (shell-command-to-string (format "git add -f %s" filename))
+     (shell-command-to-string (format "git commit %s -m '%s'" filename filename))
+     (message (format "auto-commited emacs file %s" filename))))
+
+(defmacro set-region-contents-with-fn(beg end fn)
+  "BEG END FN."
+  `(save-excursion
+     (let (
+           (region (buffer-substring-no-properties beg end))
+           (repl (,fn region)))
+       (replace-region-contents beg end
+                                #'(lambda () repl)))))
+
+
+
+(defun toml-prettify-buffer ()
+  "BEG END."
+  (interactive)
+  (when-buffer-meets
+   (string= major-mode "toml-mode")
+
+   (save-excursion
+     (let (
+           (beg (point-min))
+           (end (point-max))
+           )
+       (flush-lines "^$" beg end nil)
+       ))
+   (save-excursion
+     (let* (
+            (beg (progn (goto-char (point-min)) (forward-word) (point)))
+            (end (point-max))
+            (region (buffer-substring-no-properties beg end))
+            (repl (replace-regexp-in-string
+                   "^\\([#]\\s-*\\)?\\([[].*\\)"
+                   "\n\\1\\2"
+                   region
+                   ))
+            )
+           (replace-region-contents
+            beg end
+            #'(lambda () repl ))
+
+           (if (not (string= region repl))
+               ;; avoid modifying buffer after prettifying its contents
+               (set-buffer-modified-p nil))
+       )
+     )
+   ))
+
+(defun delete-comments-region(beg end)
+  "BEG END."
+  (interactive "*r")
+  (save-excursion
+    (let (
+           (regexp (concat "^\\s-*" (regexp-quote comment-start) ".*"))
+           )
+      (flush-lines regexp beg end)
+      )))
+
+(defun delete-comments-buffer()
+  "BEG END."
+  (interactive)
+  (delete-comments-region (point-min) (point-max)))
+
+;; (add-hook 'local-write-file-hooks 'git-add-opt-libexec)
