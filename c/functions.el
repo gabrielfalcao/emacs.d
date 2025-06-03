@@ -146,10 +146,17 @@
   (if (buffer-elisp-heuristic)
       (let* ((beg-end (region-points))
              (beg (car beg-end))
-             (end (car (cdr beg-end))))
-        (eval-region beg end)
-        (message "\"%s\" eval'd" (buffer-name)))
-    (message "\"%s\" aint no el" (buffer-name))))
+             (end (car (cdr beg-end)))
+             (region (buffer-substring-no-properties beg end))
+             )
+        (if (string-match-p "\\s-*[(]\\(.\\|\n\\)+[)]\\s-*" region)
+            (progn
+              (eval-region beg end)
+              (message "\"%s\" eval'd" (buffer-name)))
+          (message "does not seem to be valid elisp: %s" region)
+          ))
+        (message "\"%s\" aint no el" (buffer-name))
+        ))
 
 (defun $/undefine-key (key)
   "KEY."
@@ -1038,44 +1045,6 @@
 
 
 
-(defun decr-next-number()
-  "."
-  (interactive "*")
-
-    (re-search-forward "\\([0-9]+\\)" nil t)
-    (goto-char (match-beginning 1))
-    (let ((pos (point)))
-      (replace-match (format "%s" (- (string-to-number (match-string 1)) 1)) t)
-      (re-search-forward "\\([0-9]+\\)" nil t)
-      (if (eq pos (match-beginning 1))
-          (progn
-            (forward-line)
-            (message (format "forward-line %s" pos)))
-        (progn
-          (goto-char (match-beginning 1))
-          (message (format "goto-char %s" (match-beginning 1))))
-        )))
-
-(defun incr-next-number()
-  "."
-  (interactive "*")
-
-    (re-search-forward "\\([0-9]+\\)" nil t)
-    (goto-char (match-beginning 1))
-    (let ((pos (point)))
-      (replace-match (format "%s" (+ (string-to-number (match-string 1)) 1)) t)
-      (re-search-forward "\\([0-9]+\\)" nil t)
-      (if (eq pos (match-beginning 1))
-          (progn
-            (forward-line)
-            (message (format "forward-line %s" pos)))
-        (progn
-          (goto-char (match-beginning 1))
-          (message (format "goto-char %s" (match-beginning 1))))
-        )))
-
-
-
 
 (defmacro when-buffer-filename-meets(cond &rest body)
   "REGEXP FN."
@@ -1125,18 +1094,12 @@
 
 
 (defun toml-prettify-buffer ()
-  "BEG END."
+  "."
   (interactive)
   (when-buffer-meets
    (string= major-mode "toml-mode")
 
-   (save-excursion
-     (let (
-           (beg (point-min))
-           (end (point-max))
-           )
-       (flush-lines "^$" beg end nil)
-       ))
+   (flush-empty-lines)
    (save-excursion
      (let* (
             (beg (progn (goto-char (point-min)) (forward-word) (point)))
@@ -1175,3 +1138,233 @@
   (delete-comments-region (point-min) (point-max)))
 
 ;; (add-hook 'local-write-file-hooks 'git-add-opt-libexec)
+
+(defun flush-empty-lines ()
+  "."
+  (interactive)
+  (save-excursion
+    (flush-lines "^$" (point-min) (point-max) nil)))
+
+
+(defun decr-next-number()
+  "."
+  (interactive)
+
+    (re-search-forward "\\([0-9]+\\)" nil t)
+    (goto-char (match-beginning 1))
+    (let ((pos (point)))
+      (replace-match (format "%s" (- (string-to-number (match-string 1)) 1)) t)
+      (re-search-forward "\\([0-9]+\\)" nil t)
+      (if (eq pos (match-beginning 1))
+          (progn
+            (forward-line)
+            (message (format "forward-line %s" pos)))
+        (progn
+          (goto-char (match-beginning 1))
+          (message (format "goto-char %s" (match-beginning 1))))
+        )))
+
+(defun incr-next-number()
+  "."
+  (interactive)
+
+    (re-search-forward "\\([0-9]+\\)" nil t)
+    (goto-char (match-beginning 1))
+    (let ((pos (point)))
+      (replace-match (format "%s" (+ (string-to-number (match-string 1)) 1)) t)
+      (re-search-forward "\\([0-9]+\\)" nil t)
+      (if (eq pos (match-beginning 1))
+          (progn
+            (forward-line)
+            (message (format "forward-line %s" pos)))
+        (progn
+          (goto-char (match-beginning 1))
+          (message (format "goto-char %s" (match-beginning 1))))
+        )))
+
+
+(defun goto-next-close-parenthesis (open-char close-char open-count close-count &optional beg-pos)
+  "OPEN-CHAR
+   CLOSE-CHAR
+   OPEN-COUNT
+   CLOSE-COUNT
+   &optional
+   BEG-POS."
+  (unless (eq (length open-char) 1)
+    (error "open-char is should have length 1 but is %s" (length open-char)))
+  (unless (eq (length close-char) 1)
+    (error "close-char is should have length 1 but is %s" (length close-char)))
+  (unless (integerp open-count)
+    (error "open-count is should be a number not \"%s\"" open-count))
+  (unless (integerp close-count)
+    (error "close-count is should be a number not \"%s\"" close-count))
+  ;; optional
+  (unless (integerp (or beg-pos (point)))
+    (error "beg-pos is should be a number not \"%s\"" beg-pos))
+
+  (setq case-fold-search nil)
+  (let* (
+         (case-fold-search nil)
+         (open-regexp (regexp-quote open-char))
+         (close-regexp (regexp-quote close-char))
+         (open-count open-count)
+         (close-regexp (regexp-quote close-char))
+         (close-count close-count)
+         (beg-pos (or beg-pos (point)))
+         (pos beg-pos)
+         (cur-pos beg-pos)
+         (open-pos beg-pos)
+         (close-pos beg-pos)
+         (marker (point-marker))
+         (too-many-open-parenthesis (> open-count close-count))
+         )
+
+    (defun state ()
+      (format "{\n    open-count: %s,\n    close-count: %s,\n    open-pos: %s,\n    close-pos: %s\n}" open-count close-count open-pos close-pos)
+      )
+
+
+    (message (state))
+    (if (not (use-region-p))
+        (progn
+        (message (format "setting region at %s" beg-pos))
+        (push-mark (point) t t)))
+
+  (if (not (eq beg-pos (point)))
+      (progn (goto-char beg-pos)
+             (message (format "current pos %s" beg-pos)
+             )))
+
+
+
+  (or (when (not (null (re-search-forward close-regexp nil t)))
+        ;; search next close parenthesis
+        (progn
+          (message (format "search next close parenthesis"))
+          ;; close parenthesis found, set cur-pos to its match-beginning
+          (setq cur-pos (match-end 0))
+          (setq close-count (1+ close-count))
+          (goto-char cur-pos)
+
+          (or
+           ;; get position of next open parenthesis if before curernt close parenthesis
+           (and (not (null (re-search-forward open-regexp nil t)))
+                (progn
+                  (message (format "peeking onto next open parenthesis"))
+
+                 (setq open-count (1+ open-count))
+                 (if (<= (match-beginning 0) cur-pos)
+                     (progn
+                       ;; open parenthesis found before current close parenthesis
+                       (message (format "found open parenthesis before next open parenthesis, recursive call should happen next"))
+                       t)
+                   ;; else, done!
+                   '(
+                     ("beg-pos" . beg-pos)
+                     ("open-pos" . open-pos)
+                     ("open-count" . open-count)
+                     ("close-pos" . close-pos)
+                     ("close-count" . close-count)
+                     ("end-pos" . end-pos)
+                     )))
+                (progn
+                 (setq close-pos cur-pos)
+                 (setq end-pos cur-pos)
+                 (setq open-pos (match-beginning 0))
+                 ;; go backward to the last close parenthesis so that while in recursive call fast-forwards it
+                 (goto-char open-pos)
+                 (message (format "recursive call to (goto-next-close-parenthesis open-char: %s close-char: %s open-count: %s close-count: %s close-pos: %s)"  open-char close-char open-count close-count close-pos))
+                 (goto-next-close-parenthesis open-char close-char open-count close-count open-pos)
+                 )
+                )
+           )
+          )
+        )
+      (when (not (null (re-search-forward open-regexp nil t)))
+        ;; no close parenthesis found, search next open parenthesis
+        (progn
+          (message (format "unexpected third case"))
+          (setq open-pos (match-beginning 0))
+          (setq open-count (1+ open-count))
+          (setq end-pos (match-beginning 0))
+          (goto-char cur-pos)
+        '(
+          ("beg-pos" . beg-pos)
+          ("open-pos" . open-pos)
+          ("open-count" . open-count)
+          ("close-pos" . close-pos)
+          ("close-count" . close-count)
+          ("end-pos" . end-pos))
+        ))
+      (when too-many-open-parenthesis
+        ;; not enough close parenthesis found, return what it can
+        (progn
+          (message (format "too-many-open-parenthesis 4th case"))
+          (while too-many-open-parenthesis
+            (progn
+              (message (format "too-many-open-parenthesis: %s" (state)))
+              (if (not (null (re-search-forward close-regexp nil t)))
+                  (progn
+                    (message (format "found next close parenthesis within too-many-open-parenthesis"))
+                    (setq close-pos (match-end 0))
+                    (setq close-count (1+ close-count))
+                    (goto-char close-pos)
+
+                    (if (> open-pos close-pos)
+                        (progn
+                          (message "and such close parenthesis happens to appear before open parenthesis")
+                          (setq open-count (1+ close-count)))
+                      (message "but close parenthesis appears after close parenthesis"))
+
+                    (setq too-many-open-parenthesis (and
+                                                     (> open-pos close-pos)
+                                                     (> open-count close-count)))
+                    )
+                ;;else, exit loop
+                (setq too-many-open-parenthesis nil)
+                );; end if
+              t
+              ))
+          (setq end-pos close-pos)
+
+          '(
+            ("beg-pos" . beg-pos)
+            ("open-pos" . open-pos)
+            ("open-count" . open-count)
+            ("close-pos" . close-pos)
+            ("close-count" . close-count)
+            ("end-pos" . end-pos)
+            )
+          )
+        )
+      )
+  ))
+
+
+
+(defun find-next-close-parens()
+  "."
+  (interactive)
+  (erase-messages)
+  (let* ((open-char "(")
+         (close-char ")")
+         (curchar (buffer-substring-no-properties (point) (1+ (point))))
+         (open-count (if (string= curchar open-char)
+             1
+             0))
+         (close-count (if (string= curchar close-char)
+             1
+           0))
+         )
+    (goto-next-close-parenthesis open-char close-char open-count close-count)
+    )
+)
+
+(defun erase-messages()
+  "."
+  (interactive)
+  (with-current-buffer "*Messages*"
+    (read-only-mode -1)
+    (erase-buffer)
+    (read-only-mode 1)
+    ))
