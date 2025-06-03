@@ -1,33 +1,110 @@
 (defun string-shift-right (g) "." (format "\t%s" g))
-(defun delete-package (pkg-desc &optional force nosave) "." (interactive (progn (let* ((package-table (mapcar (lambda (p) (cons (package-desc-full-name p) p)) (delq nil (mapcar (lambda (p) (unless (package-built-in-p p) p)) (apply #'append (mapcar #'cdr (package--alist))))))) (package-name (completing-read "Delete package: " (mapcar #'car package-table) nil t))) (list (cdr (assoc package-name package-table)) current-prefix-arg nil)))) (package-delete pkg-desc force nosave))
-(defun kill-bufs () "." (interactive) (mapcar #'(lambda (b) (ignore-errors (set-buffer-modified-p nil) (revert-buffer 1 1)) (kill-buffer b)) (buffer-list)))
+(defun delete-package (pkg-desc &optional force nosave)
+  "."
+  (interactive
+   (progn
+     (let* ((package-table
+             (mapcar
+              (lambda (p) (cons (package-desc-full-name p) p))
+              (delq nil
+                    (mapcar
+                     (lambda (p) (unless (package-built-in-p p) p))
+                     (apply #'append (mapcar #'cdr (package--alist)))))))
+            (package-name
+             (completing-read "Delete package: "
+                              (mapcar #'car package-table)
+                              nil t)))
+       (list
+        (cdr (assoc package-name package-table))
+        current-prefix-arg nil))))
+  (package-delete pkg-desc force nosave))
+(defun kill-bufs ()
+  "."
+  (interactive)
+  (scratch-buffer)
+  (mapcar
+   #'(lambda (b)
+       (ignore-errors
+         (set-buffer-modified-p nil)
+         (revert-buffer 1 1))
+       (kill-buffer b))
+   (buffer-list))
+  (let* ((windows
+          (let ((windows 0))
+            (progn
+              (walk-windows
+               (lambda(window) (setq windows (1+ windows))))
+              windows)))
+         (current (frame-first-window)))
+    (when (> windows 1)
+      (delete-window))
+    (erase-messages)
+    (with-current-buffer "*scratch*"
+      (read-only-mode -1)
+      (widen)
+      (replace-region-contents
+       (point-min)
+       (point-max)
+       (lambda () ""))))
+  )
 
 (defun minor-mode-slist()
   "."
   (mapcar
-   (lambda (l)
-     (format "%s" (car l)))
+   (lambda (l) (format "%s" (car l)))
    minor-mode-alist))
 
 (defun string-list-html-like-display (nn sl)
   "."
-  (format "<%s>\n%s\n</%s>" nn (string-join (mapcar 'string-shift-right sl) "\n") nn))
+  (format "<%s>\n%s\n</%s>" nn
+          (string-join (mapcar 'string-shift-right sl) "\n")
+          nn))
 
-(defun uniquify-all-lines-buffer () "." (interactive "*") (uniquify-all-lines-region (point-min) (point-max)))
-(defun uniquify-all-lines-region (start end) "." (interactive "*r") (save-excursion (let ((end (copy-marker end))) (while (progn (goto-char start) (re-search-forward "^\\(.*\\)\n\\(\\(.*\n\\)*\\)\\1\n" end t)) (replace-match "\\1\n\\2")))))
+(defun uniquify-all-lines-buffer ()
+  "."
+  (interactive "*")
+  (uniquify-all-lines-region (point-min) (point-max)))
+(defun uniquify-all-lines-region (start end)
+  "."
+  (interactive "*r")
+  (save-excursion
+    (let ((end (copy-marker end)))
+      (while (progn
+               (goto-char start)
+               (re-search-forward
+                "^\\(.*\\)\n\\(\\(.*\n\\)*\\)\\1\n" end t))
+        (replace-match "\\1\n\\2")))))
 
-(defun disable-bars() "." (interactive) (progn (scroll-bar-mode 0) (menu-bar-mode 0) (tool-bar-mode 0)))
+(defun disable-bars()
+  "."
+  (interactive)
+  (progn (scroll-bar-mode 0) (menu-bar-mode 0) (tool-bar-mode 0)))
 
 (defun disable-auto-save-list()
   "."
   (interactive)
-  (mapc #'(lambda (d)
-            (delete-directory (expand-file-name d) t nil))
-        (list "~/.emacs.d/auto-save-list" "~/.emacs.backups")))
+  (mapc
+   #'(lambda (d) (delete-directory (expand-file-name d) t nil))
+   (list "~/.emacs.d/auto-save-list" "~/.emacs.backups")))
 
-(defun reverse-string (beg end) "." (interactive "*r") (replace-region-contents beg end (lambda () (reverse (buffer-substring-no-properties beg end)))))
+(defun reverse-string (beg end)
+  "."
+  (interactive "*r")
+  (replace-region-contents beg end
+                           (lambda ()
+                             (reverse
+                              (buffer-substring-no-properties beg end)))))
 
-(defun $$$$$ () "." (interactive) (global-company-mode) (disable-auto-save-list) (disable-bars) ($$$$$$$$))(defun $/ep() "." (interactive) (find-file "~/.emacs.d/t/k.el"))
+(defun $$$$$ ()
+  "."
+  (interactive)
+  (global-company-mode)
+  (disable-auto-save-list)
+  (disable-bars)
+  (set-frame-parameter nil 'fullscreen 'maximized)
+  ($$$$$$$$))
+
+(defun $/ep() "." (interactive) (find-file "~/.emacs.d/t/k.el"))
 
 (defun c$dg$ (&rest substrate)
   (interactive)
@@ -38,7 +115,10 @@
     (disable-bars)
     ($$$$$)))
 
-(defun contrast-color (c) "C." (interactive "s") (compute-bright-dark-from-color-value c "#FFF" "#333"))
+(defun contrast-color (c)
+  "C."
+  (interactive "s")
+  (compute-bright-dark-from-color-value c "#FFF" "#333"))
 (defun compute-bright-dark-from-color-value (c bright dark)
   "C."
   (interactive "s")
@@ -46,73 +126,92 @@
          (fp (car values))
          (sp (elt values 1))
          (tp (elt values 2)))
-    (if (> #x0f (floor (+ (+ (* float-pi fp)
-                             (* sp (* float-pi (- (+ float-pi float-pi)
-                                                  (+ (/ float-pi float-e)
-                                                     (* float-pi (/ float-pi 1.998879)))))))
-                          (* (/ (+ tp (/ (/ float-pi float-e) #x64))
-                                (* float-pi float-pi))))
-                       #x100))
+    (if (> #x0f
+           (floor
+            (+
+             (+
+              (* float-pi fp)
+              (* sp
+                 (* float-pi
+                    (-
+                     (+ float-pi float-pi)
+                     (+
+                      (/ float-pi float-e)
+                      (* float-pi (/ float-pi 1.998879)))))))
+             (*
+              (/
+               (+ tp (/ (/ float-pi float-e) #x64))
+               (* float-pi float-pi))))
+            #x100))
         bright dark)))
 
 (defun collapse-string (s)
   "S."
-  (replace-regexp-in-string "\\s-+" " " (string-trim (replace-regexp-in-string "\\(\\s-+\\|\xa\\)+" " " s))))
+  (replace-regexp-in-string "\\s-+" " "
+                            (string-trim
+                             (replace-regexp-in-string
+                              "\\(\\s-+\\|\xa\\)+" " " s))))
 
 (defun collapse-lines-region (beg end)
   "BEG END."
   (interactive "*r")
-  (save-excursion (let ((region
-                         (buffer-substring-no-properties
-                          beg
-                          end)))
-                    (replace-region-contents beg end #'(lambda ()
-                                                         (collapse-string region))))))
+  (save-excursion
+    (let ((region (buffer-substring-no-properties beg end)))
+      (replace-region-contents beg end
+                               #'(lambda ()
+                                   (collapse-string region))))))
 
 (defun colorize-hexadecimal-text()
   (interactive)
-  (save-excursion (let (begb hwmb cbeg cend faber)
-                    (setq begb (point-min))
-                    (setq hwmb (point-max))
-                    (goto-char begb)
-                    (while (and (re-search-forward "\\([#][a-f0-9]\\{3\,6\\}\\b\\)" hwmb t)
-                                (<= (point) hwmb))
-                      (let* ((cbeg (match-beginning 1))
-                             (cend (match-end 1))
-                             (faber
-                              (buffer-substring-no-properties
-                               cbeg
-                               cend))
-                             (x2133 (progn
-                                      ($/delete-overlays-within cbeg cend)
-                                      (make-overlay cbeg cend))))
-                        (overlay-put x2133 'bcc t)
-                        (overlay-put x2133 'face (list :foreground (contrast-color faber) :background faber))
-                        )))))
+  (save-excursion
+    (let (begb hwmb cbeg cend faber)
+      (setq begb (point-min))
+      (setq hwmb (point-max))
+      (goto-char begb)
+      (while (and
+              (re-search-forward "\\([#][a-f0-9]\\{3\,6\\}\\b\\)" hwmb t)
+              (<= (point) hwmb))
+        (let* ((cbeg (match-beginning 1))
+               (cend (match-end 1))
+               (faber (buffer-substring-no-properties cbeg cend))
+               (x2133
+                (progn
+                  ($/delete-overlays-within cbeg cend)
+                  (make-overlay cbeg cend))))
+          (overlay-put x2133 'bcc t)
+          (overlay-put x2133 'face
+                       (list :foreground
+                             (contrast-color faber)
+                             :background faber)))))))
 
 (defun $/pl/fmt (fmtexect)
   "FMTEXECT MAJOR-MODE."
-  (unless (not  (buffer-modified-p (current-buffer)))
-    (user-error "%s ought to be saved"  (buffer-name)))
-  (unless (stringp fmtexect)
-    (user-error "fmtexect nonstring"))
+  (unless (not (buffer-modified-p (current-buffer)))
+    (user-error "%s ought to be saved" (buffer-name)))
+  (unless (stringp fmtexect) (user-error "fmtexect nonstring"))
   (save-mark-and-excursion
     (let* ((target (expand-file-name (buffer-file-name)))
            (buffer (current-buffer))
            (name (format "*%s %s *" fmtexect target))
-           (err (make-temp-file fmtexect nil ($/hash-take-last-n-chars 'sha512 6 (buffer-file-name)))))
-      (if (and (file-readable-p target)
-               (file-regular-p target))
+           (err
+            (make-temp-file fmtexect nil
+                            ($/hash-take-last-n-chars 'sha512 6
+                                                      (buffer-file-name)))))
+      (if (and (file-readable-p target) (file-regular-p target))
           (progn
-            (unless (stringp err)
-              (user-error "err nonstring"))
-            (let* (
-                   (eco (format "%d" (call-process fmtexect nil '(buffer err) t target)))
-                   (ets (format "%d" (file-attribute-size (file-attributes err)))))
-              (if (or (not(equal "0" eco))
-                      (not(equal "0" ets)))
-                  (progn
-                    (message "%s" err)))))))))
+            (unless (stringp err) (user-error "err nonstring"))
+            (let* ((eco
+                    (format "%d"
+                            (call-process fmtexect nil
+                                          '(buffer err)
+                                          t target)))
+                   (ets
+                    (format "%d"
+                            (file-attribute-size (file-attributes err)))))
+              (if (or
+                   (not(equal "0" eco))
+                   (not(equal "0" ets)))
+                  (progn (message "%s" err)))))))))
                     ;; (set-buffer (get-buffer-create name t))
                     ;; (insert-file-contents err nil nil nil t)
                     ;; (read-only-mode nil)
@@ -128,17 +227,18 @@
 
 (defun buffer-elisp-heuristic()
   "."
-  (or (string="emacs-lisp-mode" ($/mode-name))
-      (string="elisp-mode" ($/mode-name))
-      (string="el" (file-name-extension (buffer-file-name)))
-      ))
+  (or
+   (string="emacs-lisp-mode" ($/mode-name))
+   (string="elisp-mode" ($/mode-name))
+   (string="lisp-mode" ($/mode-name))
+   (string="el" (file-name-extension (buffer-file-name)))))
 
 (defun region-points()
   "."
-  (if mark-active (save-mark-and-excursion (list (marker-position (mark-marker))
-                                                 (point)))
-    (list (point-min)
-          (point-max))))
+  (if mark-active
+      (save-mark-and-excursion
+        (list (marker-position (mark-marker)) (point)))
+    (list (point-min) (point-max))))
 
 (defun $/levate ()
   "."
@@ -146,92 +246,96 @@
   (if (buffer-elisp-heuristic)
       (let* ((beg-end (region-points))
              (beg (car beg-end))
-             (end (car (cdr beg-end))))
-        (eval-region beg end)
-        (message "\"%s\" eval'd" (buffer-name)))
+             (end (car (cdr beg-end)))
+             (region (buffer-substring-no-properties beg end)))
+        (if (string-match-p "\\s-*[(]\\(.\\|\n\\)+[)]\\s-*" region)
+            (progn
+              (eval-region beg end)
+              )
+          (message "does not seem to be valid elisp: %s" region)))
     (message "\"%s\" aint no el" (buffer-name))))
 
 (defun $/undefine-key (key)
   "KEY."
-  (when (not (or (stringp key)
-                 (vectorp key)
-                 (integerp key)
-;;                 (arrayp key)
-                 (consp key)
-                 (listp key)))
+  (when (not
+         (or
+          (stringp key)
+          (vectorp key)
+          (integerp key)
+          ;;                 (arrayp key)
+          (consp key)
+          (listp key)))
     (user-error "key %S has invalid type: %s" key (type-of key)))
-  (when (integerp key)
-    (global-unset-key key))
-  (when (stringp key)
-    (global-unset-key (kbd key)))
+  (when (integerp key) (global-unset-key key))
+  (when (stringp key) (global-unset-key (kbd key)))
 
-  (when (or (consp key)
-            (vectorp key)
-;            (arrayp key)
+  (when (or (consp key) (vectorp key)
+            ;;            (arrayp key)
             (listp key))
     (cdr (mapc '$/undefine-key key))))
 
 (defun $/set-key (key def)
   "KEY DEF."
-  (when (not  (or (stringp key)
-                  (vectorp key)
-                  (integerp key)
-;                  (arrayp key)
-                  (consp key)
-                  (listp key)))
+  (when (not
+         (or
+          (stringp key)
+          (vectorp key)
+          (integerp key)
+          ;;                  (arrayp key)
+          (consp key)
+          (listp key)))
     (user-error "key %S has invalid type: %s" key (type-of key)))
 
   (when (integerp key)
-    (progn
-      ($/undefine-key key)
-      (global-set-key key)))
+    (progn ($/undefine-key key) (global-set-key key)))
 
   (when (stringp key)
-    (progn
-      ($/undefine-key key)
-      (global-set-key (kbd key) def)
-      ))
+    (progn ($/undefine-key key) (global-set-key (kbd key) def)))
   (when (or (consp key)
-;            (arrayp key)
+            ;;            (arrayp key)
             (vectorp key)
             (listp key))
-    (cdr (mapc #'(lambda (key) ($/set-key key def)) key))))
+    (cdr
+     (mapc #'(lambda (key) ($/set-key key def)) key))))
 
 
 (defun $/set-extra-key (key def)
   "KEY DEF."
-  (when (not (or (stringp key)
-                 (vectorp key)
-                 (integerp key)
-;                 (arrayp key)
-                 (consp key)
-                 (listp key)))
+  (when (not
+         (or
+          (stringp key)
+          (vectorp key)
+          (integerp key)
+          ;;                 (arrayp key)
+          (consp key)
+          (listp key)))
     (user-error "key %S has invalid type: %s" key (type-of key)))
-  (when (integerp key)
-    (global-set-key key def))
+  (when (integerp key) (global-set-key key def))
 
-  (when (stringp key)
-    (global-set-key (kbd key) def)
-    )
-  (when (or (consp key)
-            (vectorp key)
-;            (arrayp key)
+  (when (stringp key) (global-set-key (kbd key) def))
+  (when (or (consp key) (vectorp key)
+            ;;            (arrayp key)
             (listp key))
-    (cdr (mapc #'(lambda (key) ($/set-extra-key key def)) key))))
+    (cdr
+     (mapc #'(lambda (key) ($/set-extra-key key def)) key))))
 
 
 
 (defun fold-file-name(file-name)
   "."
   (interactive "f")
-  ((replace-regexp-in-string (string-join "^" (getenv "HOME")) "~" (expand-file-name file-name))))
+  ((replace-regexp-in-string
+    (string-join "^" (getenv "HOME"))
+    "~"
+    (expand-file-name file-name))))
 
 (defun getcwd()
   "."
   (interactive)
-  (cond ((file-exists-p (buffer-file-name))
-         (file-name-directory (buffer-file-name))
-         (expand-file-name "~/.emacs.d"))))
+  (cond
+   ((file-exists-p (buffer-file-name))
+    (file-name-directory (buffer-file-name))
+    (expand-file-name "~/.emacs.d"))))
 
 (defun show-face-at-point()
   "."
@@ -254,9 +358,9 @@
 (defun meta-comma(k)
   "."
   (interactive)
-  (mapcar #'(lambda (n)
-              (string-join (list n k) ""))
-          (list "M-, M-" "M-, ")))
+  (mapcar
+   #'(lambda (n) (string-join (list n k) ""))
+   (list "M-, M-" "M-, ")))
 
 (defun show-face-at-point()
   "."
@@ -265,11 +369,14 @@
 
 (defun $/bfan ()
   "."
-  (or (when (equal (buffer-file-name-relative) (buffer-name))
-        ($/paint-buffer-name))
-      (format "%s %s"
-              ($/paint-buffer-name)
-              ($/colorize-face-fg (format "[%s]" (buffer-file-name-relative)) "#FF4018" ))))
+  (or
+   (when (equal (buffer-file-name-relative) (buffer-name))
+     ($/paint-buffer-name))
+   (format "%s %s"
+           ($/paint-buffer-name)
+           ($/colorize-face-fg
+            (format "[%s]" (buffer-file-name-relative))
+            "#FF4018" ))))
 
 (defun $/paint-buffer-name ()
   "."
@@ -278,8 +385,8 @@
 (defun $/hash-take-last-n-chars (algo count contents)
   "."
   (let* ((data (secure-hash algo contents))
-         (end  (length data))
-         (beg  (- end count)))
+         (end (length data))
+         (beg (- end count)))
     (substring data beg end)))
 
 (defun $/text-properties()
@@ -299,10 +406,9 @@
 (defun $/bchs ()
   "."
   (let ((data
-         (buffer-substring-no-properties
-          (point-min)
-          (point-max))))
-    (format "%s %s %s" ($/string-hash-take-last-n-chars 'sha256 8 data)
+         (buffer-substring-no-properties (point-min) (point-max))))
+    (format "%s %s %s"
+            ($/string-hash-take-last-n-chars 'sha256 8 data)
             ($/string-hash-take-last-n-chars 'sha1 8 data)
             ($/string-hash-take-last-n-chars 'md5 8 data))))
 
@@ -310,41 +416,54 @@
   "."
   (list
    '(:eval
-     (list (if mark-active
-               (propertize
-                (format " ⇒ %S %S [%S] ⇐ "
-                        (marker-position (mark-marker)) (point)
-                        (count-lines (marker-position (mark-marker)) (point))
-                        )
-                'face (list :background "#FF4018" :foreground (contrast-color "#FF4018")))
-             "")))
+     (list
+      (if mark-active
+          (propertize
+           (format " ⇒ %S %S [%S] ⇐ "
+                   (marker-position (mark-marker))
+                   (point)
+                   (count-lines
+                    (marker-position (mark-marker))
+                    (point)))
+           'face
+           (list :background "#FF4018" :foreground
+                 (contrast-color "#FF4018")))
+        "")))
    " "))
 
 (defun $/acl-owner(f)
   "F."
   (interactive)
   (if (stringp f)
-      ($/mt (format "(%s)" f)) ""))
+      ($/mt (format "(%s)" f))
+    ""))
 
 (defun $/acl-group(f)
   "F."
   (interactive)
   (if (stringp f)
-      ($/mt (format "(%s)" f)) ""))
+      ($/mt (format "(%s)" f))
+    ""))
 
 (defun $/acl-other(f)
   "F."
   (interactive)
   (if (stringp f)
-      ($/mt (format "(%s)" f)) ""))
+      ($/mt (format "(%s)" f))
+    ""))
 
 (defun $/paint-mode-line-colorize (c contents)
-  (let* ((foreground (format "#%s" ($/hash-take-last-n-chars 'sha512 6 c)))
-         (background (compute-bright-dark-from-color-value foreground ($/mode-line-foreground) ($/mode-line-background))))
+  (let* ((foreground
+          (format "#%s" ($/hash-take-last-n-chars 'sha512 6 c)))
+         (background
+          (compute-bright-dark-from-color-value foreground
+                                                ($/mode-line-foreground)
+                                                ($/mode-line-background))))
     ;;(debug "($/paint-mode-line-colorize %S %S) => %s %s" c contents foreground background)
     (propertize
      (format "%s" contents)
-     'face (list :foreground foreground :background background))))
+     'face
+     (list :foreground foreground :background background))))
 
 
 (defun $/paint-mode-line-color (contents)
@@ -352,12 +471,26 @@
 
 (defun $/paint-non-file-buffer()
   "."
-  (list ($/paint-mode-name) " " ($/paint-buffer-name) " " "   𝐗%l 𝐘%c %I ⊲ %i bytes " "%e" "%t"
-        '(:eval ($/mark-indicator))))
+  (list
+   ($/paint-mode-name)
+   " "
+   ($/paint-buffer-name)
+   " " "   𝐗%l 𝐘%c %I ⊲ %i bytes " "%e" "%t" ;; row column kbytes bytes
+   '(:eval ($/mark-indicator))))
 
 
 
-(defun $/paint-mode-name-string() (format "%s-mode" (replace-regexp-in-string "^\\([a-z0-9-]+\\)[^A-Za-z0-9-]+.*$" "\\1" (downcase (cond ((listp mode-name) (car mode-name)) ((stringp mode-name) mode-name) ((t (format "%S" mode-name)))) ))))
+(defun $/paint-mode-name-string()
+  (format "%s-mode"
+          (replace-regexp-in-string
+           "^\\([a-z0-9-]+\\)[^A-Za-z0-9-]+.*$" "\\1"
+           (downcase
+            (cond
+             ((listp mode-name)
+              (car mode-name))
+             ((stringp mode-name)
+              mode-name)
+             ((t (format "%S" mode-name))))))))
 
 (defun $/paint-mode-name()
   ($/paint-mode-line-color ($/paint-mode-name-string)))
@@ -372,8 +505,11 @@
    '(:eval ($/mark-indicator))
    " "
    '(:eval ($/bfan))
-   " " (propertize " ⇒ " 'face (list :background ($/mode-line-background)
-                                     :foreground "#F10958"))
+   " "
+   (propertize " ⇒ " 'face
+               (list :background
+                     ($/mode-line-background)
+                     :foreground "#F10958"))
    " "
    '(:eval ($/paint-mode-name))
    " "
@@ -385,39 +521,61 @@
 (defun $/paint-mode-line ()
   "."
   (interactive)
-  (let* ((narrow (if (buffer-file-name)
-                     ($/paint-file-buffer)
-                   ($/paint-non-file-buffer)))
-         (wide (list mode-line-front-space narrow mode-line-end-spaces)))
+  (let* ((narrow
+          (if (buffer-file-name)
+              ($/paint-file-buffer)
+            ($/paint-non-file-buffer)))
+         (wide
+          (list mode-line-front-space narrow mode-line-end-spaces)))
     (setq mode-line-format wide)
-    (force-mode-line-update) wide))
+    (force-mode-line-update)
+    wide))
 
 (defun $/mode-name()
   (format "%s-mode"
           (replace-regexp-in-string
            "^\\([a-z0-9-]+\\)[^A-Za-z0-9-]+.*$" "\\1"
-           (downcase (cond ((listp mode-name) (car mode-name))
-                           ((stringp mode-name) mode-name)
-                           ((t (format "%S" mode-name))))))))
+           (downcase
+            (cond
+             ((listp mode-name)
+              (car mode-name))
+             ((stringp mode-name)
+              mode-name)
+             ((t (format "%S" mode-name))))))))
 
 (defun g/build ()
   (interactive "*")
-  (cond ((string= "rust-mode" ($/mode-name))
-         ($/pl/fmt (file-name-concat (getenv "HOME") ".cargo/bin/cargo check")))
-        ((string= "typescript-mode" ($/mode-name))
-         ($/pl/fmt/prettierjs))
-        ((string= "javacript-mode" ($/mode-name))
-         ($/pl/fmt/prettierjs))
-        ((nil t))))
+  (cond
+   ((string= "rust-mode" ($/mode-name))
+    ($/pl/fmt
+     (file-name-concat (getenv "HOME") ".cargo/bin/cargo check")))
+   ((string= "typescript-mode" ($/mode-name))
+    ($/pl/fmt/prettierjs))
+   ((string= "javacript-mode" ($/mode-name))
+    ($/pl/fmt/prettierjs))
+   ((nil t))))
 
-(defun $/base64-encode-region (beg end) (interactive "*r") (save-excursion (replace-region-contents beg end (lambda () (collapse-string-2 (base64-encode-string (buffer-substring-no-properties beg end)))))))
-(defun collapse-string-2 (s) "S." (replace-regexp-in-string "\\s-+" "" (collapse-string s)))
-(defun collapse-lines-region-2 (beg end) "." (interactive "*r") (save-excursion (let ((region (buffer-substring-no-properties beg end))) (replace-region-contents beg end #'(lambda () (collapse-string-2 region))))))
+(defun $/base64-encode-region (beg end)
+  (interactive "*r")
+  (save-excursion
+    (replace-region-contents beg end
+                             (lambda ()
+                               (collapse-string-2
+                                (base64-encode-string
+                                 (buffer-substring-no-properties beg end)))))))
+(defun collapse-string-2 (s)
+  "S."
+  (replace-regexp-in-string "\\s-+" "" (collapse-string s)))
+(defun collapse-lines-region-2 (beg end)
+  "."
+  (interactive "*r")
+  (save-excursion
+    (let ((region (buffer-substring-no-properties beg end)))
+      (replace-region-contents beg end
+                               #'(lambda ()
+                                   (collapse-string-2 region))))))
 
-(defun $/mt(p)
-  "P."
-  (interactive)
-  p)
+(defun $/mt(p) "P." (interactive) p)
   ;; (let* ((p (replace-regexp-in-string "[o-t]" "🧾" p))
   ;;        (p (replace-regexp-in-string "[s-w]" "🖍️" p))
   ;;        (p (replace-regexp-in-string "[xX]" "👥️" p)))
@@ -427,51 +585,70 @@
 (defun $/fm ()
   "."
   (interactive)
-  (let ((ffb (format "%s" (file-attribute-modes (file-attributes (buffer-file-name))))))
+  (let ((ffb
+         (format "%s"
+                 (file-attribute-modes
+                  (file-attributes (buffer-file-name))))))
     (let* ((acls (split-string ffb "-+" t "[^a-z]"))
            (aclsl (proper-list-p acls)))
-      (cond ((= 1 aclsl)
-             (format "%s"     ($/acl-owner (car acls))))
-            ((= 2 aclsl)
-             (format "%s%s"   ($/acl-owner(car acls)
-                                     ($/acl-group (elt 1 acls)))))
-            ((= 3 aclsl)
-             (format "%s%s%s" ($/acl-owner(car acls)
-                                     ($/acl-group (elt 1 acls))
-                                     ($/acl-other(elt 1 acls)))))))))
+      (cond
+       ((= 1 aclsl)
+        (format "%s" ($/acl-owner (car acls))))
+       ((= 2 aclsl)
+        (format "%s%s"
+                ($/acl-owner(car acls) ($/acl-group (elt 1 acls)))))
+       ((= 3 aclsl)
+        (format "%s%s%s"
+                ($/acl-owner(car acls)
+                            ($/acl-group (elt 1 acls))
+                            ($/acl-other(elt 1 acls)))))))))
 
 
-(defun $/flush-kill-ring () "." (interactive) (setq kill-ring nil file-name-history nil))
-(defun $/kill-all-buffers-and-flush-kill-ring () "." (interactive) (ignore-errors (kill-bufs) ($/flush-kill-ring)))
+(defun $/flush-kill-ring ()
+  "."
+  (interactive)
+  (setq kill-ring nil file-name-history nil))
+(defun $/kill-all-buffers-and-flush-kill-ring ()
+  "."
+  (interactive)
+  (ignore-errors (kill-bufs) ($/flush-kill-ring) (erase-messages)))
 
 (defun $/string-hash-take-last-n-chars (algo hwm contents)
   "."
   ;; (format "%s:%s"  (symbol-name algo) ($/hash-take-last-n-chars algo hwm contents)))
-  (format "%s"  ($/hash-take-last-n-chars algo hwm contents)))
+  (format "%s" ($/hash-take-last-n-chars algo hwm contents)))
 
 
-(defun server-reboot () "." (interactive) (server-force-delete) (server-mode 9))
+(defun server-reboot ()
+  "."
+  (interactive)
+  (server-force-delete)
+  (server-mode 9))
 
 
-(defun $/hash (algo) "." (interactive "S")
-       (unless (memq algo (secure-hash-algorithms))
-         (user-error (format "\"%s\" aint no valid secure-hash algo" algo)))
-       (let* ((pipa (region-points))
-              (pi (car pipa))
-              (pa (car (cdr pipa)))
-              (bs (buffer-substring-no-properties pi pa))
-              (hg (secure-hash algo bs)))
-         (message "%S" hg)
-         hg))
+(defun $/hash (algo)
+  "."
+  (interactive "S")
+  (unless (memq algo (secure-hash-algorithms))
+    (user-error
+     (format "\"%s\" aint no valid secure-hash algo" algo)))
+  (let* ((pipa (region-points))
+         (pi (car pipa))
+         (pa (car (cdr pipa)))
+         (bs (buffer-substring-no-properties pi pa))
+         (hg (secure-hash algo bs)))
+    (message "%S" hg)
+    hg))
 
-(defun $/sec-hash-region (algo) "." (interactive "S")
-       (let* ((pipa (region-points))
-              (pi (car pipa))
-              (pa (car (cdr pipa)))
-              (bs (buffer-substring-no-properties pi pa))
-              (hg (secure-hash algo bs)))
-         (replace-region-contents pi pa
-                                  (lambda () hg))))
+(defun $/sec-hash-region (algo)
+  "."
+  (interactive "S")
+  (let* ((pipa (region-points))
+         (pi (car pipa))
+         (pa (car (cdr pipa)))
+         (bs (buffer-substring-no-properties pi pa))
+         (hg (secure-hash algo bs)))
+    (replace-region-contents pi pa (lambda () hg))))
 
 
 (defun $/delete-overlays-within (beg end)
@@ -484,89 +661,100 @@
 
 (defun setup-utf8 ()
   (interactive)
-  (mapc #'(lambda (pnoitcnuf)
-            (if (functionp pnoitcnuf)
-                (funcall pnoitcnuf 'utf-8-unix)
-              (setq pnoitcnuf 'utf-8-unix) ))
-        (list 'prefer-coding-system
-              'set-default-coding-systems
-              'set-keyboard-coding-system
-              'set-clipboard-coding-system
-              'set-next-selection-coding-system
-              'set-selection-coding-system
-              'set-terminal-coding-system
-              'locale-coding-system )))
+  (mapc
+   #'(lambda (pnoitcnuf)
+       (if (functionp pnoitcnuf)
+           (funcall pnoitcnuf 'utf-8-unix)
+         (setq pnoitcnuf 'utf-8-unix)))
+   (list 'prefer-coding-system
+         'set-default-coding-systems
+         'set-keyboard-coding-system
+         'set-clipboard-coding-system
+         'set-next-selection-coding-system
+         'set-selection-coding-system
+         'set-terminal-coding-system
+         'locale-coding-system )))
 
 
-(defun $/chacha20-hardcoded (text шоли$) "."
-       (let* ((pipa (region-points))
-              (pi (car pipa))
-              (pa (car (cdr pipa)))
-              (tmp (get-buffer-create "tmp"))
-              (shell-result (save-mark-and-excursion
-                        (shell-command (format (base64-decode-string шоли$) text) tmp nil)
-                        (set-buffer tmp)
-                        (delete-blank-lines)
-                        (flush-lines "^\s-*$")
-                        (buffer-substring-no-properties (point-min) (point-max))))
-              )
-         (kill-buffer tmp)
-         shell-result))
+(defun $/chacha20-hardcoded (text шоли$)
+  "."
+  (let* ((pipa (region-points))
+         (pi (car pipa))
+         (pa (car (cdr pipa)))
+         (tmp (get-buffer-create "tmp"))
+         (shell-result
+          (save-mark-and-excursion
+            (shell-command
+             (format (base64-decode-string шоли$) text)
+             tmp nil)
+            (set-buffer tmp)
+            (delete-blank-lines)
+            (flush-lines "^\s-*$")
+            (buffer-substring-no-properties (point-min) (point-max)))))
+    (kill-buffer tmp)
+    shell-result))
 
 
-(defun $/encrypt-chacha20-hardcoded () "."
-       (interactive)
-       (save-mark-and-excursion
-         (let* ((pipa (region-points)) (pi (car pipa)) (pa (car (cdr pipa))))
-           (replace-region-contents
-            pi pa
-            (lambda () ($/chacha20-hardcoded (buffer-substring-no-properties pi pa)
-                                       "MHgwYzlmNjAwMCAtLSAnJXMn"))))))
+(defun $/encrypt-chacha20-hardcoded ()
+  "."
+  (interactive)
+  (save-mark-and-excursion
+    (let* ((pipa (region-points))
+           (pi (car pipa))
+           (pa (car (cdr pipa))))
+      (replace-region-contents
+       pi pa
+       (lambda ()
+         ($/chacha20-hardcoded
+          (buffer-substring-no-properties pi pa)
+          "MHgwYzlmNjAwMCAtLSAnJXMn"))))))
 
 
-(defun $/decrypt-chacha20-hardcoded () "."
-       (interactive)
-       (save-mark-and-excursion
-         (let* ((pipa (region-points)) (pi (car pipa)) (pa (car (cdr pipa))))
-           (replace-region-contents
-            pi pa
-            (lambda () ($/chacha20-hardcoded (buffer-substring-no-properties pi pa)
-                                       "MHgwYzlmNjAwMCAtZCAtLSAnJXMn"))))))
+(defun $/decrypt-chacha20-hardcoded ()
+  "."
+  (interactive)
+  (save-mark-and-excursion
+    (let* ((pipa (region-points))
+           (pi (car pipa))
+           (pa (car (cdr pipa))))
+      (replace-region-contents
+       pi pa
+       (lambda ()
+         ($/chacha20-hardcoded
+          (buffer-substring-no-properties pi pa)
+          "MHgwYzlmNjAwMCAtZCAtLSAnJXMn"))))))
 
 ;;($/undefine-key (list "C-c C-e C-2" "C-c C-d C-2"))
 (progn
   ($/set-key (list "C-c C-e C-2 C-0") '$/encrypt-chacha20-hardcoded)
-  ($/set-key (list "C-c C-e C-d C-2 C-0") '$/decrypt-chacha20-hardcoded))
+  ($/set-key
+   (list "C-c C-e C-d C-2 C-0")
+   '$/decrypt-chacha20-hardcoded))
 
 
 (defun string-list-region (beg end)
   "BEG END."
   (interactive "*r")
-  (save-excursion (let ((region
-                         (buffer-substring-no-properties
-                          beg
-                          end)))
-                    (replace-region-contents
-                     beg end
-                     #'(lambda ()
-                         (replace-regexp-in-string "$" ","
-                                                   (replace-regexp-in-string
-                                                    "\\(^\\|$\\)" "\""
-                                                    (replace-regexp-in-string
-                                                     "\\(^[\"']+\\|[\"']+$\\)" ""
-                                                     (replace-regexp-in-string
-                                                      "\\(^,+\\|,+$\\)" ""
-                                                      (replace-regexp-in-string
-                                                       "\\s-+" "\n"
-                                                       (replace-regexp-in-string
-                                                        "^\\s-+" ""
-                                                        (replace-regexp-in-string
-                                                        "\\s-+$" ""
-                                                        region)))
-                                                      ))))
-                         ))
-                    (flush-lines "^$" beg end)
-                    )))
+  (save-excursion
+    (let ((region (buffer-substring-no-properties beg end)))
+      (replace-region-contents
+       beg end
+       #'(lambda ()
+           (replace-regexp-in-string "$" ","
+                                     (replace-regexp-in-string
+                                      "\\(^\\|$\\)" "\""
+                                      (replace-regexp-in-string
+                                       "\\(^[\"']+\\|[\"']+$\\)" ""
+                                       (replace-regexp-in-string
+                                        "\\(^,+\\|,+$\\)" ""
+                                        (replace-regexp-in-string
+                                         "\\s-+" "\n"
+                                         (replace-regexp-in-string
+                                          "^\\s-+" ""
+                                          (replace-regexp-in-string
+                                           "\\s-+$" ""
+                                           region)))))))))
+      (flush-lines "^$" beg end))))
 
 
 (defun refactor-test-node-info-buffer ()
@@ -576,8 +764,7 @@
   (rust-format-buffer)
   (remove-trailing-commas-buffer)
   (fix-vec-buffer)
-  (rust-format-buffer)
-  )
+  (rust-format-buffer))
 
 
 (defun refactor-test-node-info-region (beg end)
@@ -587,11 +774,9 @@
     (let ((region (buffer-substring-no-properties beg end)))
       (replace-region-contents
        beg end
-       #'(lambda ()
-           (refactor-node-info-string region)))
+       #'(lambda () (refactor-node-info-string region)))
       (flush-lines "^$" beg end)
-      (indent-region beg end)
-      )))
+      (indent-region beg end))))
 
 (defun refactor-node-info-string (string)
   "STRING."
@@ -599,24 +784,19 @@
    (regex-fix-value-names
     (regex-fix-operation-names
      (regex-fix-begin-names
-      (regex-fix-node-names
-       (regex-fix-node-info
-        string)))))
-   )
-  )
+      (regex-fix-node-names (regex-fix-node-info string)))))))
 
 
 (defun regex-fix-node-names (string)
   "STRING."
   (let ((fixed
          (replace-regexp-in-string
-   "\\(^\\s-*\\|\\s-*(\\s-*\\)\\(Expression\\|Ident\\|Operation\\|FunctionDeclaration\\|Args\\|Block\\|Value\\|Begin\\|End\\)"
-   "\\1Node"
-   string)))
+          "\\(^\\s-*\\|\\s-*(\\s-*\\)\\(Expression\\|Ident\\|Operation\\|FunctionDeclaration\\|Args\\|Block\\|Value\\|Begin\\|End\\)"
+          "\\1Node"
+          string)))
     (if (not (string= fixed string))
         (regex-fix-node-names fixed)
-      fixed
-      )))
+      fixed)))
 
 
 (defun regex-fix-operation-names (string)
@@ -631,8 +811,7 @@
            string))))
     (if (not (string= fixed string))
         (regex-fix-operation-names fixed)
-      fixed
-      )))
+      fixed)))
 
 
 
@@ -646,10 +825,9 @@
            "\\(^\\s-*\\|\\s-*(\\s-*\\)\\(Boolean\\|Integer\\|String\\|Null\\)"
            "\\1Value::\\2"
            string))))
-        (if (not (string= fixed string))
-            (regex-fix-value-names fixed)
-          fixed
-          )))
+    (if (not (string= fixed string))
+        (regex-fix-value-names fixed)
+      fixed)))
 
 
 (defun regex-fix-begin-names (string)
@@ -664,19 +842,18 @@
            string))))
     (if (not (string= fixed string))
         (regex-fix-begin-names fixed)
-      fixed
-      )))
+      fixed)))
 
 (defun regex-fix-node-info (string)
   "STRING."
   (let ((fixed
          (replace-regexp-in-string
-   "^\\s-+NodeInfo\\s-+[{]\\(.\\|\n\\)*?string:\\s-+\"\\([^\"]+\\)\",\n\\(.\\|\n\\)*?start_pos: -*\\(.\\|\n\\)*?line:\\s-+\\([0-9]+\\)\\(.\\|\n\\)*?column:\\s-+\\([0-9]+\\)\\(.\\|\n\\)+*?end_pos: -*\\(.\\|\n\\)*?line:\\s-+\\([0-9]+\\)\\(.\\|\n\\)*?column:\\s-+\\([0-9]+\\)\\(.\\|\n\\)+?\\(.\\|\n\\)+?[}]\\(.\\|\n\\)+?[}]\\(.\\|\n\\)+?[}],?\\([^)]+\\|\n\\| -+\\)"
-   "stub_node_info(&input, \"\\2\", (\\5, \\7), (\\10, \\12))"
-   string)))
+          "^\\s-+NodeInfo\\s-+[{]\\(.\\|\n\\)*?string:\\s-+\"\\([^\"]+\\)\",\n\\(.\\|\n\\)*?start_pos: -*\\(.\\|\n\\)*?line:\\s-+\\([0-9]+\\)\\(.\\|\n\\)*?column:\\s-+\\([0-9]+\\)\\(.\\|\n\\)+*?end_pos: -*\\(.\\|\n\\)*?line:\\s-+\\([0-9]+\\)\\(.\\|\n\\)*?column:\\s-+\\([0-9]+\\)\\(.\\|\n\\)+?\\(.\\|\n\\)+?[}]\\(.\\|\n\\)+?[}]\\(.\\|\n\\)+?[}],?\\([^)]+\\|\n\\| -+\\)"
+          "stub_node_info(&input, \"\\2\", (\\5, \\7), (\\10, \\12))"
+          string)))
     (if (not (string= fixed string))
         (regex-fix-node-info fixed)
-        fixed)))
+      fixed)))
 
 
 
@@ -687,7 +864,7 @@
   (replace-regexp-in-string
    "\\(^\\s-+\\|\\s-+\\|[^!#]\\|(\\)[[]\\(^\\s-+\\|\\s-+\\|[^!#]\\|(\\)"
    "\\1vec![\\2"
-    string))
+   string))
 
 (defun fix-vec-region (beg end)
   "BEG END."
@@ -696,12 +873,11 @@
     (let ((region (buffer-substring-no-properties beg end)))
       (replace-region-contents
        beg end
-       #'(lambda ()
-           (regex-fix-vec region)))
-      )))
+       #'(lambda () (regex-fix-vec region))))))
 
 (defun fix-vec-buffer ()
-  "." (interactive "*")
+  "."
+  (interactive "*")
   (fix-vec-region (point-min) (point-max)))
 
 
@@ -709,11 +885,9 @@
   "STRING."
   (replace-regexp-in-string
    "\\s-+$" ""
-  (replace-regexp-in-string
-   "^\\s-+" ""
-  (replace-regexp-in-string
-   "\\(\\s-\\|\n\\)+" " "
-     string))))
+   (replace-regexp-in-string
+    "^\\s-+" ""
+    (replace-regexp-in-string "\\(\\s-\\|\n\\)+" " " string))))
 
 
 (defun single-space-all-whitespace-and-newlines-region (beg end)
@@ -724,10 +898,8 @@
       (replace-region-contents
        beg end
        #'(lambda ()
-           (regex-single-space-all-whitespace-and-newlines
-            region)))
-      (flush-lines "^$" beg end)
-      )))
+           (regex-single-space-all-whitespace-and-newlines region)))
+      (flush-lines "^$" beg end))))
 
 ;; (defun regex-remove-trailing-commas (string)
 ;;   "STRING."
@@ -744,14 +916,14 @@
   (replace-regexp-in-string
    "\\([)]\\|[]]\\|[}]\\)\\(\\s-\\|\n\\)*,\\(\\s-\\|\n\\)*\\([)]\\|[]]\\|[}]\\)"
    "\\1\\4"
-     string))
+   string))
 
 (defun regex-remove-trailing-commas-all (string)
   "STRING."
   (let ((fixed (regex-remove-trailing-commas string)))
     (if (not (string= fixed string))
         (regex-remove-trailing-commas-all fixed)
-        fixed)))
+      fixed)))
 
 (defun remove-trailing-commas-region (beg end)
   "BEG END."
@@ -760,12 +932,11 @@
     (let ((region (buffer-substring-no-properties beg end)))
       (replace-region-contents
        beg end
-       #'(lambda ()
-           (regex-remove-trailing-commas-all region)))
-      )))
+       #'(lambda () (regex-remove-trailing-commas-all region))))))
 
 (defun remove-trailing-commas-buffer ()
-  "." (interactive "*")
+  "."
+  (interactive "*")
   (remove-trailing-commas-region (point-min) (point-max)))
 
 
@@ -773,11 +944,9 @@
   "STRING."
   (replace-regexp-in-string
    "\\s-+$" ""
-  (replace-regexp-in-string
-   "^\\s-+" ""
-  (replace-regexp-in-string
-   "\\(\\s-*\n\\s-*\\|\n\\)+" "\n\n"
-     string))))
+   (replace-regexp-in-string
+    "^\\s-+" ""
+    (replace-regexp-in-string "\\(\\s-*\n\\s-*\\|\n\\)+" "\n\n" string))))
 
 
 (defun remove-duplicate-new-lines-region (beg end)
@@ -787,13 +956,11 @@
     (let ((region (buffer-substring-no-properties beg end)))
       (replace-region-contents
        beg end
-       #'(lambda ()
-           (regex-remove-duplicate-new-lines
-            region)))
-      )))
+       #'(lambda () (regex-remove-duplicate-new-lines region))))))
 
 (defun remove-duplicate-new-lines-buffer ()
-  "." (interactive "*")
+  "."
+  (interactive "*")
   (remove-duplicate-new-lines-region (point-min) (point-max)))
 
 
@@ -807,12 +974,11 @@
     (let ((region (buffer-substring-no-properties beg end)))
       (replace-region-contents
        beg end
-       #'(lambda ()
-           (regex-fix-begin-names region)))
-      )))
+       #'(lambda () (regex-fix-begin-names region))))))
 
 (defun fix-begin-names-buffer ()
-  "." (interactive "*")
+  "."
+  (interactive "*")
   (fix-begin-names-region (point-min) (point-max)))
 
 
@@ -823,12 +989,11 @@
     (let ((region (buffer-substring-no-properties beg end)))
       (replace-region-contents
        beg end
-       #'(lambda ()
-           (regex-fix-node-info region)))
-      )))
+       #'(lambda () (regex-fix-node-info region))))))
 
 (defun fix-node-info-buffer ()
-  "." (interactive "*")
+  "."
+  (interactive "*")
   (fix-node-info-all-region (point-min) (point-max)))
 
 
@@ -847,9 +1012,7 @@
     (let ((region (buffer-substring-no-properties beg end)))
       (replace-region-contents
        beg end
-       #'(lambda ()
-           (regex-cargo-dependencies-normalize region)))
-      )))
+       #'(lambda () (regex-cargo-dependencies-normalize region))))))
 
 
 
@@ -858,7 +1021,7 @@
   (setq case-fold-search nil)
   (let ((result (replace-regexp-in-string
 
-                  string)))
+                 string)))
     (setq case-fold-search t)
     result))
 
@@ -870,9 +1033,12 @@
   (save-excursion
     (goto-char beg)
     (while (re-search-forward "^\\(\\w+.*\\)$" nil t)
-      (replace-match (format "set.themes.insert(\"%s\".to_string(), theme_from_bytes(include_bytes!(\"./%s.tmTheme\")));" (match-string 0) (match-string 0)) t)
-      )
-    ))
+      (replace-match
+       (format
+        "set.themes.insert(\"%s\".to_string(), theme_from_bytes(include_bytes!(\"./%s.tmTheme\")));"
+        (match-string 0)
+        (match-string 0))
+       t))))
 
 
 
@@ -940,27 +1106,27 @@
                "^\\s-*\\(\\s-+\\|}\\|use\\|impl\\|extern\\s-*crate\\|\\(pub\\(\s-*\\(in\s-*\\)?[a-z0-9:]+\\)?\\)?\\s-*mod\\|[#][[]\\|)\\).*"
                ""
                region))))))))
-  (save-excursion
-    (flush-lines "^$" beg end nil)
-    ))
+  (save-excursion (flush-lines "^$" beg end nil)))
 
 
 (defun rust-extract-members-regex (package-name string)
   "STRING."
-  (format "pub use %s::{\n%s\n};" package-name (rust-comma-separated-members-regex string)))
+  (format "pub mod %s;\npub use %s::{\n%s\n};\n" package-name package-name
+          (rust-comma-separated-members-regex string)))
 
 (defun rust-comma-separated-members-regex (string)
   "STRING."
-  (let ((members (replace-regexp-in-string
-                 "^\\s-*///?.*$"
-                 ""
-                 (replace-regexp-in-string
-                  "^\\s-*\\(pub\\s-*\\)?\\((super\\|crate\\|self\\|in\\s-*[^)]+)\\)?\\s-*\\(struct\\|union\\|trait\\|type\\|enum\\|fn\\)\\s-*\\([<][^>]*[>]\\)?\\s-*\\([A-Za-z_][a-zA-Z0-9_]+\\).*"
-                  "\\5,"
-                  (replace-regexp-in-string
-                   "^\\s-*\\(\\s-+\\|}\\|use\\|impl\\|extern\\s-*crate\\|\\(pub\\(\s-*\\(in\s-*\\)?[a-z0-9:]+\\)?\\)?\\s-*\\(mod\\|macro_\\(rules\\|export\\)[!]?\s-*\\)\\|[#][[]\\|)\\).*[{]?.*$"
-                   ""
-                   string)))))
+  (let ((members
+         (replace-regexp-in-string
+          "^\\s-*///?.*$"
+          ""
+          (replace-regexp-in-string
+           "^\\s-*\\(pub\\s-*\\)?\\((super\\|crate\\|self\\|in\\s-*[^)]+)\\)?\\s-*\\(struct\\|union\\|trait\\|type\\|enum\\|fn\\)\\s-*\\([<][^>]*[>]\\)?\\s-*\\([A-Za-z_][a-zA-Z0-9_]+\\).*"
+           "\\5,"
+           (replace-regexp-in-string
+            "^\\s-*\\(\\s-+\\|}\\|use\\|impl\\|extern\\s-*crate\\|\\(pub\\(\s-*\\(in\s-*\\)?[a-z0-9:]+\\)?\\)?\\s-*\\(mod\\|macro_\\(rules\\|export\\)[!]?\s-*\\)\\|[#][[]\\|)\\).*[{]?.*$"
+            ""
+            string)))))
     (replace-regexp-in-string
      "^\\(\\(.\\|\n\\)*\\)$"
      "\\1"
@@ -975,11 +1141,12 @@
 (defun rust-path-to-current-file-mod ()
   (let* ((current-file-name (expand-file-name (buffer-file-name)))
          (no-extension (file-name-sans-extension current-file-name)))
-         (or (when (string= no-extension "mod")
-               (file-name-directory current-file-name))
-             (when (string= no-extension "lib")
-               (file-name-directory current-file-name))
-             no-extension)))
+    (or
+     (when (string= no-extension "mod")
+       (file-name-directory current-file-name))
+     (when (string= no-extension "lib")
+       (file-name-directory current-file-name))
+     no-extension)))
 
 (defun rust-guess-package-name-of-file (filename)
   (let* ((current-file-name (expand-file-name filename))
@@ -993,12 +1160,17 @@
   "BEG END."
   (interactive)
   (let* ((rust-file-name
-          (expand-file-name (read-file-name
-          "insert members of rust file:" (rust-path-to-current-file-mod) nil 'confirm-after-completion)))
-         (package-name (rust-guess-package-name-of-file rust-file-name))
-         (string (with-temp-buffer
-                   (insert-file-contents rust-file-name)
-                   (buffer-string))))
+          (expand-file-name
+           (read-file-name
+            "insert members of rust file:"
+            (rust-path-to-current-file-mod)
+            nil 'confirm-after-completion)))
+         (package-name
+          (rust-guess-package-name-of-file rust-file-name))
+         (string
+          (with-temp-buffer
+            (insert-file-contents rust-file-name)
+            (buffer-string))))
     (insert (rust-extract-members-regex package-name string))
     (rust-format-buffer)))
 
@@ -1014,11 +1186,7 @@
            (replace-regexp-in-string
             "\\bbg\\b"
             "back"
-            (replace-regexp-in-string
-             "\\bfg\\b"
-             "fore"
-             region))
-           )))))
+            (replace-regexp-in-string "\\bfg\\b" "fore" region)))))))
 
 
 (defun comment-step-region(beg end)
@@ -1032,146 +1200,488 @@
            (replace-regexp-in-string
             "^\\(\\s-*\\)\\(step\\(_test\\)?!\\)"
             "\\1 // \\2"
-             region))
-           ))))
+            region))))))
 
 
 
 
-(defun decr-next-number()
-  "."
-  (interactive "*")
 
-    (re-search-forward "\\([0-9]+\\)" nil t)
-    (goto-char (match-beginning 1))
-    (let ((pos (point)))
-      (replace-match (format "%s" (- (string-to-number (match-string 1)) 1)) t)
-      (re-search-forward "\\([0-9]+\\)" nil t)
-      (if (eq pos (match-beginning 1))
-          (progn
-            (forward-line)
-            (message (format "forward-line %s" pos)))
-        (progn
-          (goto-char (match-beginning 1))
-          (message (format "goto-char %s" (match-beginning 1))))
-        )))
-
-(defun incr-next-number()
-  "."
-  (interactive "*")
-
-    (re-search-forward "\\([0-9]+\\)" nil t)
-    (goto-char (match-beginning 1))
-    (let ((pos (point)))
-      (replace-match (format "%s" (+ (string-to-number (match-string 1)) 1)) t)
-      (re-search-forward "\\([0-9]+\\)" nil t)
-      (if (eq pos (match-beginning 1))
-          (progn
-            (forward-line)
-            (message (format "forward-line %s" pos)))
-        (progn
-          (goto-char (match-beginning 1))
-          (message (format "goto-char %s" (match-beginning 1))))
-        )))
-
-
-
-
-(defmacro when-buffer-filename-meets(cond &rest body)
+(defmacro
+    when-buffer-filename-meets(cond &rest body)
   "REGEXP FN."
   `(let ((filename (expand-file-name (buffer-file-name))))
-     (if ,cond
-         (progn ,@body)
-       )))
+     (if ,cond (progn ,@body))))
 
-(defmacro when-buffer-meets(cond &rest body)
+(defmacro
+    when-buffer-meets(cond &rest body)
   "REGEXP FN."
-  `(if ,cond
-       (progn ,@body)
-     ))
+  `(if ,cond (progn ,@body)))
 
-(defmacro when-buffer-filename-matches(regexp &rest body)
+(defmacro
+    when-buffer-filename-matches(regexp &rest body)
   "REGEXP FN."
   `(let ((filename (expand-file-name (buffer-file-name))))
      (if (string-match-p ,regexp filename)
          (progn ,@body))))
 
 
+(defun git-current-branch()
+  (car
+   (seq-filter
+    (apply-partially #'string-match-p "[*]\s-\\(\\)")
+    (string-lines (shell-command-to-string "git branch")))))
+
+
+(defun git-commit()
+  "."
+  (interactive)
+  (let *((commit-message
+          (read-string "Commit Message:")))
+       (or
+        (when (zerop (length commit-message))
+          (user-error "aborted due to empty commit message"))
+        (progn
+          (shell-command-to-string
+           (format "git commit -m '%s'" commit-message))))))
+
+(defun git-commit-all()
+  "."
+  (interactive)
+  (let *((commit-message
+          (read-string "Commit Message:")))
+       (or
+        (when (zerop (length commit-message))
+          (user-error "aborted due to empty commit message"))
+        (progn
+          (shell-command-to-string
+           (format "git commit -a -m '%s'" commit-message))))))
+
+
+(defun git-autocommit-current-file-buffer()
+  (let* ((current-branch-name (git-current-branch))
+         (last-commit-message
+          (shell-command-to-string "git log --max-count=1 --format=%s"))
+         (branch-name
+          (format "%s@%s"
+                  ($/hash-take-last-n-chars 'sha512 8 filename)
+                  (file-name-nondirectory filename))))
+    (shell-command-to-string (format "git branch %s" branch-name))
+    (shell-command-to-string (format "git checkout %s" branch-name))
+    (shell-command-to-string (format "git add -f %s" filename))
+    (shell-command-to-string
+     (format "git commit %s -m '%s'" filename
+             (file-name-nondirectory filename)))
+    (shell-command-to-string
+     (format "git checkout %s" current-branch-name))
+    (shell-command-to-string
+     (format "git merge --squash %s --no-commit" branch-name))
+    (shell-command-to-string
+     (format "git commit --amend -m '%s'"
+             (format "%s\n%s (%s)" last-commit-message
+                     (file-name-nondirectory filename)
+                     (time-stamp-string "%Y-%m-%d %H:%M:%S"))))
+    (set-buffer-modified-p nil)))
+
+
+
 (defun git-autocommit-opt-libexec()
   "."
   (when-buffer-filename-meets
-   (string-match-p (concat "^" (getenv "HOME") "/opt/libexec") filename)
-   (shell-command-to-string (format "git add -f %s" filename))
-   (shell-command-to-string (format "git commit %s -m '%s'" filename filename))
-   (message (format "auto-commited %s" filename))
-  ))
+   (string-match-p
+    (concat "^" (getenv "HOME") "/opt/libexec")
+    filename)
+   (git-autocommit-current-file-buffer)
+   (message (format "auto-commited %s" filename))))
 
 (defun git-autocommit-emacs-d-c-sources()
   "."
-  (when-buffer-filename-matches (concat "^" (getenv "HOME") "/.emacs.d/c")
-     (shell-command-to-string (format "git add -f %s" filename))
-     (shell-command-to-string (format "git commit %s -m '%s'" filename filename))
-     (message (format "auto-commited emacs file %s" filename))))
+  (when-buffer-filename-matches
+   (concat "^" (getenv "HOME") "/.emacs.d/c")
+   (git-autocommit-current-file-buffer)
+   (message (format "auto-commited emacs file %s" filename))))
 
-(defmacro set-region-contents-with-fn(beg end fn)
+(defmacro
+    set-region-contents-with-fn(beg end fn)
   "BEG END FN."
   `(save-excursion
-     (let (
-           (region (buffer-substring-no-properties beg end))
+     (let ((region (buffer-substring-no-properties beg end))
            (repl (,fn region)))
-       (replace-region-contents beg end
-                                #'(lambda () repl)))))
+       (replace-region-contents beg end #'(lambda () repl)))))
 
 
 
 (defun toml-prettify-buffer ()
-  "BEG END."
+  "."
   (interactive)
   (when-buffer-meets
    (string= major-mode "toml-mode")
 
+   (flush-empty-lines)
    (save-excursion
-     (let (
-           (beg (point-min))
-           (end (point-max))
-           )
-       (flush-lines "^$" beg end nil)
-       ))
-   (save-excursion
-     (let* (
-            (beg (progn (goto-char (point-min)) (forward-word) (point)))
+     (let* ((beg
+             (progn
+               (goto-char (point-min))
+               (forward-word)
+               (point)))
             (end (point-max))
             (region (buffer-substring-no-properties beg end))
-            (repl (replace-regexp-in-string
-                   "^\\([#]\\s-*\\)?\\([[].*\\)"
-                   "\n\\1\\2"
-                   region
-                   ))
-            )
-           (replace-region-contents
-            beg end
-            #'(lambda () repl ))
+            (repl
+             (replace-regexp-in-string
+              "^\\([#]\\s-*\\)?\\([[].*\\)"
+              "\n\\1\\2"
+              region)))
+       (replace-region-contents beg end #'(lambda () repl ))
 
-           (if (not (string= region repl))
-               ;; avoid modifying buffer after prettifying its contents
-               (set-buffer-modified-p nil))
-       )
-     )
-   ))
+       (if (not (string= region repl))
+           ;; avoid modifying buffer after prettifying its contents
+           (set-buffer-modified-p nil))))))
 
 (defun delete-comments-region(beg end)
   "BEG END."
   (interactive "*r")
   (save-excursion
-    (let (
-           (regexp (concat "^\\s-*" (regexp-quote comment-start) ".*"))
-           )
-      (flush-lines regexp beg end)
-      )))
+    (let ((regexp (concat "^\\s-*" (regexp-quote comment-start) ".*"))
+          )
+      (flush-lines regexp beg end))))
 
 (defun delete-comments-buffer()
   "BEG END."
   (interactive)
   (delete-comments-region (point-min) (point-max)))
 
-;; (add-hook 'local-write-file-hooks 'git-add-opt-libexec)
+
+(defun flush-empty-lines ()
+  "."
+  (interactive)
+  (save-excursion (flush-lines "^$" (point-min) (point-max) nil)))
+
+
+(defun decr-next-number()
+  "."
+  (interactive)
+
+  (re-search-forward "\\([0-9]+\\)" nil t)
+  (goto-char (match-beginning 1))
+  (let ((pos (point)))
+    (replace-match
+     (format "%s" (- (string-to-number (match-string 1)) 1))
+     t)
+    (re-search-forward "\\([0-9]+\\)" nil t)
+    (if (eq pos (match-beginning 1))
+        (progn
+          (forward-line)
+          (message (format "forward-line %s" pos)))
+      (progn
+        (goto-char (match-beginning 1))
+        (message (format "goto-char %s" (match-beginning 1)))))))
+
+(defun incr-next-number()
+  "."
+  (interactive)
+
+  (re-search-forward "\\([0-9]+\\)" nil t)
+  (goto-char (match-beginning 1))
+  (let ((pos (point)))
+    (replace-match
+     (format "%s" (+ (string-to-number (match-string 1)) 1))
+     t)
+    (re-search-forward "\\([0-9]+\\)" nil t)
+    (if (eq pos (match-beginning 1))
+        (progn
+          (forward-line)
+          (message (format "forward-line %s" pos)))
+      (progn
+        (goto-char (match-beginning 1))
+        (message (format "goto-char %s" (match-beginning 1)))))))
+
+
+(defun goto-next-close-parenthesis (open-char close-char open-count close-count &optional beg-pos)
+  "OPEN-CHAR
+   CLOSE-CHAR
+   OPEN-COUNT
+   CLOSE-COUNT
+   &optional
+   BEG-POS."
+  (unless (eq (length open-char) 1)
+    (error "open-char is should have length 1 but is %s"
+           (length open-char)))
+  (unless (eq (length close-char) 1)
+    (error "close-char is should have length 1 but is %s"
+           (length close-char)))
+  (unless (integerp open-count)
+    (error "open-count is should be a number not \"%s\"" open-count))
+  (unless (integerp close-count)
+    (error "close-count is should be a number not \"%s\"" close-count))
+  ;; optional
+  (unless (integerp (or beg-pos (point)))
+    (error "beg-pos is should be a number not \"%s\"" beg-pos))
+
+  (setq case-fold-search nil)
+  (let* ((case-fold-search nil)
+         (open-regexp (regexp-quote open-char))
+         (close-regexp (regexp-quote close-char))
+         (open-count open-count)
+         (close-regexp (regexp-quote close-char))
+         (close-count close-count)
+         (beg-pos (or beg-pos (point)))
+         (pos beg-pos)
+         (cur-pos beg-pos)
+         (open-pos beg-pos)
+         (close-pos beg-pos)
+         (marker (point-marker))
+         (too-many-open-parenthesis (> open-count close-count)))
+
+    (defun state ()
+      (format "{\n    open-count: %s,\n    close-count: %s,\n    open-pos: %s,\n    close-pos: %s\n}" open-count close-count open-pos close-pos))
+
+
+    (message (state))
+    (if (not (use-region-p))
+        (progn
+          (message (format "setting region at %s" beg-pos))
+          (push-mark (point) t t)))
+
+    (if (not (eq beg-pos (point)))
+        (progn
+          (goto-char beg-pos)
+          (message (format "current pos %s" beg-pos))))
+
+
+
+    (or
+     (when (not (null (re-search-forward close-regexp nil t)))
+       ;; search next close parenthesis
+       (progn
+         (message (format "search next close parenthesis"))
+         ;; close parenthesis found, set cur-pos to its match-end
+         (setq cur-pos (match-end 0))
+         (setq close-count (1+ close-count))
+         (goto-char cur-pos)
+
+         (or
+          ;; get position of next open parenthesis if before curernt close parenthesis
+          (and
+           (not (null (re-search-forward open-regexp nil t)))
+           (progn
+             (message (format "peeking onto next open parenthesis"))
+
+             (setq open-count (1+ open-count))
+             (if (<= (match-end 0) cur-pos)
+                 (progn
+                   ;; open parenthesis found before current close parenthesis
+                   (message
+                    (format "found open parenthesis before next open parenthesis, recursive call should happen next"))
+                   t)
+               ;; else, done!
+               '(("beg-pos" . beg-pos)
+                 ("open-pos" . open-pos)
+                 ("open-count" . open-count)
+                 ("close-pos" . close-pos)
+                 ("close-count" . close-count)
+                 ("end-pos" . end-pos))))
+           (progn
+             (setq close-pos cur-pos)
+             (setq end-pos cur-pos)
+             (setq open-pos (match-end 0))
+             ;; go backward to the last close parenthesis so that while in recursive call fast-forwards it
+             (goto-char open-pos)
+             (message
+              (format "recursive call to (goto-next-close-parenthesis open-char: %s close-char: %s open-count: %s close-count: %s close-pos: %s)"  open-char close-char open-count close-count close-pos))
+             (goto-next-close-parenthesis open-char close-char open-count close-count open-pos))))))
+     (when (not (null (re-search-forward open-regexp nil t)))
+       ;; no close parenthesis found, search next open parenthesis
+       (progn
+         (message (format "unexpected third case"))
+         (setq open-pos (match-end 0))
+         (setq open-count (1+ open-count))
+         (setq end-pos (match-end 0))
+         (goto-char cur-pos)
+         '(("beg-pos" . beg-pos)
+           ("open-pos" . open-pos)
+           ("open-count" . open-count)
+           ("close-pos" . close-pos)
+           ("close-count" . close-count)
+           ("end-pos" . end-pos))))
+     (when too-many-open-parenthesis
+       ;; not enough close parenthesis found, return what it can
+       (progn
+         (message (format "too-many-open-parenthesis 4th case"))
+         (while too-many-open-parenthesis
+           (progn
+             (message
+              (format "too-many-open-parenthesis: %s" (state)))
+             (if (not (null (re-search-forward close-regexp nil t)))
+                 (progn
+                   (message
+                    (format "found next close parenthesis within too-many-open-parenthesis"))
+                   (setq close-pos (match-end 0))
+                   (setq close-count (1+ close-count))
+                   (goto-char close-pos)
+
+                   (if (> open-pos close-pos)
+                       (progn
+                         (message
+                          (format "and such close parenthesis happens to appear before open parenthesis: %s"
+                                  (state)))
+                         ;; (setq open-count (1+ close-count))
+                         )
+                     (progn
+                       (message
+                        (format "but close parenthesis appears after close parenthesis: %s"
+                                (state)))
+                       (setq open-count (1+ close-count))))
+
+                   (setq too-many-open-parenthesis
+                         (or
+                          (> open-pos close-pos)
+                          (> open-count close-count))))
+               ;;else, exit loop
+               (setq too-many-open-parenthesis nil));; end if
+             t))
+         (setq end-pos close-pos)
+
+         '(("beg-pos" . beg-pos)
+           ("open-pos" . open-pos)
+           ("open-count" . open-count)
+           ("close-pos" . close-pos)
+           ("close-count" . close-count)
+           ("end-pos" . end-pos)))))))
+
+
+
+(defun find-next-close-parens()
+  "."
+  (interactive)
+  (let* ((open-char "(")
+         (close-char ")")
+         (til-next-open
+          (re-search-forward (concat "\\(\\s-\\|\n\\)*[" open-char "]")))
+         (til-next-close
+          (re-search-forward
+           (concat "\\(\\s-\\|\n\\)*[" close-char "]")))
+         (open-count
+          (if (>= (point) til-next-open)
+              (progn (goto-char til-next-open) 1)
+            0))
+         (close-count
+          (if (and (eq 1 open-count) (> (point) til-next-close))
+              (progn (goto-char til-next-close) 1)
+            0)))
+    (defun state ()
+      (format "{\n    point: %s\n    til-next-open: %s,\n    til-next-close: %s,\n    open-count: %s,\n    close-count: %s\n}"
+              (point)
+              til-next-open til-next-close open-count close-count))
+
+    (message (state))
+    (goto-next-close-parenthesis open-char close-char open-count close-count)
+
+    ))
+
+(defun erase-messages()
+  "."
+  (interactive)
+  (with-current-buffer "*Messages*"
+    (read-only-mode -1)
+    (erase-buffer)
+    (read-only-mode 1)))
+
+(defun erase-scratch()
+  "."
+  (interactive)
+  (with-current-buffer "*scratch*"
+    (read-only-mode -1)
+    (erase-buffer)))
+
+
+(defun git-add()
+  "."
+  (interactive)
+  (shell-command-to-string
+   (format "git add -f %s" (expand-file-name (buffer-file-name)))))
+
+
+(defun buffer-list-builtin-only()
+  "returns all open emacs-only buffers, i.e: starting and ending in `*'."
+  (seq-filter
+   (apply-partially #'string-match-p "^[*].*[*]$")
+   (mapcar 'buffer-name (buffer-list))))
+
+(defun only-builtin-buffers-open-p()
+  "returns `t' if all open buffers are only emacs buffers as determined by `buffer-list-builtin-only'"
+  (=
+   (length (buffer-list))
+   (length (buffer-list-builtin-only))))
+
+
+;; (defun ask-whether-to-kill-emacs (&optional predicate)
+;;     (interactive)
+;;   (when (only-builtin-buffers-open-p)
+;;     (y-or-n-p "exit emacs?")))
+;;
+;; (setq confirm-kill-emacs 'ask-whether-to-kill-emacs)
+(setq confirm-kill-emacs nil)
+
+;; TODO: build rust refactoring tool using `minibuffer-lazy-highlight-setup' to find callers of functions, structs etc
+
+(defun buffer-names-in-current-frame()
+  "."
+  (let ((buffer-names (list)))
+    (walk-windows
+     (lambda(window)
+       (with-window-non-dedicated window
+         (setq buffer-names (append buffer-names (list (format "%s" (buffer-name))))))))
+    (delete-dups buffer-names)
+    ))
+
+(defun eval-messages()
+  "setup windows for elisp evaluation/testing in the current frame."
+  (interactive)
+  (scratch-buffer)
+  (let* ((windows
+          (let ((windows 0))
+            (progn
+              (walk-windows
+               (lambda(window) (setq windows (1+ windows))))
+              windows)))
+         (right (split-window-right))
+         (current (frame-first-window)))
+    (when (> windows 1)
+      (delete-window))
+    (set-window-buffer right "*Messages*")
+    (set-window-buffer current "*scratch*")
+    (erase-messages)
+    (with-current-buffer "*scratch*"
+      (read-only-mode -1)
+      (widen)
+      (replace-region-contents
+       (point-min)
+       (point-max)
+       (lambda () "(erase-messages)\n\n(message\n (format \"%s\"\n\n))"))
+      (goto-char (point-min))
+      (forward-word 5)
+      (end-of-line 1)
+      (forward-char 1)
+      (indent-for-tab-command))))
+
+(defun current-column()
+  "returns the current column number."
+  (- (point) (line-beginning-position)))
+
+
+(defun insert-char-until-column()
+  "."
+  (interactive)
+  (let* ((char (read-string "characters to insert: "))
+         (column (read-number "column number")))
+    (while (> column (current-column))
+      (insert char)
+      )))
+
+
+(defun insert-space-until-column()
+  "."
+  (interactive)
+  (let ((column (read-number "column number")))
+    (while (> column (current-column))
+      (insert " ")
+      )))
