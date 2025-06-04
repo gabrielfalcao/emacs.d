@@ -1366,7 +1366,9 @@
       (format "{\n    point: %s\n    til-next-open: %s,\n    til-next-close: %s,\n    count: %s,\n    count: %s\n}" (point) til-next-open til-next-close count count)
       )
 
+    (message (state))
     (goto-next-close-parenthesis open-char close-char open-count close-count)
+
     )
 )
 
