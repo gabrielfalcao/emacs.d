@@ -1551,3 +1551,14 @@
   (interactive)
   (shell-command-to-string
    (format "git add -f %s" (expand-file-name (buffer-file-name)))))
+
+
+(defun git-commit()
+  "."
+  (interactive)
+  (let *((commit-message (read-string "Commit Message:")))
+       (or (when (zerop (length commit-message))
+             (user-error "aborted due to empty commit message"))
+           (progn
+             (shell-command-to-string
+              (format "git add -f %s" (expand-file-name (buffer-file-name))))))))
