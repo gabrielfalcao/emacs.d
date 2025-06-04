@@ -10,44 +10,15 @@
 (add-hook 'after-save-hook 'git-autocommit-opt-libexec)
 (add-hook 'after-save-hook 'git-autocommit-emacs-d-c-sources)
 (add-hook 'after-change-major-mode-hook #'(lambda () (prettify-symbols-mode)))
-(add-hook 'after-set-visited-file-name-hook
-          #'(lambda () (
-                        (let* ((full-path (expand-file-name (buffer-file-name)))
-                               (parent-path (file-name-directory (full-path)))
-                               (filename (file-name-nondirectory (full-path))))
-                          (setq buffer-auto-save-file-name (file-name-concat parent-path (format ".%s.emacs-auto-save"  filename)))
-                        ))))
+(add-hook 'after-set-visited-file-name-hook #'(lambda () ( (let* ((full-path (expand-file-name (buffer-file-name))) (parent-path (file-name-directory (full-path))) (filename (file-name-nondirectory (full-path)))) (setq buffer-auto-save-file-name (file-name-concat parent-path (format ".%s.emacs-auto-save" filename))) ))))
 ;; (add-hook 'web-mode-hook 'prettier-js-mode)
 ;; (add-hook 'web-mode-hook 'prettier-js-mode)
-(add-hook 'python-mode-hook #'(lambda ()
-                                (interactive)
-                                (define-key python-mode-map (kbd "C-c C-f") 'blacken-buffer)))
-(add-hook 'typescript-mode-hook  #'(lambda ()
-                                (interactive)
-                                (define-key typescript-mode-map (kbd "C-c C-f") '$/pl/fmt/prettierjs)))
-(add-hook 'javascript-mode-hook  #'(lambda ()
-                                (interactive)
-                                (define-key typescript-mode-map (kbd "C-c C-f") '$/pl/fmt/prettierjs)))
+(add-hook 'python-mode-hook #'(lambda () (interactive) (define-key python-mode-map (kbd "C-c C-f") 'blacken-buffer)))
+(add-hook 'typescript-mode-hook #'(lambda () (interactive) (define-key typescript-mode-map (kbd "C-c C-f") '$/pl/fmt/prettierjs)))
+(add-hook 'javascript-mode-hook #'(lambda () (interactive) (define-key typescript-mode-map (kbd "C-c C-f") '$/pl/fmt/prettierjs)))
 (add-hook 'shell-script-mode-hook #'(lambda () (interactive) (setq sh-mode-map (make-sparse-keymap)) (setq 'sh-basic-offset 6)))
-(add-hook 'web-mode-hook
-          #'(lambda () (interactive)
-           (setq web-mode-markup-indent-offset 2
-                 web-mode-css-indent-offset 2
-                 web-mode-code-indent-offset 2
-                 web-mode-enable-current-element-highlight t
-                 web-mode-enable-current-column-highlight t
-                 )
-           (set-face-attribute 'web-mode-doctype-face nil
-                               :foreground (face-foreground font-lock-function-name-face))
-           (set-face-attribute 'web-mode-html-attr-name-face nil
-                               :foreground (face-foreground font-lock-variable-name-face))
-           (set-face-attribute 'web-mode-html-attr-value-face nil
-                               :foreground (face-foreground font-lock-type-face))
-           ))
+(add-hook 'web-mode-hook #'(lambda () (interactive) (setq web-mode-markup-indent-offset 2 web-mode-css-indent-offset 2 web-mode-code-indent-offset 2 web-mode-enable-current-element-highlight t web-mode-enable-current-column-highlight t ) (set-face-attribute 'web-mode-doctype-face nil :foreground (face-foreground font-lock-function-name-face)) (set-face-attribute 'web-mode-html-attr-name-face nil :foreground (face-foreground font-lock-variable-name-face)) (set-face-attribute 'web-mode-html-attr-value-face nil :foreground (face-foreground font-lock-type-face)) ))
 (add-hook 'sh-mode-hook 'flycheck-mode)
 (add-hook 'shell-script-mode-hook 'flycheck-mode)
 (add-hook 'pest-mode-hook 'flycheck-mode)
-
-(add-hook 'toml-mode-hook
-          #'(lambda () (
-                        (local-set-key (kbd '("C-c C-f") 'toml-prettify-buffer)))))
+(add-hook 'toml-mode-hook #'(lambda () ( (local-set-key (kbd '("C-c C-f") 'toml-prettify-buffer)))))
