@@ -1238,8 +1238,7 @@
              (format "%s\n%s (%s)" last-commit-message
                      (file-name-nondirectory filename)
                      (time-stamp-string "%Y-%m-%d %H:%M:%S"))))
-    (ignore-errors
-      (set-buffer-modified-p nil)
+    (set-buffer-modified-p nil)
 
     )
   )
