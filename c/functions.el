@@ -449,7 +449,7 @@
 
 
 (defun $/flush-kill-ring () "." (interactive) (setq kill-ring nil file-name-history nil))
-(defun $/kill-all-buffers-and-flush-kill-ring () "." (interactive) (ignore-errors (kill-bufs) ($/flush-kill-ring)))
+(defun $/kill-all-buffers-and-flush-kill-ring () "." (interactive) (ignore-errors (kill-bufs) ($/flush-kill-ring) (erase-messages)))
 
 (defun $/string-hash-take-last-n-chars (algo hwm contents)
   "."
@@ -1066,21 +1066,39 @@
          (progn ,@body))))
 
 
+(defun git-current-branch() (car (seq-filter (apply-partially #'string-match-p "[*]\s-\\(\\)") (string-lines (shell-command-to-string "git branch")))))
+
+
+(defun git-autocommit-current-file-buffer()
+  (let* ((current-branch-name (git-current-branch))
+         (last-commit-message (shell-command-to-string "git log --max-count=1 --format=%s"))
+         (branch-name (format "%s@%s" ($/hash-take-last-n-chars 'sha512 8 filename) (file-name-nondirectory filename))))
+     (shell-command-to-string (format "git branch %s" branch-name))
+     (shell-command-to-string (format "git checkout %s" branch-name))
+     (shell-command-to-string (format "git add -f %s" filename))
+     (shell-command-to-string (format "git commit %s -m '%s'" filename (file-name-nondirectory filename)))
+     (shell-command-to-string (format "git checkout %s" current-branch-name))
+     (shell-command-to-string (format "git merge --squash %s --no-commit" branch-name))
+     (shell-command-to-string (format "git commit --amend -m '%s'" (format "%s\n%s (%s)" last-commit-message (file-name-nondirectory filename) (time-stamp-string "%Y-%m-%d %H:%M:%S"))))
+     )
+  )
+
+
 (defun git-autocommit-opt-libexec()
   "."
   (when-buffer-filename-meets
    (string-match-p (concat "^" (getenv "HOME") "/opt/libexec") filename)
-   (shell-command-to-string (format "git add -f %s" filename))
-   (shell-command-to-string (format "git commit %s -m '%s'" filename filename))
+   (git-autocommit-current-file-buffer)
    (message (format "auto-commited %s" filename))
-  ))
+   ))
 
 (defun git-autocommit-emacs-d-c-sources()
   "."
-  (when-buffer-filename-matches (concat "^" (getenv "HOME") "/.emacs.d/c")
-     (shell-command-to-string (format "git add -f %s" filename))
-     (shell-command-to-string (format "git commit %s -m '%s'" filename filename))
-     (message (format "auto-commited emacs file %s" filename))))
+  (when-buffer-filename-matches
+   (concat "^" (getenv "HOME") "/.emacs.d/c")
+   (git-autocommit-current-file-buffer)
+   (message (format "auto-commited emacs file %s" filename))
+   ))
 
 (defmacro set-region-contents-with-fn(beg end fn)
   "BEG END FN."
@@ -1137,7 +1155,6 @@
   (interactive)
   (delete-comments-region (point-min) (point-max)))
 
-;; (add-hook 'local-write-file-hooks 'git-add-opt-libexec)
 
 (defun flush-empty-lines ()
   "."

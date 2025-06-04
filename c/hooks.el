@@ -10,7 +10,6 @@
 (add-hook 'after-save-hook 'git-autocommit-opt-libexec)
 (add-hook 'after-save-hook 'git-autocommit-emacs-d-c-sources)
 (add-hook 'after-change-major-mode-hook #'(lambda () (prettify-symbols-mode)))
-(add-hook 'after-set-visited-file-name-hook #'(lambda () ( (let* ((full-path (expand-file-name (buffer-file-name))) (parent-path (file-name-directory (full-path))) (filename (file-name-nondirectory (full-path)))) (setq buffer-auto-save-file-name (file-name-concat parent-path (format ".%s.emacs-auto-save" filename))) ))))
 ;; (add-hook 'web-mode-hook 'prettier-js-mode)
 ;; (add-hook 'web-mode-hook 'prettier-js-mode)
 (add-hook 'python-mode-hook #'(lambda () (interactive) (define-key python-mode-map (kbd "C-c C-f") 'blacken-buffer)))
@@ -22,3 +21,13 @@
 (add-hook 'shell-script-mode-hook 'flycheck-mode)
 (add-hook 'pest-mode-hook 'flycheck-mode)
 (add-hook 'toml-mode-hook #'(lambda () ( (local-set-key (kbd '("C-c C-f") 'toml-prettify-buffer)))))
+;; (add-hook 'local-write-file-hooks 'git-add-opt-libexec)
+
+(add-hook 'after-set-visited-file-name-hook
+          #'(lambda ()
+              (interactive)
+              (let* ((full-path (expand-file-name (buffer-file-name)))
+                     (parent-path (file-name-directory (full-path)))
+                     (filename (file-name-nondirectory (full-path))))
+                (setq buffer-auto-save-file-name (file-name-concat parent-path (format ".%s.emacs-auto-save" filename)))
+                )))
