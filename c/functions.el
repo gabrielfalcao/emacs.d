@@ -1212,6 +1212,27 @@
     (string-lines (shell-command-to-string "git branch")))))
 
 
+(defun git-commit()
+  "."
+  (interactive)
+  (let *((commit-message (read-string "Commit Message:")))
+       (or (when (zerop (length commit-message))
+             (user-error "aborted due to empty commit message"))
+           (progn
+             (shell-command-to-string
+              (format "git commit -m '%s'" commit-message))))))
+
+(defun git-commit-all()
+  "."
+  (interactive)
+  (let *((commit-message (read-string "Commit Message:")))
+       (or (when (zerop (length commit-message))
+             (user-error "aborted due to empty commit message"))
+           (progn
+             (shell-command-to-string
+              (format "git commit -a -m '%s'" commit-message))))))
+
+
 (defun git-autocommit-current-file-buffer()
   (let* ((current-branch-name (git-current-branch))
          (last-commit-message
@@ -1547,24 +1568,3 @@
   (interactive)
   (shell-command-to-string
    (format "git add -f %s" (expand-file-name (buffer-file-name)))))
-
-
-(defun git-commit()
-  "."
-  (interactive)
-  (let *((commit-message (read-string "Commit Message:")))
-       (or (when (zerop (length commit-message))
-             (user-error "aborted due to empty commit message"))
-           (progn
-             (shell-command-to-string
-              (format "git commit %s -m '%s'" (expand-file-name (buffer-file-name)) commit-message))))))
-
-(defun git-commit-all()
-  "."
-  (interactive)
-  (let *((commit-message (read-string "Commit Message:")))
-       (or (when (zerop (length commit-message))
-             (user-error "aborted due to empty commit message"))
-           (progn
-             (shell-command-to-string
-              (format "git commit -a -m '%s'" commit-message))))))
