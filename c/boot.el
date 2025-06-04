@@ -23,3 +23,4 @@
 (defalias 'times #'*)
 (defalias 'difference #'-)
 (line-number-mode)
+(erase-messages)
