@@ -1318,7 +1318,7 @@
                       (progn
                         (message "but close parenthesis appears after close parenthesis")
                           (setq open-count (1+ close-count))
-                        )
+                        ))
 
                     (setq too-many-open-parenthesis (and
                                                      (> open-pos close-pos)
