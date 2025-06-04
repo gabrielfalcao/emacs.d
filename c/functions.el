@@ -1561,4 +1561,4 @@
              (user-error "aborted due to empty commit message"))
            (progn
              (shell-command-to-string
-              (format "git add -f %s" (expand-file-name (buffer-file-name))))))))
+              (format "git commit %s -m '%s'" (expand-file-name (buffer-file-name)) commit-message))))))
