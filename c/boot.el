@@ -7,6 +7,7 @@
 (load-library "functions")
 (load-library "keys")
 (load-library "modes")
+(load-library "hooks")
 (load-library "macros")
 (load-library "pest-mode")
 (load-library "functions")
