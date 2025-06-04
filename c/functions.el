@@ -1241,7 +1241,7 @@
         ;; search next close parenthesis
         (progn
           (message (format "search next close parenthesis"))
-          ;; close parenthesis found, set cur-pos to its match-beginning
+          ;; close parenthesis found, set cur-pos to its match-end
           (setq cur-pos (match-end 0))
           (setq close-count (1+ close-count))
           (goto-char cur-pos)
@@ -1253,7 +1253,7 @@
                   (message (format "peeking onto next open parenthesis"))
 
                  (setq open-count (1+ open-count))
-                 (if (<= (match-beginning 0) cur-pos)
+                 (if (<= (match-end 0) cur-pos)
                      (progn
                        ;; open parenthesis found before current close parenthesis
                        (message (format "found open parenthesis before next open parenthesis, recursive call should happen next"))
@@ -1270,7 +1270,7 @@
                 (progn
                  (setq close-pos cur-pos)
                  (setq end-pos cur-pos)
-                 (setq open-pos (match-beginning 0))
+                 (setq open-pos (match-end 0))
                  ;; go backward to the last close parenthesis so that while in recursive call fast-forwards it
                  (goto-char open-pos)
                  (message (format "recursive call to (goto-next-close-parenthesis open-char: %s close-char: %s open-count: %s close-count: %s close-pos: %s)"  open-char close-char open-count close-count close-pos))
@@ -1284,9 +1284,9 @@
         ;; no close parenthesis found, search next open parenthesis
         (progn
           (message (format "unexpected third case"))
-          (setq open-pos (match-beginning 0))
+          (setq open-pos (match-end 0))
           (setq open-count (1+ open-count))
-          (setq end-pos (match-beginning 0))
+          (setq end-pos (match-end 0))
           (goto-char cur-pos)
         '(
           ("beg-pos" . beg-pos)
