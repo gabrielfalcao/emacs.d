@@ -733,8 +733,7 @@
                                           "^\\s-+" ""
                                           (replace-regexp-in-string
                                            "\\s-+$" ""
-                                           region)))))))
-           ))
+                                           region)))))))))
       (flush-lines "^$" beg end))))
 
 
@@ -765,8 +764,7 @@
    (regex-fix-value-names
     (regex-fix-operation-names
      (regex-fix-begin-names
-      (regex-fix-node-names (regex-fix-node-info string))))))
-  )
+      (regex-fix-node-names (regex-fix-node-info string)))))))
 
 
 (defun regex-fix-node-names (string)
@@ -1020,8 +1018,7 @@
         "set.themes.insert(\"%s\".to_string(), theme_from_bytes(include_bytes!(\"./%s.tmTheme\")));"
         (match-string 0)
         (match-string 0))
-       t))
-    ))
+       t))))
 
 
 
@@ -1240,8 +1237,8 @@
                      (time-stamp-string "%Y-%m-%d %H:%M:%S"))))
     (set-buffer-modified-p nil)
 
-    )
-  )
+    ))
+
 
 
 
@@ -1290,14 +1287,12 @@
              (replace-regexp-in-string
               "^\\([#]\\s-*\\)?\\([[].*\\)"
               "\n\\1\\2"
-              region))
-            )
+              region)))
        (replace-region-contents beg end #'(lambda () repl ))
 
        (if (not (string= region repl))
            ;; avoid modifying buffer after prettifying its contents
-           (set-buffer-modified-p nil)))
-     )))
+           (set-buffer-modified-p nil))))))
 
 (defun delete-comments-region(beg end)
   "BEG END."
@@ -1450,8 +1445,7 @@
              (goto-char open-pos)
              (message
               (format "recursive call to (goto-next-close-parenthesis open-char: %s close-char: %s open-count: %s close-count: %s close-pos: %s)"  open-char close-char open-count close-count close-pos))
-             (goto-next-close-parenthesis open-char close-char open-count close-count open-pos))
-           ))
+             (goto-next-close-parenthesis open-char close-char open-count close-count open-pos))))
          ))
      (when (not (null (re-search-forward open-regexp nil t)))
        ;; no close parenthesis found, search next open parenthesis
@@ -1510,8 +1504,7 @@
            ("open-count" . open-count)
            ("close-pos" . close-pos)
            ("close-count" . close-count)
-           ("end-pos" . end-pos))
-         ))
+           ("end-pos" . end-pos))))
      )))
 
 
