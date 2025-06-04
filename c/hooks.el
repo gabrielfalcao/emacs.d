@@ -9,7 +9,6 @@
 (add-hook 'after-set-visited-file-name-hook 'c$dg$)
 (add-hook 'after-save-hook 'git-autocommit-opt-libexec)
 (add-hook 'after-save-hook 'git-autocommit-emacs-d-c-sources)
-(add-hook 'after-save-hook 'toml-prettify-buffer)
 (add-hook 'after-change-major-mode-hook #'(lambda () (prettify-symbols-mode)))
 (add-hook 'after-set-visited-file-name-hook
           #'(lambda () (
