@@ -1352,8 +1352,8 @@
   (erase-messages)
   (let* ((open-char "(")
          (close-char ")")
-         (til-next-open (save-excursion (re-search-forward (concat "\\(\\s-\\|\n\\)*[" open-char "]"))))
-         (til-next-close (save-excursion (re-search-forward (concat "\\(\\s-\\|\n\\)*[" close-char "]"))))
+         (til-next-open (re-search-forward (concat "\\(\\s-\\|\n\\)*[" open-char "]")))
+         (til-next-close (re-search-forward (concat "\\(\\s-\\|\n\\)*[" close-char "]")))
          (open-count (if (>= (point) til-next-open)
              1
              0))
