@@ -1320,7 +1320,7 @@
                         (setq open-count (1+ close-count))
                         ))
 
-                    (setq too-many-open-parenthesis (and
+                    (setq too-many-open-parenthesis (or
                                                      (> open-pos close-pos)
                                                      (> open-count close-count)))
                     )
