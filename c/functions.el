@@ -1384,4 +1384,3 @@
     (erase-buffer)
     (read-only-mode 1)
     ))
-2
