@@ -1352,6 +1352,8 @@
   (erase-messages)
   (let* ((open-char "(")
          (close-char ")")
+         (til-next-open (re-search-forward (concat "\\(\\s-\\|\n\\)*[" open-char "]"))
+         (til-next-close (re-search-forward (concat "\\(\\s-\\|\n\\)*[" close-char "]"))
          (curchar (buffer-substring-no-properties (point) (1+ (point))))
          (open-count (if (string= curchar open-char)
              1
