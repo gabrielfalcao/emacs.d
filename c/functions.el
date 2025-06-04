@@ -1355,7 +1355,7 @@
          (til-next-open (save-excursion (re-search-forward (concat "\\(\\s-\\|\n\\)*[" open-char "]"))))
          (til-next-close (save-excursion (re-search-forward (concat "\\(\\s-\\|\n\\)*[" close-char "]"))))
          (curchar (buffer-substring-no-properties (point) (1+ (point))))
-         (open-count (if (> (point) til-next-open)
+         (open-count (if (>= (point) til-next-open)
              1
              0))
          (close-count (if (and (eq 1 open-count)
