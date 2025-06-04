@@ -1349,7 +1349,6 @@
 (defun find-next-close-parens()
   "."
   (interactive)
-  (erase-messages)
   (let* ((open-char "(")
          (close-char ")")
          (til-next-open (re-search-forward (concat "\\(\\s-\\|\n\\)*[" open-char "]")))
