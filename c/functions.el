@@ -1357,7 +1357,7 @@
          (open-count (if (>= (point) til-next-open)
                          (progn
                            (goto-char til-next-open)
-                                      1))
+                                      1)
                        0))
          (close-count (if (and (eq 1 open-count)
                                (> (point) til-next-close))
