@@ -69,3 +69,7 @@
 (add-to-list 'auto-mode-alist '("\\.tsx\\.tera$" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.typ?\\.tera$" . typst-mode))
 (add-to-list 'auto-mode-alist '("\\.ya?ml\\.tera$" . yaml-mode))
+
+(add-hook 'toml-mode-hook
+          #'(lambda () (
+                        (local-set-key (kbd '("C-c C-f") 'toml-prettify-buffer)))))
