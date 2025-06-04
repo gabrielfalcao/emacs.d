@@ -1091,7 +1091,7 @@
 
 (defun rust-extract-members-regex (package-name string)
   "STRING."
-  (format "pub  mod %s;\npub use %s::{\n%s\n};" package-name package-name
+  (format "pub mod %s;\npub use %s::{\n%s\n};" package-name package-name
           (rust-comma-separated-members-regex string)))
 
 (defun rust-comma-separated-members-regex (string)
@@ -1238,6 +1238,7 @@
     (set-buffer-modified-p nil)
 
     ))
+
 
 
 
