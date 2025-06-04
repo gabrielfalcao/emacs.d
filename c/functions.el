@@ -1355,11 +1355,15 @@
          (til-next-open (re-search-forward (concat "\\(\\s-\\|\n\\)*[" open-char "]")))
          (til-next-close (re-search-forward (concat "\\(\\s-\\|\n\\)*[" close-char "]")))
          (open-count (if (>= (point) til-next-open)
-                         1
+                         (progn
+                           (goto-char til-next-open
+                                      1))
                        0))
          (close-count (if (and (eq 1 open-count)
                                (> (point) til-next-close))
-                          1
+                          (progn
+                            goto-char til-next-close
+                            1)
                         0))
          )
     (defun state ()
@@ -1380,3 +1384,4 @@
     (erase-buffer)
     (read-only-mode 1)
     ))
+2
