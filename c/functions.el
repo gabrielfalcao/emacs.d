@@ -1237,7 +1237,11 @@
      (format "git commit --amend -m '%s'"
              (format "%s\n%s (%s)" last-commit-message
                      (file-name-nondirectory filename)
-                     (time-stamp-string "%Y-%m-%d %H:%M:%S")))))
+                     (time-stamp-string "%Y-%m-%d %H:%M:%S"))))
+    (ignore-errors
+      (set-buffer-modified-p nil)
+
+    )
   )
 
 
