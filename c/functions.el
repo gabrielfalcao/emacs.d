@@ -1312,12 +1312,12 @@
 
                     (if (> open-pos close-pos)
                         (progn
-                          (message "and such close parenthesis happens to appear before open parenthesis")
+                          (message (format "and such close parenthesis happens to appear before open parenthesis: %s" (state)))
                           (setq open-count (1+ close-count))
                           )
                       (progn
-                        (message "but close parenthesis appears after close parenthesis")
-                          (setq open-count (1+ close-count))
+                        (message (format "but close parenthesis appears after close parenthesis: %s" (state)))
+                        (setq open-count (1+ close-count))
                         ))
 
                     (setq too-many-open-parenthesis (and
