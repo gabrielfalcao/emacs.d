@@ -1250,6 +1250,7 @@
 
 
 
+
 (defun git-autocommit-opt-libexec()
   "."
   (when-buffer-filename-meets
@@ -1560,6 +1561,16 @@
 
 
 (defun git-commit()
+  "."
+  (interactive)
+  (let *((commit-message (read-string "Commit Message:")))
+       (or (when (zerop (length commit-message))
+             (user-error "aborted due to empty commit message"))
+           (progn
+             (shell-command-to-string
+              (format "git commit %s -m '%s'" (expand-file-name (buffer-file-name)) commit-message))))))
+
+(defun git-commit-all()
   "."
   (interactive)
   (let *((commit-message (read-string "Commit Message:")))
