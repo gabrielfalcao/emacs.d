@@ -1363,7 +1363,7 @@
                         0))
          )
     (defun state ()
-      (format "{\n    point: %s\n    til-next-open: %s,\n    til-next-close: %s,\n    count: %s,\n    count: %s\n}" (point) til-next-open til-next-close count count)
+      (format "{\n    point: %s\n    til-next-open: %s,\n    til-next-close: %s,\n    open-count: %s,\n    close-count: %s\n}" (point) til-next-open til-next-close open-count close-count)
       )
 
     (message (state))
