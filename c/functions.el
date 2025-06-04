@@ -1383,3 +1383,4 @@
     (erase-buffer)
     (read-only-mode 1)
     ))
+(erase-messages)
