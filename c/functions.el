@@ -1242,6 +1242,7 @@
 
 
 
+
 (defun git-autocommit-opt-libexec()
   "."
   (when-buffer-filename-meets
@@ -1544,3 +1545,9 @@
     (read-only-mode -1)
     (erase-buffer)
     (read-only-mode 1)))
+
+
+(defun git-add()
+  "."
+  (interactive)
+    (shell-command-to-string (format "git add -f %s" (expand-file-name (buffer-file-name)))))
