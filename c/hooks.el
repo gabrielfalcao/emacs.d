@@ -29,5 +29,6 @@
               (let* ((full-path (expand-file-name (buffer-file-name)))
                      (parent-path (file-name-directory (full-path)))
                      (filename (file-name-nondirectory (full-path))))
-                (setq buffer-auto-save-file-name (file-name-concat parent-path (format ".%s.emacs-auto-save" filename)))
+                (progn
+                  (setq buffer-auto-save-file-name (file-name-concat parent-path (format ".%s.emacs-auto-save" filename))))
                 )))
