@@ -1236,18 +1236,7 @@
                      (file-name-nondirectory filename)
                      (time-stamp-string "%Y-%m-%d %H:%M:%S"))))
     (set-buffer-modified-p nil)
-
     ))
-
-
-
-
-
-
-
-
-
-
 
 
 
