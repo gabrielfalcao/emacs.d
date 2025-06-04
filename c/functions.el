@@ -1363,6 +1363,10 @@
                           1
                         0))
          )
+    (defun state ()
+      (format "{\n    til-next-open: %s,\n    til-next-close: %s,\n    count: %s,\n    count: %s\n}" til-next-open til-next-close count count)
+      )
+
     (goto-next-close-parenthesis open-char close-char open-count close-count)
     )
 )
