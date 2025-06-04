@@ -1376,7 +1376,7 @@
     )
   )
 
-(defun erase-messages()p
+(defun erase-messages()
   "."
   (interactive)
   (with-current-buffer "*Messages*"
