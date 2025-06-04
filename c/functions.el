@@ -1356,7 +1356,7 @@
          (til-next-close (re-search-forward (concat "\\(\\s-\\|\n\\)*[" close-char "]")))
          (open-count (if (>= (point) til-next-open)
                          (progn
-                           (goto-char til-next-open
+                           (goto-char til-next-open)
                                       1))
                        0))
          (close-count (if (and (eq 1 open-count)
