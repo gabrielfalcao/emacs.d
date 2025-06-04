@@ -27,7 +27,13 @@
 
 (defun reverse-string (beg end) "." (interactive "*r") (replace-region-contents beg end (lambda () (reverse (buffer-substring-no-properties beg end)))))
 
-(defun $$$$$ () "." (interactive) (global-company-mode) (disable-auto-save-list) (disable-bars) ($$$$$$$$))(defun $/ep() "." (interactive) (find-file "~/.emacs.d/t/k.el"))
+(defun $$$$$ () "." (interactive)
+       (global-company-mode)
+       (disable-auto-save-list)
+       (disable-bars) (set-frame-parameter nil 'fullscreen 'maximized)
+       ($$$$$$$$))
+
+(defun $/ep() "." (interactive) (find-file "~/.emacs.d/t/k.el"))
 
 (defun c$dg$ (&rest substrate)
   (interactive)
@@ -1082,6 +1088,7 @@
      (shell-command-to-string (format "git commit --amend -m '%s'" (format "%s\n%s (%s)" last-commit-message (file-name-nondirectory filename) (time-stamp-string "%Y-%m-%d %H:%M:%S"))))
      )
   )
+
 
 
 (defun git-autocommit-opt-libexec()
