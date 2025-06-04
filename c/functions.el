@@ -1243,6 +1243,7 @@
 
 
 
+
 (defun git-autocommit-opt-libexec()
   "."
   (when-buffer-filename-meets
@@ -1446,8 +1447,7 @@
              (goto-char open-pos)
              (message
               (format "recursive call to (goto-next-close-parenthesis open-char: %s close-char: %s open-count: %s close-count: %s close-pos: %s)"  open-char close-char open-count close-count close-pos))
-             (goto-next-close-parenthesis open-char close-char open-count close-count open-pos))))
-         ))
+             (goto-next-close-parenthesis open-char close-char open-count close-count open-pos))))))
      (when (not (null (re-search-forward open-regexp nil t)))
        ;; no close parenthesis found, search next open parenthesis
        (progn
@@ -1505,8 +1505,7 @@
            ("open-count" . open-count)
            ("close-pos" . close-pos)
            ("close-count" . close-count)
-           ("end-pos" . end-pos))))
-     )))
+           ("end-pos" . end-pos)))))))
 
 
 
@@ -1550,4 +1549,5 @@
 (defun git-add()
   "."
   (interactive)
-    (shell-command-to-string (format "git add -f %s" (expand-file-name (buffer-file-name)))))
+  (shell-command-to-string
+   (format "git add -f %s" (expand-file-name (buffer-file-name)))))
