@@ -125,7 +125,6 @@
   )
 
 
-
 (add-to-list 'auto-mode-alist '("\\.c?js\\.tera$" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.erl\\.tera$" . erlang-mode))
 (add-to-list 'auto-mode-alist '("\\.j2\\.tera$" . jinja2-mode))
