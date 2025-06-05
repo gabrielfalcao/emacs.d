@@ -20,7 +20,7 @@
 (add-hook 'sh-mode-hook 'flycheck-mode)
 (add-hook 'shell-script-mode-hook 'flycheck-mode)
 (add-hook 'pest-mode-hook 'flycheck-mode)
-(add-hook 'toml-mode-hook #'(lambda () ( (local-set-key (kbd '("C-c C-f") 'toml-prettify-buffer)))))
+;; (add-hook 'toml-mode-hook #'(lambda () ( (local-set-key (kbd '("C-c C-f") 'toml-prettify-buffer)))))
 ;; (add-hook 'local-write-file-hooks 'git-add-opt-libexec)
 
 (add-hook 'after-set-visited-file-name-hook
