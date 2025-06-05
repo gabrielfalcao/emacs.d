@@ -231,7 +231,7 @@
         (if (string-match-p "\\s-*[(]\\(.\\|\n\\)+[)]\\s-*" region)
             (progn
               (eval-region beg end)
-              (message "\"%s\" eval'd" (buffer-name)))
+              )
           (message "does not seem to be valid elisp: %s" region)))
     (message "\"%s\" aint no el" (buffer-name))))
 
@@ -1258,6 +1258,7 @@
                      (time-stamp-string "%Y-%m-%d %H:%M:%S"))))
     (set-buffer-modified-p nil)
     ))
+
 
 
 
