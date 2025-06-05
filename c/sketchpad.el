@@ -7,4 +7,9 @@
 (defun myfun()
   (message "1")
   (message "2")
+  (defun testicle()
+    (message "3"))
+  (testicle)
   )
+
+(myfun)
