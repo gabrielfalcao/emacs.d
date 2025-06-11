@@ -21,13 +21,32 @@
 (defun kill-bufs ()
   "."
   (interactive)
+  (scratch-buffer)
   (mapcar
    #'(lambda (b)
        (ignore-errors
          (set-buffer-modified-p nil)
          (revert-buffer 1 1))
        (kill-buffer b))
-   (buffer-list)))
+   (buffer-list))
+  (let* ((windows
+          (let ((windows 0))
+            (progn
+              (walk-windows
+               (lambda(window) (setq windows (1+ windows))))
+              windows)))
+         (current (frame-first-window)))
+    (when (> windows 1)
+      (delete-window))
+    (erase-messages)
+    (with-current-buffer "*scratch*"
+      (read-only-mode -1)
+      (widen)
+      (replace-region-contents
+       (point-min)
+       (point-max)
+       (lambda () ""))))
+  )
 
 (defun minor-mode-slist()
   "."
@@ -211,6 +230,7 @@
   (or
    (string="emacs-lisp-mode" ($/mode-name))
    (string="elisp-mode" ($/mode-name))
+   (string="lisp-mode" ($/mode-name))
    (string="el" (file-name-extension (buffer-file-name)))))
 
 (defun region-points()
@@ -231,7 +251,7 @@
         (if (string-match-p "\\s-*[(]\\(.\\|\n\\)+[)]\\s-*" region)
             (progn
               (eval-region beg end)
-              (message "\"%s\" eval'd" (buffer-name)))
+              )
           (message "does not seem to be valid elisp: %s" region)))
     (message "\"%s\" aint no el" (buffer-name))))
 
@@ -455,7 +475,7 @@
    ($/paint-mode-name)
    " "
    ($/paint-buffer-name)
-   " " "   𝐗%l 𝐘%c %I ⊲ %i bytes " "%e" "%t"
+   " " "   𝐗%l 𝐘%c %I ⊲ %i bytes " "%e" "%t" ;; row column kbytes bytes
    '(:eval ($/mark-indicator))))
 
 
@@ -1215,22 +1235,26 @@
 (defun git-commit()
   "."
   (interactive)
-  (let *((commit-message (read-string "Commit Message:")))
-       (or (when (zerop (length commit-message))
-             (user-error "aborted due to empty commit message"))
-           (progn
-             (shell-command-to-string
-              (format "git commit -m '%s'" commit-message))))))
+  (let *((commit-message
+          (read-string "Commit Message:")))
+       (or
+        (when (zerop (length commit-message))
+          (user-error "aborted due to empty commit message"))
+        (progn
+          (shell-command-to-string
+           (format "git commit -m '%s'" commit-message))))))
 
 (defun git-commit-all()
   "."
   (interactive)
-  (let *((commit-message (read-string "Commit Message:")))
-       (or (when (zerop (length commit-message))
-             (user-error "aborted due to empty commit message"))
-           (progn
-             (shell-command-to-string
-              (format "git commit -a -m '%s'" commit-message))))))
+  (let *((commit-message
+          (read-string "Commit Message:")))
+       (or
+        (when (zerop (length commit-message))
+          (user-error "aborted due to empty commit message"))
+        (progn
+          (shell-command-to-string
+           (format "git commit -a -m '%s'" commit-message))))))
 
 
 (defun git-autocommit-current-file-buffer()
@@ -1256,8 +1280,7 @@
              (format "%s\n%s (%s)" last-commit-message
                      (file-name-nondirectory filename)
                      (time-stamp-string "%Y-%m-%d %H:%M:%S"))))
-    (set-buffer-modified-p nil)
-    ))
+    (set-buffer-modified-p nil)))
 
 
 
@@ -1562,9 +1585,103 @@
     (erase-buffer)
     (read-only-mode 1)))
 
+(defun erase-scratch()
+  "."
+  (interactive)
+  (with-current-buffer "*scratch*"
+    (read-only-mode -1)
+    (erase-buffer)))
+
 
 (defun git-add()
   "."
   (interactive)
   (shell-command-to-string
    (format "git add -f %s" (expand-file-name (buffer-file-name)))))
+
+
+(defun buffer-list-builtin-only()
+  "returns all open emacs-only buffers, i.e: starting and ending in `*'."
+  (seq-filter
+   (apply-partially #'string-match-p "^[*].*[*]$")
+   (mapcar 'buffer-name (buffer-list))))
+
+(defun only-builtin-buffers-open-p()
+  "returns `t' if all open buffers are only emacs buffers as determined by `buffer-list-builtin-only'"
+  (=
+   (length (buffer-list))
+   (length (buffer-list-builtin-only))))
+
+
+;; (defun ask-whether-to-kill-emacs (&optional predicate)
+;;     (interactive)
+;;   (when (only-builtin-buffers-open-p)
+;;     (y-or-n-p "exit emacs?")))
+;;
+;; (setq confirm-kill-emacs 'ask-whether-to-kill-emacs)
+(setq confirm-kill-emacs nil)
+
+;; TODO: build rust refactoring tool using `minibuffer-lazy-highlight-setup' to find callers of functions, structs etc
+
+(defun buffer-names-in-current-frame()
+  "."
+  (let ((buffer-names (list)))
+    (walk-windows
+     (lambda(window)
+       (with-window-non-dedicated window
+         (setq buffer-names (append buffer-names (list (format "%s" (buffer-name))))))))
+    (delete-dups buffer-names)
+    ))
+
+(defun eval-messages()
+  "setup windows for elisp evaluation/testing in the current frame."
+  (interactive)
+  (scratch-buffer)
+  (let* ((windows
+          (let ((windows 0))
+            (progn
+              (walk-windows
+               (lambda(window) (setq windows (1+ windows))))
+              windows)))
+         (right (split-window-right))
+         (current (frame-first-window)))
+    (when (> windows 1)
+      (delete-window))
+    (set-window-buffer right "*Messages*")
+    (set-window-buffer current "*scratch*")
+    (erase-messages)
+    (with-current-buffer "*scratch*"
+      (read-only-mode -1)
+      (widen)
+      (replace-region-contents
+       (point-min)
+       (point-max)
+       (lambda () "(erase-messages)\n\n(message\n (format \"%s\"\n\n))"))
+      (goto-char (point-min))
+      (forward-word 5)
+      (end-of-line 1)
+      (forward-char 1)
+      (indent-for-tab-command))))
+
+(defun current-column()
+  "returns the current column number."
+  (- (point) (line-beginning-position)))
+
+
+(defun insert-char-until-column()
+  "."
+  (interactive)
+  (let* ((char (read-string "characters to insert: "))
+         (column (read-number "column number")))
+    (while (> column (current-column))
+      (insert char)
+      )))
+
+
+(defun insert-space-until-column()
+  "."
+  (interactive)
+  (let ((column (read-number "column number")))
+    (while (> column (current-column))
+      (insert " ")
+      )))
