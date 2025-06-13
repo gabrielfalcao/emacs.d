@@ -36,8 +36,7 @@
                (lambda(window) (setq windows (1+ windows))))
               windows)))
          (current (frame-first-window)))
-    (when (> windows 1)
-      (delete-window))
+    (when (> windows 1) (delete-window))
     (erase-messages)
     (with-current-buffer "*scratch*"
       (read-only-mode -1)
@@ -45,8 +44,7 @@
       (replace-region-contents
        (point-min)
        (point-max)
-       (lambda () ""))))
-  )
+       (lambda () "")))))
 
 (defun minor-mode-slist()
   "."
@@ -238,7 +236,9 @@
   (if mark-active
       (save-mark-and-excursion
         (list (marker-position (mark-marker)) (point)))
-    (list (point-min) (point-max))))
+    (progn
+      (widen)
+      (list (point-min) (point-max)))))
 
 (defun $/levate ()
   "."
@@ -251,7 +251,8 @@
         (if (string-match-p "\\s-*[(]\\(.\\|\n\\)+[)]\\s-*" region)
             (progn
               (eval-region beg end)
-              )
+              (when (string= (buffer-file-name) (buffer-name))
+                (message (format "%s eval'd" (buffer-file-name)))))
           (message "does not seem to be valid elisp: %s" region)))
     (message "\"%s\" aint no el" (buffer-name))))
 
@@ -1124,7 +1125,7 @@
            "^\\s-*\\(pub\\s-*\\)?\\((super\\|crate\\|self\\|in\\s-*[^)]+)\\)?\\s-*\\(struct\\|union\\|trait\\|type\\|enum\\|fn\\)\\s-*\\([<][^>]*[>]\\)?\\s-*\\([A-Za-z_][a-zA-Z0-9_]+\\).*"
            "\\5,"
            (replace-regexp-in-string
-            "^\\s-*\\(\\s-+\\|}\\|use\\|impl\\|extern\\s-*crate\\|\\(pub\\(\s-*\\(in\s-*\\)?[a-z0-9:]+\\)?\\)?\\s-*\\(mod\\|macro_\\(rules\\|export\\)[!]?\s-*\\)\\|[#][[]\\|)\\).*[{]?.*$"
+            "^\\s-*\\(pub\\)?\\s-*\\(\\s-+\\|}\\|use\\|impl\\|extern\\s-*crate\\|\\(pub\\(\s-*\\(in\s-*\\)?[a-z0-9:]+\\)?\\)?\\s-*\\(mod\\|macro_\\(rules\\|export\\)[!]?\s-*\\)\\|[#][[]\\|)\\).*[{]?.*$"
             ""
             string)))))
     (replace-regexp-in-string
@@ -1143,10 +1144,10 @@
          (no-extension (file-name-sans-extension current-file-name)))
     (or
      (when (string= no-extension "mod")
-       (file-name-directory current-file-name))
+       (file-name-parent-directory current-file-name))
      (when (string= no-extension "lib")
-       (file-name-directory current-file-name))
-     no-extension)))
+       (file-name-parent-directory current-file-name))
+     current-file-name)))
 
 (defun rust-guess-package-name-of-file (filename)
   (let* ((current-file-name (expand-file-name filename))
@@ -1162,7 +1163,7 @@
   (let* ((rust-file-name
           (expand-file-name
            (read-file-name
-            "insert members of rust file:"
+            "insert members of rust file: "
             (rust-path-to-current-file-mod)
             nil 'confirm-after-completion)))
          (package-name
@@ -1173,6 +1174,41 @@
             (buffer-string))))
     (insert (rust-extract-members-regex package-name string))
     (rust-format-buffer)))
+
+(defun rust-delete-comments ()
+  "."
+  (interactive)
+  (let ((regexp "^\\s-*//\\(\\s-\\|$\\)"))
+    (if mark-active
+        (save-mark-and-excursion
+          (flush-lines regexp (point-min) (point-max)))
+      (progn
+        (widen)
+        (flush-lines regexp (point-min) (point-max))))))
+
+
+(defun rust-delete-docs ()
+  "."
+  (interactive)
+  (let ((regexp "^\\s-*//[/!]"))
+    (if mark-active
+        (save-mark-and-excursion
+          (flush-lines regexp (point-min) (point-max)))
+      (progn
+        (widen)
+        (flush-lines regexp (point-min) (point-max))))))
+
+(defun rust-delete-all-comments ()
+  "."
+  (interactive)
+  (let ((regexp "^\\s-*//"))
+    (if mark-active
+        (save-mark-and-excursion
+          (flush-lines regexp (point-min) (point-max)))
+      (progn
+        (widen)
+        (flush-lines regexp (point-min) (point-max))))))
+
 
 
 (defun fgbg-foreback(beg end)
@@ -1629,9 +1665,10 @@
     (walk-windows
      (lambda(window)
        (with-window-non-dedicated window
-         (setq buffer-names (append buffer-names (list (format "%s" (buffer-name))))))))
-    (delete-dups buffer-names)
-    ))
+         (setq buffer-names
+               (append buffer-names
+                       (list (format "%s" (buffer-name))))))))
+    (delete-dups buffer-names)))
 
 (defun eval-messages()
   "setup windows for elisp evaluation/testing in the current frame."
@@ -1645,8 +1682,7 @@
               windows)))
          (right (split-window-right))
          (current (frame-first-window)))
-    (when (> windows 1)
-      (delete-window))
+    (when (> windows 1) (delete-window))
     (set-window-buffer right "*Messages*")
     (set-window-buffer current "*scratch*")
     (erase-messages)
@@ -1671,17 +1707,45 @@
 (defun insert-char-until-column()
   "."
   (interactive)
-  (let* ((char (read-string "characters to insert: "))
+  (let* ((char (read-string "character(s) to insert: "))
          (column (read-number "column number")))
-    (while (> column (current-column))
-      (insert char)
-      )))
+    (while (> column (current-column)) (insert char))))
 
 
 (defun insert-space-until-column()
   "."
   (interactive)
-  (let ((column (read-number "column number")))
-    (while (> column (current-column))
-      (insert " ")
-      )))
+  (let ((column (read-number "column number: ")))
+    (while (> column (current-column)) (insert " "))))
+
+;; (defadvice find-file (before existing-file activate compile)
+;;   "when interactive, try to auto-complete to existing file first."
+;;   (interactive
+;;    (list
+;;     (find-file-read-args "Find file: "
+;;                          (read-buffer "Find file: "
+;;                                       (existing-file-current-buffer)
+;;                                       (null current-prefix-arg))))))
+
+
+;; (defun existing-file-current-buffer()
+;;   (let* ((path (confirm-nonexistent-file-or-buffer)))
+;;     (message (format "confirm-nonexistent-file-or-buffer: %s" path))
+;;     ;;(abbreviate-file-name (expand-file-name (buffer-file-name)))
+;;     path
+;;     ))
+
+(defun rust-get-item()
+  (interactive)
+  (erase-messages)
+  (save-mark-and-excursion
+    (beginning-of-line 1)
+    (re-search-forward "^\\(\\s-*\\(pub -*\\(([^)]+)\\)?\\)?\\(struct\\|enum\\|fn\\) -*\\([a-zA-Z_][a-zA-Z0-9_]*\\)\\( -*\\|w+\\|[^({]\\|\n\\)+?[{(]\\([^)}]\\|\n\\)+?[)}]\\( -*\\|\n\\|[^{]\\)+?[{]\\([^}]\\|\n\\)+?[}]\\)")
+    (let* ((item (match-string 0))
+           (vis (match-string 1))
+           (type (match-string 2))
+           (name (match-string 3))
+           )
+      (message (format "rust-get-item `%s %s %s': %s" vis type name item))
+    )
+  ))

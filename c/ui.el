@@ -10,7 +10,8 @@
   "."
   (interactive)
 
-  (let* (($sel$                     "#C6DCFC")
+  (let* (($font-name$               "JetBrains Mono Thin-16")
+         ($sel$                     "#C6DCFC")
 	 ($sel$                     "#CFC6A6")
          ($background$              "#1C1C1C")
          ($variable$                "#F49101")
@@ -62,8 +63,8 @@
     (transient-mark-mode 1)
     (tramp-cleanup-all-connections)
 
-    (set-face-attribute 'default nil :font "JetBrains Mono Thin-20")
-    (set-face-attribute 'info-menu-header nil :foreground "#DB5045" :underline nil :bold t :font "JetBrains Mono Thin-20")
+    (set-face-attribute 'default nil :font $font-name$)
+    (set-face-attribute 'info-menu-header nil :foreground "#DB5045" :underline nil :bold t :font $font-name$)
     (global-prettify-symbols-mode 0)
     (setq linum-format "%6d")
     (display-line-numbers-mode t)
