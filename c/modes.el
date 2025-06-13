@@ -1,8 +1,8 @@
-(benchmark-progn
+(progn
   (require 'package)
   (require 'flycheck)
   (line-number-mode t)
-  (setq package-archives nil)
+  ;; (setq package-archives nil)
   (setq global-flycheck-mode t)
   (with-eval-after-load 'flycheck
     (require 'flycheck-pest)
