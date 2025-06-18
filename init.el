@@ -22,7 +22,6 @@
                       #'(lambda (path) t))))
     (mapcar callback (list-dir-path path))))
 
-(message (format "%s" (list-dir-path "~/.emacs.d/")))
 
 (setq server-socket-dir "~/.emacs.d/socket" server-log t)
 (let ((foreground "#A79C83")

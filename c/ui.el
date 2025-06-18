@@ -1,16 +1,14 @@
-(defun $/mode-line-foreground ()
-  (interactive)
-  "#F16018")
-
-(defun $/mode-line-background ()
-  (interactive)
-  "#333")
+(defun $/mode-line-foreground ()  "#FF1978")
+(defun $/mode-line-background () "#3d3d3d")
+(defun $/mark-indicator-color() "#cad79d")
+(defun $/mode-line-arrow-right() " ⇒ ")
+(defun $/mode-line-arrow-left() " ⇐ ")
 
 (defun $$$$$$$$()
   "."
   (interactive)
 
-  (let* (($font-name$               "JetBrains Mono Thin-16")
+  (let* (($font-name$               "JetBrains Mono Thin-20")
          ($sel$                     "#C6DCFC")
 	 ($sel$                     "#CFC6A6")
          ($background$              "#1C1C1C")
