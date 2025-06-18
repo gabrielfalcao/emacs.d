@@ -14,6 +14,7 @@
 (set-face-attribute 'default nil :font "JetBrains Mono-21")
 (load-library "ui")
 (load-library "functions")
+(load-library "g-modeline")
 (load-library "keys")
 (load-library "modes")
 (load-library "hooks")

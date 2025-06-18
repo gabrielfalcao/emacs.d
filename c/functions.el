@@ -1,4 +1,5 @@
 (defun string-shift-right (g) "." (format "\t%s" g))
+
 (defun delete-package (pkg-desc &optional force nosave)
   "."
   (interactive
@@ -104,14 +105,6 @@
 
 (defun $/ep() "." (interactive) (find-file "~/.emacs.d/t/k.el"))
 
-(defun c$dg$ (&rest substrate)
-  (interactive)
-  (ignore-errors
-    (colorize-hexadecimal-text)
-    ($/paint-mode-line)
-    (disable-auto-save-list)
-    (disable-bars)
-    ($$$$$)))
 
 (defun contrast-color (c)
   "C."
@@ -368,26 +361,18 @@
   (interactive)
   (message "%S" (face-at-point)))
 
-(defun $/bfan ()
-  "."
-  (or
-   (when (equal (buffer-file-name-relative) (buffer-name))
-     ($/paint-buffer-name))
-   (format "%s %s"
-           ($/paint-buffer-name)
-           ($/colorize-face-fg
-            (format "[%s]" (buffer-file-name-relative))
-            "#FF4018" ))))
-
-(defun $/paint-buffer-name ()
-  "."
-  ($/colorize-face-fg (buffer-name) "#C6DBDC"))
 
 (defun $/hash-take-last-n-chars (algo count contents)
   "."
   (let* ((data (secure-hash algo contents))
          (end (length data))
          (beg (- end count)))
+    (substring data beg end)))
+
+(defun $/hash-take-first-n-chars (algo end contents)
+  "."
+  (let* ((data (secure-hash algo contents))
+         (beg 0))
     (substring data beg end)))
 
 (defun $/text-properties()
@@ -413,25 +398,6 @@
             ($/string-hash-take-last-n-chars 'sha1 8 data)
             ($/string-hash-take-last-n-chars 'md5 8 data))))
 
-(defun $/mark-indicator()
-  "."
-  (list
-   '(:eval
-     (list
-      (if mark-active
-          (propertize
-           (format " ⇒ %S %S [%S] ⇐ "
-                   (marker-position (mark-marker))
-                   (point)
-                   (count-lines
-                    (marker-position (mark-marker))
-                    (point)))
-           'face
-           (list :background "#FF4018" :foreground
-                 (contrast-color "#FF4018")))
-        "")))
-   " "))
-
 (defun $/acl-owner(f)
   "F."
   (interactive)
@@ -453,96 +419,33 @@
       ($/mt (format "(%s)" f))
     ""))
 
-(defun $/paint-mode-line-colorize (c contents)
-  (let* ((foreground
-          (format "#%s" ($/hash-take-last-n-chars 'sha512 6 c)))
-         (background
-          (compute-bright-dark-from-color-value foreground
-                                                ($/mode-line-foreground)
-                                                ($/mode-line-background))))
-    ;;(debug "($/paint-mode-line-colorize %S %S) => %s %s" c contents foreground background)
-    (propertize
-     (format "%s" contents)
-     'face
-     (list :foreground foreground :background background))))
 
+;; (defun current-column()
+;;   "returns the current column number."
+;;   (- (point) (line-beginning-position)))
 
-(defun $/paint-mode-line-color (contents)
-  ($/paint-mode-line-colorize contents contents))
+(defun column-at-pos(pos)
+  "returns the current column number at marker."
+  ;; (message (format "point %s\n line-beginning-position %s\n pos %s" (point) (line-beginning-position) pos))
+  ;; ;; (let ((opoint (point))
+  ;; ;;       (hscroll (window-hscroll))
+  ;; ;;       (lnum-width (line-number-display-width t))
+  ;; ;;       target-hscroll)
 
-(defun $/paint-non-file-buffer()
-  "."
-  (list
-   ($/paint-mode-name)
-   " "
-   ($/paint-buffer-name)
-   " " "   𝐗%l 𝐘%c %I ⊲ %i bytes " "%e" "%t" ;; row column kbytes bytes
-   '(:eval ($/mark-indicator))))
+  ;;(- (point) (line-beginning-position) pos)
+  (current-column)
+  )
+;; (message (format "%S" (line-beginning-position)))
+;; (message (format "%S" (point-max)))
 
+(defun marker-begin()
+  (format
+   "%s %s"
+   (line-number-at-pos (marker-position (mark-marker)))
+   (column-at-pos (marker-position (mark-marker)))))
+(defun marker-end()
+  (format "%s %s" (line-number-at-pos (point)) (current-column)))
 
-
-(defun $/paint-mode-name-string()
-  (format "%s-mode"
-          (replace-regexp-in-string
-           "^\\([a-z0-9-]+\\)[^A-Za-z0-9-]+.*$" "\\1"
-           (downcase
-            (cond
-             ((listp mode-name)
-              (car mode-name))
-             ((stringp mode-name)
-              mode-name)
-             ((t (format "%S" mode-name))))))))
-
-(defun $/paint-mode-name()
-  ($/paint-mode-line-color ($/paint-mode-name-string)))
-
-
-
-;; 987-2711
-
-(defun $/paint-file-buffer()
-  "."
-  (list
-   '(:eval ($/mark-indicator))
-   " "
-   '(:eval ($/bfan))
-   " "
-   (propertize " ⇒ " 'face
-               (list :background
-                     ($/mode-line-background)
-                     :foreground "#F10958"))
-   " "
-   '(:eval ($/paint-mode-name))
-   " "
-   '(:eval ($/fm))
-   " "
-   '(:eval ($/bchs))
-   " " "   𝐗%l 𝐘%c %I ⊲ %i bytes " "%e" "%t"))
-
-(defun $/paint-mode-line ()
-  "."
-  (interactive)
-  (let* ((narrow
-          (if (buffer-file-name)
-              ($/paint-file-buffer)
-            ($/paint-non-file-buffer)))
-         (wide
-          (list mode-line-front-space narrow mode-line-end-spaces)))
-    (setq mode-line-format wide)
-    (force-mode-line-update)
-    wide))
-
-(defun $/mode-name()
-  (format "%s-mode"
-          (replace-regexp-in-string
-           "^\\([a-z0-9-]+\\)[^A-Za-z0-9-]+.*$" "\\1"
-           (downcase
-            (cond
-             ((listp mode-name)
-              (car mode-name))
-             ((stringp mode-name)
-              mode-name)
-             ((t (format "%S" mode-name))))))))
 
 (defun g/build ()
   (interactive "*")
@@ -1090,54 +993,29 @@
   "BEG END."
   (interactive "*r")
   (save-excursion
-    (let ((region (buffer-substring-no-properties beg end)))
-      (replace-region-contents
-       beg end
-       #'(lambda ()
-           (replace-regexp-in-string
-            "^\\(\\(.\\|\n\\)*\\)$"
-            "{\\1};"
-            (replace-regexp-in-string
-             "^\\s-*///?.*$"
-             ""
-             (replace-regexp-in-string
-              "^\\s-*\\(pub\\s-*\\)?\\((super\\|crate\\|self\\|in\\s-*[^)]+)\\)?\\s-*\\(struct\\|union\\|trait\\|enum\\|fn\\)\\s-*\\([<][^>]*[>]\\)?\\s-*\\([A-Za-z_][a-zA-Z0-9_]+\\).*"
-              "\\5,"
-              (replace-regexp-in-string
-               "^\\s-*\\(\\s-+\\|}\\|use\\|impl\\|extern\\s-*crate\\|\\(pub\\(\s-*\\(in\s-*\\)?[a-z0-9:]+\\)?\\)?\\s-*mod\\|[#][[]\\|)\\).*"
-               ""
-               region))))))))
-  (save-excursion (flush-lines "^$" beg end nil)))
+    (let* ((region (buffer-substring-no-properties beg end))
+           (region
+            (replace-region-contents
+             beg end
+             #'(lambda ()
+                 (replace-regexp-in-string
+                  "^\\(\\(.\\|\n\\)*\\)$"
+                  "{\\1};"
+                  (replace-regexp-in-string
+                   "^\\s-*///?.*$"
+                   ""
+                   (replace-regexp-in-string
+                    "^\\s-*\\(pub\\s-*\\)?\\((super\\|crate\\|use\\|self\\|in\\s-*[^)]+)\\)?\\s-*\\(struct\\|union\\|trait\\|enum\\|fn\\)\\s-*\\([<][^>]*[>]\\)?\\s-*\\([A-Za-z_][a-zA-Z0-9_]+\\).*"
+                    "\\5,"
+                    (replace-regexp-in-string
+                     "^\\s-*\\(\\s-+\\|}\\|impl\\|extern\\s-*crate\\|\\(pub\\(\s-*\\(in\s-*\\)?[a-z0-9:]+\\)?\\)?\\s-*mod\\|[#][[]\\|)\\).*"
+                     ""
+                     region))))))))
+      (if called-interactively-p (erase-messages) (message region))
+      region)
+    (flush-lines "^$" beg end nil)))
 
 
-(defun rust-extract-members-regex (package-name string)
-  "STRING."
-  (format "pub mod %s;\npub use %s::{\n%s\n};\n" package-name package-name
-          (rust-comma-separated-members-regex string)))
-
-(defun rust-comma-separated-members-regex (string)
-  "STRING."
-  (let ((members
-         (replace-regexp-in-string
-          "^\\s-*///?.*$"
-          ""
-          (replace-regexp-in-string
-           "^\\s-*\\(pub\\s-*\\)?\\((super\\|crate\\|self\\|in\\s-*[^)]+)\\)?\\s-*\\(struct\\|union\\|trait\\|type\\|enum\\|fn\\)\\s-*\\([<][^>]*[>]\\)?\\s-*\\([A-Za-z_][a-zA-Z0-9_]+\\).*"
-           "\\5,"
-           (replace-regexp-in-string
-            "^\\s-*\\(pub\\)?\\s-*\\(\\s-+\\|}\\|use\\|impl\\|extern\\s-*crate\\|\\(pub\\(\s-*\\(in\s-*\\)?[a-z0-9:]+\\)?\\)?\\s-*\\(mod\\|macro_\\(rules\\|export\\)[!]?\s-*\\)\\|[#][[]\\|)\\).*[{]?.*$"
-            ""
-            string)))))
-    (replace-regexp-in-string
-     "^\\(\\(.\\|\n\\)*\\)$"
-     "\\1"
-     (replace-regexp-in-string
-      "\\(\\s-*\\|\n*\\)+"
-      ""
-      (with-temp-buffer
-        (insert members)
-        (flush-lines "^$" (point-min) (point-max))
-        (buffer-string))))))
 
 (defun rust-path-to-current-file-mod ()
   (let* ((current-file-name (expand-file-name (buffer-file-name)))
@@ -1160,19 +1038,16 @@
 (defun rust-insert-members-from-file ()
   "BEG END."
   (interactive)
-  (let* ((rust-file-name
-          (expand-file-name
-           (read-file-name
-            "insert members of rust file: "
-            (rust-path-to-current-file-mod)
-            nil 'confirm-after-completion)))
-         (package-name
-          (rust-guess-package-name-of-file rust-file-name))
-         (string
-          (with-temp-buffer
-            (insert-file-contents rust-file-name)
-            (buffer-string))))
-    (insert (rust-extract-members-regex package-name string))
+  (let ((rust-file-name
+         (expand-file-name
+          (read-file-name
+           "insert members of rust file: "
+           (rust-path-to-current-file-mod)
+           nil 'confirm-after-completion))))
+
+    (insert
+     (shell-command-to-string
+      (format "rust-autocomplete list '%s'" rust-file-name)))
     (rust-format-buffer)))
 
 (defun rust-delete-comments ()
@@ -1699,10 +1574,6 @@
       (forward-char 1)
       (indent-for-tab-command))))
 
-(defun current-column()
-  "returns the current column number."
-  (- (point) (line-beginning-position)))
-
 
 (defun insert-char-until-column()
   "."
@@ -1740,12 +1611,21 @@
   (erase-messages)
   (save-mark-and-excursion
     (beginning-of-line 1)
-    (re-search-forward "^\\(\\s-*\\(pub -*\\(([^)]+)\\)?\\)?\\(struct\\|enum\\|fn\\) -*\\([a-zA-Z_][a-zA-Z0-9_]*\\)\\( -*\\|w+\\|[^({]\\|\n\\)+?[{(]\\([^)}]\\|\n\\)+?[)}]\\( -*\\|\n\\|[^{]\\)+?[{]\\([^}]\\|\n\\)+?[}]\\)")
+    (re-search-forward
+     "^\\(\\s-*\\(pub -*\\(([^)]+)\\)?\\)?\\(struct\\|enum\\|fn\\) -*\\([a-zA-Z_][a-zA-Z0-9_]*\\)\\( -*\\|w+\\|[^({]\\|\n\\)+?[{(]\\([^)}]\\|\n\\)+?[)}]\\( -*\\|\n\\|[^{]\\)+?[{]\\([^}]\\|\n\\)+?[}]\\)")
     (let* ((item (match-string 0))
            (vis (match-string 1))
            (type (match-string 2))
-           (name (match-string 3))
-           )
-      (message (format "rust-get-item `%s %s %s': %s" vis type name item))
-    )
-  ))
+           (name (match-string 3)))
+      (message
+       (format "rust-get-item `%s %s %s': %s" vis type name item)))))
+
+
+(defun c$dg$ (&rest substrate)
+  (interactive)
+  (ignore-errors
+    (colorize-hexadecimal-text)
+    ($/paint-mode-line)
+    (disable-auto-save-list)
+    (disable-bars)
+    ($$$$$)))
