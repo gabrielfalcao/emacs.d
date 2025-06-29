@@ -22,38 +22,53 @@
       (or
        (when mark-active
          (format "%s%s %s %s%s"
-                 (propertize ($/mode-line-arrow-right) 'face
-                             (list :background ($/mode-line-background)
-                                   :foreground "#F5BF08"
-                                   )
-                             )
+                 (propertize
+                  ($/mode-line-arrow-right)
+                  'face
+                  (list :background
+                        ($/mode-line-background)
+                        :foreground "#F5BF08")
+                  )
                  (propertize
                   (format "%s" (marker-begin))
-                  'face (list :background ($/mode-line-background)
-                              :foreground ($/mark-indicator-color)))
+                  'face
+                  (list :background
+                        ($/mode-line-background)
+                        :foreground ($/mark-indicator-color)))
                  (propertize
                   (format "%s" (marker-end))
-                  'face (list :background ($/mode-line-background)
-                              :foreground ($/mark-indicator-color)))
+                  'face
+                  (list :background
+                        ($/mode-line-background)
+                        :foreground ($/mark-indicator-color)))
 
                  (propertize
-                  (format "[%s lines]"
-                          (count-lines (marker-position (mark-marker)) (point)))
-                          'face (list :background ($/mark-indicator-color)
-                                      :foreground ($/mode-line-background)
-                                      ))
-                 (propertize ($/mode-line-arrow-left) 'face
-                             (list :background ($/mode-line-background)
-                                   :foreground "#F5BF08"
-                                   )
-                             ))
+                  (let ((line-count
+                         (count-lines
+                          (marker-position (mark-marker))
+                          (point))))
+                    (format "[%s %s]"
+                            line-count
+                            (if (= line-count 1) "line" "lines")))
+                  'face
+                  (list :background
+                        ($/mark-indicator-color)
+                        :foreground ($/mode-line-background)
+                        ))
+                 (propertize
+                  ($/mode-line-arrow-left)
+                  'face
+                  (list :background
+                        ($/mode-line-background)
+                        :foreground "#F5BF08")
+                  ))
 
          )
        " ")))))
 
 (defun $/paint-mode-line-colorize (c contents)
   (let* ((foreground
-          (format "#%s" ($/hash-take-last-n-chars 'md5 6 c)))
+          (format "#%s" ($/hash-take-first-n-chars 'sha512 6 c)))
          (background
           (compute-bright-dark-from-color-value foreground
                                                 ($/mode-line-foreground)
@@ -103,8 +118,10 @@
    " "
    '(:eval ($/bfan))
    " "
-   (propertize ($/mode-line-arrow-right) 'face
-               (list :foreground ($/mark-indicator-color)))
+   (propertize
+    ($/mode-line-arrow-right)
+    'face
+    (list :foreground ($/mark-indicator-color)))
    " "
    '(:eval ($/paint-mode-name))
    " "

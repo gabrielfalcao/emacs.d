@@ -426,25 +426,17 @@
 
 (defun column-at-pos(pos)
   "returns the current column number at marker."
-  ;; (message (format "point %s\n line-beginning-position %s\n pos %s" (point) (line-beginning-position) pos))
-  ;; ;; (let ((opoint (point))
-  ;; ;;       (hscroll (window-hscroll))
-  ;; ;;       (lnum-width (line-number-display-width t))
-  ;; ;;       target-hscroll)
-
-  ;;(- (point) (line-beginning-position) pos)
-  (current-column)
-  )
-;; (message (format "%S" (line-beginning-position)))
-;; (message (format "%S" (point-max)))
+  (save-mark-and-excursion (goto-char pos) (current-column)))
 
 (defun marker-begin()
   (format
-   "%s %s"
+   "line=%s col=%s"
    (line-number-at-pos (marker-position (mark-marker)))
    (column-at-pos (marker-position (mark-marker)))))
 (defun marker-end()
-  (format "%s %s" (line-number-at-pos (point)) (current-column)))
+  (format "line=%s col=%s"
+          (line-number-at-pos (point))
+          (current-column)))
 
 
 (defun g/build ()
@@ -1019,7 +1011,8 @@
 
 (defun rust-path-to-current-file-mod ()
   (let* ((current-file-name (expand-file-name (buffer-file-name)))
-         (no-extension (file-name-sans-extension current-file-name)))
+         (no-extension
+          (file-name-sans-extension (file-name-base current-file-name))))
     (or
      (when (string= no-extension "mod")
        (file-name-parent-directory current-file-name))
@@ -1084,6 +1077,44 @@
         (widen)
         (flush-lines regexp (point-min) (point-max))))))
 
+(defun cargo-manifest-insert-tests-from-folder (folder-path)
+  (interactive
+   (list
+    (expand-file-name
+     (read-file-name
+      "insert members of rust file: "
+      (rust-path-to-current-file-mod)
+      nil 'confirm-after-completion))))
+
+  (let* ((test-files (directory-files folder-path t "[.]rs$"))
+
+         (test-names
+          (mapcar #'(lambda (name) (file-name-base name)) test-files))
+         (entries (-zip test-names test-files))
+         (toml-entries
+          (mapcar
+           #'(lambda (entry)
+               (format "[[test]]\nname = \"%s\"\npath = \"%s\""
+                       (car entry)
+                       (file-name-concat
+                        (file-name-base folder-path)
+                        (file-name-nondirectory
+                         (concat (cdr entry) "")))))
+           entries))))
+  (messages-buffer)
+  (erase-messages)
+  (messages-buffer)
+  (message toml-entries)
+  (find-file
+   (file-name-concat
+    (file-name-parent-directory folder-path)
+    "Cargo.toml"))
+  (with-current-buffer "Cargo.toml"
+    (widen)
+    (goto-char (point-max))
+    (insert "\n")
+    (insert "\n")
+    (mapcar #'(lambda(entry) (insert entry)) toml-entries)))
 
 
 (defun fgbg-foreback(beg end)
@@ -1510,6 +1541,18 @@
   (shell-command-to-string
    (format "git add -f %s" (expand-file-name (buffer-file-name)))))
 
+(defun git-restore()
+  "."
+  (interactive)
+  (shell-command-to-string
+   (format "git restore --staged %s"
+           (expand-file-name (buffer-file-name))))
+  (shell-command-to-string
+   (format "git restore %s" (expand-file-name (buffer-file-name))))
+  (revert-buffer t t t))
+
+
+
 
 (defun buffer-list-builtin-only()
   "returns all open emacs-only buffers, i.e: starting and ending in `*'."
@@ -1575,20 +1618,6 @@
       (indent-for-tab-command))))
 
 
-(defun insert-char-until-column()
-  "."
-  (interactive)
-  (let* ((char (read-string "character(s) to insert: "))
-         (column (read-number "column number")))
-    (while (> column (current-column)) (insert char))))
-
-
-(defun insert-space-until-column()
-  "."
-  (interactive)
-  (let ((column (read-number "column number: ")))
-    (while (> column (current-column)) (insert " "))))
-
 ;; (defadvice find-file (before existing-file activate compile)
 ;;   "when interactive, try to auto-complete to existing file first."
 ;;   (interactive
@@ -1620,6 +1649,47 @@
       (message
        (format "rust-get-item `%s %s %s': %s" vis type name item)))))
 
+(defun format-peg-once(column)
+  (or
+   (when (not (integerp column))
+     (user-error (format "column is not a number: %S" column)))
+   (beginning-of-line 1)
+   (re-search-forward "=")
+   (goto-char (match-beginning 1))
+   (backward-char)
+   (insert-char-until-column column)
+   (re-search-forward
+    "=\\(\\s-*?\\)\\([ @_$][{]\\)"
+    (replace-match "= \\2"))
+   (forward-line)))
+
+(defun insert-char-until-column(char column)
+  "."
+  (interactive
+   (let* ((char (read-string "character(s) to insert: "))
+          (column (read-number "column number")))
+     '(char column)))
+  (while (> column (current-column)) (insert char)))
+
+
+(defun insert-space-until-column(column)
+  "."
+  (interactive
+   (let* ((column (read-number "insert space until column number: ")))
+     '(column)))
+  (while (> column (current-column)) (insert " ")))
+
+
+(defun format-peg(column)
+  (interactive
+   (let* ((column (read-number "insert space until column number: ")))
+     '(column)))
+  (widen)
+  (beginning-of-buffer)
+  (while (> (point-max) (point))
+    (format-peg-once column)))
+
+
 
 (defun c$dg$ (&rest substrate)
   (interactive)
@@ -1629,3 +1699,38 @@
     (disable-auto-save-list)
     (disable-bars)
     ($$$$$)))
+
+
+(defun replace-regexp-within-bounds(regexp replacement beg end)
+  "."
+  ;; (if (or (null beg) (null end))
+  ;;     (user-error "regexp=%S\nreplacement=%S\nbeg=%S\nend=%S" regexp replacement beg end))
+  (if (not (null beg))
+      (goto-char beg))
+  (let* ((last-match beg)
+         (current-match (+ last-match 1)))
+
+    (re-search-forward regexp end t)
+    (setq last-match (match-beginning 0))
+    (setq current-match (match-end 1))
+    (while (and (< last-match current-match) (< (point) end))
+      (re-search-forward regexp end t)
+      (goto-char (match-beginning 1))
+      (replace-match replacement)
+      (goto-char (match-end 1))
+      (end-of-line 0)
+      (goto-char (match-end 2))
+      ;; (sleep-for 0.1)
+      (re-search-forward regexp end t)
+      (setq last-match (match-beginning 0))
+      (goto-char (match-beginning 0))
+      (backward-word 1)
+      (setq current-match (match-end 1))
+      (if (> (length (string-trim (match-string-no-properties 1))) 0)
+          (message
+           (format "replaced %s in line %s col %s"
+                   (match-string-no-properties 0)
+                   (line-number-at-pos (match-beginning 1))
+                   (column-at-pos (match-beginning 1)))))
+
+      )))
