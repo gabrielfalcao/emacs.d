@@ -4,6 +4,7 @@
   (line-number-mode t)
   (setq global-package-online nil) ;; set to non-nil to enable
   (setq global-flycheck-mode t)
+  (setq debug-on-error nil)
   (setq initial-scratch-message nil)
   (setq auto-save-interval 137)
   ;; (setq case-fold-search t)
