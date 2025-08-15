@@ -12,7 +12,7 @@
   (defalias 'describe 'describe-symbol)
   )
 (add-to-list 'custom-safe-themes "5bd001a0f95d54174370e9275b1f594829930a1a95ed82741a5492facb7415e7")
-(set-face-attribute 'default nil :font "JetBrains Mono-21")
+(set-face-attribute 'default nil :font "JetBrains Mono-15")
 (load-library "ui")
 (load-library "functions")
 (load-library "debug-et-diagnostics")
@@ -40,5 +40,4 @@
 (defalias 'times #'*)
 (defalias 'difference #'-)
 (line-number-mode)
-
 (setq debug-on-error nil)
