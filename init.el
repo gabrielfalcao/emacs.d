@@ -1,3 +1,4 @@
+(setq debug-on-error nil)
 (setq $font-name$ "JetBrains Mono-16")
 (set-face-attribute 'default nil :font $font-name$ :background "#1c1c1c")
 
@@ -7,19 +8,20 @@
   (unless (file-exists-p path)
     (user-error (format "path `%s' does not exist" path)))
   (let* ((path (expand-file-name path)))
-  (or (when (file-directory-p path)
-        (directory-files path))
-      (when (file-regular-p path)
-        '(path)))))
+    (or
+     (when (file-directory-p path) (directory-files path))
+     (when (file-regular-p path) '(path)))))
 
 (defun scan-dir(path &optional callback)
-  (or (unless (stringp path)
-        (user-error (format "`%s' is not a string" path)))
-      (unless (file-exists-p path)
-        (user-error (format "path `%s' does not exist" path))))
-  (let* ((callback (or (when (functionp callback)
-                        callback)
-                      #'(lambda (path) t))))
+  (or
+   (unless (stringp path)
+     (user-error (format "`%s' is not a string" path)))
+   (unless (file-exists-p path)
+     (user-error (format "path `%s' does not exist" path))))
+  (let* ((callback
+          (or
+           (when (functionp callback) callback)
+           #'(lambda (path) t))))
     (mapcar callback (list-dir-path path))))
 
 
@@ -29,7 +31,11 @@
   (set-face-attribute 'default nil :foreground foreground :background background :font $font-name$)
   (set-face-attribute 'mode-line nil :background background :foreground foreground)
   (set-face-attribute 'mode-line-inactive nil :background background :foreground foreground))
-(progn (add-to-list 'load-path "~/.emacs.d/3pty") (add-to-list 'load-path "~/.emacs.d/c") (load-library "boot")(load-library "elfmt"))
+(progn
+  (add-to-list 'load-path "~/.emacs.d/3pty")
+  (add-to-list 'load-path "~/.emacs.d/c")
+  (load-library "boot")
+  (load-library "elfmt"))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -56,3 +62,4 @@
 (line-number-mode)
 (disable-bars)
 (set-frame-parameter nil 'fullscreen 'maximized)
+(setq debug-on-error nil)

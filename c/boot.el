@@ -40,3 +40,5 @@
 (defalias 'times #'*)
 (defalias 'difference #'-)
 (line-number-mode)
+
+(setq debug-on-error nil)

@@ -1041,6 +1041,7 @@
     (insert
      (shell-command-to-string
       (format "rust-autocomplete list '%s'" rust-file-name)))
+    (insert (format "\n"))
     (rust-format-buffer)))
 
 (defun rust-delete-comments ()
@@ -1173,18 +1174,28 @@
     (apply-partially #'string-match-p "[*]\s-\\(\\)")
     (string-lines (shell-command-to-string "git branch")))))
 
-
 (defun git-commit()
   "."
   (interactive)
-  (let *((commit-message
-          (read-string "Commit Message:")))
-       (or
-        (when (zerop (length commit-message))
-          (user-error "aborted due to empty commit message"))
-        (progn
-          (shell-command-to-string
-           (format "git commit -m '%s'" commit-message))))))
+  (let* ((commit-message (read-string "Commit Message: ")))
+    (or
+     (when (zerop (length commit-message))
+       (user-error "aborted due to empty commit message"))
+     (if (eq 0
+             (let* ((git-commit-output-buf
+                     (get-buffer-create "*git-commit*"))
+                    (exitcode
+                     (call-process "git" nil git-commit-output-buf nil "commit" "-m"
+                                   (format "'%s'" commit-message))))
+               exitcode))
+         (message (format "commited '%s'" commit-message))
+       (user-error
+        (format "failed to commit '%s': %s" commit-message
+                (with-current-buffer git-commit-output-buf
+                  (widen)
+                  (buffer-string))))))))
+
+
 
 (defun git-commit-all()
   "."
@@ -1541,12 +1552,19 @@
   (shell-command-to-string
    (format "git add -f %s" (expand-file-name (buffer-file-name)))))
 
-(defun git-restore()
+(defun git-restore-staged()
   "."
   (interactive)
   (shell-command-to-string
    (format "git restore --staged %s"
            (expand-file-name (buffer-file-name))))
+  (shell-command-to-string
+   (format "git restore %s" (expand-file-name (buffer-file-name))))
+  (revert-buffer t t t))
+
+(defun git-restore()
+  "."
+  (interactive)
   (shell-command-to-string
    (format "git restore %s" (expand-file-name (buffer-file-name))))
   (revert-buffer t t t))
@@ -1705,25 +1723,32 @@
   "."
   ;; (if (or (null beg) (null end))
   ;;     (user-error "regexp=%S\nreplacement=%S\nbeg=%S\nend=%S" regexp replacement beg end))
-  (if (not (null beg))
-      (goto-char beg))
+
+  (if (not (null beg)) (goto-char beg))
   (let* ((last-match beg)
          (current-match (+ last-match 1)))
 
     (re-search-forward regexp end t)
     (setq last-match (match-beginning 0))
     (setq current-match (match-end 1))
-    (while (and (< last-match current-match) (< (point) end))
+    (while (and
+            (< last-match current-match)
+            (< (point) end)
+            (not (null (match-beginning 1))))
       (re-search-forward regexp end t)
-      (goto-char (match-beginning 1))
+      (if (not (null (match-beginning 1)))
+          (goto-char (match-beginning 1)))
       (replace-match replacement)
-      (goto-char (match-end 1))
+      (if (not (null (match-end 1)))
+          (goto-char (match-end 1)))
       (end-of-line 0)
-      (goto-char (match-end 2))
+      (if (not (null (match-end 2)))
+          (goto-char (match-end 2)))
       ;; (sleep-for 0.1)
       (re-search-forward regexp end t)
       (setq last-match (match-beginning 0))
-      (goto-char (match-beginning 0))
+      (if (not (null (match-beginning 0)))
+          (goto-char (match-beginning 0)))
       (backward-word 1)
       (setq current-match (match-end 1))
       (if (> (length (string-trim (match-string-no-properties 1))) 0)
@@ -1734,3 +1759,78 @@
                    (column-at-pos (match-beginning 1)))))
 
       )))
+
+(defun shift-right-tabbed-table-string (s)
+  "S."
+  (replace-regexp-in-string
+   "\t\\([A-Za-z0-9]+\\)\t"
+   "    @\\1                @" s))
+
+
+(defun shift-right-tabbed-table-lines-region (beg end)
+  "BEG END."
+  (interactive "*r")
+  (save-excursion
+    (let ((region (buffer-substring-no-properties beg end)))
+      (replace-region-contents beg end
+                               #'(lambda ()
+                                   (shift-right-tabbed-table-string region))))))
+
+(defun undefun (symbol-name-param)
+  (if (nil (symbolp symbol-name-param))
+      (user-error
+       (format "undefun: param '%S' is not a symbol-name-param" symbol-name-param))
+
+    (progn
+      (progn (fmakunbound symbol-name-param))
+      (progn (unintern symbol-name-param obarray))
+      (progn (unintern symbol-name-param obarray-cache)))))
+
+
+(defun decimal-to-hexadecimal-region(beg end)
+  "BEG END."
+  (interactive "*r")
+  (save-excursion
+    (goto-char beg)
+    (re-search-forward "\\([0-9]+\\)" nil t 1)
+    (replace-match
+     (format "0x%x" (string-to-number (match-string 0)))
+     t)))
+
+(defun decimal-to-char-region(beg end)
+  "BEG END."
+  (interactive "*r")
+  (save-excursion
+    (goto-char beg)
+    (re-search-forward "\\([0-9]+\\)" nil t 1)
+    (replace-match
+     (format "%s"
+             (char-to-string (string-to-number (match-string 0))))
+     t)))
+
+(defun shell-script-fix-variables-region (beg end)
+  "."
+  (interactive "*r")
+  (let* ((regexp "[$]\\([a-zA-Z0-9_][a-zA-Z0-9_]*\\)")
+         (replacement "${\\1}"))
+    (save-mark-and-excursion
+      (replace-regexp-within-bounds regexp replacement beg end))))
+
+(defun shell-script-fix-variables-buffer ()
+  (interactive)
+  (let* ((beg (point-min))
+         (end (point-max))
+         (regexp "[$]\\([a-zA-Z0-9_][a-zA-Z0-9_]*\\)")
+         (replacement "${\\1}"))
+    (if mark-active
+        (user-error "mark is active, use shell-script-fix-variables-region instead.")
+      (save-excursion
+        (widen)
+        (replace-regexp-within-bounds regexp replacement beg end)))))
+(setq debug-on-error t)
+
+
+(defun wip()
+  "."
+  (interactive)
+  (find-file "~/projects/work/poems.codes/poc/wip.rst"))

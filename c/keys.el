@@ -53,6 +53,7 @@
 ($/set-key '("C-c C-t C-m C-l") '$$$$$)
 ($/set-key '("C-c C-x C-f") 'show-face-at-point)
 ($/set-key '("C-c C-w" "C-c M-w") 'clipboard-kill-ring-save)
+($/set-key '("C-c C-x C-w") 'clipboard-kill-region)
 ($/set-key '("C-c C-y" "C-c M-y") 'clipboard-yank)
 ($/set-key '("C-x C-q" "C-c M-y" "C-γ") 'keyboard-quit)
 ($/set-key '("C-x C-d C-h") 'info)
