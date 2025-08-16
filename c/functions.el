@@ -1827,10 +1827,15 @@
       (save-excursion
         (widen)
         (replace-regexp-within-bounds regexp replacement beg end)))))
-(setq debug-on-error t)
+(setq debug-on-error nil)
 
 
 (defun wip()
   "."
   (interactive)
   (find-file "~/projects/work/poems.codes/poc/wip.rst"))
+
+(defun reload()
+  "."
+  (interactive)
+  (revert-buffer nil t))
