@@ -8,7 +8,7 @@
   "."
   (interactive)
 
-  (let* (($font-name$               "JetBrains Mono-20")
+  (let* (($font-name$               "JetBrains Mono-14")
          ($sel$                     "#C6DCFC")
 	 ($sel$                     "#CFC6A6")
          ($background$              "#1C1C1C")

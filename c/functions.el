@@ -1834,3 +1834,8 @@
   "."
   (interactive)
   (find-file "~/projects/work/poems.codes/poc/wip.rst"))
+
+(defun reload()
+  "."
+  (interactive)
+  (revert-buffer nil t))
