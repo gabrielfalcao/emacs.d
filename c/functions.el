@@ -1835,7 +1835,38 @@
   (interactive)
   (find-file "~/projects/work/poems.codes/poc/wip.rst"))
 
-(defun reload()
+(defun notes()
   "."
   (interactive)
-  (revert-buffer nil t))
+  (find-file "~/projects/work/poems.codes/poc/notes.rst"))
+
+(defun reload() "." (interactive) (revert-buffer nil t))
+
+(defun regex-ansi-underline-to-spaced (string)
+  "STRING."
+  (replace-regexp-in-string
+   "^\\(\\s-+\\)\\(bar_text_left\\s-+\\)\\([0-9]+\\)\\s-+\\([0-9]+\\)\\(\\s-*.*\\)[$](ansi_underline\\s-+\\(\"[^\"]+\"\\))"
+   "\\1\\2 \\3 \\4\\5$(ansi_spaced \\4 \\3 \\6)"string))
+
+
+
+(defun ansi-underline-to-spaced-region(beg end)
+  "BEG END."
+  (interactive "*r")
+  (save-excursion
+    (let ((region (buffer-substring-no-properties beg end)))
+      (replace-region-contents
+       beg end
+       #'(lambda () (regex-ansi-underline-to-spaced region))))))
+
+
+;; (defun ansi-underline-to-spaced-region(start end)
+;;   "."
+;;   (interactive "*r")
+;;   (save-excursion
+;;     (let ((end (copy-marker end)))
+;;       (while (progn
+;;                (goto-char start)
+;;                (re-search-forward "^\\(\\s-+\\)\\(bar_text_left\\s-+\\)\\([0-9]+\\)\\s-+\\([0-9]+\\)\\(\\s-*.*\\)[$](ansi_underline\\s-+\\(\"[^\"]+\"\\))"
+;;                  end t))
+;;         (replace-match "\\1\\2 \\3 \\4\\5$(ansi_spaced \\4 \\3 \\6)")))))
