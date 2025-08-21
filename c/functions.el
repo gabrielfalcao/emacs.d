@@ -1091,7 +1091,7 @@
 
          (test-names
           (mapcar #'(lambda (name) (file-name-base name)) test-files))
-         (entries (-zip test-names test-files))
+         (entries (-zip-pair test-names test-files))
          (toml-entries
           (mapcar
            #'(lambda (entry)
@@ -1830,10 +1830,21 @@
 (setq debug-on-error nil)
 
 
+(defun find-file-if-exists(file-path)
+  "."
+  (if (file-exists-p file-path)
+      (find-file file-path)
+    (user-error (format "file does not exist: %s" file-path))))
+
 (defun wip()
   "."
   (interactive)
-  (find-file "~/projects/work/poems.codes/poc/wip.rst"))
+  (find-file-if-exists "~/projects/work/poems.codes/poc/wip.rst"))
+
+(defun ps1()
+  "."
+  (interactive)
+  (find-file-if-exists "~/.config/ps1.toml"))
 
 (defun reload()
   "."
