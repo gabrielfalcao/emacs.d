@@ -212,7 +212,8 @@
 (defun $/pl/fmt/prettierjs ()
   "."
   (interactive)
-  ($/pl/fmt (expand-file-name "~/.emacs.d/libexec/prettier")))
+  (prettierjs))
+
 
 
 
@@ -446,9 +447,11 @@
     ($/pl/fmt
      (file-name-concat (getenv "HOME") ".cargo/bin/cargo check")))
    ((string= "typescript-mode" ($/mode-name))
-    ($/pl/fmt/prettierjs))
+    (prettierjs))
+   ((string= "shell-script-mode" ($/mode-name))
+    (shfmt))
    ((string= "javacript-mode" ($/mode-name))
-    ($/pl/fmt/prettierjs))
+    (prettierjs))
    ((nil t))))
 
 (defun $/base64-encode-region (beg end)
@@ -1562,6 +1565,62 @@
    (format "git restore %s" (expand-file-name (buffer-file-name))))
   (revert-buffer t t t))
 
+(defun prettierjs()
+  "."
+  (interactive)
+  (let* ((current-filename (expand-file-name (buffer-file-name)))
+         (tmp-buffer-name
+           (format "*prettierjs:%s*" current-filename))
+         (tmp-buffer
+          (get-buffer-create tmp-buffer-name))
+         (exit-code
+          (call-process "prettier"
+                        nil
+                        tmp-buffer
+                        nil "-w" current-filename )))
+    (message
+     (format "prettier -w %s exitted with code: %s" current-filename exit-code))
+    (or
+     (when (eq exit-code 0)
+       (progn
+         (message (format "%s prettified" (abbreviate-file-name current-filename)))
+         (revert-buffer t t t)))
+     (progn
+       (user-error
+        (format "prettier -w %s failed with code: %s" (abbreviate-file-name current-filename) exit-code)))
+     )))
+
+
+(defun shfmt()
+  ".
+;; https://github.com/mvdan/sh
+;; go install mvdan.cc/sh/v3/cmd/shfmt@latest
+
+shfmt -bn -ci -sr -kp -i 4 -ln=bash -w %s
+"
+  (interactive)
+  (let* ((current-filename (expand-file-name (buffer-file-name)))
+         (tmp-buffer-name
+           (format "*shfmt:%s*" current-filename))
+         (tmp-buffer
+          (get-buffer-create tmp-buffer-name))
+         (exit-code
+          (call-process "shfmt"
+                        nil
+                        tmp-buffer
+                        nil "-bn" "-ci" "-sr" "-kp" "-i" "4" "-ln=bash" "-w" current-filename )))
+    (message
+     (format "shfmt -bn -ci -sr -kp -i 4 -ln=bash -w %s exitted with code: %s" current-filename exit-code))
+    (or
+     (when (eq exit-code 0)
+       (progn
+         (message (format "%s prettified" (abbreviate-file-name current-filename)))
+         (revert-buffer t t t)))
+     (progn
+       (user-error
+        (format "shfmt -bn -ci -sr -kp -i 4 -ln=bash -w %s failed with code: %s" (abbreviate-file-name current-filename) exit-code)))
+     )))
+
 (defun git-restore()
   "."
   (interactive)
@@ -1830,15 +1889,70 @@
 (setq debug-on-error nil)
 
 
-(defun wip()
+(defun open-note(note-name)
+  (let* ((name (file-name-base note-name))
+         (old-notes-location "~/projects/work/poems.codes/poc")
+         (current-notes-location "~/projects/notes")
+         (old-path
+          (format "~/projects/work/poems.codes/poc/%s.rst" name))
+         (note-path (format "%s/%s.rst" current-notes-location name)))
+
+    (when (not (file-exists-p current-notes-location))
+      (progn
+        (mkdir current-notes-location t)
+        (message (format "mkdir %s" current-notes-location))))
+    (message
+     (format "note-name: %s"
+             (propertize note-name 'face (list :foreground "#FC0"))))
+    (message
+     (format "name: %s"
+             (propertize name 'face (list :foreground "#0F0"))))
+    (message
+     (format "old-path: %s"
+             (propertize old-path 'face (list :foreground "#0FF"))))
+    (message
+     (format "note-path: %s"
+             (propertize note-path 'face (list :foreground "#F0F"))))
+    (when (file-exists-p old-path)
+      (if (not (file-exists-p note-path))
+          ;; rename file if note-path does not exist
+          (progn
+            ;; (copy-file old-path note-path t t t t)
+            (rename-file old-path note-path t)
+            (message (format "renamed %s -> %s" old-path note-path)))
+        ;; rename file to name with timestamp if note-path exists
+        (progn
+          (let ((stamped-note-path
+                 (format "%s/%s%s.rst" current-notes-location name
+                         (time-stamp-string "%Y-%m-%dT%H%M%S"))))
+            ;; (copy-file old-path stamped-note-path t t t t)
+            (rename-file old-path stamped-note-path t)
+            (message
+             (format "renamed %s -> %s" old-path stamped-note-path))))))
+    (find-file note-path)))
+
+
+(defun insert-timestamp()
   "."
   (interactive)
-  (find-file "~/projects/work/poems.codes/poc/wip.rst"))
+  (insert (time-stamp-string "%Y-%m-%dT%H:%M:%S%Z")))
+
+(defun insert-date()
+  "."
+  (interactive)
+  (insert (time-stamp-string "%Y-%m-%d")))
+
+(defun wip() "." (interactive) (open-note "wip.rst"))
+
+(defun todo()
+  "."
+  (interactive)
+  (open-note "~/projects/notes/todo.rst"))
 
 (defun notes()
   "."
   (interactive)
-  (find-file "~/projects/work/poems.codes/poc/notes.rst"))
+  (open-note "~/projects/notes/notes.rst"))
 
 (defun reload() "." (interactive) (revert-buffer nil t))
 
