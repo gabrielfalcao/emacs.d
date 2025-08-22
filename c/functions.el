@@ -242,8 +242,10 @@
         (if (string-match-p "\\s-*[(]\\(.\\|\n\\)+[)]\\s-*" region)
             (progn
               (eval-region beg end)
-              (when (string= (buffer-file-name) (buffer-name))
-                (message (format "%s eval'd" (buffer-file-name)))))
+              (or (when (string= (file-name-nondirectory (buffer-file-name)) (buffer-name))
+                    (message (format "%s eval'd" (buffer-name))))
+                  (message (format "buffer-file-name=%s buffer-name=%s eval'd" (buffer-file-name) (buffer-name)))
+                  ))
           (message "does not seem to be valid elisp: %s" region)))
     (message "\"%s\" aint no el" (buffer-name))))
 
@@ -1015,9 +1017,9 @@
           (file-name-sans-extension (file-name-base current-file-name))))
     (or
      (when (string= no-extension "mod")
-       (file-name-parent-directory current-file-name))
+       (file-name-directory current-file-name))
      (when (string= no-extension "lib")
-       (file-name-parent-directory current-file-name))
+       (file-name-directory current-file-name))
      current-file-name)))
 
 (defun rust-guess-package-name-of-file (filename)
@@ -1038,11 +1040,20 @@
            (rust-path-to-current-file-mod)
            nil 'confirm-after-completion))))
 
-    (insert
-     (shell-command-to-string
-      (format "rust-autocomplete list '%s'" rust-file-name)))
-    (insert (format "\n"))
-    (rust-format-buffer)))
+  (let* ((tmp-buffer-name (format "*rust-autocomplete:%s*" rust-file-name))
+         (tmp-buffer (get-buffer-create tmp-buffer-name))
+         (exit-code (call-process "rust-autocomplete" nil tmp-buffer nil "list" rust-file-name)))
+    (if (eq 0 exit-code)
+        (let ((items (with-current-buffer tmp-buffer (widen) (buffer-substring-no-properties (point-min) (point-max)))))
+            (kill-buffer tmp-buffer)
+            (insert (format "\n%s\n" items))
+            (rust-format-buffer)
+            )
+      (progn
+        (switch-to-buffer tmp-buffer)
+        (user-error (format "failed to list items of file %s" (abbreviate-file-name (rust-file-name)))))
+      )
+    )))
 
 (defun rust-delete-comments ()
   "."
@@ -1108,7 +1119,7 @@
   (message toml-entries)
   (find-file
    (file-name-concat
-    (file-name-parent-directory folder-path)
+    (file-name-directory folder-path)
     "Cargo.toml"))
   (with-current-buffer "Cargo.toml"
     (widen)
@@ -1232,7 +1243,7 @@
      (format "git commit --amend -m '%s'"
              (format "%s\n%s (%s)" last-commit-message
                      (file-name-nondirectory filename)
-                     (time-stamp-string "%Y-%m-%d %H:%M:%S"))))
+                     (format-time-string "%Y-%m-%d %H:%M:%S"))))
     (set-buffer-modified-p nil)))
 
 
@@ -1941,7 +1952,7 @@ shfmt -bn -ci -sr -kp -i 4 -ln=bash -w %s
         (progn
           (let ((stamped-note-path
                  (format "%s/%s%s.rst" current-notes-location name
-                         (time-stamp-string "%Y-%m-%dT%H%M%S"))))
+                         (format-time-string "%Y-%m-%dT%H%M%S"))))
             ;; (copy-file old-path stamped-note-path t t t t)
             (rename-file old-path stamped-note-path t)
             (message
@@ -1952,12 +1963,12 @@ shfmt -bn -ci -sr -kp -i 4 -ln=bash -w %s
 (defun insert-timestamp()
   "."
   (interactive)
-  (insert (time-stamp-string "%Y-%m-%dT%H:%M:%S%Z")))
+  (insert (format-time-string "%Y-%m-%dT%H:%M:%S%Z")))
 
 (defun insert-date()
   "."
   (interactive)
-  (insert (time-stamp-string "%Y-%m-%d")))
+  (insert (format-time-string "%Y-%m-%d")))
 
 (defun wip() "." (interactive) (open-note "wip.rst"))
 
@@ -1990,6 +2001,11 @@ shfmt -bn -ci -sr -kp -i 4 -ln=bash -w %s
        beg end
        #'(lambda () (regex-ansi-underline-to-spaced region))))))
 
+(defun entry()
+  "."
+  (interactive)
+  (insert (format-time-string "%Y/%m/%dT%H:%M:%S" ))
+)
 
 ;; (defun ansi-underline-to-spaced-region(start end)
 ;;   "."
