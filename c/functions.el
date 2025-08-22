@@ -1604,6 +1604,15 @@ shfmt -bn -ci -sr -kp -i 4 -ln=bash -w %s
            (format "*shfmt:%s*" current-filename))
          (tmp-buffer
           (get-buffer-create tmp-buffer-name))
+           (format "*shfmt:%s*" current-filename))
+         (shfmt-args '("-bn" "-ci" "-sr" "-kp" "-i" "4" "-ln=bash" "-w" current-filename))
+         (call-process-args (append '("shfmt"
+                        nil
+                        tmp-buffer
+                        nil) shfmt-args))
+         (exit-code
+          (apply #call-process call-process-args)))
+
          (exit-code
           (call-process "shfmt"
                         nil
