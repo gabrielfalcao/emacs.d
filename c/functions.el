@@ -203,11 +203,11 @@
                    (not(equal "0" eco))
                    (not(equal "0" ets)))
                   (progn (message "%s" err)))))))))
-                    ;; (set-buffer (get-buffer-create name t))
-                    ;; (insert-file-contents err nil nil nil t)
-                    ;; (read-only-mode nil)
-                    ;; (pop-to-buffer (get-buffer-create name t) 'display-buffer-same-window nil)
-                    ;; (display-buffer (current-buffer))))))))))
+;; (set-buffer (get-buffer-create name t))
+;; (insert-file-contents err nil nil nil t)
+;; (read-only-mode nil)
+;; (pop-to-buffer (get-buffer-create name t) 'display-buffer-same-window nil)
+;; (display-buffer (current-buffer))))))))))
 
 (defun $/pl/fmt/prettierjs () "." (interactive) (prettierjs))
 
@@ -474,10 +474,10 @@
                                    (collapse-string-2 region))))))
 
 (defun $/mt(p) "P." (interactive) p)
-  ;; (let* ((p (replace-regexp-in-string "[o-t]" "🧾" p))
-  ;;        (p (replace-regexp-in-string "[s-w]" "🖍️" p))
-  ;;        (p (replace-regexp-in-string "[xX]" "👥️" p)))
-  ;;   p))
+;; (let* ((p (replace-regexp-in-string "[o-t]" "🧾" p))
+;;        (p (replace-regexp-in-string "[s-w]" "🖍️" p))
+;;        (p (replace-regexp-in-string "[xX]" "👥️" p)))
+;;   p))
 
 
 (defun $/fm ()
@@ -1040,20 +1040,20 @@
            (rust-path-to-current-file-mod)
            nil 'confirm-after-completion))))
 
-  (let* ((tmp-buffer-name (format "*rust-autocomplete:%s*" rust-file-name))
-         (tmp-buffer (get-buffer-create tmp-buffer-name))
-         (exit-code (call-process "rust-autocomplete" nil tmp-buffer nil "list" rust-file-name)))
-    (if (eq 0 exit-code)
-        (let ((items (with-current-buffer tmp-buffer (widen) (buffer-substring-no-properties (point-min) (point-max)))))
+    (let* ((tmp-buffer-name (format "*rust-autocomplete:%s*" rust-file-name))
+           (tmp-buffer (get-buffer-create tmp-buffer-name))
+           (exit-code (call-process "rust-autocomplete" nil tmp-buffer nil "list" rust-file-name)))
+      (if (eq 0 exit-code)
+          (let ((items (with-current-buffer tmp-buffer (widen) (buffer-substring-no-properties (point-min) (point-max)))))
             (kill-buffer tmp-buffer)
             (insert (format "\n%s\n" items))
             (rust-format-buffer)
             )
-      (progn
-        (switch-to-buffer tmp-buffer)
-        (user-error (format "failed to list items of file %s" (abbreviate-file-name (rust-file-name)))))
-      )
-    )))
+	(progn
+          (switch-to-buffer tmp-buffer)
+          (user-error (format "failed to list items of file %s" (abbreviate-file-name (rust-file-name)))))
+	)
+      )))
 
 (defun rust-delete-comments ()
   "."
@@ -2005,7 +2005,7 @@ shfmt -bn -ci -sr -kp -i 4 -ln=bash -w %s
   "."
   (interactive)
   (insert (format-time-string "%Y/%m/%dT%H:%M:%S" ))
-)
+  )
 
 ;; (defun ansi-underline-to-spaced-region(start end)
 ;;   "."
