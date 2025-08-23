@@ -25,7 +25,7 @@
   (scratch-buffer)
   (mapcar
    #'(lambda (b)
-       (ignore-errors
+       (progn
          (set-buffer-modified-p nil)
          (revert-buffer 1 1))
        (kill-buffer b))
@@ -511,7 +511,8 @@
 (defun $/kill-all-buffers-and-flush-kill-ring ()
   "."
   (interactive)
-  (ignore-errors (kill-bufs) ($/flush-kill-ring) (erase-messages)))
+  (progn (kill-bufs) ($/flush-kill-ring) (erase-messages)     (while (> windows 1) (delete-window))
+))
 
 (defun $/string-hash-take-last-n-chars (algo hwm contents)
   "."
@@ -1820,13 +1821,34 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 
 (defun c$dg$ (&rest substrate)
   (interactive)
-  (ignore-errors
+  (progn
     (colorize-hexadecimal-text)
     ($/paint-mode-line)
     (disable-auto-save-list)
     (disable-bars)
     ($$$$$)))
 
+(defun enable-debug-on-error ()
+  (interactive)
+  (ignore-errors (erase-messages))
+  (setq debug-on-error t))
+(defun disable-debug-on-error ()
+  (interactive)
+  (ignore-errors (erase-messages))
+  (setq debug-on-error nil))
+
+(defun scratch-buffer()
+  "."
+  (interactive)
+  (let* ((candidate-buffers (-filter #'(lambda (name) (string= (buffer-name tbuf) "*scratch*")) (buffer-list)))
+         (total (length candidate-buffers))
+         (scratch-buffer-ref (cond ((eq 1 total) (car (append candidate-buffers)))
+                                   ((eq 0 total) (get-buffer-create "*scratch*"))
+                                   ((> 1 total) (error (format "unexpected number of buffers named *scratch* %s" total)))))
+         )
+
+    (switch-to-buffer scratch-buffer-ref nil t)
+    ))
 
 (defun replace-regexp-within-bounds(regexp replacement beg end)
   "."
