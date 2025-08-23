@@ -451,6 +451,8 @@
     (shfmt))
    ((string= "javacript-mode" ($/mode-name))
     (prettierjs))
+   ((string= "elisp-mode" ($/mode-name))
+    (elfmt))
    ((nil t))))
 
 (defun $/base64-encode-region (beg end)
@@ -1188,23 +1190,34 @@
 (defun git-commit()
   "."
   (interactive)
-  (let* ((commit-message (read-string "Commit Message: ")))
+  (let* ((git-commit-output-buf
+                     (get-buffer-create "*git-commit*"))
+         (filename (buffer-file-name-relative))
+         (commit-message (read-string "Commit Message: " (format "saves %s" filename))))
     (or
      (when (zerop (length commit-message))
        (user-error "aborted due to empty commit message"))
      (if (eq 0
-             (let* ((git-commit-output-buf
-                     (get-buffer-create "*git-commit*"))
+             (let* (
                     (exitcode
-                     (call-process "git" nil git-commit-output-buf nil "commit" "-m"
+                     (call-process "git" nil git-commit-output-buf nil "commit" (buffer-file-name-relative) "-m"
                                    (format "'%s'" commit-message))))
                exitcode))
-         (message (format "commited '%s'" commit-message))
-       (user-error
+(progn         (message (format "commited '%s'" commit-message)) (kill-buffer git-commit-output-buf))
+       (progn (user-error
         (format "failed to commit '%s': %s" commit-message
                 (with-current-buffer git-commit-output-buf
                   (widen)
-                  (buffer-string))))))))
+                  (buffer-string)))
+        (kill-buffer git-commit-output-buf))
+        )))))
+
+
+(defun git-save()
+  "."
+  (interactive)
+  (git-add)
+  (git-commit))
 
 
 
@@ -1590,7 +1603,7 @@
      (when (eq exit-code 0)
        (progn
          (message
-          (format "%s prettified"
+          (format "%s formatted"
                   (abbreviate-file-name current-filename)))
          (revert-buffer t t t)))
      (progn
@@ -1622,12 +1635,39 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
      (when (eq exit-code 0)
        (progn
          (message
-          (format "%s prettified"
+          (format "%s formatted"
                   (abbreviate-file-name current-filename)))
          (revert-buffer t t t)))
      (progn
        (user-error
         (format "shfmt -bn -ci -i 4 -ln=bash -w %s failed with code: %s"
+                (abbreviate-file-name current-filename)
+                exit-code))))))
+
+
+(defun elfmt()
+  "."
+  (interactive)
+  (let* ((current-filename (expand-file-name (buffer-file-name)))
+         (tmp-buffer-name (format "*elfmt:%s*" current-filename))
+         (tmp-buffer (get-buffer-create tmp-buffer-name))
+         (exit-code
+          (call-process "elfmt"
+                        nil
+                        tmp-buffer
+                        nil current-filename )))
+    (message
+     (format "elfmt %s exitted with code: %s" current-filename exit-code))
+    (or
+     (when (eq exit-code 0)
+       (progn
+         (message
+          (format "%s formatted"
+                  (abbreviate-file-name current-filename)))
+         (revert-buffer t t t)))
+     (progn
+       (user-error
+        (format "elfmt %s failed with code: %s"
                 (abbreviate-file-name current-filename)
                 exit-code))))))
 

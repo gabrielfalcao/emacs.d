@@ -9,4 +9,8 @@ custom.el
 /sandbox
 /tramp
 /transient
-
+*.elc
+*.eln
+*.elc.*
+*.eln.*
+/session.*
