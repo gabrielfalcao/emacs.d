@@ -1957,17 +1957,21 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 
 (defun reload() "." (interactive) (revert-buffer nil t))
 
+(defun current-notes-location()
+  "."
+  (expand-file-name "~/projects/notes"))
+
 (defun open-note(note-name)
   (let* ((name (file-name-base note-name))
          (old-notes-location "~/projects/work/poems.codes/poc")
-         (current-notes-location "~/projects/notes")
+
          (old-path
           (format "~/projects/work/poems.codes/poc/%s.rst" name))
-         (note-path (format "%s/%s.rst" current-notes-location name)))
+         (note-path (format "%s/%s.rst" (current-notes-location) name)))
 
     (when (not (file-exists-p current-notes-location))
       (progn
-        (mkdir current-notes-location t)
+        (mkdir (current-notes-location) t)
         (message (format "mkdir %s" current-notes-location))))
     (message
      (format "note-name: %s"
@@ -1991,7 +1995,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
         ;; rename file to name with timestamp if note-path exists
         (progn
           (let ((stamped-note-path
-                 (format "%s/%s%s.rst" current-notes-location name
+                 (format "%s/%s%s.rst" (current-notes-location) name
                          (format-time-string "%Y-%m-%dT%H%M%S"))))
             ;; (copy-file old-path stamped-note-path t t t t)
             (rename-file old-path stamped-note-path t)
@@ -2000,17 +2004,54 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
     (find-file note-path)))
 
 
+(defun insert-timestamp-for-mode(timestamp-to-insert)
+  "."
+  (if (not (stringp timestamp))
+      (user-error (format "format-timestamp-for-mode received non-string argument %S" timestamp))
+  (let ((text-to-insert (format "%s " timestamp-to-insert)))
+    (or (when (or (string= "rest-mode" ($/mode-name)) (string= "markdown-mode" ($/mode-name)))
+          (setq text-to-insert (format "- at %s:\n  - Journal entry ..." timestamp-to-insert))
+          (newline)
+          (beginning-of-line 0)))
+    (insert text-to-insert))))
+
 (defun insert-timestamp()
   "."
-  (interactive)
-  (insert (format-time-string "%Y-%m-%dT%H:%M:%S%Z")))
+  (interactive "*")
+  (insert-timestamp-for-mode (format-time-string "%Y-%m-%dT%H:%M:%S%Z")))
 
 (defun insert-date()
   "."
   (interactive)
-  (insert (format-time-string "%Y-%m-%d")))
+  (insert-timestamp-for-mode (format-time-string "%Y-%m-%d")))
+
+(defun insert-time()
+  "."
+  (interactive)
+  (insert-timestamp-for-mode (format-time-string "%H:%M:%S")))
 
 (defun wip() "." (interactive) (open-note "wip.rst"))
+
+(defun note()
+  "."
+  (interactive)
+  (let* ((file-compatible-timestamp (format-time-string "%Y-%m-%d-at-%H-%M-%S-%p-%Z"))
+         (title (format "%s" (format-time-string "Note %Y-%m-%dT at %H:%M%p %Z")))
+         (timestamp (format-time-string "%Y-%m-%dT%H:%M:%S%Z"))
+         (name (read-string "New Note Name: " (format "note-%s.rst" file-compatible-timestamp) t))
+         (note-path (format "%s/%s%s.rst" (current-notes-location) name
+                            file-compatible-timestamp))
+         (rst-note-file-header (format "%s\n%s\n\n\n" title (replace-regexp-in-string "." "~" title)))
+         (note-buffer (progn
+           (find-file note-path)
+           (find-buffer-visiting note-path nil))))
+    (switch-to-buffer note-buffer)
+    (insert rst-note-file-header)
+    (write-file note-path nil)
+    (git-add)
+    (insert-timestamp)
+    ))
+
 
 (defun todo()
   "."
@@ -2041,11 +2082,6 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
        beg end
        #'(lambda () (regex-ansi-underline-to-spaced region))))))
 
-(defun entry()
-  "."
-  (interactive)
-  (insert (format-time-string "%Y/%m/%dT%H:%M:%S" ))
-  )
 
 ;; (defun ansi-underline-to-spaced-region(start end)
 ;;   "."
