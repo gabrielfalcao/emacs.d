@@ -1,5 +1,12 @@
 (defun string-shift-right (g) "." (format "\t%s" g))
 
+(if (not (functionp 'scratch-buffer))
+(defun scratch-buffer()
+  "."
+  (interactive)
+  (switch-to-buffer (get-buffer-create "*scratch*" t) t t))
+(message (format "scratch-buffer already defined")))
+
 (defun delete-package (pkg-desc &optional force nosave)
   "."
   (interactive
@@ -1837,10 +1844,6 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
   (ignore-errors (erase-messages))
   (setq debug-on-error nil))
 
-(defun scratch-buffer()
-  "."
-  (interactive)
-  (switch-to-buffer (get-buffer-create "*scratch*")))
 
 (defun replace-regexp-within-bounds(regexp replacement beg end)
   "."
