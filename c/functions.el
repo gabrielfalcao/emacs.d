@@ -1840,15 +1840,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 (defun scratch-buffer()
   "."
   (interactive)
-  (let* ((candidate-buffers (-filter #'(lambda (name) (string= (buffer-name tbuf) "*scratch*")) (buffer-list)))
-         (total (length candidate-buffers))
-         (scratch-buffer-ref (cond ((eq 1 total) (car (append candidate-buffers)))
-                                   ((eq 0 total) (get-buffer-create "*scratch*"))
-                                   ((> 1 total) (error (format "unexpected number of buffers named *scratch* %s" total)))))
-         )
-
-    (switch-to-buffer scratch-buffer-ref nil t)
-    ))
+  (switch-to-buffer (get-buffer-create "*scratch*")))
 
 (defun replace-regexp-within-bounds(regexp replacement beg end)
   "."
