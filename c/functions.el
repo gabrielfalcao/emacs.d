@@ -1605,7 +1605,7 @@
 ;; https://github.com/mvdan/sh
 ;; go install mvdan.cc/sh/v3/cmd/shfmt@latest
 
-shfmt -bn -ci -sr -kp -i 4 -ln=bash -w %s
+shfmt -bn -ci -i 4 -ln=bash -w %s
 "
   (interactive)
   (let* ((current-filename (expand-file-name (buffer-file-name)))
@@ -1615,9 +1615,9 @@ shfmt -bn -ci -sr -kp -i 4 -ln=bash -w %s
           (call-process "shfmt"
                         nil
                         tmp-buffer
-                        nil "-bn" "-ci" "-sr" "-kp" "-i" "4" "-ln=bash" "-w" current-filename )))
+                        nil "-bn" "-ci" "-i" "4" "-ln=bash" "-w" current-filename )))
     (message
-     (format "shfmt -bn -ci -sr -kp -i 4 -ln=bash -w %s exitted with code: %s" current-filename exit-code))
+     (format "shfmt -bn -ci -i 4 -ln=bash -w %s exitted with code: %s" current-filename exit-code))
     (or
      (when (eq exit-code 0)
        (progn
@@ -1627,7 +1627,7 @@ shfmt -bn -ci -sr -kp -i 4 -ln=bash -w %s
          (revert-buffer t t t)))
      (progn
        (user-error
-        (format "shfmt -bn -ci -sr -kp -i 4 -ln=bash -w %s failed with code: %s"
+        (format "shfmt -bn -ci -i 4 -ln=bash -w %s failed with code: %s"
                 (abbreviate-file-name current-filename)
                 exit-code))))))
 
