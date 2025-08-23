@@ -10,6 +10,7 @@
   ;; (setq case-fold-search t)
   (defalias 'yes-or-no-p 'y-or-n-p)
   (defalias 'describe 'describe-symbol)
+  (defalias 'entry 'insert-timestamp)
   )
 (add-to-list 'custom-safe-themes "5bd001a0f95d54174370e9275b1f594829930a1a95ed82741a5492facb7415e7")
 (set-face-attribute 'default nil :font "JetBrains Mono-15")
