@@ -149,6 +149,7 @@
 (setq ns-function-modifier 'control)
 (setq ns-option-modifier 'meta)
 (setq ns-command-modifier 'meta)
+(setq x-super-keysym 'meta)
 
 
 ($/set-key '("C-x C--") 'text-scale-adjust)
