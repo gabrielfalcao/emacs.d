@@ -2100,13 +2100,12 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
        #'(lambda () (regex-ansi-underline-to-spaced region))))))
 
 
-;; (defun ansi-underline-to-spaced-region(start end)
-;;   "."
-;;   (interactive "*r")
-;;   (save-excursion
-;;     (let ((end (copy-marker end)))
-;;       (while (progn
-;;                (goto-char start)
-;;                (re-search-forward "^\\(\\s-+\\)\\(bar_text_left\\s-+\\)\\([0-9]+\\)\\s-+\\([0-9]+\\)\\(\\s-*.*\\)[$](ansi_underline\\s-+\\(\"[^\"]+\"\\))"
-;;                  end t))
-;;         (replace-match "\\1\\2 \\3 \\4\\5$(ansi_spaced \\4 \\3 \\6)")))))
+(defun shebang()
+  "."
+  (interactive)
+  (save-mark-and-excursion
+            (widen)
+            (goto-char (point-min))
+            (insert "#!/usr/bin/env bash")
+
+      ))
