@@ -19,18 +19,34 @@
               (define-key python-mode-map
                           (kbd "C-c C-f")
                           'blacken-buffer)))
+
+(add-hook 'elisp-mode-hook
+          #'(lambda ()
+              (interactive)
+              (define-key elisp-mode-map
+                          (kbd "C-c C-f")
+                          'elfmt)))
+(add-hook 'shell-script-mode-hook
+          #'(lambda ()
+              (interactive)
+              (define-key shell-script-mode-map
+                          (kbd "C-c C-f")
+                          'shfmt)))
+
+
 (add-hook 'typescript-mode-hook
           #'(lambda ()
               (interactive)
               (define-key typescript-mode-map
                           (kbd "C-c C-f")
-                          '$/pl/fmt/prettierjs)))
+                          'prettierjs)))
+
 (add-hook 'javascript-mode-hook
           #'(lambda ()
               (interactive)
               (define-key typescript-mode-map
                           (kbd "C-c C-f")
-                          '$/pl/fmt/prettierjs)))
+                          'prettierjs)))
 (add-hook 'shell-script-mode-hook
           #'(lambda ()
               (interactive)
