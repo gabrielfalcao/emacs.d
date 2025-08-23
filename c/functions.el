@@ -1,5 +1,12 @@
 (defun string-shift-right (g) "." (format "\t%s" g))
 
+(if (not (functionp 'scratch-buffer))
+(defun scratch-buffer()
+  "."
+  (interactive)
+  (switch-to-buffer (get-buffer-create "*scratch*" t) t t))
+(message (format "scratch-buffer already defined")))
+
 (defun delete-package (pkg-desc &optional force nosave)
   "."
   (interactive
@@ -25,7 +32,7 @@
   (scratch-buffer)
   (mapcar
    #'(lambda (b)
-       (ignore-errors
+       (progn
          (set-buffer-modified-p nil)
          (revert-buffer 1 1))
        (kill-buffer b))
@@ -203,16 +210,13 @@
                    (not(equal "0" eco))
                    (not(equal "0" ets)))
                   (progn (message "%s" err)))))))))
-                    ;; (set-buffer (get-buffer-create name t))
-                    ;; (insert-file-contents err nil nil nil t)
-                    ;; (read-only-mode nil)
-                    ;; (pop-to-buffer (get-buffer-create name t) 'display-buffer-same-window nil)
-                    ;; (display-buffer (current-buffer))))))))))
+;; (set-buffer (get-buffer-create name t))
+;; (insert-file-contents err nil nil nil t)
+;; (read-only-mode nil)
+;; (pop-to-buffer (get-buffer-create name t) 'display-buffer-same-window nil)
+;; (display-buffer (current-buffer))))))))))
 
-(defun $/pl/fmt/prettierjs ()
-  "."
-  (interactive)
-  (prettierjs))
+(defun $/pl/fmt/prettierjs () "." (interactive) (prettierjs))
 
 
 
@@ -245,8 +249,10 @@
         (if (string-match-p "\\s-*[(]\\(.\\|\n\\)+[)]\\s-*" region)
             (progn
               (eval-region beg end)
-              (when (string= (buffer-file-name) (buffer-name))
-                (message (format "%s eval'd" (buffer-file-name)))))
+              (or (when (string= (file-name-nondirectory (buffer-file-name)) (buffer-name))
+                    (message (format "%s eval'd" (buffer-name))))
+                  (message (format "buffer-file-name=%s buffer-name=%s eval'd" (buffer-file-name) (buffer-name)))
+                  ))
           (message "does not seem to be valid elisp: %s" region)))
     (message "\"%s\" aint no el" (buffer-name))))
 
@@ -452,6 +458,8 @@
     (shfmt))
    ((string= "javacript-mode" ($/mode-name))
     (prettierjs))
+   ((string= "elisp-mode" ($/mode-name))
+    (elfmt))
    ((nil t))))
 
 (defun $/base64-encode-region (beg end)
@@ -475,10 +483,10 @@
                                    (collapse-string-2 region))))))
 
 (defun $/mt(p) "P." (interactive) p)
-  ;; (let* ((p (replace-regexp-in-string "[o-t]" "🧾" p))
-  ;;        (p (replace-regexp-in-string "[s-w]" "🖍️" p))
-  ;;        (p (replace-regexp-in-string "[xX]" "👥️" p)))
-  ;;   p))
+;; (let* ((p (replace-regexp-in-string "[o-t]" "🧾" p))
+;;        (p (replace-regexp-in-string "[s-w]" "🖍️" p))
+;;        (p (replace-regexp-in-string "[xX]" "👥️" p)))
+;;   p))
 
 
 (defun $/fm ()
@@ -510,7 +518,8 @@
 (defun $/kill-all-buffers-and-flush-kill-ring ()
   "."
   (interactive)
-  (ignore-errors (kill-bufs) ($/flush-kill-ring) (erase-messages)))
+  (progn (kill-bufs) ($/flush-kill-ring) (erase-messages)     (while (> windows 1) (delete-window))
+))
 
 (defun $/string-hash-take-last-n-chars (algo hwm contents)
   "."
@@ -1018,9 +1027,9 @@
           (file-name-sans-extension (file-name-base current-file-name))))
     (or
      (when (string= no-extension "mod")
-       (file-name-parent-directory current-file-name))
+       (file-name-directory current-file-name))
      (when (string= no-extension "lib")
-       (file-name-parent-directory current-file-name))
+       (file-name-directory current-file-name))
      current-file-name)))
 
 (defun rust-guess-package-name-of-file (filename)
@@ -1041,11 +1050,20 @@
            (rust-path-to-current-file-mod)
            nil 'confirm-after-completion))))
 
-    (insert
-     (shell-command-to-string
-      (format "rust-autocomplete list '%s'" rust-file-name)))
-    (insert (format "\n"))
-    (rust-format-buffer)))
+    (let* ((tmp-buffer-name (format "*rust-autocomplete:%s*" rust-file-name))
+           (tmp-buffer (get-buffer-create tmp-buffer-name))
+           (exit-code (call-process "rust-autocomplete" nil tmp-buffer nil "list" rust-file-name)))
+      (if (eq 0 exit-code)
+          (let ((items (with-current-buffer tmp-buffer (widen) (buffer-substring-no-properties (point-min) (point-max)))))
+            (kill-buffer tmp-buffer)
+            (insert (format "\n%s\n" items))
+            (rust-format-buffer)
+            )
+	(progn
+          (switch-to-buffer tmp-buffer)
+          (user-error (format "failed to list items of file %s" (abbreviate-file-name (rust-file-name)))))
+	)
+      )))
 
 (defun rust-delete-comments ()
   "."
@@ -1094,7 +1112,7 @@
 
          (test-names
           (mapcar #'(lambda (name) (file-name-base name)) test-files))
-         (entries (-zip test-names test-files))
+         (entries (-zip-pair test-names test-files))
          (toml-entries
           (mapcar
            #'(lambda (entry)
@@ -1111,7 +1129,7 @@
   (message toml-entries)
   (find-file
    (file-name-concat
-    (file-name-parent-directory folder-path)
+    (file-name-directory folder-path)
     "Cargo.toml"))
   (with-current-buffer "Cargo.toml"
     (widen)
@@ -1180,23 +1198,34 @@
 (defun git-commit()
   "."
   (interactive)
-  (let* ((commit-message (read-string "Commit Message: ")))
+  (let* ((git-commit-output-buf
+                     (get-buffer-create "*git-commit*"))
+         (filename (buffer-file-name-relative))
+         (commit-message (read-string "Commit Message: " (format "saves %s" filename))))
     (or
      (when (zerop (length commit-message))
        (user-error "aborted due to empty commit message"))
      (if (eq 0
-             (let* ((git-commit-output-buf
-                     (get-buffer-create "*git-commit*"))
+             (let* (
                     (exitcode
-                     (call-process "git" nil git-commit-output-buf nil "commit" "-m"
+                     (call-process "git" nil git-commit-output-buf nil "commit" (buffer-file-name-relative) "-m"
                                    (format "'%s'" commit-message))))
                exitcode))
-         (message (format "commited '%s'" commit-message))
-       (user-error
+(progn         (message (format "commited '%s'" commit-message)) (kill-buffer git-commit-output-buf))
+       (progn (user-error
         (format "failed to commit '%s': %s" commit-message
                 (with-current-buffer git-commit-output-buf
                   (widen)
-                  (buffer-string))))))))
+                  (buffer-string)))
+        (kill-buffer git-commit-output-buf))
+        )))))
+
+
+(defun git-save()
+  "."
+  (interactive)
+  (git-add)
+  (git-commit))
 
 
 
@@ -1235,7 +1264,7 @@
      (format "git commit --amend -m '%s'"
              (format "%s\n%s (%s)" last-commit-message
                      (file-name-nondirectory filename)
-                     (time-stamp-string "%Y-%m-%d %H:%M:%S"))))
+                     (format-time-string "%Y-%m-%d %H:%M:%S"))))
     (set-buffer-modified-p nil)))
 
 
@@ -1569,10 +1598,8 @@
   "."
   (interactive)
   (let* ((current-filename (expand-file-name (buffer-file-name)))
-         (tmp-buffer-name
-           (format "*prettierjs:%s*" current-filename))
-         (tmp-buffer
-          (get-buffer-create tmp-buffer-name))
+         (tmp-buffer-name (format "*prettierjs:%s*" current-filename))
+         (tmp-buffer (get-buffer-create tmp-buffer-name))
          (exit-code
           (call-process "prettier"
                         nil
@@ -1583,12 +1610,15 @@
     (or
      (when (eq exit-code 0)
        (progn
-         (message (format "%s prettified" (abbreviate-file-name current-filename)))
+         (message
+          (format "%s formatted"
+                  (abbreviate-file-name current-filename)))
          (revert-buffer t t t)))
      (progn
        (user-error
-        (format "prettier -w %s failed with code: %s" (abbreviate-file-name current-filename) exit-code)))
-     )))
+        (format "prettier -w %s failed with code: %s"
+                (abbreviate-file-name current-filename)
+                exit-code))))))
 
 
 (defun shfmt()
@@ -1596,39 +1626,58 @@
 ;; https://github.com/mvdan/sh
 ;; go install mvdan.cc/sh/v3/cmd/shfmt@latest
 
-shfmt -bn -ci -sr -kp -i 4 -ln=bash -w %s
+shfmt -bn -ci -i 4 -ln=bash -w %s
 "
   (interactive)
   (let* ((current-filename (expand-file-name (buffer-file-name)))
-         (tmp-buffer-name
-           (format "*shfmt:%s*" current-filename))
-         (tmp-buffer
-          (get-buffer-create tmp-buffer-name))
-           (format "*shfmt:%s*" current-filename))
-         (shfmt-args '("-bn" "-ci" "-sr" "-kp" "-i" "4" "-ln=bash" "-w" current-filename))
-         (call-process-args (append '("shfmt"
-                        nil
-                        tmp-buffer
-                        nil) shfmt-args))
-         (exit-code
-          (apply #call-process call-process-args)))
-
+         (tmp-buffer-name (format "*shfmt:%s*" current-filename))
+         (tmp-buffer (get-buffer-create tmp-buffer-name))
          (exit-code
           (call-process "shfmt"
                         nil
                         tmp-buffer
-                        nil "-bn" "-ci" "-sr" "-kp" "-i" "4" "-ln=bash" "-w" current-filename )))
+                        nil "-bn" "-ci" "-i" "4" "-ln=bash" "-w" current-filename )))
     (message
-     (format "shfmt -bn -ci -sr -kp -i 4 -ln=bash -w %s exitted with code: %s" current-filename exit-code))
+     (format "shfmt -bn -ci -i 4 -ln=bash -w %s exitted with code: %s" current-filename exit-code))
     (or
      (when (eq exit-code 0)
        (progn
-         (message (format "%s prettified" (abbreviate-file-name current-filename)))
+         (message
+          (format "%s formatted"
+                  (abbreviate-file-name current-filename)))
          (revert-buffer t t t)))
      (progn
        (user-error
-        (format "shfmt -bn -ci -sr -kp -i 4 -ln=bash -w %s failed with code: %s" (abbreviate-file-name current-filename) exit-code)))
-     )))
+        (format "shfmt -bn -ci -i 4 -ln=bash -w %s failed with code: %s"
+                (abbreviate-file-name current-filename)
+                exit-code))))))
+
+
+(defun elfmt()
+  "."
+  (interactive)
+  (let* ((current-filename (expand-file-name (buffer-file-name)))
+         (tmp-buffer-name (format "*elfmt:%s*" current-filename))
+         (tmp-buffer (get-buffer-create tmp-buffer-name))
+         (exit-code
+          (call-process "elfmt"
+                        nil
+                        tmp-buffer
+                        nil current-filename )))
+    (message
+     (format "elfmt %s exitted with code: %s" current-filename exit-code))
+    (or
+     (when (eq exit-code 0)
+       (progn
+         (message
+          (format "%s formatted"
+                  (abbreviate-file-name current-filename)))
+         (revert-buffer t t t)))
+     (progn
+       (user-error
+        (format "elfmt %s failed with code: %s"
+                (abbreviate-file-name current-filename)
+                exit-code))))))
 
 (defun git-restore()
   "."
@@ -1779,12 +1828,21 @@ shfmt -bn -ci -sr -kp -i 4 -ln=bash -w %s
 
 (defun c$dg$ (&rest substrate)
   (interactive)
-  (ignore-errors
+  (progn
     (colorize-hexadecimal-text)
     ($/paint-mode-line)
     (disable-auto-save-list)
     (disable-bars)
     ($$$$$)))
+
+(defun enable-debug-on-error ()
+  (interactive)
+  (ignore-errors (erase-messages))
+  (setq debug-on-error t))
+(defun disable-debug-on-error ()
+  (interactive)
+  (ignore-errors (erase-messages))
+  (setq debug-on-error nil))
 
 
 (defun replace-regexp-within-bounds(regexp replacement beg end)
@@ -1898,17 +1956,39 @@ shfmt -bn -ci -sr -kp -i 4 -ln=bash -w %s
 (setq debug-on-error nil)
 
 
+(defun find-file-if-exists(file-path)
+  "."
+  (if (file-exists-p file-path)
+      (find-file file-path)
+    (user-error (format "file does not exist: %s" file-path))))
+
+(defun wip()
+  "."
+  (interactive)
+  (find-file-if-exists "~/projects/work/poems.codes/poc/wip.rst"))
+
+(defun ps1()
+  "."
+  (interactive)
+  (find-file-if-exists "~/.config/ps1.toml"))
+
+(defun reload() "." (interactive) (revert-buffer nil t))
+
+(defun current-notes-location()
+  "."
+  (expand-file-name "~/projects/notes"))
+
 (defun open-note(note-name)
   (let* ((name (file-name-base note-name))
          (old-notes-location "~/projects/work/poems.codes/poc")
-         (current-notes-location "~/projects/notes")
+
          (old-path
           (format "~/projects/work/poems.codes/poc/%s.rst" name))
-         (note-path (format "%s/%s.rst" current-notes-location name)))
+         (note-path (format "%s/%s.rst" (current-notes-location) name)))
 
     (when (not (file-exists-p current-notes-location))
       (progn
-        (mkdir current-notes-location t)
+        (mkdir (current-notes-location) t)
         (message (format "mkdir %s" current-notes-location))))
     (message
      (format "note-name: %s"
@@ -1932,8 +2012,8 @@ shfmt -bn -ci -sr -kp -i 4 -ln=bash -w %s
         ;; rename file to name with timestamp if note-path exists
         (progn
           (let ((stamped-note-path
-                 (format "%s/%s%s.rst" current-notes-location name
-                         (time-stamp-string "%Y-%m-%dT%H%M%S"))))
+                 (format "%s/%s%s.rst" (current-notes-location) name
+                         (format-time-string "%Y-%m-%dT%H%M%S"))))
             ;; (copy-file old-path stamped-note-path t t t t)
             (rename-file old-path stamped-note-path t)
             (message
@@ -1941,17 +2021,54 @@ shfmt -bn -ci -sr -kp -i 4 -ln=bash -w %s
     (find-file note-path)))
 
 
+(defun insert-timestamp-for-mode(timestamp-to-insert)
+  "."
+  (if (not (stringp timestamp))
+      (user-error (format "format-timestamp-for-mode received non-string argument %S" timestamp))
+  (let ((text-to-insert (format "%s " timestamp-to-insert)))
+    (or (when (or (string= "rest-mode" ($/mode-name)) (string= "markdown-mode" ($/mode-name)))
+          (setq text-to-insert (format "- at %s:\n  - Journal entry ..." timestamp-to-insert))
+          (newline)
+          (beginning-of-line 0)))
+    (insert text-to-insert))))
+
 (defun insert-timestamp()
   "."
-  (interactive)
-  (insert (time-stamp-string "%Y-%m-%dT%H:%M:%S%Z")))
+  (interactive "*")
+  (insert-timestamp-for-mode (format-time-string "%Y-%m-%dT%H:%M:%S%Z")))
 
 (defun insert-date()
   "."
   (interactive)
-  (insert (time-stamp-string "%Y-%m-%d")))
+  (insert-timestamp-for-mode (format-time-string "%Y-%m-%d")))
+
+(defun insert-time()
+  "."
+  (interactive)
+  (insert-timestamp-for-mode (format-time-string "%H:%M:%S")))
 
 (defun wip() "." (interactive) (open-note "wip.rst"))
+
+(defun note()
+  "."
+  (interactive)
+  (let* ((file-compatible-timestamp (format-time-string "%Y-%m-%d-at-%H-%M-%S-%p-%Z"))
+         (title (format "%s" (format-time-string "Note %Y-%m-%dT at %H:%M%p %Z")))
+         (timestamp (format-time-string "%Y-%m-%dT%H:%M:%S%Z"))
+         (name (read-string "New Note Name: " (format "note-%s.rst" file-compatible-timestamp) t))
+         (note-path (format "%s/%s%s.rst" (current-notes-location) name
+                            file-compatible-timestamp))
+         (rst-note-file-header (format "%s\n%s\n\n\n" title (replace-regexp-in-string "." "~" title)))
+         (note-buffer (progn
+           (find-file note-path)
+           (find-buffer-visiting note-path nil))))
+    (switch-to-buffer note-buffer)
+    (insert rst-note-file-header)
+    (write-file note-path nil)
+    (git-add)
+    (insert-timestamp)
+    ))
+
 
 (defun todo()
   "."
@@ -1983,13 +2100,12 @@ shfmt -bn -ci -sr -kp -i 4 -ln=bash -w %s
        #'(lambda () (regex-ansi-underline-to-spaced region))))))
 
 
-;; (defun ansi-underline-to-spaced-region(start end)
-;;   "."
-;;   (interactive "*r")
-;;   (save-excursion
-;;     (let ((end (copy-marker end)))
-;;       (while (progn
-;;                (goto-char start)
-;;                (re-search-forward "^\\(\\s-+\\)\\(bar_text_left\\s-+\\)\\([0-9]+\\)\\s-+\\([0-9]+\\)\\(\\s-*.*\\)[$](ansi_underline\\s-+\\(\"[^\"]+\"\\))"
-;;                  end t))
-;;         (replace-match "\\1\\2 \\3 \\4\\5$(ansi_spaced \\4 \\3 \\6)")))))
+(defun shebang()
+  "."
+  (interactive)
+  (save-mark-and-excursion
+            (widen)
+            (goto-char (point-min))
+            (insert "#!/usr/bin/env bash")
+
+      ))
