@@ -2103,9 +2103,12 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 (defun shebang()
   "."
   (interactive)
+  (let ((curpoint (point)))
   (save-mark-and-excursion
-            (widen)
-            (goto-char (point-min))
-            (insert "#!/usr/bin/env bash")
+    (widen)
 
-      ))
+            (goto-char (point-min))
+            (insert "#!/usr/bin/env bash\n\n")
+            (goto-char curpoint)
+
+      )))
