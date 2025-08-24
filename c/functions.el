@@ -2124,3 +2124,8 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
             (message (format "elc cleanup error:\n'%s'" stderr ))
           )
     )))
+
+(defun shell-script-expand-oneliner (beg end)
+  (interactive "r")
+  (replace-regexp-in-region "\\b\\(do\\|done\\|then\\|else\\|fi\\)\\b" "\n\\1\n" beg end)
+)
