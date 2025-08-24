@@ -1,11 +1,10 @@
 (defun string-shift-right (g) "." (format "\t%s" g))
 
-(if (not (functionp 'scratch-buffer))
+(when (not (functionp 'scratch-buffer))
 (defun scratch-buffer()
   "."
   (interactive)
-  (switch-to-buffer (get-buffer-create "*scratch*" t) t t))
-(message (format "scratch-buffer already defined")))
+  (switch-to-buffer (get-buffer-create "*scratch*" t) t t)))
 
 (defun delete-package (pkg-desc &optional force nosave)
   "."
@@ -2106,9 +2105,22 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
   (let ((curpoint (point)))
   (save-mark-and-excursion
     (widen)
-
-            (goto-char (point-min))
-            (insert "#!/usr/bin/env bash\n\n")
-            (goto-char curpoint)
-
+    (goto-char (point-min))
+    (insert "#!/usr/bin/env bash\n\n")
+    (goto-char curpoint)
       )))
+
+(defun cleanup-elc()
+  "."
+  (interactive)
+  (let* ((tmp (get-buffer-create "*cleanup-elc*"))
+         (exit-code (call-process "cleanup-elc" nil tmp))
+         (stderr (with-current-buffer tmp (widen) (buffer-substring-no-properties (point-min) (point-max))))
+         )
+    (cond (
+           (eq 0 exit-code)
+            (message (format "elc cleanup ok" ))
+           (length> stderr 0)
+            (message (format "elc cleanup error:\n'%s'" stderr ))
+          )
+    )))
