@@ -24,18 +24,26 @@
               (interactive)
               (define-key typescript-mode-map
                           (kbd "C-c C-f")
-                          '$/pl/fmt/prettierjs)))
+                          'prettierjs)))
 (add-hook 'javascript-mode-hook
           #'(lambda ()
               (interactive)
               (define-key typescript-mode-map
                           (kbd "C-c C-f")
-                          '$/pl/fmt/prettierjs)))
+                          'prettierjs)))
+
+(defvar shell-script-mode-map
+  (let ((keymap (make-sparse-keymap)))
+    (define-key keymap (kbd "C-c C-f") #'shfmt)
+    keymap)
+  "Keymap for `shell-script-mode'.")
+(defalias 'sh-mode-map 'shell-script-mode-map)
+
 (add-hook 'shell-script-mode-hook
           #'(lambda ()
               (interactive)
-              (setq sh-mode-map (make-sparse-keymap))
-              (setq 'sh-basic-offset 6)))
+              (setq 'sh-basic-offset 6)
+              ))
 (add-hook 'web-mode-hook
           #'(lambda ()
               (interactive)
