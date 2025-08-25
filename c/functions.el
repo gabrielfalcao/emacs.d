@@ -2023,8 +2023,8 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 
 (defun insert-timestamp-for-mode(timestamp-to-insert)
   "."
-  (if (not (stringp timestamp))
-      (user-error (format "format-timestamp-for-mode received non-string argument %S" timestamp))
+  (if (not (stringp timestamp-to-insert))
+      (user-error (format "format-timestamp-for-mode received non-string argument %S" timestamp-to-insert))
   (let ((text-to-insert (format "%s " timestamp-to-insert)))
     (or (when (or (string= "rest-mode" ($/mode-name)) (string= "markdown-mode" ($/mode-name)))
           (setq text-to-insert (format "- at %s:\n  - Journal entry ..." timestamp-to-insert))
@@ -2109,3 +2109,13 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
             (insert "#!/usr/bin/env bash")
 
       ))
+
+
+(defun make-script()
+  "."
+  (interactive)
+  (let* ((target (expand-file-name (buffer-file-name))))
+    (when (not (file-exists-p target))
+      (basic-save-buffer nil))
+    (chmod target "+x")
+    ))
