@@ -1975,7 +1975,13 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 
 (defun current-notes-location()
   "."
-  (expand-file-name "~/projects/notes"))
+  (let ((location (expand-file-name "~/projects/notes")))
+    (when (not (file-exists-p location))
+      (progn
+        (mkdir (current-notes-location) t)))
+    location))
+
+
 
 (defun open-note(note-name)
   (let* ((name (file-name-base note-name))
@@ -1985,10 +1991,6 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
           (format "~/projects/work/poems.codes/poc/%s.rst" name))
          (note-path (format "%s/%s.rst" (current-notes-location) name)))
 
-    (when (not (file-exists-p current-notes-location))
-      (progn
-        (mkdir (current-notes-location) t)
-        (message (format "mkdir %s" current-notes-location))))
     (message
      (format "note-name: %s"
              (propertize note-name 'face (list :foreground "#FC0"))))
