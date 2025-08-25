@@ -1,11 +1,5 @@
 (defun string-shift-right (g) "." (format "\t%s" g))
 
-(when (not (functionp 'scratch-buffer))
-(defun scratch-buffer()
-  "."
-  (interactive)
-  (switch-to-buffer (get-buffer-create "*scratch*" t) t t)))
-
 (defun delete-package (pkg-desc &optional force nosave)
   "."
   (interactive
@@ -248,10 +242,8 @@
         (if (string-match-p "\\s-*[(]\\(.\\|\n\\)+[)]\\s-*" region)
             (progn
               (eval-region beg end)
-              (or (when (string= (file-name-nondirectory (buffer-file-name)) (buffer-name))
-                    (message (format "%s eval'd" (buffer-name))))
-                  (message (format "buffer-file-name=%s buffer-name=%s eval'd" (buffer-file-name) (buffer-name)))
-                  ))
+              (when (string= (buffer-file-name) (buffer-name))
+                (message (format "%s eval'd" (buffer-file-name)))))
           (message "does not seem to be valid elisp: %s" region)))
     (message "\"%s\" aint no el" (buffer-name))))
 
@@ -1026,9 +1018,9 @@
           (file-name-sans-extension (file-name-base current-file-name))))
     (or
      (when (string= no-extension "mod")
-       (file-name-directory current-file-name))
+       (file-name-parent-directory current-file-name))
      (when (string= no-extension "lib")
-       (file-name-directory current-file-name))
+       (file-name-parent-directory current-file-name))
      current-file-name)))
 
 (defun rust-guess-package-name-of-file (filename)
