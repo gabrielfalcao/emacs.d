@@ -155,7 +155,7 @@
         (require 'markdown-mode)
       (progn
         (set-face-attribute 'markdown-markup-face nil :foreground $variable$))
-        (set-face-attribute 'markdown-link-face nil :foreground "#79B9FF")
+      (set-face-attribute 'markdown-link-face nil :foreground "#79B9FF")
       )
 
     (mapc #'(lambda (s)
