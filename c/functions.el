@@ -248,10 +248,8 @@
         (if (string-match-p "\\s-*[(]\\(.\\|\n\\)+[)]\\s-*" region)
             (progn
               (eval-region beg end)
-              (or (when (string= (file-name-nondirectory (buffer-file-name)) (buffer-name))
-                    (message (format "%s eval'd" (buffer-name))))
-                  (message (format "buffer-file-name=%s buffer-name=%s eval'd" (buffer-file-name) (buffer-name)))
-                  ))
+              (when (string= (buffer-file-name) (buffer-name))
+                (message (format "%s eval'd" (buffer-file-name)))))
           (message "does not seem to be valid elisp: %s" region)))
     (message "\"%s\" aint no el" (buffer-name))))
 
@@ -1026,9 +1024,9 @@
           (file-name-sans-extension (file-name-base current-file-name))))
     (or
      (when (string= no-extension "mod")
-       (file-name-directory current-file-name))
+       (file-name-parent-directory current-file-name))
      (when (string= no-extension "lib")
-       (file-name-directory current-file-name))
+       (file-name-parent-directory current-file-name))
      current-file-name)))
 
 (defun rust-guess-package-name-of-file (filename)
@@ -1187,6 +1185,32 @@
      (if (string-match-p ,regexp filename)
          (progn ,@body))))
 
+
+(defun git-status-porcelain()
+  "."
+  (let* ((git-status-output-buf
+          (get-buffer-create "*git-status-porcelain*"))
+         (exitcode
+          (call-process
+           "git" nil git-status-output-buf nil "status" "--porcelain"))
+         (output (with-current-buffer git-status-output-buf
+		   (widen)
+		   (buffer-string))))
+    (ignore-errors (kill-buffer git-status-output-buf))
+    '(exitcode output)))
+
+
+(defun git-status()
+  "."
+  (interactive)
+  (let* ((result (git-status-porcelain))
+         (exitcode (car result))
+         (output (car (cdr result))))
+
+    (if (eq 0 exitcode)
+        (message (format "git status ok: %s" output))
+      (user-error (format "git-status error (%s): %s" exitcode output)))
+    ))
 
 (defun git-current-branch()
   (car
@@ -1694,11 +1718,21 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
    (apply-partially #'string-match-p "^[*].*[*]$")
    (mapcar 'buffer-name (buffer-list))))
 
+
 (defun only-builtin-buffers-open-p()
   "returns `t' if all open buffers are only emacs buffers as determined by `buffer-list-builtin-only'"
   (=
    (length (buffer-list))
    (length (buffer-list-builtin-only))))
+
+
+(defun buffer-list-existing-files-only()
+  "returns all open emacs buffers which point at actually existing files."
+  (seq-filter
+   #'(lambda (buf) (and (not (null (buffer-file-name buf)))
+                        (file-exists-p (buffer-file-name buf))))
+   (buffer-list)
+   ))
 
 
 ;; (defun ask-whether-to-kill-emacs (&optional predicate)
@@ -2166,32 +2200,4 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
     (with-current-buffer wip-buffer
       (insert body))
     (message (format "saved to %s" (abbreviate-file-name wip-log-file-path)))
-    ))
-
-
-
-(defun git-status-porcelain()
-  "."
-  (let* ((git-status-output-buf
-          (get-buffer-create "*git-status-porcelain*"))
-         (exitcode
-          (call-process
-           "git" nil git-status-output-buf nil "status" "--porcelain"))
-         (output (with-current-buffer git-status-output-buf
-		   (widen)
-		   (buffer-string))))
-    (ignore-errors (kill-buffer git-status-output-buf))
-    '(exitcode output)))
-
-
-(defun git-status()
-  "."
-  (interactive)
-  (let* ((result (git-status-porcelain))
-         (exitcode (car result))
-         (output (car (cdr result))))
-
-    (if (eq 0 exitcode)
-        (message (format "git status ok: %s" output))
-      (user-error (format "git-status error (%s): %s" exitcode output)))
     ))
