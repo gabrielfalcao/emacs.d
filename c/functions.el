@@ -1686,11 +1686,19 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
    (apply-partially #'string-match-p "^[*].*[*]$")
    (mapcar 'buffer-name (buffer-list))))
 
+
 (defun only-builtin-buffers-open-p()
   "returns `t' if all open buffers are only emacs buffers as determined by `buffer-list-builtin-only'"
   (=
    (length (buffer-list))
    (length (buffer-list-builtin-only))))
+
+
+(defun buffer-list-existing-files-only()
+  "returns all open emacs buffers which point at actually existing files."
+  (seq-filter
+   #'(lambda (buf) (if (not (null (buffer-file-name buf)))
+                           (file-exists-p (buffer-file-name buf)))) (buffer-list)))
 
 
 ;; (defun ask-whether-to-kill-emacs (&optional predicate)
@@ -2123,3 +2131,18 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
   (interactive "r")
   (replace-regexp-in-region "\\b\\(do\\|done\\|then\\|else\\|fi\\)\\b" "\n\\1\n" beg end)
 )
+
+
+(defun logwip()
+  "."
+  (interactive)
+
+  (let* ((open-filenames (buffer-list-existing-files-only))
+         (filenames-lines (concat (mapcar
+                                   #'(lambda (name) (format "%s\n" name)) open-filenames)))
+         (timestamp (format-time-string "%Y-%m-%dT%H:%M:%S%Z"))
+         (header (format "Emacs WIP Buffers @ %s"))
+         (header-underline (replace-regexp-in-string "." "~" header))
+         (hr (replace-regexp-in-string "." "-" header))
+         (lines-to-write (format "%s\n%s\n\n%s\n%s\n" header header-underline hr)))
+    (message lines-to-write)))
