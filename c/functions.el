@@ -1697,8 +1697,10 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 (defun buffer-list-existing-files-only()
   "returns all open emacs buffers which point at actually existing files."
   (seq-filter
-   #'(lambda (buf) (if (not (null (buffer-file-name buf)))
-                           (file-exists-p (buffer-file-name buf)))) (buffer-list)))
+   #'(lambda (buf) (and (not (null (buffer-file-name buf)))
+                        (file-exists-p (buffer-file-name buf))))
+   (buffer-list)
+   ))
 
 
 ;; (defun ask-whether-to-kill-emacs (&optional predicate)
