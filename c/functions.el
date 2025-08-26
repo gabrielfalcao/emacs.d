@@ -2167,3 +2167,31 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
       (insert body))
     (message (format "saved to %s" (abbreviate-file-name wip-log-file-path)))
     ))
+
+
+
+(defun git-status-porcelain()
+  "."
+  (let* ((git-status-output-buf
+          (get-buffer-create "*git-status-porcelain*"))
+         (exitcode
+          (call-process
+           "git" nil git-status-output-buf nil "status" "--porcelain"))
+         (output (with-current-buffer git-status-output-buf
+		   (widen)
+		   (buffer-string))))
+    (ignore-errors (kill-buffer git-status-output-buf))
+    '(exitcode output)))
+
+
+(defun git-status()
+  "."
+  (interactive)
+  (let* ((result (git-status-porcelain))
+         (exitcode (car result))
+         (output (car (cdr result))))
+
+    (if (eq 0 exitcode)
+        (message (format "git status ok: %s" output))
+      (user-error (format "git-status error (%s): %s" exitcode output)))
+    ))
