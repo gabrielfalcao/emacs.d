@@ -54,7 +54,7 @@
            #'(lambda (frame)
                (set-frame-parameter frame 'fullscreen 'maximized)
                ($/paint-mode-line nil "new buffer")
-                 ))
+               ))
 ;; (add-hook 'toml-mode-hook #'(lambda () ( (local-set-key (kbd '("C-c C-f") 'toml-prettify-buffer)))))
 ;; (add-hook 'local-write-file-hooks 'git-add-opt-libexec)
 

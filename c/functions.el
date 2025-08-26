@@ -1,10 +1,10 @@
 (defun string-shift-right (g) "." (format "\t%s" g))
 
 (when (not (functionp 'scratch-buffer))
-(defun scratch-buffer()
-  "."
-  (interactive)
-  (switch-to-buffer (get-buffer-create "*scratch*" t) t t)))
+  (defun scratch-buffer()
+    "."
+    (interactive)
+    (switch-to-buffer (get-buffer-create "*scratch*" t) t t)))
 
 (defun delete-package (pkg-desc &optional force nosave)
   "."
@@ -518,7 +518,7 @@
   "."
   (interactive)
   (progn (kill-bufs) ($/flush-kill-ring) (erase-messages)     (while (> windows 1) (delete-window))
-))
+	 ))
 
 (defun $/string-hash-take-last-n-chars (algo hwm contents)
   "."
@@ -1198,7 +1198,7 @@
   "."
   (interactive)
   (let* ((git-commit-output-buf
-                     (get-buffer-create "*git-commit*"))
+          (get-buffer-create "*git-commit*"))
          (filename (buffer-file-name-relative))
          (commit-message (read-string "Commit Message: " (format "saves %s" filename))))
     (or
@@ -1210,14 +1210,14 @@
                      (call-process "git" nil git-commit-output-buf nil "commit" (buffer-file-name-relative) "-m"
                                    (format "'%s'" commit-message))))
                exitcode))
-(progn         (message (format "commited '%s'" commit-message)) (kill-buffer git-commit-output-buf))
+	 (progn         (message (format "commited '%s'" commit-message)) (kill-buffer git-commit-output-buf))
        (progn (user-error
-        (format "failed to commit '%s': %s" commit-message
-                (with-current-buffer git-commit-output-buf
-                  (widen)
-                  (buffer-string)))
-        (kill-buffer git-commit-output-buf))
-        )))))
+               (format "failed to commit '%s': %s" commit-message
+                       (with-current-buffer git-commit-output-buf
+			 (widen)
+			 (buffer-string)))
+               (kill-buffer git-commit-output-buf))
+              )))))
 
 
 (defun git-save()
@@ -2024,12 +2024,12 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
   "."
   (if (not (stringp timestamp))
       (user-error (format "format-timestamp-for-mode received non-string argument %S" timestamp))
-  (let ((text-to-insert (format "%s " timestamp-to-insert)))
-    (or (when (or (string= "rest-mode" ($/mode-name)) (string= "markdown-mode" ($/mode-name)))
-          (setq text-to-insert (format "- at %s:\n  - Journal entry ..." timestamp-to-insert))
-          (newline)
-          (beginning-of-line 0)))
-    (insert text-to-insert))))
+    (let ((text-to-insert (format "%s " timestamp-to-insert)))
+      (or (when (or (string= "rest-mode" ($/mode-name)) (string= "markdown-mode" ($/mode-name)))
+            (setq text-to-insert (format "- at %s:\n  - Journal entry ..." timestamp-to-insert))
+            (newline)
+            (beginning-of-line 0)))
+      (insert text-to-insert))))
 
 (defun insert-timestamp()
   "."
@@ -2059,8 +2059,8 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
                             file-compatible-timestamp))
          (rst-note-file-header (format "%s\n%s\n\n\n" title (replace-regexp-in-string "." "~" title)))
          (note-buffer (progn
-           (find-file note-path)
-           (find-buffer-visiting note-path nil))))
+			(find-file note-path)
+			(find-buffer-visiting note-path nil))))
     (switch-to-buffer note-buffer)
     (insert rst-note-file-header)
     (write-file note-path nil)
@@ -2103,11 +2103,11 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
   "."
   (interactive)
   (let ((curpoint (point)))
-  (save-mark-and-excursion
-    (widen)
-    (goto-char (point-min))
-    (insert "#!/usr/bin/env bash\n\n")
-    (goto-char curpoint)
+    (save-mark-and-excursion
+      (widen)
+      (goto-char (point-min))
+      (insert "#!/usr/bin/env bash\n\n")
+      (goto-char curpoint)
       )))
 
 (defun cleanup-elc()
@@ -2119,13 +2119,13 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
          )
     (cond (
            (eq 0 exit-code)
-            (message (format "elc cleanup ok" ))
+           (message (format "elc cleanup ok" ))
            (length> stderr 0)
-            (message (format "elc cleanup error:\n'%s'" stderr ))
-          )
-    )))
+           (message (format "elc cleanup error:\n'%s'" stderr ))
+           )
+	  )))
 
 (defun shell-script-expand-oneliner (beg end)
   (interactive "r")
   (replace-regexp-in-region "\\b\\(do\\|done\\|then\\|else\\|fi\\)\\b" "\n\\1\n" beg end)
-)
+  )
