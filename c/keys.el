@@ -43,7 +43,7 @@
 ($/set-key '("C-S-d") 'decr-next-number)
 ($/set-key '("C-S-i") 'incr-next-number)
 ($/set-key '("C-x C-x") '$/levate)
-($/set-key '("C-x C-z") #'(lambda () (interactive) (eval-buffer) (message "%s eval'd " (buffer-name))))
+($/set-key '("C-x C-a") #'(lambda () (interactive) (eval-buffer) (message "%s eval'd " (buffer-name))))
 
 ($/set-key '("C-x C--") 'text-scale-adjust)
 ($/set-key '("C-x C-+") 'text-scale-adjust)
@@ -130,6 +130,7 @@
 ($/set-key   "M-G" #'(lambda () (interactive) (insert "$")))
 ($/set-key   '("M-g g" "M-g M-g") 'goto-line)
 ($/set-key   "C-x C-z" #'(lambda () (interactive) (insert "\n")))
+($/set-key   "C-x C-j" #'(lambda () (interactive) (insert "\n")))
 
 (setq        ring-bell-function               'ignore)
 (global-set-key [kp-delete] 'delete-char)
