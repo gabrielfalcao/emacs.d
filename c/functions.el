@@ -223,10 +223,10 @@
 (defun buffer-elisp-heuristic()
   "."
   (or
-   (string="emacs-lisp-mode" ($/mode-name))
-   (string="elisp-mode" ($/mode-name))
-   (string="lisp-mode" ($/mode-name))
-   (string="el" (file-name-extension (buffer-file-name)))))
+   (string= "emacs-lisp-mode" ($/mode-name))
+   (string= "elisp-mode" ($/mode-name))
+   (string= "lisp-mode" ($/mode-name))
+   (string= "el" (file-name-extension (buffer-file-name)))))
 
 (defun region-points()
   "."
@@ -248,7 +248,7 @@
         (if (string-match-p "\\s-*[(]\\(.\\|\n\\)+[)]\\s-*" region)
             (progn
               (eval-region beg end)
-              (when (string= (buffer-file-name) (buffer-name))
+              (when (string= (abbreviate-file-name (buffer-file-name)) (buffer-name))
                 (message (format "%s eval'd" (buffer-file-name)))))
           (message "does not seem to be valid elisp: %s" region)))
     (message "\"%s\" aint no el" (buffer-name))))
@@ -527,8 +527,12 @@
 (defun server-reboot ()
   "."
   (interactive)
-  (server-force-delete)
-  (server-mode 9))
+  (ignore-errors
+    (server-force-delete))
+  (ignore-errors
+    (server-mode 9))
+  (ignore-errors
+    (server-start)))
 
 
 (defun $/hash (algo)
@@ -1358,10 +1362,16 @@
   (delete-comments-region (point-min) (point-max)))
 
 
-(defun flush-empty-lines ()
+(defun flush-empty-lines-region (beg end)
+  "."
+  (interactive "*r")
+  (flush-lines "^$" beg end nil))
+
+(defun flush-empty-lines-buffer ()
   "."
   (interactive)
-  (save-excursion (flush-lines "^$" (point-min) (point-max) nil)))
+  (save-excursion (widen) (flush-empty-lines-region (point-min) (point-max) )))
+
 
 
 (defun decr-next-number()
@@ -2201,3 +2211,58 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
       (insert body))
     (message (format "saved to %s" (abbreviate-file-name wip-log-file-path)))
     ))
+
+
+(defun file-is-git-tracked()
+  "."
+  (let* ((status-output (git-rev-parse (buffer-file-name)))
+         (status (car status-output))
+         (output (car (cdr status-output))))
+    (eq 0 status)))
+
+
+(defun git-rev-parse(arg)
+  "."
+  (let* ((extra-args (if (listp arg)
+                         arg
+                       '((format "%S" arg))))
+         (call-process-args (append '("git" nil git-rev-parse-output-buf nil "rev-parse") extra-args))
+         (git-rev-parse-output-buf
+          (get-buffer-create "*git-rev-parse*"))
+         (exitcode
+          (apply #'call-process call-process-args))
+         (output (with-current-buffer git-rev-parse-output-buf
+		   (widen)
+		   (buffer-string))))
+    (ignore-errors (kill-buffer git-rev-parse-output-buf))
+    '(exitcode output)))
+
+
+(defun git-delete()
+  "."
+  (let* ((git-status-output-buf
+          (get-buffer-create "*git-status-porcelain*"))
+         (exitcode
+          (call-process
+           "git" nil git-status-output-buf nil "rm" "-rf" (buffer-file-name)))
+         (output (with-current-buffer git-status-output-buf
+		   (widen)
+		   (buffer-string))))
+    (ignore-errors (kill-buffer git-status-output-buf))
+    '(exitcode output)))
+
+(defun call-program-with-list-args(program args)
+  "."
+  (if (not (stringp program))
+      (user-error (format "call-process-with-list-args: program is not a string: %S" program)))
+  (if (not (listp args))
+      (user-error (format "call-process-with-list-args: args (%s) is not a list" args)))
+  (let* ((program-to-call-output-buf
+          (get-buffer-create (format "*%s*" program)))
+         (exitcode
+          (apply #'call-process call-process-args))
+         (output (with-current-buffer program-to-call-output-buf
+		   (widen)
+		   (buffer-string))))
+    (ignore-errors (kill-buffer program-to-call-output-buf))
+    '(exitcode output)))
