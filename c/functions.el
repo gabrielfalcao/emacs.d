@@ -1254,6 +1254,36 @@
   (git-add)
   (git-commit))
 
+(defun git-push()
+  "."
+  (let* ((git-push-output-buf
+          (get-buffer-create "*git-push-porcelain*"))
+         (exitcode
+          (call-process
+           "git" nil git-push-output-buf nil "push" "--porcelain"))
+         (output (with-current-buffer git-push-output-buf
+		   (widen)
+		   (buffer-string))))
+    (ignore-errors (kill-buffer git-push-output-buf))
+    '(exitcode output)))
+
+
+(defun git-remote-names()
+  "."
+  (save-match-data (split-string (shell-command-to-string "git remote show -n") nil t )))
+
+(defun git-remote-get-url(remote-name)
+  "returns a cons cell where the head is the remote name and the tail is the remote url."
+  (let ((remote-url (shell-command-to-string (format "git remote get-url %s" remote-name))))
+    (cons remote-name remote-url)))
+
+
+(defun git-remotes()
+  "returns list of cons cells where the head is the remote name and the tail is the remote url."
+  (mapcar 'git-remote-get-url (git-remote-names)))
+
+
+(progn (message (format "%S" (git-remotes))))
 
 
 (defun git-commit-all()
@@ -2164,6 +2194,15 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
       (insert "#!/usr/bin/env bash\n\n")
       (goto-char curpoint)
       )))
+
+(defun make-script()
+  "."
+  (interactive)
+  (let* ((target (expand-file-name (buffer-file-name))))
+    (when (not (file-exists-p target))
+      (basic-save-buffer nil))
+    (chmod target "+x")
+    ))
 
 (defun cleanup-elc()
   "."
