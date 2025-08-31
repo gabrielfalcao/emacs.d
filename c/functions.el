@@ -1201,7 +1201,7 @@
 		   (widen)
 		   (buffer-string))))
     (ignore-errors (kill-buffer git-status-output-buf))
-    '(exitcode output)))
+    (cons exitcode output)))
 
 
 (defun git-status()
@@ -1254,18 +1254,57 @@
   (git-add)
   (git-commit))
 
-(defun git-push()
+(defun get-regexp-github-remote-url ()
   "."
-  (let* ((git-push-output-buf
-          (get-buffer-create "*git-push-porcelain*"))
-         (exitcode
-          (call-process
-           "git" nil git-push-output-buf nil "push" "--porcelain"))
+  "\(https://github[.]com[/]\|git@github[.]com[:]\)\([a-zA-Z0-9_-]+\)[/]\([a-zA-Z0-9_-]+\)[.]git"
+  )
+
+(defun get-git-remote-url-vendor-username-and-repo ()
+  "."
+  "\(https://[^.]+[.][^.]+[/]\|git@[^.]+[.][^.]+[:]\)\([a-zA-Z0-9_-]+\)[/]\([a-zA-Z0-9_-]+\)[.]git"
+  )
+
+(defun git-push(allow-github)
+  "."
+  (let* ((remotes (git-remote-names))
+         (allow-github (not (null allow-github)))
+         (linux-remote (-first #'(lambda (remote)
+                                    (string= "linux" (car remote)))
+                               remotes))
+         (github-remote (-first #'(lambda (remote)
+                                    (string-match (get-regexp-github-remote-url) (cdr remote) nil t )))
+                               remotes)
+         (has-linux-remote (not (null linux-remote)))
+         (has-github-remote (not (null github-remote)))
+         (push-remote (cond
+                            (has-linux-remote (car linux-remote))
+                            ((and allow-github has-github-remote) github-remote)
+                            (t (-first #'(lambda (remote)
+                                           (and (not (string= "linux" (car remote)))
+                                                (null (string-match (get-regexp-github-remote-url) (cdr remote) nil t ))
+                                                ))
+                                       remotes))
+                            )))
+    (cond
+     ((null push-remote) (let ((error-message
+                                (format "no suitable remotes found in current git dir (allow-github=%s)"
+                                        (if allow-github "true" "false"))))
+                           (user-error error-message)
+      (cons 101 error-message))
+      )
+     (t (let* (
+               (remote-name (car push-remote))
+               (remote-url (cdr push-remote))
+               (git-push-output-buf
+                (get-buffer-create (format "*git-push-%s*" remote-name)))
+               (exitcode
+                (call-process
+                 "git" nil git-push-output-buf nil "push" remote-name))
          (output (with-current-buffer git-push-output-buf
 		   (widen)
 		   (buffer-string))))
     (ignore-errors (kill-buffer git-push-output-buf))
-    '(exitcode output)))
+    (cons exitcode output))))))
 
 
 (defun git-remote-names()
@@ -1283,7 +1322,7 @@
   (mapcar 'git-remote-get-url (git-remote-names)))
 
 
-(progn (message (format "%S" (git-remotes))))
+;; (progn (message (format "%s" (git-remotes))))
 
 
 (defun git-commit-all()
@@ -2274,7 +2313,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 		   (widen)
 		   (buffer-string))))
     (ignore-errors (kill-buffer git-rev-parse-output-buf))
-    '(exitcode output)))
+    (cons exitcode output)))
 
 
 (defun git-delete()
@@ -2288,7 +2327,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 		   (widen)
 		   (buffer-string))))
     (ignore-errors (kill-buffer git-status-output-buf))
-    '(exitcode output)))
+    (cons exitcode output)))
 
 (defun call-program-with-list-args(program args)
   "."
@@ -2304,4 +2343,4 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 		   (widen)
 		   (buffer-string))))
     (ignore-errors (kill-buffer program-to-call-output-buf))
-    '(exitcode output)))
+    (cons exitcode output)))
