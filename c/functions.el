@@ -2348,7 +2348,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
           (call-process "stylua"
                         nil
                         tmp-buffer
-                        nil "--config-path" "~/.config/stylua.toml" current-filename )))
+                        nil "--config-path" (expand-file-name "~/.config/stylua.toml") current-filename )))
     (message
      (format "stylua %s exitted with code: %s" current-filename exit-code))
     (or
