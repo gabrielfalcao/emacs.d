@@ -181,44 +181,6 @@
                              (contrast-color faber)
                              :background faber)))))))
 
-(defun $/pl/fmt (fmtexect)
-  "FMTEXECT MAJOR-MODE."
-  (unless (not (buffer-modified-p (current-buffer)))
-    (user-error "%s ought to be saved" (buffer-name)))
-  (unless (stringp fmtexect) (user-error "fmtexect nonstring"))
-  (save-mark-and-excursion
-    (let* ((target (expand-file-name (buffer-file-name)))
-           (buffer (current-buffer))
-           (name (format "*%s %s *" fmtexect target))
-           (err
-            (make-temp-file fmtexect nil
-                            ($/hash-take-last-n-chars 'sha512 6
-                                                      (buffer-file-name)))))
-      (if (and (file-readable-p target) (file-regular-p target))
-          (progn
-            (unless (stringp err) (user-error "err nonstring"))
-            (let* ((eco
-                    (format "%d"
-                            (call-process fmtexect nil
-                                          '(buffer err)
-                                          t target)))
-                   (ets
-                    (format "%d"
-                            (file-attribute-size (file-attributes err)))))
-              (if (or
-                   (not(equal "0" eco))
-                   (not(equal "0" ets)))
-                  (progn (message "%s" err)))))))))
-;; (set-buffer (get-buffer-create name t))
-;; (insert-file-contents err nil nil nil t)
-;; (read-only-mode nil)
-;; (pop-to-buffer (get-buffer-create name t) 'display-buffer-same-window nil)
-;; (display-buffer (current-buffer))))))))))
-
-(defun $/pl/fmt/prettierjs () "." (interactive) (prettierjs))
-
-
-
 
 (defun buffer-elisp-heuristic()
   "."
@@ -447,8 +409,9 @@
   (interactive "*")
   (cond
    ((string= "rust-mode" ($/mode-name))
-    ($/pl/fmt
-     (file-name-concat (getenv "HOME") ".cargo/bin/cargo check")))
+    (rustfmt))
+   ((string= "lua-mode" ($/mode-name))
+    (stylua))
    ((string= "typescript-mode" ($/mode-name))
     (prettierjs))
    ((string= "shell-script-mode" ($/mode-name))
