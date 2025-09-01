@@ -2307,3 +2307,59 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 		   (buffer-string))))
     (ignore-errors (kill-buffer program-to-call-output-buf))
     (cons exitcode output)))
+
+
+
+(defun rustfmt()
+  "."
+  (interactive)
+  (let* ((current-filename (expand-file-name (buffer-file-name)))
+         (tmp-buffer-name (format "*rustfmt:%s*" current-filename))
+         (tmp-buffer (get-buffer-create tmp-buffer-name))
+         (exit-code
+          (call-process "rustfmt"
+                        nil
+                        tmp-buffer
+                        nil current-filename )))
+    (message
+     (format "rustfmt %s exitted with code: %s" current-filename exit-code))
+    (or
+     (when (eq exit-code 0)
+       (progn
+         (message
+          (format "%s formatted"
+                  (abbreviate-file-name current-filename)))
+         (revert-buffer t t t)))
+     (progn
+       (user-error
+        (format "rustfmt %s failed with code: %s"
+                (abbreviate-file-name current-filename)
+                exit-code))))))
+
+
+
+(defun stylua()
+  "."
+  (interactive)
+  (let* ((current-filename (expand-file-name (buffer-file-name)))
+         (tmp-buffer-name (format "*stylua:%s*" current-filename))
+         (tmp-buffer (get-buffer-create tmp-buffer-name))
+         (exit-code
+          (call-process "stylua"
+                        nil
+                        tmp-buffer
+                        nil current-filename )))
+    (message
+     (format "stylua %s exitted with code: %s" current-filename exit-code))
+    (or
+     (when (eq exit-code 0)
+       (progn
+         (message
+          (format "%s formatted"
+                  (abbreviate-file-name current-filename)))
+         (revert-buffer t t t)))
+     (progn
+       (user-error
+        (format "stylua %s failed with code: %s"
+                (abbreviate-file-name current-filename)
+                exit-code))))))

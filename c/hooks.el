@@ -25,6 +25,19 @@
               (define-key typescript-mode-map
                           (kbd "C-c C-f")
                           'prettierjs)))
+(add-hook 'elisp-mode-hook
+          #'(lambda ()
+              (interactive)
+              (define-key elisp-mode-map (kbd "C-c C-f") 'elfmt)))
+(add-hook 'emacs-lisp-mode-hook
+          #'(lambda ()
+              (interactive)
+              (define-key emacs-lisp-mode-map (kbd "C-c C-f") 'elfmt)))
+
+(add-hook 'lua-mode-hook
+          #'(lambda ()
+              (interactive)
+              (define-key lua-mode-map (kbd "C-c C-f") 'stylua)))
 (add-hook 'javascript-mode-hook
           #'(lambda ()
               (interactive)
@@ -43,7 +56,8 @@
           #'(lambda ()
               (interactive)
               (setq 'sh-basic-offset 6)
-              ))
+              (define-key typescript-mode-map (kbd "C-c C-f") 'shfmt)))
+
 (add-hook 'web-mode-hook
           #'(lambda ()
               (interactive)
@@ -61,8 +75,7 @@
 (add-hook  'after-make-frame-functions
            #'(lambda (frame)
                (set-frame-parameter frame 'fullscreen 'maximized)
-               ($/paint-mode-line nil "new buffer")
-               ))
+               ($/paint-mode-line nil "new buffer")))
 ;; (add-hook 'toml-mode-hook #'(lambda () ( (local-set-key (kbd '("C-c C-f") 'toml-prettify-buffer)))))
 ;; (add-hook 'local-write-file-hooks 'git-add-opt-libexec)
 
