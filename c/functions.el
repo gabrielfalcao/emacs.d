@@ -2363,3 +2363,12 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
         (format "stylua %s failed with code: %s"
                 (abbreviate-file-name current-filename)
                 exit-code))))))
+
+
+(defun enable-case-fold-search ()
+  (interactive)
+  (setq case-fold-search t))
+
+(defun disable-case-fold-search ()
+  (interactive)
+  (setq case-fold-search nil))
