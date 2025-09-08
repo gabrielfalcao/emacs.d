@@ -42,3 +42,6 @@
 (line-number-mode)
 
 (setq debug-on-error nil)
+
+(setq history-length 1000)
+(setq history-delete-duplicates t)
