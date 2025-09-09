@@ -2293,7 +2293,16 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
     (cons exitcode output)))
 
 (defun call-program-with-list-args(program &optional  args trim-output)
-  "calls PROGRAM with ARGS
+  "calls PROGRAM synchronously in separate process, returns list where HEAD is the exit-status (integer) and TAIL is
+the combined stderr/stdout output (string).
+
+If ARGS is nil program is called without arguments.
+If ARGS is a list, every member should be a string.
+if TRIM-OUTPUT is not nil, then the string output is trimmed of spaces with `string-trim' before returning.
+
+This function is a shortcut to `call-process' to a temporary buffer and
+can be rightfully perceived as an alternative `shell-command-to-string'
+which returns the exit-status and the string output.
 ."
   (if (not (stringp program))
       (user-error (format "call-process-with-list-args: program is not a string: %S" program)))
