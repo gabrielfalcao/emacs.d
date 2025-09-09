@@ -2292,21 +2292,36 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
     (ignore-errors (kill-buffer git-status-output-buf))
     (cons exitcode output)))
 
-(defun call-program-with-list-args(program args)
-  "."
+(defun call-program-with-list-args(program &optional  args trim-output)
+  "calls PROGRAM with ARGS
+."
   (if (not (stringp program))
       (user-error (format "call-process-with-list-args: program is not a string: %S" program)))
-  (if (not (listp args))
-      (user-error (format "call-process-with-list-args: args (%s) is not a list" args)))
-  (let* ((program-to-call-output-buf
+  (if (and (not (null args)) (not (listp args)))
+      (user-error (format "call-process-with-list-args: args `%S' is not a list" args)))
+  (let* ((extra-args (if (null args) (list)
+                       (if (listp args) args
+                         (user-error (format "call-process-with-list-args: args `%S' is not a list" args))
+                         )
+                       ))
+         (program-to-call-output-buf
           (get-buffer-create (format "*%s*" program)))
+         (call-process-args (append (list program nil program-to-call-output-buf nil ) extra-args))
          (exitcode
           (apply #'call-process call-process-args))
          (output (with-current-buffer program-to-call-output-buf
 		   (widen)
-		   (buffer-string))))
+		   (buffer-string))
+                              ) )
     (ignore-errors (kill-buffer program-to-call-output-buf))
-    (cons exitcode output)))
+    (cons exitcode (if (not (null trim-output)) (string-trim output) output))))
+
+(progn
+  (erase-messages)
+  (message (format "which shprettier: %S" (call-program-with-list-args "which" '("shprettier"))))
+  (message (format "hostname: %S" (call-program-with-list-args "hostname" nil t)))
+
+  )
 
 
 
