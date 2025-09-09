@@ -2325,12 +2325,11 @@ which returns the exit-status and the string output.
     (ignore-errors (kill-buffer program-to-call-output-buf))
     (cons exitcode (if (not (null trim-output)) (string-trim output) output))))
 
-(progn
-  (erase-messages)
-  (message (format "which shprettier: %S" (call-program-with-list-args "which" '("shprettier"))))
-  (message (format "hostname: %S" (call-program-with-list-args "hostname" nil t)))
-
-  )
+;; ;; testing call-program-with-list-args
+;; (progn
+;;   (erase-messages)
+;;   (message (format "which shprettier: %S" (call-program-with-list-args "which" '("shprettier"))))
+;;   (message (format "hostname: %S" (call-program-with-list-args "hostname" nil t))))
 
 
 
