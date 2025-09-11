@@ -2331,7 +2331,18 @@ which returns the exit-status and the string output.
 ;;   (message (format "which shprettier: %S" (call-program-with-list-args "which" '("shprettier"))))
 ;;   (message (format "hostname: %S" (call-program-with-list-args "hostname" nil t))))
 
-
+(defun ack(regexp)
+  "."
+  (interactive "*r")
+  (let* ((exit-status-output (call-program-with-list-args "ack" (list regexp)))
+         (exit-status (car exit-status-output))
+         (output (car (cdr( exit-status-output)))))
+    (if (eq 0 exit-status)
+        (let ((ack-buffer (get-buffer-create (format "ack `%s'" regexp))))
+          (with-current-buffer ack-buffer
+            (insert output))
+          (switch-to-buffer ack-buffer))
+      (user-error (format "ack `%s' failed with status %d" regexp exit-status)))))
 
 (defun rustfmt()
   "."
