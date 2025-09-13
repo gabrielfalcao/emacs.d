@@ -97,6 +97,7 @@
   (add-to-list 'auto-mode-alist '("\\.ts$" . typescript-mode))
   (add-to-list 'auto-mode-alist '("\\.tsx$" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.typ?$" . typst-mode))
+  (add-to-list 'auto-mode-alist '("\\.el\\.gz$" . emacs-lisp-mode))
   (add-to-list 'auto-mode-alist '("\\.ya?ml$" . yaml-mode))
   (add-to-list 'auto-mode-alist '("^---$" . yaml-mode))
   (add-to-list 'auto-mode-alist '("nginx.conf$" . nginx-mode))
@@ -109,10 +110,6 @@
   (setq web-mode-content-types-alist
         '(("json" . ".*[.]json$'")
           ("jsx"  . ".*[.]jsx")))
-
-
-  (setq sh-mode-map (make-sparse-keymap))
-
 
 
   (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
