@@ -19,6 +19,17 @@
               (define-key python-mode-map
                           (kbd "C-c C-f")
                           'blacken-buffer)))
+(add-hook 'rust-mode-hook
+          #'(lambda ()
+              (interactive)
+              (define-key rust-mode-map
+                          (kbd "C-x C-e i")
+                          'rust-insert-members-from-file)
+              (define-key rust-mode-map
+                          (kbd "C-x C-e C-i")
+                          'rust-insert-members-from-file
+)
+              ))
 (add-hook 'typescript-mode-hook
           #'(lambda ()
               (interactive)
@@ -45,18 +56,18 @@
                           (kbd "C-c C-f")
                           'prettierjs)))
 
-(defvar shell-script-mode-map
-  (let ((keymap (make-sparse-keymap)))
-    (define-key keymap (kbd "C-c C-f") #'shfmt)
-    keymap)
-  "Keymap for `shell-script-mode'.")
-(defalias 'sh-mode-map 'shell-script-mode-map)
+;; (defvar shell-script-mode-map
+;;   (let ((keymap (make-sparse-keymap)))
+;;     (define-key keymap (kbd "C-c C-f") #'shfmt)
+;;     keymap)
+;;   "Keymap for `shell-script-mode'.")
+;; (defalias 'sh-mode-map 'shell-script-mode-map)
 
 (add-hook 'shell-script-mode-hook
           #'(lambda ()
               (interactive)
-              (setq 'sh-basic-offset 6)
-              (define-key typescript-mode-map (kbd "C-c C-f") 'shfmt)))
+              (setq 'sh-basic-offset 4)
+              (define-key shell-script-mode-map (kbd "C-c C-f") 'shfmt)))
 
 (add-hook 'web-mode-hook
           #'(lambda ()
