@@ -31,27 +31,30 @@
   (scratch-buffer)
   (mapcar
    #'(lambda (b)
-       (progn
-         (set-buffer-modified-p nil)
+       (ignore-errors
+         (set-buffer-modified-p nil))
+
+       (ignore-errors
          (revert-buffer 1 1))
        (kill-buffer b))
    (buffer-list))
   (let* ((windows
-          (let ((windows 0))
-            (progn
-              (walk-windows
-               (lambda(window) (setq windows (1+ windows))))
-              windows)))
+          (or (let ((windows 0))
+		(progn
+		  (walk-windows
+		   (lambda(window) (setq windows (1+ windows))))
+		  windows))
+              (list)))
          (current (frame-first-window)))
     (when (> windows 1) (delete-window))
-    (erase-messages)
-    (with-current-buffer "*scratch*"
-      (read-only-mode -1)
-      (widen)
-      (replace-region-contents
-       (point-min)
-       (point-max)
-       (lambda () "")))))
+    (ignore-errors (erase-messages))
+    (ignore-errors (with-current-buffer "*scratch*"
+		     (read-only-mode -1)
+		     (widen)
+		     (replace-region-contents
+		      (point-min)
+		      (point-max)
+		      (lambda () ""))))))
 
 (defun minor-mode-slist()
   "."
@@ -210,8 +213,8 @@
         (if (string-match-p "\\s-*[(]\\(.\\|\n\\)+[)]\\s-*" region)
             (progn
               (eval-region beg end)
-              (when (string= (abbreviate-file-name (buffer-file-name)) (buffer-name))
-                (message (format "%s eval'd" (buffer-file-name)))))
+              (when (string= (format "%S" (abbreviate-file-name (buffer-file-name))) (buffer-name))
+                (message (format "%s eval'd" (abbreviate-file-name (buffer-file-name))))))
           (message "does not seem to be valid elisp: %s" region)))
     (message "\"%s\" aint no el" (buffer-name))))
 
@@ -1041,6 +1044,21 @@
         (flush-lines regexp (point-min) (point-max))))))
 
 
+(defun rust-add-error-variant()
+  "."
+  (interactive)
+  (let ((error-name (read-string "new error variant name (PascalCase): ")))
+    (save-mark-and-excursion
+      (widen)
+      (replace-regexp-within-bounds
+       "\\(\\(Error::\\)?IOError(\\([^)]+\\))\\s-*\\(,\\|=>\\s-e[.]to_string(),\\)\\)"
+       (format "\\1\n    \2%s\3 \4\n" error-name) (point-min) (point-max))
+      (replace-regexp-within-bounds
+       "\\(\\(Error::\\)?IOError(\\([^)]+\\))\\s-*=>\\s-\\(\"[^\"]+\",\\)\\)"
+       (format "\\1\n    \2%s\3 => \"%s\"\n" error-name error-name) (point-min) (point-max)))))
+
+
+
 (defun rust-delete-docs ()
   "."
   (interactive)
@@ -1152,6 +1170,54 @@
      (if (string-match-p ,regexp filename)
          (progn ,@body))))
 
+
+(defun git-diff-exitcode-output(&optional ref)
+  "."
+  (let* ((git-diff-output-buf
+          (get-buffer-create (format "*git-diff:%s*" (buffer-file-name-relative))))
+         (exitcode
+          (or (when (stringp ref)
+                (call-process
+                 "git" nil git-diff-output-buf nil "diff" ref (buffer-file-name-relative)))
+              (when (null ref)
+                (call-process
+                 "git" nil git-diff-output-buf nil "diff" (buffer-file-name-relative)))
+              (user-error (format "ref is neither nil nor string: %S" ref)))
+          )
+         (output (with-current-buffer git-diff-output-buf
+		   (widen)
+		   (buffer-string))))
+    (ignore-errors (kill-buffer git-diff-output-buf))
+    (cons exitcode output)))
+
+(defun git-diff-internal(&optional ref)
+  (let* ((exitcode-output (git-diff-exitcode-output ref))
+         (exitcode (car exitcode-output))
+         (output (car (cdr exitcode-output)))
+         (buffer (get-buffer-create (format "*git-diff:%s*" (buffer-file-name-relative))))
+         )
+    (if (eq 0 exitcode-output)
+        (progn
+          (with-current-buffer buffer
+            (widen)
+            (diff-mode)
+            (insert output))
+          (switch-to-buffer buffer))
+      (user-error (format "git diff failed with status %d" exitcode))
+      )))
+
+(defun git-diff()
+  (interactive)
+  (git-diff-internal))
+
+(defun git-diff-head()
+  (interactive)
+  (git-diff-internal "HEAD"))
+
+(defun git-diff-ref()
+  (interactive)
+  (let ((ref (read-string "git diff against ref: " "HEAD")))
+    (git-diff-internal ref)))
 
 (defun git-status-porcelain()
   "."
@@ -1354,31 +1420,6 @@
 
 
 
-(defun toml-prettify-buffer ()
-  "."
-  (interactive)
-  (when-buffer-meets
-   (string= major-mode "toml-mode")
-
-   (flush-empty-lines)
-   (save-excursion
-     (let* ((beg
-             (progn
-               (goto-char (point-min))
-               (forward-word)
-               (point)))
-            (end (point-max))
-            (region (buffer-substring-no-properties beg end))
-            (repl
-             (replace-regexp-in-string
-              "^\\([#]\\s-*\\)?\\([[].*\\)"
-              "\n\\1\\2"
-              region)))
-       (replace-region-contents beg end #'(lambda () repl ))
-
-       (if (not (string= region repl))
-           ;; avoid modifying buffer after prettifying its contents
-           (set-buffer-modified-p nil))))))
 
 (defun delete-comments-region(beg end)
   "BEG END."
@@ -1444,6 +1485,32 @@
         (goto-char (match-beginning 1))
         (message (format "goto-char %s" (match-beginning 1)))))))
 
+
+(defun toml-prettify-buffer ()
+  "."
+  (interactive)
+  (when-buffer-meets
+   (string= major-mode "toml-mode")
+
+   (flush-empty-lines)
+   (save-excursion
+     (let* ((beg
+             (progn
+               (goto-char (point-min))
+               (forward-word)
+               (point)))
+            (end (point-max))
+            (region (buffer-substring-no-properties beg end))
+            (repl
+             (replace-regexp-in-string
+              "^\\([#]\\s-*\\)?\\([[].*\\)"
+              "\n\\1\\2"
+              region)))
+       (replace-region-contents beg end #'(lambda () repl ))
+
+       (if (not (string= region repl))
+           ;; avoid modifying buffer after prettifying its contents
+           (set-buffer-modified-p nil))))))
 
 (defun goto-next-close-parenthesis (open-char close-char open-count close-count &optional beg-pos)
   "OPEN-CHAR
@@ -1672,6 +1739,8 @@
                         nil "-w" current-filename )))
     (message
      (format "prettier -w %s exitted with code: %s" current-filename exit-code))
+    (ignore-errors (kill-buffer tmp-buffer))
+
     (or
      (when (eq exit-code 0)
        (progn
@@ -1683,7 +1752,8 @@
        (user-error
         (format "prettier -w %s failed with code: %s"
                 (abbreviate-file-name current-filename)
-                exit-code))))))
+                exit-code)))))
+  )
 
 
 (defun shfmt()
@@ -1704,6 +1774,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
                         nil "-bn" "-ci" "-i" "4" "-ln=bash" "-w" current-filename )))
     (message
      (format "shfmt -bn -ci -i 4 -ln=bash -w %s exitted with code: %s" current-filename exit-code))
+    (ignore-errors (kill-buffer tmp-buffer))
     (or
      (when (eq exit-code 0)
        (progn
@@ -1921,46 +1992,55 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
   (setq debug-on-error nil))
 
 
-(defun replace-regexp-within-bounds(regexp replacement beg end)
+(defun replace-regexp-within-bounds(regexp replacement &optional beg end)
   "."
   ;; (if (or (null beg) (null end))
   ;;     (user-error "regexp=%S\nreplacement=%S\nbeg=%S\nend=%S" regexp replacement beg end))
+  (let* ((beg (or beg (point-min)))
+         (end (or end (point-max))))
 
-  (if (not (null beg)) (goto-char beg))
-  (let* ((last-match beg)
-         (current-match (+ last-match 1)))
+    ;; goto beginning of buffer
+    (goto-char beg)
 
-    (re-search-forward regexp end t)
-    (setq last-match (match-beginning 0))
-    (setq current-match (match-end 1))
-    (while (and
-            (< last-match current-match)
-            (< (point) end)
-            (not (null (match-beginning 1))))
-      (re-search-forward regexp end t)
-      (if (not (null (match-beginning 1)))
-          (goto-char (match-beginning 1)))
-      (replace-match replacement)
-      (if (not (null (match-end 1)))
-          (goto-char (match-end 1)))
-      (end-of-line 0)
-      (if (not (null (match-end 2)))
-          (goto-char (match-end 2)))
-      ;; (sleep-for 0.1)
-      (re-search-forward regexp end t)
-      (setq last-match (match-beginning 0))
-      (if (not (null (match-beginning 0)))
-          (goto-char (match-beginning 0)))
-      (backward-word 1)
-      (setq current-match (match-end 1))
-      (if (> (length (string-trim (match-string-no-properties 1))) 0)
-          (message
-           (format "replaced %s in line %s col %s"
-                   (match-string-no-properties 0)
-                   (line-number-at-pos (match-beginning 1))
-                   (column-at-pos (match-beginning 1)))))
+    ;; search exactly 1 occurrence until the `end' without causing
+    ;; errors `t', saving (point) of last ocurrence in `current-match'.
+    (let* ((current-match (re-search-forward regexp end t 1))
+           (last-match (if (null current-match) (user-error (format "failed to search regexp `%s'" regexp))  (match-beginning 0))
+                       ))
 
-      )))
+      (while (and
+              (not (null current-match)) ;; stop iteration when last re-search-forward returns nil
+              (not (null last-match))
+
+              (< last-match current-match)
+              (< (point) end)
+              (not (null (match-beginning 1))))
+
+	(setq current-match (re-search-forward regexp end t 1))
+	(if (not (null (match-beginning 1)))
+            (goto-char (match-beginning 1)))
+	(replace-match replacement)
+	(if (not (null (match-end 1)))
+            (goto-char (match-end 1)))
+	(end-of-line 0)
+	(if (not (null (match-end 2)))
+            (goto-char (match-end 2)))
+	;; (sleep-for 0.1)
+	(re-search-forward regexp end t)
+	(setq last-match (match-beginning 0))
+	(if (not (null (match-beginning 0)))
+            (goto-char (match-beginning 0)))
+	(backward-word 1)
+	(setq current-match (match-end 1))
+	(if (> (length (string-trim (match-string-no-properties 1))) 0)
+            (message
+             (format "replaced %s in line %s col %s"
+                     (match-string-no-properties 0)
+                     (line-number-at-pos (match-beginning 1))
+                     (column-at-pos (match-beginning 1)))))
+
+	)))
+  )
 
 (defun shift-right-tabbed-table-string (s)
   "S."
@@ -1975,7 +2055,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
   (save-excursion
     (let ((region (buffer-substring-no-properties beg end)))
       (replace-region-contents beg end
-                               #'(lambda ()
+			       #'(lambda ()
                                    (shift-right-tabbed-table-string region))))))
 
 (defun undefun (symbol-name-param)
@@ -2193,9 +2273,37 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
     (save-mark-and-excursion
       (widen)
       (goto-char (point-min))
-      (insert "#!/usr/bin/env bash\n\n")
+      (insert "#!/usr/bin/env bash
+# shellcheck disable=SC2004,SC2206,SC2068,SC2086
+
+declare -a argv=( $@ )
+declare argc=${#argv[@]}
+
+set -e
+set -o pipefail
+
+ctrlc() {
+    1>&2 echo -e \"\\rAborted with Ctrl-C\"
+    exit 101
+}
+trap ctrlc int
+
+usage(){
+    1>&2 echo -e \"$(basename $0) <ARGUMENT>\"
+}
+
+if [ ${argc} -eq 0 ]; then
+    1>&2 echo -e \"missing argument\"
+    usage
+    exit 101
+fi
+
+")
       (goto-char curpoint)
-      )))
+      )
+    ;; (save-buffer 0)
+    ;; (shfmt)
+    ))
 
 (defun make-script()
   "."
@@ -2266,7 +2374,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
   "."
   (let* ((extra-args (if (listp arg)
                          arg
-                       '((format "%S" arg))))
+		       '((format "%S" arg))))
          (call-process-args (append '("git" nil git-rev-parse-output-buf nil "rev-parse") extra-args))
          (git-rev-parse-output-buf
           (get-buffer-create "*git-rev-parse*"))
@@ -2309,10 +2417,10 @@ which returns the exit-status and the string output.
   (if (and (not (null args)) (not (listp args)))
       (user-error (format "call-process-with-list-args: args `%S' is not a list" args)))
   (let* ((extra-args (if (null args) (list)
-                       (if (listp args) args
+		       (if (listp args) args
                          (user-error (format "call-process-with-list-args: args `%S' is not a list" args))
                          )
-                       ))
+		       ))
          (program-to-call-output-buf
           (get-buffer-create (format "*%s*" program)))
          (call-process-args (append (list program nil program-to-call-output-buf nil ) extra-args))
@@ -2406,3 +2514,15 @@ which returns the exit-status and the string output.
 (defun disable-case-fold-search ()
   (interactive)
   (setq case-fold-search nil))
+
+
+(defun shell-wrap-variables-in-braces-region (beg end)
+  "."
+  (interactive "*r")
+  (replace-regexp-in-region "[$]\b\([a-zA-Z_][a-zA-Z0-9_]+\)\b" "${\1}" beg end))
+
+
+(defun shell-wrap-variables-in-braces-buffer ()
+  "."
+  (interactive)
+  (save-excursion (widen) (shell-wrap-variables-in-braces-region (point-min) (point-max) )))
