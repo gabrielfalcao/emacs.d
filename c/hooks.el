@@ -56,18 +56,18 @@
                           (kbd "C-c C-f")
                           'prettierjs)))
 
-;; (defvar shell-script-mode-map
-;;   (let ((keymap (make-sparse-keymap)))
-;;     (define-key keymap (kbd "C-c C-f") #'shfmt)
-;;     keymap)
-;;   "Keymap for `shell-script-mode'.")
-;; (defalias 'sh-mode-map 'shell-script-mode-map)
+;; (add-hook 'sh-mode-hook 'flycheck-mode)
+;; (add-hook 'shell-script-mode-hook 'flycheck-mode)
+
+(add-hook 'sh-mode-hook 'flymake-shellcheck-load)
+(add-hook 'shell-script-mode-hook 'flymake-shellcheck-load)
 
 (add-hook 'shell-script-mode-hook
           #'(lambda ()
               (interactive)
               (setq 'sh-basic-offset 4)
-              (define-key shell-script-mode-map (kbd "C-c C-f") 'shfmt)))
+              (local-unset-key (kbd "C-c C-f"))
+              (local-set-key (kbd "C-c C-f") 'shfmt)))
 
 (add-hook 'web-mode-hook
           #'(lambda ()
@@ -79,14 +79,12 @@
                                   (face-foreground font-lock-variable-name-face))
               (set-face-attribute 'web-mode-html-attr-value-face nil :foreground
                                   (face-foreground font-lock-type-face))))
-(add-hook 'sh-mode-hook 'flycheck-mode)
-(add-hook 'shell-script-mode-hook 'flycheck-mode)
 (add-hook 'pest-mode-hook 'flycheck-mode)
 
 (add-hook  'after-make-frame-functions
            #'(lambda (frame)
                (set-frame-parameter frame 'fullscreen 'maximized)
-               ($/paint-mode-line nil "new buffer")))
+               (Ox33b4O/$/paint-mode-line nil "new buffer")))
 ;; (add-hook 'toml-mode-hook #'(lambda () ( (local-set-key (kbd '("C-c C-f") 'toml-prettify-buffer)))))
 ;; (add-hook 'local-write-file-hooks 'git-add-opt-libexec)
 
@@ -101,3 +99,10 @@
                                         (format ".%s.emacs-auto-save" filename))))
                 (progn
                   (setq buffer-auto-save-file-name auto-save-filename)))))
+
+;; (defvar shell-script-mode-map
+;;   (let ((keymap (make-sparse-keymap)))
+;;     (define-key keymap (kbd "C-c C-f") #'shfmt)
+;;     keymap)
+;;   "Keymap for `shell-script-mode'.")
+;; (defalias 'sh-mode-map 'shell-script-mode-map)

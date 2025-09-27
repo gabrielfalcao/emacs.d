@@ -44,12 +44,12 @@
  '(package-selected-packages
    '(ansi autothemer blacken cargo-mode company csharp-mode
           dockerfile-mode elixir-mode exec-path-from-shell
-          expand-region flycheck-rust go-mode haml-mode
-          highlight-indentation jinja2-mode jsonnet-mode lua-mode
-          markdown-mode nginx-mode pcre2el peg php-mode protobuf-mode
-          python-mode restclient rust-mode solidity-flycheck
-          swift-mode terraform-mode toml toml-mode typescript-mode
-          web-mode yaml-mode)))
+          expand-region flycheck-rust flymake-shellcheck go-mode
+          haml-mode highlight-indentation jinja2-mode jsonnet-mode
+          lua-mode markdown-mode nginx-mode pcre2el peg php-mode
+          protobuf-mode python-mode restclient rust-mode
+          solidity-flycheck swift-mode terraform-mode toml toml-mode
+          typescript-mode web-mode yaml-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

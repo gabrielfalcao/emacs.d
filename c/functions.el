@@ -112,7 +112,7 @@
   (set-frame-parameter nil 'fullscreen 'maximized)
   ($$$$$$$$))
 
-(defun $/ep() "." (interactive) (find-file "~/.emacs.d/t/k.el"))
+(defun Ox33b4O/$/ep() "." (interactive) (find-file "~/.emacs.d/t/k.el"))
 
 
 (defun contrast-color (c)
@@ -176,7 +176,7 @@
                (faber (buffer-substring-no-properties cbeg cend))
                (x2133
                 (progn
-                  ($/delete-overlays-within cbeg cend)
+                  (Ox33b4O/$/delete-overlays-within cbeg cend)
                   (make-overlay cbeg cend))))
           (overlay-put x2133 'bcc t)
           (overlay-put x2133 'face
@@ -188,9 +188,9 @@
 (defun buffer-elisp-heuristic()
   "."
   (or
-   (string= "emacs-lisp-mode" ($/mode-name))
-   (string= "elisp-mode" ($/mode-name))
-   (string= "lisp-mode" ($/mode-name))
+   (string= "emacs-lisp-mode" (Ox33b4O/$/mode-name))
+   (string= "elisp-mode" (Ox33b4O/$/mode-name))
+   (string= "lisp-mode" (Ox33b4O/$/mode-name))
    (string= "el" (file-name-extension (buffer-file-name)))))
 
 (defun region-points()
@@ -202,7 +202,7 @@
       (widen)
       (list (point-min) (point-max)))))
 
-(defun $/levate ()
+(defun Ox33b4O/$/levate ()
   "."
   (interactive)
   (if (buffer-elisp-heuristic)
@@ -218,7 +218,7 @@
           (message "does not seem to be valid elisp: %s" region)))
     (message "\"%s\" aint no el" (buffer-name))))
 
-(defun $/undefine-key (key)
+(defun Ox33b4O/$/undefine-key (key)
   "KEY."
   (when (not
          (or
@@ -235,9 +235,9 @@
   (when (or (consp key) (vectorp key)
             ;;            (arrayp key)
             (listp key))
-    (cdr (mapc '$/undefine-key key))))
+    (cdr (mapc 'Ox33b4O/$/undefine-key key))))
 
-(defun $/set-key (key def)
+(defun Ox33b4O/$/set-key (key def)
   "KEY DEF."
   (when (not
          (or
@@ -250,19 +250,19 @@
     (user-error "key %S has invalid type: %s" key (type-of key)))
 
   (when (integerp key)
-    (progn ($/undefine-key key) (global-set-key key)))
+    (progn (Ox33b4O/$/undefine-key key) (global-set-key key)))
 
   (when (stringp key)
-    (progn ($/undefine-key key) (global-set-key (kbd key) def)))
+    (progn (Ox33b4O/$/undefine-key key) (global-set-key (kbd key) def)))
   (when (or (consp key)
             ;;            (arrayp key)
             (vectorp key)
             (listp key))
     (cdr
-     (mapc #'(lambda (key) ($/set-key key def)) key))))
+     (mapc #'(lambda (key) (Ox33b4O/$/set-key key def)) key))))
 
 
-(defun $/set-extra-key (key def)
+(defun Ox33b4O/$/set-extra-key (key def)
   "KEY DEF."
   (when (not
          (or
@@ -280,7 +280,7 @@
             ;;            (arrayp key)
             (listp key))
     (cdr
-     (mapc #'(lambda (key) ($/set-extra-key key def)) key))))
+     (mapc #'(lambda (key) (Ox33b4O/$/set-extra-key key def)) key))))
 
 
 
@@ -331,25 +331,25 @@
   (message "%S" (face-at-point)))
 
 
-(defun $/hash-take-last-n-chars (algo count contents)
+(defun Ox33b4O/$/hash-take-last-n-chars (algo count contents)
   "."
   (let* ((data (secure-hash algo contents))
          (end (length data))
          (beg (- end count)))
     (substring data beg end)))
 
-(defun $/hash-take-first-n-chars (algo end contents)
+(defun Ox33b4O/$/hash-take-first-n-chars (algo end contents)
   "."
   (let* ((data (secure-hash algo contents))
          (beg 0))
     (substring data beg end)))
 
-(defun $/text-properties()
+(defun Ox33b4O/$/text-properties()
   "."
   (interactive)
   (message "%S" (text-properties-at (car (region-points)))))
 
-(defun $/colorize-face-fg (text faber)
+(defun Ox33b4O/$/colorize-face-fg (text faber)
   "."
   (propertize text 'face (list :foreground faber)))
 
@@ -358,34 +358,38 @@
   (format "%s" (file-relative-name (buffer-file-name))))
 
 
-(defun $/bchs ()
+;; KGRlZnVuIGRlYnVnLyQvYmNocyAoKQogICIuIgogIChpbnRlcmFjdGl2ZSkKCiAgKG1lc3NhZ2UKICAgKGZvcm1hdCAiPCQvYmNocyBkZWJ1Zz5cblxubW9kZTogJyVTJ1xuXG5maWxlLWF0dHJpYnV0ZS1tb2RlOiAnJVMnXG5cbiQvYmZhbjogJyVzJ1xuXG5idWZmZXItbmFtZTogJyVTJ1xuPC8kL2JjaHMgZGVidWc+IgogICAgICAgICAgICgkL21vZGUtbmFtZSkKICAgICAgICAgICAoZmlsZS1hdHRyaWJ1dGUtbW9kZXMgKGZpbGUtYXR0cmlidXRlcyAoYnVmZmVyLWZpbGUtbmFtZSkpKQogICAgICAgICAgICgkL2JmYW4pCiAgICAgICAgICAgKGJ1ZmZlci1uYW1lKQoKICAgICAgICAgICApKQo=
+
+(defun Ox33b4O/$/bchs ()
   "."
   (let ((data
          (buffer-substring-no-properties (point-min) (point-max))))
+
+
     (format "%s %s %s"
-            ($/string-hash-take-last-n-chars 'sha256 8 data)
-            ($/string-hash-take-last-n-chars 'sha1 8 data)
-            ($/string-hash-take-last-n-chars 'md5 8 data))))
+            (Ox33b4O/$/string-hash-take-last-n-chars 'sha256 8 data)
+            (Ox33b4O/$/string-hash-take-last-n-chars 'sha1 8 data)
+            (Ox33b4O/$/string-hash-take-last-n-chars 'md5 8 data))))
 
-(defun $/acl-owner(f)
+(defun Ox33b4O/$/acl-owner(f)
   "F."
   (interactive)
   (if (stringp f)
-      ($/mt (format "(%s)" f))
+      (Ox33b4O/$/mt (format "(%s)" f))
     ""))
 
-(defun $/acl-group(f)
+(defun Ox33b4O/$/acl-group(f)
   "F."
   (interactive)
   (if (stringp f)
-      ($/mt (format "(%s)" f))
+      (Ox33b4O/$/mt (format "(%s)" f))
     ""))
 
-(defun $/acl-other(f)
+(defun Ox33b4O/$/acl-other(f)
   "F."
   (interactive)
   (if (stringp f)
-      ($/mt (format "(%s)" f))
+      (Ox33b4O/$/mt (format "(%s)" f))
     ""))
 
 
@@ -411,21 +415,21 @@
 (defun g/build ()
   (interactive "*")
   (cond
-   ((string= "rust-mode" ($/mode-name))
+   ((string= "rust-mode" (Ox33b4O/$/mode-name))
     (rustfmt))
-   ((string= "lua-mode" ($/mode-name))
+   ((string= "lua-mode" (Ox33b4O/$/mode-name))
     (stylua))
-   ((string= "typescript-mode" ($/mode-name))
+   ((string= "typescript-mode" (Ox33b4O/$/mode-name))
     (prettierjs))
-   ((string= "shell-script-mode" ($/mode-name))
+   ((string= "shell-script-mode" (Ox33b4O/$/mode-name))
     (shfmt))
-   ((string= "javacript-mode" ($/mode-name))
+   ((string= "javacript-mode" (Ox33b4O/$/mode-name))
     (prettierjs))
-   ((string= "elisp-mode" ($/mode-name))
+   ((string= "elisp-mode" (Ox33b4O/$/mode-name))
     (elfmt))
    ((nil t))))
 
-(defun $/base64-encode-region (beg end)
+(defun Ox33b4O/$/base64-encode-region (beg end)
   (interactive "*r")
   (save-excursion
     (replace-region-contents beg end
@@ -445,14 +449,14 @@
                                #'(lambda ()
                                    (collapse-string-2 region))))))
 
-(defun $/mt(p) "P." (interactive) p)
+(defun Ox33b4O/$/mt(p) "P." (interactive) p)
 ;; (let* ((p (replace-regexp-in-string "[o-t]" "🧾" p))
 ;;        (p (replace-regexp-in-string "[s-w]" "🖍️" p))
 ;;        (p (replace-regexp-in-string "[xX]" "👥️" p)))
 ;;   p))
 
 
-(defun $/fm ()
+(defun Ox33b4O/$/fm ()
   "."
   (interactive)
   (let ((ffb
@@ -463,31 +467,31 @@
            (aclsl (proper-list-p acls)))
       (cond
        ((= 1 aclsl)
-        (format "%s" ($/acl-owner (car acls))))
+        (format "%s" (Ox33b4O/$/acl-owner (car acls))))
        ((= 2 aclsl)
         (format "%s%s"
-                ($/acl-owner(car acls) ($/acl-group (elt 1 acls)))))
+                (Ox33b4O/$/acl-owner(car acls) (Ox33b4O/$/acl-group (elt 1 acls)))))
        ((= 3 aclsl)
         (format "%s%s%s"
-                ($/acl-owner(car acls)
-                            ($/acl-group (elt 1 acls))
-                            ($/acl-other(elt 1 acls)))))))))
+                (Ox33b4O/$/acl-owner(car acls)
+                            (Ox33b4O/$/acl-group (elt 1 acls))
+                            (Ox33b4O/$/acl-other(elt 1 acls)))))))))
 
 
-(defun $/flush-kill-ring ()
+(defun Ox33b4O/$/flush-kill-ring ()
   "."
   (interactive)
   (setq kill-ring nil file-name-history nil))
-(defun $/kill-all-buffers-and-flush-kill-ring ()
+(defun Ox33b4O/$/kill-all-buffers-and-flush-kill-ring ()
   "."
   (interactive)
-  (progn (kill-bufs) ($/flush-kill-ring) (erase-messages)     (while (> windows 1) (delete-window))
+  (progn (kill-bufs) (Ox33b4O/$/flush-kill-ring) (erase-messages)     (while (> windows 1) (delete-window))
 	 ))
 
-(defun $/string-hash-take-last-n-chars (algo hwm contents)
+(defun Ox33b4O/$/string-hash-take-last-n-chars (algo hwm contents)
   "."
-  ;; (format "%s:%s"  (symbol-name algo) ($/hash-take-last-n-chars algo hwm contents)))
-  (format "%s" ($/hash-take-last-n-chars algo hwm contents)))
+  ;; (format "%s:%s"  (symbol-name algo) (Ox33b4O/$/hash-take-last-n-chars algo hwm contents)))
+  (format "%s" (Ox33b4O/$/hash-take-last-n-chars algo hwm contents)))
 
 
 (defun server-reboot ()
@@ -501,7 +505,7 @@
     (server-start)))
 
 
-(defun $/hash (algo)
+(defun Ox33b4O/$/hash (algo)
   "."
   (interactive "S")
   (unless (memq algo (secure-hash-algorithms))
@@ -515,7 +519,7 @@
     (message "%S" hg)
     hg))
 
-(defun $/sec-hash-region (algo)
+(defun Ox33b4O/$/sec-hash-region (algo)
   "."
   (interactive "S")
   (let* ((pipa (region-points))
@@ -526,7 +530,7 @@
     (replace-region-contents pi pa (lambda () hg))))
 
 
-(defun $/delete-overlays-within (beg end)
+(defun Ox33b4O/$/delete-overlays-within (beg end)
   "."
   (let ((mp beg))
     (while (<= mp end)
@@ -551,7 +555,7 @@
          'locale-coding-system )))
 
 
-(defun $/chacha20-hardcoded (text шоли$)
+(defun Ox33b4O/$/chacha20-hardcoded (text шоли$)
   "."
   (let* ((pipa (region-points))
          (pi (car pipa))
@@ -570,7 +574,7 @@
     shell-result))
 
 
-(defun $/encrypt-chacha20-hardcoded ()
+(defun Ox33b4O/$/encrypt-chacha20-hardcoded ()
   "."
   (interactive)
   (save-mark-and-excursion
@@ -580,12 +584,12 @@
       (replace-region-contents
        pi pa
        (lambda ()
-         ($/chacha20-hardcoded
+         (Ox33b4O/$/chacha20-hardcoded
           (buffer-substring-no-properties pi pa)
           "MHgwYzlmNjAwMCAtLSAnJXMn"))))))
 
 
-(defun $/decrypt-chacha20-hardcoded ()
+(defun Ox33b4O/$/decrypt-chacha20-hardcoded ()
   "."
   (interactive)
   (save-mark-and-excursion
@@ -595,16 +599,16 @@
       (replace-region-contents
        pi pa
        (lambda ()
-         ($/chacha20-hardcoded
+         (Ox33b4O/$/chacha20-hardcoded
           (buffer-substring-no-properties pi pa)
           "MHgwYzlmNjAwMCAtZCAtLSAnJXMn"))))))
 
-;;($/undefine-key (list "C-c C-e C-2" "C-c C-d C-2"))
+;;(Ox33b4O/$/undefine-key (list "C-c C-e C-2" "C-c C-d C-2"))
 (progn
-  ($/set-key (list "C-c C-e C-2 C-0") '$/encrypt-chacha20-hardcoded)
-  ($/set-key
+  (Ox33b4O/$/set-key (list "C-c C-e C-2 C-0") 'Ox33b4O/$/encrypt-chacha20-hardcoded)
+  (Ox33b4O/$/set-key
    (list "C-c C-e C-d C-2 C-0")
-   '$/decrypt-chacha20-hardcoded))
+   'Ox33b4O/$/decrypt-chacha20-hardcoded))
 
 
 (defun string-list-region (beg end)
@@ -1373,7 +1377,7 @@
           (shell-command-to-string "git log --max-count=1 --format=%s"))
          (branch-name
           (format "%s@%s"
-                  ($/hash-take-last-n-chars 'sha512 8 filename)
+                  (Ox33b4O/$/hash-take-last-n-chars 'sha512 8 filename)
                   (file-name-nondirectory filename))))
     (shell-command-to-string (format "git branch %s" branch-name))
     (shell-command-to-string (format "git checkout %s" branch-name))
@@ -1976,7 +1980,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
   (interactive)
   (progn
     (colorize-hexadecimal-text)
-    ($/paint-mode-line)
+    (Ox33b4O/$/paint-mode-line)
     (disable-auto-save-list)
     (disable-bars)
     ($$$$$)))
@@ -2192,7 +2196,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
   (if (not (stringp timestamp))
       (user-error (format "format-timestamp-for-mode received non-string argument %S" timestamp))
     (let ((text-to-insert (format "%s " timestamp-to-insert)))
-      (or (when (or (string= "rest-mode" ($/mode-name)) (string= "markdown-mode" ($/mode-name)))
+      (or (when (or (string= "rest-mode" (Ox33b4O/$/mode-name)) (string= "markdown-mode" (Ox33b4O/$/mode-name)))
             (setq text-to-insert (format "- at %s:\n  - Journal entry ..." timestamp-to-insert))
             (newline)
             (beginning-of-line 0)))

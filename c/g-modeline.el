@@ -1,20 +1,20 @@
-(defun $/bfan ()
+(defun Ox33b4O/$/bfan ()
   "."
   (or
    (when (equal (buffer-file-name-relative) (buffer-name))
-     ($/paint-buffer-name))
+     (Ox33b4O/$/paint-buffer-name))
    (format "%s %s"
-           ($/paint-buffer-name)
-           ($/colorize-face-fg
+           (Ox33b4O/$/paint-buffer-name)
+           (Ox33b4O/$/colorize-face-fg
             (format "[%s]" (buffer-file-name-relative))
             "#FF4018" ))))
 
-(defun $/paint-buffer-name ()
+(defun Ox33b4O/$/paint-buffer-name ()
   "."
-  ($/colorize-face-fg (buffer-name) "#C6DBDC"))
+  (Ox33b4O/$/colorize-face-fg (buffer-name) "#C6DBDC"))
 
 
-(defun $/mark-indicator()
+(defun Ox33b4O/$/mark-indicator()
   "."
   (list
    '(:eval
@@ -23,24 +23,24 @@
        (when mark-active
          (format "%s%s %s %s%s"
                  (propertize
-                  ($/mode-line-arrow-right)
+                  (Ox33b4O/$/mode-line-arrow-right)
                   'face
                   (list :background
-                        ($/mode-line-background)
+                        (Ox33b4O/$/mode-line-background)
                         :foreground "#F5BF08")
                   )
                  (propertize
                   (format "%s" (marker-begin))
                   'face
                   (list :background
-                        ($/mode-line-background)
-                        :foreground ($/mark-indicator-color)))
+                        (Ox33b4O/$/mode-line-background)
+                        :foreground (Ox33b4O/$/mark-indicator-color)))
                  (propertize
                   (format "%s" (marker-end))
                   'face
                   (list :background
-                        ($/mode-line-background)
-                        :foreground ($/mark-indicator-color)))
+                        (Ox33b4O/$/mode-line-background)
+                        :foreground (Ox33b4O/$/mark-indicator-color)))
 
                  (propertize
                   (let ((line-count
@@ -52,50 +52,50 @@
                             (if (= line-count 1) "line" "lines")))
                   'face
                   (list :background
-                        ($/mark-indicator-color)
-                        :foreground ($/mode-line-background)
+                        (Ox33b4O/$/mark-indicator-color)
+                        :foreground (Ox33b4O/$/mode-line-background)
                         ))
                  (propertize
-                  ($/mode-line-arrow-left)
+                  (Ox33b4O/$/mode-line-arrow-left)
                   'face
                   (list :background
-                        ($/mode-line-background)
+                        (Ox33b4O/$/mode-line-background)
                         :foreground "#F5BF08")
                   ))
 
          )
        " ")))))
 
-(defun $/paint-mode-line-colorize (c contents)
+(defun Ox33b4O/$/paint-mode-line-colorize (c contents)
   (let* ((foreground
-          (format "#%s" ($/hash-take-first-n-chars 'sha512 6 c)))
+          (format "#%s" (Ox33b4O/$/hash-take-first-n-chars 'sha512 6 c)))
          (background
           (compute-bright-dark-from-color-value foreground
-                                                ($/mode-line-foreground)
-                                                ($/mode-line-background))))
+                                                (Ox33b4O/$/mode-line-foreground)
+                                                (Ox33b4O/$/mode-line-background))))
     ;; (message (format "mode-name color %s" foreground))
-    ;;(debug "($/paint-mode-line-colorize %S %S) => %s %s" c contents foreground background)
+    ;;(debug "(Ox33b4O/$/paint-mode-line-colorize %S %S) => %s %s" c contents foreground background)
     (propertize
      (format "%s" contents)
      'face
      (list :foreground foreground :background background))))
 
 
-(defun $/paint-mode-line-color (contents)
-  ($/paint-mode-line-colorize contents contents))
+(defun Ox33b4O/$/paint-mode-line-color (contents)
+  (Ox33b4O/$/paint-mode-line-colorize contents contents))
 
-(defun $/paint-non-file-buffer()
+(defun Ox33b4O/$/paint-non-file-buffer()
   "."
   (list
-   ($/paint-mode-name)
+   (Ox33b4O/$/paint-mode-name)
    " "
-   ($/paint-buffer-name)
+   (Ox33b4O/$/paint-buffer-name)
    " " "   𝐗%l 𝐘%c %I ⊲ %i bytes " "%e" "%t" ;; row column kbytes bytes
-   '(:eval ($/mark-indicator))))
+   '(:eval (Ox33b4O/$/mark-indicator))))
 
 
 
-(defun $/paint-mode-name-string()
+(defun Ox33b4O/$/paint-mode-name-string()
   (format "%s-mode"
           (replace-regexp-in-string
            "^\\([a-z0-9-]+\\)[^A-Za-z0-9-]+.*$" "\\1"
@@ -107,43 +107,70 @@
               mode-name)
              ((t (format "%S" mode-name))))))))
 
-(defun $/paint-mode-name()
-  ($/paint-mode-line-color ($/paint-mode-name-string)))
+(defun Ox33b4O/$/paint-mode-name()
+  (Ox33b4O/$/paint-mode-line-color (Ox33b4O/$/paint-mode-name-string)))
 
 
-(defun $/paint-file-buffer()
+(defun Ox33b4O/$/paint-file-buffer()
+  "."
+  (if (null (file-attribute-modes (file-attributes (buffer-file-name))))
+      (Ox33b4O/$/paint-file-buffer-nil)
+      (Ox33b4O/$/paint-file-buffer-existing-file)))
+
+(defun Ox33b4O/$/paint-file-buffer-existing-file()
   "."
   (list
-   '(:eval ($/mark-indicator))
+   '(:eval (Ox33b4O/$/mark-indicator))
    " "
-   '(:eval ($/bfan))
+   '(:eval (Ox33b4O/$/bfan))
    " "
    (propertize
-    ($/mode-line-arrow-right)
+    (Ox33b4O/$/mode-line-arrow-right)
     'face
-    (list :foreground ($/mark-indicator-color)))
+    (list :foreground (Ox33b4O/$/mark-indicator-color)))
    " "
-   '(:eval ($/paint-mode-name))
+   '(:eval (Ox33b4O/$/paint-mode-name))
    " "
-   '(:eval ($/fm))
+   '(:eval (Ox33b4O/$/fm))
    " "
-   '(:eval ($/bchs))
+   '(:eval (Ox33b4O/$/bchs))
    " " "   𝐗%l 𝐘%c %I ⊲ %i bytes " "%e" "%t"))
 
-(defun $/paint-mode-line ()
+(defun Ox33b4O/$/paint-file-buffer-nil
+    ()
+  "."
+  (list
+   '(:eval (Ox33b4O/$/mark-indicator))
+   " "
+   '(:eval (Ox33b4O/$/bfan))
+   " "
+   (propertize
+    (Ox33b4O/$/mode-line-arrow-right)
+    'face
+    (list :foreground (Ox33b4O/$/mark-indicator-color)))
+   " "
+   '(:eval (Ox33b4O/$/paint-mode-name))
+   " "
+   '(:eval (Ox33b4O/$/fm))
+   " "
+   '(:eval (Ox33b4O/$/bchs))
+   " " "   𝐗%l 𝐘%c %I ⊲ %i bytes " "%e" "%t"))
+
+
+(defun Ox33b4O/$/paint-mode-line ()
   "."
   (interactive)
   (let* ((narrow
           (if (buffer-file-name)
-              ($/paint-file-buffer)
-            ($/paint-non-file-buffer)))
+              (Ox33b4O/$/paint-file-buffer)
+            (Ox33b4O/$/paint-non-file-buffer)))
          (wide
           (list mode-line-front-space narrow mode-line-end-spaces)))
     (setq mode-line-format wide)
     (force-mode-line-update)
     wide))
 
-(defun $/mode-name()
+(defun Ox33b4O/$/mode-name()
   (format "%s-mode"
           (replace-regexp-in-string
            "^\\([a-z0-9-]+\\)[^A-Za-z0-9-]+.*$" "\\1"
@@ -156,7 +183,7 @@
              ((t (format "%S" mode-name))))))))
 
 
-(defun $/mode-name()
+(defun Ox33b4O/$/mode-name()
   (format "%s-mode"
           (replace-regexp-in-string
            "^\\([a-z0-9-]+\\)[^A-Za-z0-9-]+.*$" "\\1"
