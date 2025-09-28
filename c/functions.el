@@ -1036,6 +1036,33 @@
 	)
       )))
 
+(defun rust-insert-members-from-file-with-docs ()
+  "BEG END."
+  (interactive)
+  (let ((rust-file-name
+         (expand-file-name
+          (read-file-name
+           "insert members of rust file: "
+           (rust-path-to-current-file-mod)
+           nil 'confirm-after-completion))))
+
+    (let* ((tmp-buffer-name (format "*rust-autocomplete:%s*" rust-file-name))
+           (tmp-buffer (get-buffer-create tmp-buffer-name))
+           (exit-code (call-process "rust-autocomplete" nil tmp-buffer nil "list" "--docs" rust-file-name)))
+      (if (eq 0 exit-code)
+          (let ((items (with-current-buffer tmp-buffer (widen) (buffer-substring-no-properties (point-min) (point-max)))))
+            (kill-buffer tmp-buffer)
+            (insert (format "\n%s\n" items))
+            (rust-format-buffer)
+            )
+	(progn
+          (switch-to-buffer tmp-buffer)
+          (user-error (format "failed to list items of file %s" (abbreviate-file-name (rust-file-name)))))
+	)
+      )))
+
+
+
 (defun rust-delete-comments ()
   "."
   (interactive)
@@ -2530,3 +2557,97 @@ which returns the exit-status and the string output.
   "."
   (interactive)
   (save-excursion (widen) (shell-wrap-variables-in-braces-region (point-min) (point-max) )))
+
+(defun hex-to-decimal-region(beg end)
+  "BEG END."
+  (interactive "*r")
+  (save-excursion
+    (goto-char beg)
+    (while (re-search-forward "[a-fA-F0-9]+" end t)
+      (replace-match
+       (format
+        "%s" (string-to-number (match-string 0) 16))))))
+
+(defun decimal-to-hex-region(beg end)
+  "BEG END."
+  (interactive "*r")
+  (save-excursion
+    (goto-char beg)
+    (while (re-search-forward "[0-9]+" end t)
+      (replace-match
+       (format
+        "%x" (string-to-number (match-string 0)))))))
+
+
+(defun heck-string-to-case-buffer(case beg end)
+  "depends on cargo crate heck-string-cli: `cargo install heck-string-cli'
+BEG END."
+  (let* ((tmp-buffer-name (format "*string-to-%s*" case))
+         (tmp-buffer (get-buffer-create tmp-buffer-name))
+         (input-string (buffer-substring-no-properties beg end))
+         (exit-code (call-process "heck-string" nil tmp-buffer nil (format "--to=%s" case) input-string)))
+    (message tmp-buffer-name)
+    (if (eq 0 exit-code)
+        (let ((output (with-current-buffer tmp-buffer
+		   (widen)
+		   (string-trim (buffer-string)))))
+          (kill-buffer tmp-buffer)
+          (save-excursion
+            (replace-region-contents beg end #'(lambda () output)))
+          )
+
+      (kill-buffer tmp-buffer)
+      (user-error (format "command failed with status %d: string --to=%s '%s'"  case input-string)))))
+
+
+(defun string-to-train-region(beg end)
+  "BEG END."
+  (interactive "*r")
+  (heck-string-to-case-buffer "train" beg end))
+
+(defun string-to-kebab-region(beg end)
+  "BEG END."
+  (interactive "*r")
+  (heck-string-to-case-buffer "kebab" beg end))
+
+(defun string-to-snake-region(beg end)
+  "BEG END."
+  (interactive "*r")
+  (heck-string-to-case-buffer "snake" beg end))
+
+(defun string-to-shouty-snake-region(beg end)
+  "BEG END."
+  (interactive "*r")
+  (heck-string-to-case-buffer "shouty-snake" beg end))
+
+(defun string-to-shouty-kebab-region(beg end)
+  "BEG END."
+  (interactive "*r")
+  (heck-string-to-case-buffer "shouty-kebab" beg end))
+
+(defun string-to-pascal-region(beg end)
+  "BEG END."
+  (interactive "*r")
+  (heck-string-to-case-buffer "pascal" beg end))
+
+(defun string-to-lower-camel-region(beg end)
+  "BEG END."
+  (interactive "*r")
+  (heck-string-to-case-buffer "lower-camel" beg end))
+
+;; ;; kebab lower-camel pascal shouty-kebab shouty-snake snake train
+;; (defun string-to-kebab-region(beg end)
+;;   "BEG END."
+;;   (interactive "*r")
+;;   (heck-string-to-case-buffer "kebab" beg end))
+
+
+;; (defun hex-to-decimal-region(beg end)
+;;   "."
+;;   (interactive "*r")
+;;   (save-excursion
+;;     (goto-char beg)
+;;     (while (not(null (re-search-forward "\\([a-fA-F0-9]+\\)" end t)))
+;;       (replace-match
+;;        (format "%s" (string-to-number (match-string 1)) 1))
+;;        t)))
