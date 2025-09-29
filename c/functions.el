@@ -2307,7 +2307,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
       (insert "#!/usr/bin/env bash
 # shellcheck disable=SC2004,SC2206,SC2068,SC2086
 
-declare -a argv=( $@ )
+declare -a argv=($@)
 declare argc=${#argv[@]}
 
 set -e
@@ -2319,16 +2319,23 @@ ctrlc() {
 }
 trap ctrlc int
 
-usage(){
-    1>&2 echo -e \"$(basename $0) <ARGUMENT>\"
+usage() {
+    1>&2 echo -e \"$(basename $0) <ARGUMENT >\"
 }
 
-if [ ${argc} -eq 0 ]; then
-    1>&2 echo -e \"missing argument\"
-    usage
-    exit 101
-fi
+main() {
+    if [ ${argc} -eq 0 ]; then
+        1>&2 echo -e \"missing argument\"
+        usage
+        exit 101
+    fi
+}
 
+if [ \"${0}\" == \"${BASH_SOURCE[0]}\" ]; then
+    main ${argv[@]}
+else
+    1>&2 echo -e \"${BASH_SOURCE[0]} appears to being used as a library by ${0@Q}\"
+fi
 ")
       (goto-char curpoint)
       )
