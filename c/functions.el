@@ -474,8 +474,8 @@
        ((= 3 aclsl)
         (format "%s%s%s"
                 (Ox33b4O/$/acl-owner(car acls)
-                            (Ox33b4O/$/acl-group (elt 1 acls))
-                            (Ox33b4O/$/acl-other(elt 1 acls)))))))))
+				    (Ox33b4O/$/acl-group (elt 1 acls))
+				    (Ox33b4O/$/acl-other(elt 1 acls)))))))))
 
 
 (defun Ox33b4O/$/flush-kill-ring ()
@@ -2302,75 +2302,58 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 (defun shebang()
   "."
   (interactive)
-  (let ((curpoint (point)))
-    (save-mark-and-excursion
-      (widen)
-      (goto-char (point-min))
-      (insert "#!/usr/bin/env bash
-# shellcheck disable=SC2004,SC2206,SC2068,SC2086
+  (let ((buf-filename (buffer-file-name)))
+    (if (or (null buf-filename)
+            (not (file-exists-p buf-filename)))
+        (user-error (format "save buffer `%s' to actual file before using shebang" buf-filename))
+      (let ((curpoint (point)))
+	(save-mark-and-excursion
+	  (widen)
+	  (goto-char (point-min))
+	  (insert-template "shebang.sh")
+	  (goto-char curpoint)
+	  )
 
-export IFS=$'\\n'
-error_color_rgb=\"$((\"0xFF\"));$((0x00));$((0x42))\"
+	(save-buffer 0)
+	(chmod buf-filename (string-to-number "755" 8))
+	(shfmt)
+	))
+    )
+  )
 
-if [ \"$(whoami)\" != \"root\" ]; then
-    sudo bash $0
-    exit $?
-fi
-
-declare -a argv=($@)
-declare argc=${#argv[@]}
-
-set -e
-set -o pipefail
-
-ctrlc() {
-    repl no echo
-    1>&2 echo -e \"\\x1b[1;38;2;${error_color_rgb}m\\rAborted with Ctrl-C\\x1b[0m\"
-    exit 101
-}
-trap ctrlc int
-
-repl() {
-    local -a stty_args=()
-    case \"$1\" in
-        -*no*stdin | no*stdin | -*no*echo | no*echo | capture)
-            args+=('-echo')
-            ;;
-        *)
-            args+=('sane')
-            ;;
-    esac
-    2>/dev/random 1>/dev/random stty ${stty_args[@]}
-
-}
-usage() {
-    repl no echo
-    1>&2 echo -e \"$(basename $0) <ARGUMENT>\"
-    repl sane
-}
-
-main() {
-    repl no echo
-    if [ ${argc} -eq 0 ]; then
-        1>&2 echo -e \"missing argument\"
-        usage
-        repl sane
-        exit 101
-    fi
-}
-
-if [ \"${0}\" == \"${BASH_SOURCE[0]}\" ]; then
-    main ${argv[@]}
-else
-    1>&2 echo -e \"${BASH_SOURCE[0]} appears to being used as a library by ${0@Q}\"
-fi
-repl sane
-")
-      (goto-char curpoint)
-      )
-    ;; (save-buffer 0)
-    ;; (shfmt)
+(defun read-file-to-string(filename)
+  "inserts template file at beginning of current buffer."
+  (if (not (stringp filename))
+      (user-error (format "[read-file-to-string error] arg FILENAME is not a string: %S" filename)))
+  (if (not (file-exists-p filename))
+      (user-error (format "[read-file-to-string error] FILENAME does not exist: %s" filename)))
+  (if (not (file-regular-p filename))
+      (user-error (format "[read-file-to-string error] FILENAME is not a regular file: %s" filename)))
+  (if (not (file-readable-p filename))
+      (user-error (format "[read-file-to-string error] FILENAME not readable: %s" filename)))
+  (let ((file-contents-string (with-temp-buffer
+    (insert-file-contents filename)
+    (widen)
+    (buffer-substring-no-properties (point-min) (point-max)))
+                              ))
+    file-contents-string
     ))
+
+(defun insert-template(name)
+  "inserts template file at beginning of current buffer."
+  (if (not (stringp name))
+      (user-error (format "insert-template: arg NAME is not a string: %S" name)))
+
+  (let ((template-path (file-name-concat (expand-file-name "~/.emacs.d/c/templates") name)))
+    (if (not (file-exists-p template-path))
+        (user-error (format "insert-template: file does not exist: %s" template-path)))
+    (if (not (file-readable-p template-path))
+        (user-error (format "insert-template: file not readable: %s" template-path)))
+    (let ((template-contents (read-file-to-string template-path)))
+      (insert template-contents)
+      )
+    )
+  )
 
 (defun make-script()
   "."
@@ -2625,8 +2608,8 @@ BEG END."
     (message tmp-buffer-name)
     (if (eq 0 exit-code)
         (let ((output (with-current-buffer tmp-buffer
-		   (widen)
-		   (string-trim (buffer-string)))))
+			(widen)
+			(string-trim (buffer-string)))))
           (kill-buffer tmp-buffer)
           (save-excursion
             (replace-region-contents beg end #'(lambda () output)))
@@ -2670,20 +2653,3 @@ BEG END."
   "BEG END."
   (interactive "*r")
   (heck-string-to-case-buffer "lower-camel" beg end))
-
-;; ;; kebab lower-camel pascal shouty-kebab shouty-snake snake train
-;; (defun string-to-kebab-region(beg end)
-;;   "BEG END."
-;;   (interactive "*r")
-;;   (heck-string-to-case-buffer "kebab" beg end))
-
-
-;; (defun hex-to-decimal-region(beg end)
-;;   "."
-;;   (interactive "*r")
-;;   (save-excursion
-;;     (goto-char beg)
-;;     (while (not(null (re-search-forward "\\([a-fA-F0-9]+\\)" end t)))
-;;       (replace-match
-;;        (format "%s" (string-to-number (match-string 1)) 1))
-;;        t)))
