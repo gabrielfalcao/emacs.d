@@ -1805,15 +1805,17 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
                         nil "-bn" "-ci" "-i" "4" "-ln=bash" "-w" current-filename )))
     (message
      (format "shfmt -bn -ci -i 4 -ln=bash -w %s exitted with code: %s" current-filename exit-code))
-    (ignore-errors (kill-buffer tmp-buffer))
     (or
      (when (eq exit-code 0)
        (progn
          (message
           (format "%s formatted"
                   (abbreviate-file-name current-filename)))
-         (revert-buffer t t t)))
+         (revert-buffer t t t)
+         (ignore-errors (kill-buffer tmp-buffer))
+         ))
      (progn
+       (switch-to-buffer tmp-buffer t t)
        (user-error
         (format "shfmt -bn -ci -i 4 -ln=bash -w %s failed with code: %s"
                 (abbreviate-file-name current-filename)
@@ -2307,6 +2309,14 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
       (insert "#!/usr/bin/env bash
 # shellcheck disable=SC2004,SC2206,SC2068,SC2086
 
+export IFS=$'\\n'
+error_color_rgb=\"$((\"0xFF\"));$((0x00));$((0x42))\"
+
+if [ \"$(whoami)\" != \"root\" ]; then
+    sudo bash $0
+    exit $?
+fi
+
 declare -a argv=($@)
 declare argc=${#argv[@]}
 
@@ -2314,19 +2324,37 @@ set -e
 set -o pipefail
 
 ctrlc() {
-    1>&2 echo -e \"\\rAborted with Ctrl-C\"
+    repl no echo
+    1>&2 echo -e \"\\x1b[1;38;2;${error_color_rgb}m\\rAborted with Ctrl-C\\x1b[0m\"
     exit 101
 }
 trap ctrlc int
 
+repl() {
+    local -a stty_args=()
+    case \"$1\" in
+        -*no*stdin | no*stdin | -*no*echo | no*echo | capture)
+            args+=('-echo')
+            ;;
+        *)
+            args+=('sane')
+            ;;
+    esac
+    2>/dev/random 1>/dev/random stty ${stty_args[@]}
+
+}
 usage() {
-    1>&2 echo -e \"$(basename $0) <ARGUMENT >\"
+    repl no echo
+    1>&2 echo -e \"$(basename $0) <ARGUMENT>\"
+    repl sane
 }
 
 main() {
+    repl no echo
     if [ ${argc} -eq 0 ]; then
         1>&2 echo -e \"missing argument\"
         usage
+        repl sane
         exit 101
     fi
 }
@@ -2336,6 +2364,7 @@ if [ \"${0}\" == \"${BASH_SOURCE[0]}\" ]; then
 else
     1>&2 echo -e \"${BASH_SOURCE[0]} appears to being used as a library by ${0@Q}\"
 fi
+repl sane
 ")
       (goto-char curpoint)
       )
