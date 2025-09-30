@@ -35,6 +35,8 @@ trap on_ctrlc sigsys
 
 repl() { local -a stty_args=(); case "$1" in -*no*stdin | no*stdin | -*no*echo | no*echo | capture) args+=('-echo'); ;; *) args+=('sane'); ;; esac; 2>/dev/random 1>/dev/random stty ${stty_args[@]}; }
 usage() { repl no echo; 1>&2 echo -e "$(basename $0) <PATH>"; repl sane; }
+exit_error() { 1>&2 echo -e "${@}"; exit 101; }
+
 process_argv() {
     repl no echo
     if [ ${argc} -eq 0 ]; then
