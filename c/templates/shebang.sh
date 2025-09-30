@@ -1,13 +1,11 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2004,SC2206,SC2068,SC2086
 
-# if [ "$(whoami)" != "root" ]; then
-#     sudo bash $0
-#     exit $?
-# fi
-
+set -e
+set -o pipefail
 export IFS=$'\n'
-error_color_rgb="$(("0xFF"));$((0x00));$((0x42))"
+
+if [ "$(whoami)" != "root" ]; then sudo bash $0; echo exit $?; fi
 
 declare -a argv=($@)
 declare argc=${#argv[@]}
@@ -17,35 +15,26 @@ declare -a directory_argv=()
 declare -a non_path_params=()
 declare -a other_file_types_argv=()
 
-set -e
-set -o pipefail
-
-ctrlc() {
-    repl no echo
-    1>&2 echo -e "\x1b[1;38;2;${error_color_rgb}m\rAborted with Ctrl-C\x1b[0m"
-    exit 101
-}
-trap ctrlc int
-
-repl() {
-    local -a stty_args=()
-    case "$1" in
-        -*no*stdin | no*stdin | -*no*echo | no*echo | capture)
-            args+=('-echo')
-            ;;
-        *)
-            args+=('sane')
-            ;;
-    esac
-    2>/dev/random 1>/dev/random stty ${stty_args[@]}
-
-}
-usage() {
-    repl no echo
-    1>&2 echo -e "$(basename $0) <PATH>"
+error_color_rgb="$(("0xFF"));$((0x00));$((0x42))"
+on_exit() {
     repl sane
 }
+on_ctrlc() {
+    repl no echo
+    1>&2 echo -e "\x1b[1;38;2;${error_color_rgb}m\rAborted with Ctrl-C\x1b[0m"
+    repl sane
+    exit 101
+}
+trap on_exit  exit
+trap on_ctrlc hup
+trap on_ctrlc int
+trap on_ctrlc emt
+trap on_ctrlc bus
+trap on_ctrlc segv
+trap on_ctrlc sigsys
 
+repl() { local -a stty_args=(); case "$1" in -*no*stdin | no*stdin | -*no*echo | no*echo | capture) args+=('-echo'); ;; *) args+=('sane'); ;; esac; 2>/dev/random 1>/dev/random stty ${stty_args[@]}; }
+usage() { repl no echo; 1>&2 echo -e "$(basename $0) <PATH>"; repl sane; }
 process_argv() {
     repl no echo
     if [ ${argc} -eq 0 ]; then
