@@ -25,13 +25,7 @@ on_ctrlc() {
     repl sane
     exit 101
 }
-trap on_exit  exit
-trap on_ctrlc hup
-trap on_ctrlc int
-trap on_ctrlc emt
-trap on_ctrlc bus
-trap on_ctrlc segv
-trap on_ctrlc sigsys
+trap on_exit exit; trap on_ctrlc hup; trap on_ctrlc int; trap on_ctrlc emt; trap on_ctrlc bus; trap on_ctrlc segv; trap on_ctrlc sigsys;
 
 repl() { local -a stty_args=(); case "$1" in -*no*stdin | no*stdin | -*no*echo | no*echo | capture) args+=('-echo'); ;; *) args+=('sane'); ;; esac; 2>/dev/random 1>/dev/random stty ${stty_args[@]}; }
 usage() { repl no echo; 1>&2 echo -e "$(basename $0) <PATH>"; repl sane; }
