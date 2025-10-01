@@ -1818,31 +1818,31 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
      (progn
        (let
            ((result t
-             ;; (with-temp-buffer tmp-buffer
-             ;;             (widen)
-             ;;             (if (re-search-forward "^\s-*\\([^:]+\\):\\([0-9]+\\):\\([0-9]+\\)\s-*\\(.+\\)$" nil t)
-             ;;                 (let* ((error-filename (match-string 1))
-             ;;                    (error-lineno (match-string 2))
-             ;;                    (error-column (match-string 3))
-             ;;                    (error-message (match-string 4)))
-             ;;                   (list error-filename error-lineno error-column error-message)))
-             ;;               )
-                         ))
+		    ;; (with-temp-buffer tmp-buffer
+		    ;;             (widen)
+		    ;;             (if (re-search-forward "^\s-*\\([^:]+\\):\\([0-9]+\\):\\([0-9]+\\)\s-*\\(.+\\)$" nil t)
+		    ;;                 (let* ((error-filename (match-string 1))
+		    ;;                    (error-lineno (match-string 2))
+		    ;;                    (error-column (match-string 3))
+		    ;;                    (error-message (match-string 4)))
+		    ;;                   (list error-filename error-lineno error-column error-message)))
+		    ;;               )
+                    ))
          (if (listp result)
              (let ((error-filename (nth 0 result))
-                    (error-lineno (string-to-number (nth 1 result)))
-                    (error-column (string-to-number (nth 2 result)))
-                    (error-message (nth 3 result)))
+                   (error-lineno (string-to-number (nth 1 result)))
+                   (error-column (string-to-number (nth 2 result)))
+                   (error-message (nth 3 result)))
                (goto-line error-lineno current-shell-buffer)
                (beginning-of-line)
                (forward-char error-column)
                (user-error
                 (format "line %d: %s" error-lineno error-message)))
-       (switch-to-buffer tmp-buffer t t)
-       (user-error
-        (format "shfmt -bn -ci -i 4 -ln=bash -w %s failed with code: %s"
-                (abbreviate-file-name current-filename)
-                exit-code)))
+	   (switch-to-buffer tmp-buffer t t)
+	   (user-error
+            (format "shfmt -bn -ci -i 4 -ln=bash -w %s failed with code: %s"
+                    (abbreviate-file-name current-filename)
+                    exit-code)))
          )))))
 
 
@@ -2356,9 +2356,9 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
   (if (not (file-readable-p filename))
       (user-error (format "[read-file-to-string error] FILENAME not readable: %s" filename)))
   (let ((file-contents-string (with-temp-buffer
-    (insert-file-contents filename)
-    (widen)
-    (buffer-substring-no-properties (point-min) (point-max)))
+				(insert-file-contents filename)
+				(widen)
+				(buffer-substring-no-properties (point-min) (point-max)))
                               ))
     file-contents-string
     ))
@@ -2680,5 +2680,25 @@ BEG END."
 
 (defun cargo-craft-get-replace-regexp-pattern-string()
   "."
-  "^\\(cargo.craft\\(\\s-+[\\]\\s-*$\\|\\s-+.*[\\]\\s-*$\\|\n+\\)+\\(\n+\\|\\s-+\\|[a-zA-Z0-9_-]+\\)\\(\\w+\\)\\) → if 1>&2 \\1; then\necho \"cd ${name:-\\4}\"\nfi"
+  "^\\(cargo.craft\\(\\s-+[\\]\\s-*$\\|\\s-+.*[\\]\\s-*$\\|\n+\\)+\\(\n+\\|\\s-+\\|[a-zA-Z0-9_-]+\\)\\(\\w+\\|\"[^\"]+\"\\)\\) → if 1>&2 \\1; then\necho \"cd ${name:-\\4}\"\nfi"
+  )
+
+(defun cargo-craft-sh-replace-regexp-call-cd-stderr()
+  "."
+  (interactive)
+  (let ((regexp "^\\(cargo.craft\\(\\s-+[\\]\\s-*$\\|\\s-+.*[\\]\\s-*$\\|\n+\\)+\\(\n+\\|\\s-+\\|[a-zA-Z0-9_-]+\\)\\(\\w+\\|\"[^\"]+\"\\)\\)"))
+    (save-excursion
+      (widen)
+      (goto-char (point-min))
+      (if (re-search-forward regexp nil t 1)
+          (let ((new-call (format
+            "if 1>&2 %s; then\\necho \"cd %s\"\\nfi"
+            (match-string 0)
+            (match-string 4))))
+          (replace-match "")
+	  (insert new-call))
+
+	(user-error "no regexp match for: %S" regexp)
+	)
+      ))
   )
