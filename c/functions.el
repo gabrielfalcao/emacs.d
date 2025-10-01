@@ -1795,7 +1795,8 @@
 shfmt -bn -ci -i 4 -ln=bash -w %s
 "
   (interactive)
-  (let* ((current-filename (expand-file-name (buffer-file-name)))
+  (let* ((current-shell-buffer (current-buffer))
+         (current-filename (expand-file-name (buffer-file-name)))
          (tmp-buffer-name (format "*shfmt:%s*" current-filename))
          (tmp-buffer (get-buffer-create tmp-buffer-name))
          (exit-code
@@ -1815,11 +1816,34 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
          (ignore-errors (kill-buffer tmp-buffer))
          ))
      (progn
+       (let
+           ((result t
+             ;; (with-temp-buffer tmp-buffer
+             ;;             (widen)
+             ;;             (if (re-search-forward "^\s-*\\([^:]+\\):\\([0-9]+\\):\\([0-9]+\\)\s-*\\(.+\\)$" nil t)
+             ;;                 (let* ((error-filename (match-string 1))
+             ;;                    (error-lineno (match-string 2))
+             ;;                    (error-column (match-string 3))
+             ;;                    (error-message (match-string 4)))
+             ;;                   (list error-filename error-lineno error-column error-message)))
+             ;;               )
+                         ))
+         (if (listp result)
+             (let ((error-filename (nth 0 result))
+                    (error-lineno (string-to-number (nth 1 result)))
+                    (error-column (string-to-number (nth 2 result)))
+                    (error-message (nth 3 result)))
+               (goto-line error-lineno current-shell-buffer)
+               (beginning-of-line)
+               (forward-char error-column)
+               (user-error
+                (format "line %d: %s" error-lineno error-message)))
        (switch-to-buffer tmp-buffer t t)
        (user-error
         (format "shfmt -bn -ci -i 4 -ln=bash -w %s failed with code: %s"
                 (abbreviate-file-name current-filename)
-                exit-code))))))
+                exit-code)))
+         )))))
 
 
 (defun elfmt()
@@ -2653,3 +2677,8 @@ BEG END."
   "BEG END."
   (interactive "*r")
   (heck-string-to-case-buffer "lower-camel" beg end))
+
+(defun cargo-craft-get-replace-regexp-pattern-string()
+  "."
+  "^\(cargo.craft\(\s-+[\\]\s-*$\|\s-+.*[\\]\s-*$\|\n+\)+\(\n+\|\s-+\|[a-zA-Z0-9_-]+\)\(\w+\)\) → if 1>&2 \1; then\necho \"cd ${name:-\4}\"\nfi"
+  )
