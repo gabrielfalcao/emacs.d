@@ -2680,5 +2680,5 @@ BEG END."
 
 (defun cargo-craft-get-replace-regexp-pattern-string()
   "."
-  "^\(cargo.craft\(\s-+[\\]\s-*$\|\s-+.*[\\]\s-*$\|\n+\)+\(\n+\|\s-+\|[a-zA-Z0-9_-]+\)\(\w+\)\) → if 1>&2 \1; then\necho \"cd ${name:-\4}\"\nfi"
+  "^\\(cargo.craft\\(\\s-+[\\]\\s-*$\\|\\s-+.*[\\]\\s-*$\\|\n+\\)+\\(\n+\\|\\s-+\\|[a-zA-Z0-9_-]+\\)\\(\\w+\\)\\) → if 1>&2 \\1; then\necho \"cd ${name:-\\4}\"\nfi"
   )
