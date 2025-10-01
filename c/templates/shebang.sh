@@ -15,7 +15,12 @@ declare -a directory_argv=()
 declare -a non_path_params=()
 declare -a other_file_types_argv=()
 
-error_color_rgb="$(("0xFF"));$((0x00));$((0x42))"
+error_prefix_color_rgb="$((0xFF));$((0x00));$((0x42))"
+error_color_rgb="$(( 0xFF ));$(( 0x32 ));$(( 0x32 ))"
+error_color_rgb="$(( 0xFF ));$(( 0x3E ));$(( 0x5C ))"
+warn_prefix_color_rgb="$((0xFF));$((0x6A));$((0x32))"
+warn_color_rgb="$(( 0xFF ));$(( 0xA1 ));$(( 0x32 ))"
+
 on_exit() {
     repl sane
 }
@@ -25,16 +30,39 @@ on_ctrlc() {
     repl sane
     exit 101
 }
-trap on_exit exit; trap on_ctrlc hup; trap on_ctrlc int; trap on_ctrlc emt; trap on_ctrlc bus; trap on_ctrlc segv; trap on_ctrlc sigsys;
+trap on_exit exit
+trap on_ctrlc hup
+trap on_ctrlc int
+trap on_ctrlc emt
+trap on_ctrlc bus
+trap on_ctrlc segv
+trap on_ctrlc sigsys
 
-repl() { local -a stty_args=(); case "$1" in -*no*stdin | no*stdin | -*no*echo | no*echo | capture) args+=('-echo'); ;; *) args+=('sane'); ;; esac; 2>/dev/random 1>/dev/random stty ${stty_args[@]}; }
-usage() { repl no echo; 1>&2 echo -e "$(basename $0) <PATH>"; repl sane; }
-exit_error() { 1>&2 echo -e "${@}"; usage;repl sane;exit 101; }
+repl() {
+    local -a stty_args=()
+    case "$1" in -*no*stdin | no*stdin | -*no*echo | no*echo | capture) args+=('-echo') ;; *) args+=('sane') ;; esac
+    2>/dev/random 1>/dev/random stty ${stty_args[@]}
+}
+usage() {
+    repl no echo
+    1>&2 echo -e "$(basename $0) <ARGUMENT>"
+    repl sane
+}
+exit_error() {
+    error "${@}"
+    exit 101
+}
+warn() {
+    1>&2 echo -e "\x1b[1;38;2;${warn_prefix_color_rgb}m[warn]\x1b[1;38;2;${warn_color_rgb}m ${@}\x1b[0m"
+}
+error() {
+    1>&2 echo -e "\x1b[1;38;2;${error_prefix_color_rgb}m[error]\x1b[1;38;2;${error_color_rgb}m ${@}\x1b[0m"
+}
 
 process_argv() {
     repl no echo
     if [ ${argc} -eq 0 ]; then
-        exit_error "missing argument: <PATH>"
+        exit_error "missing argument: <ARGUMENT>"
         exit 101
     fi
     for arg in ${argv[@]}; do
