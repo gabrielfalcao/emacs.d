@@ -412,22 +412,6 @@
           (current-column)))
 
 
-(defun g/build ()
-  (interactive "*")
-  (cond
-   ((string= "rust-mode" (Ox33b4O/$/mode-name))
-    (rustfmt))
-   ((string= "lua-mode" (Ox33b4O/$/mode-name))
-    (stylua))
-   ((string= "typescript-mode" (Ox33b4O/$/mode-name))
-    (prettierjs))
-   ((string= "shell-script-mode" (Ox33b4O/$/mode-name))
-    (shfmt))
-   ((string= "javacript-mode" (Ox33b4O/$/mode-name))
-    (prettierjs))
-   ((string= "elisp-mode" (Ox33b4O/$/mode-name))
-    (elfmt))
-   ((nil t))))
 
 (defun Ox33b4O/$/base64-encode-region (beg end)
   (interactive "*r")
@@ -1787,6 +1771,36 @@
   )
 
 
+(defun shfmt-break-onliner()
+  "."
+  (interactive)
+  (enable-debug-on-error)
+  (ignore-errors (erase-messages))
+  (let (
+        (break-up-oneliner-regex "\\([;]\s-\\|\\bdo\\b\\|\\bthen\\b\\|\\bthen\\b\\|\\belse\\b\\|\\bfi\\b\\|\\besac\\b\\|[;][;]\\)")
+        (started-at (format-time-string "%Y/%m/%d %H:%M:%S %Z"))
+        )
+    (message (format "<match-regex started-at=\"%s\"" started-at))
+
+    (save-excursion
+      (widen)
+      (goto-char (point-min))
+      (let* ((match-point (re-search-forward break-up-oneliner-regex nil t)))
+	(while match-point
+          ;; (message (format "match point: %S" match-point)) (message (format "match-beginning 0: %S" (match-beginning 0))) (message (format "match-beginning 1: %S" (match-beginning 1))) (message (format "match-end 0: %S" (match-end 0))) (message (format "match-end 1: %S" (match-end 1)))
+          (goto-char (match-beginning 0))
+          (message (format "match-string-no-properties 0:\n%S\n" (match-string-no-properties 0)))
+          (message (format "match-string-no-properties 0:\n%S\n" (match-string-no-properties 1)))
+          (replace-match "\n\\1\n")
+          (setq match-point (re-search-forward break-up-oneliner-regex nil t))
+          )
+	;; (save-buffer 3)
+	))
+    (let ((finished-at (format-time-string "%Y/%m/%d %H:%M:%S %Z")))
+      (message (format "</match-regex finished-at=\"%s\" started-at=\"%s\">" finished-at started-at))
+      )
+    ))
+
 (defun shfmt()
   ".
 ;; https://github.com/mvdan/sh
@@ -1795,6 +1809,7 @@
 shfmt -bn -ci -i 4 -ln=bash -w %s
 "
   (interactive)
+  (shfmt-break-onliner)
   (let* ((current-shell-buffer (current-buffer))
          (current-filename (expand-file-name (buffer-file-name)))
          (tmp-buffer-name (format "*shfmt:%s*" current-filename))
@@ -1833,10 +1848,10 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
                    (error-lineno (string-to-number (nth 1 result)))
                    (error-column (string-to-number (nth 2 result)))
                    (error-message (nth 3 result)))
-               (goto-line error-lineno current-shell-buffer)
-               (beginning-of-line)
-               (forward-char error-column)
-               (user-error
+	       (goto-line error-lineno current-shell-buffer)
+	       (beginning-of-line)
+	       (forward-char error-column)
+	       (user-error
                 (format "line %d: %s" error-lineno error-message)))
 	   (switch-to-buffer tmp-buffer t t)
 	   (user-error
@@ -1871,6 +1886,23 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
         (format "elfmt %s failed with code: %s"
                 (abbreviate-file-name current-filename)
                 exit-code))))))
+
+(defun g/build ()
+  (interactive "*")
+  (cond
+   ((string= "rust-mode" (Ox33b4O/$/mode-name))
+    (rustfmt))
+   ((string= "lua-mode" (Ox33b4O/$/mode-name))
+    (stylua))
+   ((string= "typescript-mode" (Ox33b4O/$/mode-name))
+    (prettierjs))
+   ((string= "shell-script-mode" (Ox33b4O/$/mode-name))
+    (shfmt))
+   ((string= "javacript-mode" (Ox33b4O/$/mode-name))
+    (prettierjs))
+   ((string= "elisp-mode" (Ox33b4O/$/mode-name))
+    (elfmt))
+   ((nil t))))
 
 (defun git-restore()
   "."
@@ -1922,8 +1954,8 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
      (lambda(window)
        (with-window-non-dedicated window
          (setq buffer-names
-               (append buffer-names
-                       (list (format "%s" (buffer-name))))))))
+	       (append buffer-names
+		       (list (format "%s" (buffer-name))))))))
     (delete-dups buffer-names)))
 
 (defun eval-messages()
@@ -1933,9 +1965,9 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
   (let* ((windows
           (let ((windows 0))
             (progn
-              (walk-windows
-               (lambda(window) (setq windows (1+ windows))))
-              windows)))
+	      (walk-windows
+	       (lambda(window) (setq windows (1+ windows))))
+	      windows)))
          (right (split-window-right))
          (current (frame-first-window)))
     (when (> windows 1) (delete-window))
@@ -2063,15 +2095,15 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
     ;; errors `t', saving (point) of last ocurrence in `current-match'.
     (let* ((current-match (re-search-forward regexp end t 1))
            (last-match (if (null current-match) (user-error (format "failed to search regexp `%s'" regexp))  (match-beginning 0))
-                       ))
+		       ))
 
       (while (and
-              (not (null current-match)) ;; stop iteration when last re-search-forward returns nil
-              (not (null last-match))
+	      (not (null current-match)) ;; stop iteration when last re-search-forward returns nil
+	      (not (null last-match))
 
-              (< last-match current-match)
-              (< (point) end)
-              (not (null (match-beginning 1))))
+	      (< last-match current-match)
+	      (< (point) end)
+	      (not (null (match-beginning 1))))
 
 	(setq current-match (re-search-forward regexp end t 1))
 	(if (not (null (match-beginning 1)))
@@ -2359,7 +2391,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 				(insert-file-contents filename)
 				(widen)
 				(buffer-substring-no-properties (point-min) (point-max)))
-                              ))
+			      ))
     file-contents-string
     ))
 
@@ -2697,7 +2729,7 @@ BEG END."
                  (new-call (format
 			    "if 1>&2 %s; then\necho \"cd \\\"%s\\\"\"\nfi"
                             old-call escaped-crate-name
-                           )))
+                            )))
             (replace-match "")
 	    (insert new-call)
             (save-buffer 0)
