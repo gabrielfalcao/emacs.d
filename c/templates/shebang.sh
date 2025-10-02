@@ -5,15 +5,8 @@ set -e
 set -o pipefail
 export IFS=$'\n'
 
-if [ "$(whoami)" != "root" ]; then sudo bash $0; echo exit $?; fi
-
 declare -a argv=($@)
 declare argc=${#argv[@]}
-
-declare -a regular_file_argv=()
-declare -a directory_argv=()
-declare -a non_path_params=()
-declare -a other_file_types_argv=()
 
 error_prefix_color_rgb="$((0xFF));$((0x00));$((0x42))"
 error_color_rgb="$(( 0xFF ));$(( 0x32 ));$(( 0x32 ))"
@@ -22,10 +15,9 @@ warn_prefix_color_rgb="$((0xFF));$((0x6A));$((0x32))"
 warn_color_rgb="$(( 0xFF ));$(( 0xA1 ));$(( 0x32 ))"
 
 on_exit() {
-    repl sane
+    stty sane
 }
 on_ctrlc() {
-    repl no echo
     1>&2 echo -e "\x1b[1;38;2;${error_color_rgb}m\rAborted with Ctrl-C\x1b[0m"
     repl sane
     exit 101
@@ -36,7 +28,7 @@ trap on_ctrlc int
 trap on_ctrlc emt
 trap on_ctrlc bus
 trap on_ctrlc segv
-trap on_ctrlc sigsys
+trap on_ctrlc sys
 
 repl() {
     local -a stty_args=()
