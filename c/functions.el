@@ -2527,8 +2527,8 @@ which returns the exit-status and the string output.
 
 (defun ack(regexp)
   "."
-  (interactive "*r")
-  (let* ((exit-status-output (call-program-with-list-args "ack" (list regexp)))
+  ;; ack --output='$f +$. # $&' 'querySelectorAll' src/lib/dom.generated.d.ts
+  (let* ((exit-status-output (call-program-with-list-args "ack" (list "--output='(cons $. \"$f\") ;; $&" regexp)))
          (exit-status (car exit-status-output))
          (output (car (cdr( exit-status-output)))))
     (if (eq 0 exit-status)
