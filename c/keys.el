@@ -42,8 +42,19 @@
 (Ox33b4O/$/set-key '("C-S-r") 're-builder)
 (Ox33b4O/$/set-key '("C-S-d") 'decr-next-number)
 (Ox33b4O/$/set-key '("C-S-i") 'incr-next-number)
-(Ox33b4O/$/set-key '("C-x C-x") 'Ox33b4O/$/levate)
-(Ox33b4O/$/set-key '("C-x C-a") #'(lambda () (interactive) (eval-buffer) (message "%s eval'd " (buffer-name))))
+
+(Ox33b4O/$/set-key '("C-x C-M-a") 'Ox33b4O/$/reload-all-c)
+(Ox33b4O/$/set-key '("C-x C-M-g a") 'git-add)
+(Ox33b4O/$/set-key '("C-x C-M-g s") 'git-save)
+(Ox33b4O/$/set-key '("C-x C-g") 'git-save)
+(Ox33b4O/$/set-key '("C-x C-x") 'eval-elisp-buffer)
+;; TODO ;; fix levate (Ox33b4O/$/set-key '("C-x C-x") 'Ox33b4O/$/levate)
+(Ox33b4O/$/set-key '("C-x C-a") #'(lambda () (interactive)
+                                    (if (buffer-elisp-heuristic)
+                                        (save-mark-and-excursion
+                                          (widen)
+                                          (eval-buffer)
+                                          (message "%s eval'd " (buffer-name))))))
 
 (Ox33b4O/$/set-key '("C-x C--") 'text-scale-adjust)
 (Ox33b4O/$/set-key '("C-x C-+") 'text-scale-adjust)
