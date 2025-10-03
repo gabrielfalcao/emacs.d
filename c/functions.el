@@ -198,25 +198,36 @@
   (if mark-active
       (save-mark-and-excursion
         (list (marker-position (mark-marker)) (point)))
-    (progn
-      (widen)
+    (save-mark-and-excursion
+        (widen)
       (list (point-min) (point-max)))))
+
+
+(defun eval-elisp-buffer () (interactive)
+       "evaluates the entire buffer as emacs-lisp expression so long as calling `buffer-elisp-heuristic' returns non-nil."
+                                    (if (buffer-elisp-heuristic)
+                                        (save-mark-and-excursion
+                                          (widen)
+                                          (eval-buffer)
+                                          (message "%s eval'd " (buffer-name)))))
 
 (defun Ox33b4O/$/levate ()
   "."
   (interactive)
   (if (buffer-elisp-heuristic)
+      (save-mark-and-excursion
       (let* ((beg-end (region-points))
-             (beg (car beg-end))
-             (end (car (cdr beg-end)))
-             (region (buffer-substring-no-properties beg end)))
-        (if (string-match-p "\\s-*[(]\\(.\\|\n\\)+[)]\\s-*" region)
+             (beg (nth 0 beg-end))
+             (end (nth 1 beg-end)))
+        (region (buffer-substring-no-properties beg end))
+        (widen)
+        (if (re-search-forward "\\s-*[(]\\(.\\|\n\\)+[)]\\s-*" region )
             (progn
               (eval-region beg end)
               (when (string= (format "%S" (abbreviate-file-name (buffer-file-name))) (buffer-name))
                 (message (format "%s eval'd" (abbreviate-file-name (buffer-file-name))))))
           (message "does not seem to be valid elisp: %s" region)))
-    (message "\"%s\" aint no el" (buffer-name))))
+      (message "\"%s\" aint no el" (buffer-name)))))
 
 (defun Ox33b4O/$/undefine-key (key)
   "KEY."
@@ -1754,7 +1765,6 @@
                         nil "-w" current-filename )))
     (message
      (format "prettier -w %s exitted with code: %s" current-filename exit-code))
-    (ignore-errors (kill-buffer tmp-buffer))
 
     (or
      (when (eq exit-code 0)
@@ -1762,12 +1772,17 @@
          (message
           (format "%s formatted"
                   (abbreviate-file-name current-filename)))
-         (revert-buffer t t t)))
+         (revert-buffer t t t)
+         (ignore-errors (kill-buffer tmp-buffer))
+         ))
      (progn
+       (pop-to-buffer-same-window tmp-buffer)
        (user-error
         (format "prettier -w %s failed with code: %s"
                 (abbreviate-file-name current-filename)
-                exit-code)))))
+                exit-code))))
+
+    )
   )
 
 
