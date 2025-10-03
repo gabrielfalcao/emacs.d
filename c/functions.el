@@ -1771,35 +1771,15 @@
   )
 
 
-(defun shfmt-break-onliner()
+(defun shfmt-break-onliner-region(beg end)
   "."
-  (interactive)
-  (enable-debug-on-error)
-  (ignore-errors (erase-messages))
+  (interactive "*r")
   (let (
-        (break-up-oneliner-regex "\\([;]\s-\\|\\bdo\\b\\|\\bthen\\b\\|\\bthen\\b\\|\\belse\\b\\|\\bfi\\b\\|\\besac\\b\\|[;][;]\\)")
-        (started-at (format-time-string "%Y/%m/%d %H:%M:%S %Z"))
+        (break-up-oneliner-regex "\\([;]\\s-\\|\\bdo\\b\\|\\bthen\\b\\|\\bthen\\b\\|\\belse\\b\\|\\bfi\\b\\|\\besac\\b\\|[;][;]\\)")
         )
-    (message (format "<match-regex started-at=\"%s\"" started-at))
-
-    (save-excursion
-      (widen)
-      (goto-char (point-min))
-      (let* ((match-point (re-search-forward break-up-oneliner-regex nil t)))
-	(while match-point
-          ;; (message (format "match point: %S" match-point)) (message (format "match-beginning 0: %S" (match-beginning 0))) (message (format "match-beginning 1: %S" (match-beginning 1))) (message (format "match-end 0: %S" (match-end 0))) (message (format "match-end 1: %S" (match-end 1)))
-          (goto-char (match-beginning 0))
-          (message (format "match-string-no-properties 0:\n%S\n" (match-string-no-properties 0)))
-          (message (format "match-string-no-properties 0:\n%S\n" (match-string-no-properties 1)))
-          (replace-match "\n\\1\n")
-          (setq match-point (re-search-forward break-up-oneliner-regex nil t))
-          )
-	;; (save-buffer 3)
-	))
-    (let ((finished-at (format-time-string "%Y/%m/%d %H:%M:%S %Z")))
-      (message (format "</match-regex finished-at=\"%s\" started-at=\"%s\">" finished-at started-at))
-      )
-    ))
+    (save-mark-and-excursion
+      (goto-char beg)
+      (replace-regexp break-up-oneliner-regex "\n\\1\n" nil (point-min) (point-max) ))))
 
 (defun shfmt()
   ".
@@ -1809,7 +1789,7 @@
 shfmt -bn -ci -i 4 -ln=bash -w %s
 "
   (interactive)
-  (shfmt-break-onliner)
+  ;; (shfmt-break-onliner)
   (let* ((current-shell-buffer (current-buffer))
          (current-filename (expand-file-name (buffer-file-name)))
          (tmp-buffer-name (format "*shfmt:%s*" current-filename))
@@ -2654,6 +2634,34 @@ which returns the exit-status and the string output.
         "%x" (string-to-number (match-string 0)))))))
 
 
+(defun hex-rgb-to-ansi-region(beg end)
+  "BEG END."
+  (interactive "*r")
+  (let
+      (
+       (regexp-6 "\\([A-F0-9]\\{2\\}\\|[A-F0-9]\\{4\\}\\|[A-F0-9]\\{6\\}\\)")
+       (regexp-2 "[A-F0-9]\\{2\\}")
+       )
+    (save-mark-and-excursion
+      (goto-char beg)
+      (if (re-search-forward regexp-6 end t)
+          (progn
+            (goto-char (match-beginning 0))
+            (while (re-search-forward regexp-2 end t)
+              (goto-char (match-beginning 0))
+              (replace-match
+               (format
+		"$(( 0x%x ));" (string-to-number (match-string 0) 16)))
+              (setq end (point))
+              (backward-word 0)
+              )
+            )
+	(user-error "no match for regex %S in %S" regexp-6 (buffer-substring-no-properties beg end))
+	)
+      )
+    ))
+
+
 (defun heck-string-to-case-buffer(case beg end)
   "depends on cargo crate heck-string-cli: `cargo install heck-string-cli'
 BEG END."
@@ -2741,3 +2749,17 @@ BEG END."
       ))
   ;; OzsgOzsgKGRlZnVuIGNhcmdvLWNyYWZ0LWJyZWFrLW9uZWxpbmVyLWNhbGwoKQo7OyA7OyAgICIuIgo7OyA7OyAgIChpbnRlcmFjdGl2ZSkKOzsgOzsgICA7OyBjYXJnbyBjcmFmdCAtY3NtIC1DIGJvb2xlYW4gLUMgbnVtYmVyIC1DIGRhdGV0aW1lIC1DIGpzb24gLUMgeWFtbCAtQyB0b21sIC1DIGluaSAtQyBkYXRlIC1DIHRpbWUgLWQgJ2Nocm9ubyAtRiBjbG9jaycgaXMKOzsKOzsgOzsgICAobGV0ICgocmVnZXhwICJeXFwoY2FyZ29cXChccy0rXHxbLV1cXCljcmFmdFxcKVxcKFxccy0rWy1dW2Etel0rXFx8XFxzLStbLV1bQ11ccy0rW2Etel1bYS16MC05Xy1dK1xcfFxccy0rWy1dW2RdXFxzLStcXCgnW14nXSsnXFx8W2EtekEtWl1bYS16QS1aMC05Xy1dK1xcKVxccy0rXFwoW2EtekEtWl1bYS16QS1aMC05Xy1dK1xcKVxcKSIpKQo7OyA7OyAgICAgKHNhdmUtZXhjdXJzaW9uCjs7IDs7ICAgICAgICh3aWRlbikKOzsgOzsgICAgICAgKGdvdG8tY2hhciAocG9pbnQtbWluKSkKOzsgOzsgICAgICAgKGlmIChyZS1zZWFyY2gtZm9yd2FyZCByZWdleHAgbmlsIHQgMSkKOzsgOzsgICAgICAgICAgIChyZXBsYWNlLW1hdGNoICJcXDEgXFxcblxcMyIpCjs7Cjs7Cjs7IDs7IAkodXNlci1lcnJvciAibm8gcmVnZXhwIG1hdGNoIGZvcjogJVMiIHJlZ2V4cCkKOzsgOzsgCSkKOzsgOzsgICAgICAgKSkKOzsgOzsgICApCjs7ICh1bmRlZnVuICdjYXJnby1jcmFmdC1icmVhay1vbmVsaW5lci1jYWxsKQo=
   )
+
+(defun css-selector-fix-regex-region(beg end)
+  "."
+  (interactive "*r")
+  (save-mark-and-excursion
+      (goto-char beg)
+      (let ((regexp "\"\\([[]\\([a-z0-9A-Z_-]+\\)\\([*^|$~]?=\\)\\([^]\"]+\\)[]]\\)\""))
+        (while (re-search-forward regexp end t)
+          (replace-match "`\\1`,\n`[\\2\\3'\\4']`,\n`[\\2\\3\"\\4\"]`") ;; works
+          ;; (replace-match "\\1,\n\"[\\2\\3'\\4']\",\n\"[\\2\\3\\\"\\4\\\"]\"")
+          ;; (replace-match "\\1,\n\"[\\2\\3'\\4']\"") ;; works
+          )
+        )
+      ))
