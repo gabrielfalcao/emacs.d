@@ -199,37 +199,38 @@
       (save-mark-and-excursion
         (list (marker-position (mark-marker)) (point)))
     (save-mark-and-excursion
-        (widen)
+      (widen)
       (list (point-min) (point-max)))))
 
 
 (defun eval-elisp-buffer () (interactive)
        "evaluates the entire buffer as emacs-lisp expression so long as calling `buffer-elisp-heuristic' returns non-nil."
-                                    (if (buffer-elisp-heuristic)
-                                        (save-mark-and-excursion
-                                          (widen)
-                                          (eval-buffer)
-                                          (message "%s eval'd " (buffer-name)))))
+       (if (buffer-elisp-heuristic)
+           (save-mark-and-excursion
+             (widen)
+             (eval-buffer)
+             (message "%s eval'd " (buffer-name)))))
 
 (defun Ox33b4O/$/reload-all-c() "." (interactive) (cleanup-elc) (load-file "~/.emacs.d/c/boot.el"))
+(defun Ox33b4O/$/reload-init () "." (interactive) (cleanup-elc) (load-file "~/.emacs.d/init.el"))
 
 (defun Ox33b4O/$/levate ()
   "."
   (interactive)
   (if (buffer-elisp-heuristic)
       (save-mark-and-excursion
-      (let* ((beg-end (region-points))
-             (beg (nth 0 beg-end))
-             (end (nth 1 beg-end)))
-        (region (buffer-substring-no-properties beg end))
-        (widen)
-        (if (re-search-forward "\\s-*[(]\\(.\\|\n\\)+[)]\\s-*" region )
-            (progn
-              (eval-region beg end)
-              (when (string= (format "%S" (abbreviate-file-name (buffer-file-name))) (buffer-name))
-                (message (format "%s eval'd" (abbreviate-file-name (buffer-file-name))))))
-          (message "does not seem to be valid elisp: %s" region)))
-      (message "\"%s\" aint no el" (buffer-name)))))
+        (let* ((beg-end (region-points))
+               (beg (nth 0 beg-end))
+               (end (nth 1 beg-end))
+               (region (buffer-substring-no-properties beg end)))
+          (widen)
+          (if (re-search-forward "\\s-*[(]\\(.\\|\n\\)+[)]\\s-*" region )
+              (progn
+                (eval-region beg end)
+                (when (string= (format "%S" (abbreviate-file-name (buffer-file-name))) (buffer-name))
+                  (message (format "%s eval'd" (abbreviate-file-name (buffer-file-name))))))
+            (message "does not seem to be valid elisp: %s" region)))
+        (message "\"%s\" aint no el" (buffer-name)))))
 
 (defun Ox33b4O/$/undefine-key (key)
   "KEY."
@@ -1722,11 +1723,46 @@
 
     ))
 
+(defun disable-read-only-mode()
+  "shortcut to (read-only-mode -1)"
+  (read-only-mode -1))
+
+(defun enable-read-only-mode()
+  "shortcut to (read-only-mode 1)"
+  (read-only-mode 1))
+
+
+
+(defun erase-all-non-file-buffers()
+  "."
+  (interactive)
+  (ignore-errors
+    (erase-scratch)
+    (erase-messages)
+    (mapcar #'erase-buffer-by-name
+            (buffer-list-builtin-only)
+            )))
+
+(defun erase-buffer-by-name(buffer-or-name)
+  (if (not (stringp buffer-or-name))
+      (user-error "[erase-buffer-by-name] argument buffer-or-name is not a string: %S" buffer-or-name))
+  (ignore-errors
+    (with-current-buffer buffer-or-name
+      (let ((buffer-was-read-only (not (null buffer-read-only))))
+        (read-only-mode -1)
+        (widen)
+        (erase-buffer)
+        (if buffer-was-read-only
+            (read-only-mode 1))
+        ))))
+
+
 (defun erase-messages()
   "."
   (interactive)
   (with-current-buffer "*Messages*"
     (read-only-mode -1)
+    (widen)
     (erase-buffer)
     (read-only-mode 1)))
 
@@ -1777,15 +1813,52 @@
          (revert-buffer t t t)
          (ignore-errors (kill-buffer tmp-buffer))
          ))
-     (progn
-       (pop-to-buffer-same-window tmp-buffer)
-       (user-error
-        (format "prettier -w %s failed with code: %s"
-                (abbreviate-file-name current-filename)
-                exit-code))))
+     (let ((error-details
+            (with-current-buffer tmp-buffer
+              (widen)
+              (goto-char (point-min))
+              (let ((regex-point-beg (point))
+                    (regex-point-end (save-excursion
+                                       (end-of-line)
+                                       (point))))
+                ;;^ ;; [error] index.ts: SyntaxError: Function type notation must be parenthesized when used in a union type. (96:46)
 
+                (if (re-search-forward
+                     "^\s-*[[]error[]]\s-+\\([^ :]+[.][a-z]\\{2,\\}\\)[:]\s-+\\(\\([A-Za-z0-9]+\\|[^:]+\\)[:]\s-+.+[.]\\)\s-+[(]\\([1-9][0-9]*\\):\\([1-9][0-9]*\\)[)]\s-*$"
+                     regex-point-end
+                     t)
+                    (let ((error-filename (match-string 1))
+                          (error-message (match-string 2))
+                          (error-lineno (string-to-number (match-string 4)))
+                          (error-column (string-to-number (match-string 5))))
+                      (append error-filename error-message error-lineno error-column))))))
+           )
+       (if (listp error-details)
+           (let* (
+                  (error-filename (nth 0 error-details))
+                  (error-message (nth 1 error-details))
+                  (error-lineno (nth 2 error-details))
+                  (error-column (nth 3 error-details)))
+             (goto-line error-lineno)
+             (goto-char (+ (point) error-column))
+             (message (format "%s" (propertize error-message 'face
+                                               (list :background "#3d3d3d"
+                                                     :foreground "#FF3232"))))
+             )
+         ;; else
+         (pop-to-buffer-same-window tmp-buffer)
+         (user-error
+          (format "prettier -w %s failed with code: %s"
+                  (abbreviate-file-name current-filename)
+                  exit-code))
+         )
+       )
+     )
     )
   )
+
+
+
 
 
 (defun shfmt-break-onliner-region(beg end)
@@ -2770,12 +2843,12 @@ BEG END."
   "."
   (interactive "*r")
   (save-mark-and-excursion
-      (goto-char beg)
-      (let ((regexp "\"\\([[]\\([a-z0-9A-Z_-]+\\)\\([*^|$~]?=\\)\\([^]\"]+\\)[]]\\)\""))
-        (while (re-search-forward regexp end t)
-          (replace-match "`\\1`,\n`[\\2\\3'\\4']`,\n`[\\2\\3\"\\4\"]`") ;; works
-          ;; (replace-match "\\1,\n\"[\\2\\3'\\4']\",\n\"[\\2\\3\\\"\\4\\\"]\"")
-          ;; (replace-match "\\1,\n\"[\\2\\3'\\4']\"") ;; works
-          )
+    (goto-char beg)
+    (let ((regexp "\"\\([[]\\([a-z0-9A-Z_-]+\\)\\([*^|$~]?=\\)\\([^]\"]+\\)[]]\\)\""))
+      (while (re-search-forward regexp end t)
+        (replace-match "`\\1`,\n`[\\2\\3'\\4']`,\n`[\\2\\3\"\\4\"]`") ;; works
+        ;; (replace-match "\\1,\n\"[\\2\\3'\\4']\",\n\"[\\2\\3\\\"\\4\\\"]\"")
+        ;; (replace-match "\\1,\n\"[\\2\\3'\\4']\"") ;; works
         )
-      ))
+      )
+    ))
