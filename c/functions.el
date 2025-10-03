@@ -211,6 +211,8 @@
                                           (eval-buffer)
                                           (message "%s eval'd " (buffer-name)))))
 
+(defun Ox33b4O/$/reload-all-c() "." (interactive) (cleanup-elc) (load-file "~/.emacs.d/c/boot.el"))
+
 (defun Ox33b4O/$/levate ()
   "."
   (interactive)
@@ -2330,7 +2332,6 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
   (interactive)
   (open-note "~/projects/notes/notes.rst"))
 
-(defun reload() "." (interactive) (revert-buffer nil t))
 
 (defun regex-ansi-underline-to-spaced (string)
   "STRING."
