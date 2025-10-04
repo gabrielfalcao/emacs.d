@@ -5,6 +5,10 @@ set -e
 set -o pipefail
 export IFS=$'\n'
 
+this_script_path="${BASH_SOURCE[0]}"
+script_name="$(basename "${this_script_path}")"
+script_path="$(dirname "${this_script_path}")"
+
 declare -a argv=($@)
 declare argc=${#argv[@]}
 
