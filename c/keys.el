@@ -49,7 +49,7 @@
 ;; (Ox33b4O/$/set-key '("C-x C-M-g s") 'git-save)
 (Ox33b4O/$/set-key '("C-x C-g") 'git-save)
 (Ox33b4O/$/set-key '("C-x C-a") 'eval-elisp-buffer)
-(Ox33b4O/$/set-key '("C-x C-x") 'Ox33b4O/$/levate)
+(Ox33b4O/$/set-key '("C-x C-x") 'eval-elisp-buffer)
 
 (Ox33b4O/$/set-key '("C-x C--") 'text-scale-adjust)
 (Ox33b4O/$/set-key '("C-x C-+") 'text-scale-adjust)
