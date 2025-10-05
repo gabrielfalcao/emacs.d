@@ -2852,3 +2852,49 @@ BEG END."
         )
       )
     ))
+
+(defun regexp-adoc-to-markdown()
+  "."
+  (let* ((regexp "^\([+]\([^+]+\)[+]::\s-+\(.+\($\|
+\|\s-*\|.*\)\)\)")
+         (replacement "# `\2`
+# \3
+### \1"))))
+
+(defun insert-regexp-linebreak-and-tabs()
+  (interactive)
+  (insert "\\(\n\\|\t\\)"))
+
+(defun regexp-adoc-strip-all-but-spaces()
+  (let ((regexp "\\([a-zA-Z0-9+=(.|*){@}%,:<>\"'`_-]+\\|[[]\\|[]]\\)+"))))
+
+(defun elisp-escape-regexp-with-double-slashes-in-region(beg end)
+  (interactive "*r")
+  (if (or (not (string= "emacs-lisp-mode" (Ox33b4O/$/mode-name)))
+          (not (string= "elisp-mode" (Ox33b4O/$/mode-name))))
+
+      (user-error "this function requires emacs-lisp-mode"))
+  (let ((regexp "\\\\\\([^\"]\\)")
+        (replacement "\\\\\1"))
+    (save-mark-and-excursion
+      (goto-char beg)
+      (while (re-search-forward regexp end t)
+	(replace-match replacement)))
+    ;; (replace-match "\\1,\n\"[\\2\\3'\\4']\",\n\"[\\2\\3\\\"\\4\\\"]\"")
+    ;; (replace-match "\\1,\n\"[\\2\\3'\\4']\"") ;; works
+    )
+  )
+
+
+(defun disable-delete-trailing-space()
+  (interactive)
+  (setq delete-trailing-lines nil)
+  (electric-indent-mode -1)
+  (electric-indent-local-mode -1)
+)
+
+
+(defun enable-electric-indent-mode()
+  (interactive)
+  (electric-indent-mode 1)
+)

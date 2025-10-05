@@ -101,6 +101,7 @@
   (add-to-list 'auto-mode-alist '("\\.ya?ml$" . yaml-mode))
   (add-to-list 'auto-mode-alist '("^---$" . yaml-mode))
   (add-to-list 'auto-mode-alist '("nginx.conf$" . nginx-mode))
+  (add-to-list 'auto-mode-alist '("[.][a-z]\{3,\}[a-z_-]+rc$" . conf-mode))
   (add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
   (add-to-list 'auto-mode-alist '("\\.frm$" . visual-basic-mode))
   (add-to-list 'auto-mode-alist '("\\.vbp$" . visual-basic-mode))
