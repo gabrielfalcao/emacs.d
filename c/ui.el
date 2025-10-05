@@ -1,4 +1,4 @@
-(defun Ox33b4O/$/mode-line-foreground ()  "#FF1978")
+(defun Ox33b4O/$/mode-line-foreground ()  "#FF1978") ;; #F13976
 (defun Ox33b4O/$/mode-line-background () "#3d3d3d")
 (defun Ox33b4O/$/mark-indicator-color() "#cad79d")
 (defun Ox33b4O/$/mode-line-arrow-right() " ⇒ ")

@@ -209,28 +209,18 @@
            (save-mark-and-excursion
              (widen)
              (eval-buffer)
-             (message "%s eval'd " (buffer-name)))))
+             (message "%s eval'd " (buffer-name)))
+         (message "cannot evaluate buffer %s because it is not in %s"
+                  (Ox33b4O/$/paint-mode-line-color (buffer-name) )
+		  (Ox33b4O/$/paint-mode-line-color "elisp-mode")
+		  )
+	 )
+       )
+
+
 
 (defun Ox33b4O/$/reload-all-c() "." (interactive) (cleanup-elc) (load-file "~/.emacs.d/c/boot.el"))
 (defun Ox33b4O/$/reload-init () "." (interactive) (cleanup-elc) (load-file "~/.emacs.d/init.el"))
-
-(defun Ox33b4O/$/levate ()
-  "."
-  (interactive)
-  (if (buffer-elisp-heuristic)
-      (save-mark-and-excursion
-        (let* ((beg-end (region-points))
-               (beg (nth 0 beg-end))
-               (end (nth 1 beg-end))
-               (region (buffer-substring-no-properties beg end)))
-          (widen)
-          (if (re-search-forward "\\s-*[(]\\(.\\|\n\\)+[)]\\s-*" region )
-              (progn
-                (eval-region beg end)
-                (when (string= (format "%S" (abbreviate-file-name (buffer-file-name))) (buffer-name))
-                  (message (format "%s eval'd" (abbreviate-file-name (buffer-file-name))))))
-            (message "does not seem to be valid elisp: %s" region)))
-        (message "\"%s\" aint no el" (buffer-name)))))
 
 (defun Ox33b4O/$/undefine-key (key)
   "KEY."
@@ -2891,10 +2881,10 @@ BEG END."
   (setq delete-trailing-lines nil)
   (electric-indent-mode -1)
   (electric-indent-local-mode -1)
-)
+  )
 
 
 (defun enable-electric-indent-mode()
   (interactive)
   (electric-indent-mode 1)
-)
+  )
