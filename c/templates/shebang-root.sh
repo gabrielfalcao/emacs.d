@@ -5,6 +5,10 @@ set -e
 set -o pipefail
 export IFS=$'\n'
 
+this_script_path="${BASH_SOURCE[0]}"
+script_name="$(basename "${this_script_path}")"
+script_path="$(dirname "${this_script_path}")"
+
 if [ "$(whoami)" != "root" ]; then sudo bash $0; echo exit $?; fi
 
 declare -a argv=($@)
@@ -15,11 +19,16 @@ declare -a directory_argv=()
 declare -a non_path_params=()
 declare -a other_file_types_argv=()
 
+declare -i regular_file_argv_count=0
+declare -i directory_argv_count=0
+declare -i non_path_params_count=0
+declare -i other_file_types_argv_count=0
+
 error_prefix_color_rgb="$((0xFF));$((0x00));$((0x42))"
-error_color_rgb="$(( 0xFF ));$(( 0x32 ));$(( 0x32 ))"
-error_color_rgb="$(( 0xFF ));$(( 0x3E ));$(( 0x5C ))"
+error_color_rgb="$((0xFF));$((0x32));$((0x32))"
+error_color_rgb="$((0xFF));$((0x3E));$((0x5C))"
 warn_prefix_color_rgb="$((0xFF));$((0x6A));$((0x32))"
-warn_color_rgb="$(( 0xFF ));$(( 0xA1 ));$(( 0x32 ))"
+warn_color_rgb="$((0xFF));$((0xA1));$((0x32))"
 
 on_exit() {
     repl sane
@@ -36,7 +45,7 @@ trap on_ctrlc int
 trap on_ctrlc emt
 trap on_ctrlc bus
 trap on_ctrlc segv
-trap on_ctrlc sigsys
+trap on_ctrlc sys
 
 repl() {
     local -a stty_args=()
@@ -53,10 +62,10 @@ exit_error() {
     exit 101
 }
 warn() {
-    1>&2 echo -e "\x1b[1;38;2;${warn_prefix_color_rgb}m[warn]\x1b[1;38;2;${warn_color_rgb}m ${@}\x1b[0m"
+    1>&2 echo -e "\x1b[1;38;2;${warn_prefix_color_rgb}m[${script_name} warn]\x1b[1;38;2;${warn_color_rgb}m ${@}\x1b[0m"
 }
 error() {
-    1>&2 echo -e "\x1b[1;38;2;${error_prefix_color_rgb}m[error]\x1b[1;38;2;${error_color_rgb}m ${@}\x1b[0m"
+    1>&2 echo -e "\x1b[1;38;2;${error_prefix_color_rgb}m[${script_name} error]\x1b[1;38;2;${error_color_rgb}m ${@}\x1b[0m"
 }
 
 process_argv() {
@@ -76,38 +85,38 @@ process_argv() {
             other_file_types_argv+=("${arg}")
         fi
     done
+    regular_file_argv_count=${#regular_file_argv[@]}
+    directory_argv_count=${#directory_argv[@]}
+    non_path_params_count=${#non_path_params[@]}
+    other_file_types_argv_count=${#other_file_types_argv[@]}
     repl sane
 }
 
 main() {
-    local -i regular_file_count=${#regular_file_argv[@]}
-    local -i directory_count=${#directory_argv[@]}
-    local -i non_path_count=${#non_path_params[@]}
-    local -i other_file_types_count=${#other_file_types_argv[@]}
 
-    if [ ${regular_file_count} -gt 0 ]; then
-        echo "${regular_file_count} regular_file_argv passed as argument"
+    if [ ${regular_file_argv_count} -gt 0 ]; then
+        echo "${regular_file_argv_count} regular_file_argv passed as argument"
         for index in ${!regular_file_argv[@]}; do
             param="${regular_file_argv[$index]}"
             echo "    regular_file_argv[$index] ${param@Q}"
         done
     fi
-    if [ ${directory_count} -gt 0 ]; then
-        echo "${directory_count} directory_argv passed as argument"
+    if [ ${directory_argv_count} -gt 0 ]; then
+        echo "${directory_argv_count} directory_argv passed as argument"
         for index in ${!directory_argv[@]}; do
             param="${directory_argv[$index]}"
             echo "    directory_argv[$index] ${param@Q}"
         done
     fi
-    if [ ${non_path_count} -gt 0 ]; then
-        echo "${non_path_count} non_path_params passed as argument"
+    if [ ${non_path_params_count} -gt 0 ]; then
+        echo "${non_path_params_count} non_path_params passed as argument"
         for index in ${!non_path_params[@]}; do
             param="${non_path_params[$index]}"
             echo "    non_path_params[$index] ${param@Q}"
         done
     fi
-    if [ ${other_file_types_count} -gt 0 ]; then
-        echo "${other_file_types_count} other_file_types_argv passed as argument"
+    if [ ${other_file_types_argv_count} -gt 0 ]; then
+        echo "${other_file_types_argv_count} other_file_types_argv passed as argument"
         for index in ${!other_file_types_argv[@]}; do
             param="${other_file_types_argv[$index]}"
             echo "    other_file_types_argv[$index] ${param@Q}"
