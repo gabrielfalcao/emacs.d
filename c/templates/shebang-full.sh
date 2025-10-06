@@ -60,10 +60,10 @@ exit_error() {
     exit 101
 }
 warn() {
-    1>&2 echo -e "\x1b[1;38;2;${warn_prefix_color_rgb}m[warn]\x1b[1;38;2;${warn_color_rgb}m ${@}\x1b[0m"
+    1>&2 echo -e "\x1b[1;38;2;${warn_prefix_color_rgb}m[${script_name} warn]\x1b[1;38;2;${warn_color_rgb}m ${@}\x1b[0m"
 }
 error() {
-    1>&2 echo -e "\x1b[1;38;2;${error_prefix_color_rgb}m[error]\x1b[1;38;2;${error_color_rgb}m ${@}\x1b[0m"
+    1>&2 echo -e "\x1b[1;38;2;${error_prefix_color_rgb}m[${script_name} error]\x1b[1;38;2;${error_color_rgb}m ${@}\x1b[0m"
 }
 
 process_argv() {
