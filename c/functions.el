@@ -2417,7 +2417,31 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 (defun shebang()
   "."
   (interactive)
-  (let ((buf-filename (buffer-file-name)))
+  (insert-shebang "shebang.sh"))
+
+(defun shebang-full()
+  "."
+  (interactive)
+  (insert-shebang "shebang-full.sh"))
+
+(defun shebang-root()
+  "."
+  (interactive)
+  (insert-shebang "shebang-root.sh"))
+
+(defun shebang-simplest()
+  "."
+  (interactive)
+  (insert-shebang "shebang-simplest.sh"))
+
+
+(defun insert-shebang(template-name)
+  "."
+  (if (not (stringp template-name))
+      (user-error "template-name is not a string: %S" template-name))
+
+  (let ((template-string (get-template-string-from-filename template-name))
+        (buf-filename (buffer-file-name)))
     (if (or (null buf-filename)
             (not (file-exists-p buf-filename)))
         (user-error (format "save buffer `%s' to actual file before using shebang" buf-filename))
@@ -2425,7 +2449,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 	(save-mark-and-excursion
 	  (widen)
 	  (goto-char (point-min))
-	  (insert-template "shebang.sh")
+	  (insert template-string)
 	  (goto-char curpoint)
 	  )
 
@@ -2456,6 +2480,10 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 
 (defun insert-template(name)
   "inserts template file at beginning of current buffer."
+  (insert (get-template-string-from-filename name)))
+
+(defun get-template-string-from-filename(name)
+  "inserts template file at beginning of current buffer."
   (if (not (stringp name))
       (user-error (format "insert-template: arg NAME is not a string: %S" name)))
 
@@ -2465,7 +2493,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
     (if (not (file-readable-p template-path))
         (user-error (format "insert-template: file not readable: %s" template-path)))
     (let ((template-contents (read-file-to-string template-path)))
-      (insert template-contents)
+      template-contents
       )
     )
   )
@@ -2851,9 +2879,10 @@ BEG END."
 # \3
 ### \1"))))
 
-(defun insert-regexp-linebreak-and-tabs()
+(defun insert-regexp-linebreak-tabs-and-spaces()
   (interactive)
-  (insert "\\(\n\\|\t\\)"))
+  (let* ((space-chars-list (list "\n" "\t" "\x0a" "\x20" "\x09")))
+  (insert (format "\\(%s\\)" (string-join space-chars-list "\\|" )))))
 
 (defun regexp-adoc-strip-all-but-spaces()
   (let ((regexp "\\([a-zA-Z0-9+=(.|*){@}%,:<>\"'`_-]+\\|[[]\\|[]]\\)+"))))
