@@ -2881,8 +2881,16 @@ BEG END."
 
 (defun insert-regexp-linebreak-tabs-and-spaces()
   (interactive)
-  (let* ((space-chars-list (list "\n" "\t" "\x0a" "\x20" "\x09")))
-  (insert (format "\\(%s\\)" (string-join space-chars-list "\\|" )))))
+  ;; (let ((space-chars-list (list "\n" "\t" "\x0a" "\x20" "\x09")))
+  (let ((space-chars-list (list
+			   "\a"
+			   "\b"
+			   ;; "\n"
+			   "\t"
+			   "\v"
+			   "\f"
+			   "\r")))
+    (insert (format "\\(%s\\)" (string-join space-chars-list "\\|" )))))
 
 (defun regexp-adoc-strip-all-but-spaces()
   (let ((regexp "\\([a-zA-Z0-9+=(.|*){@}%,:<>\"'`_-]+\\|[[]\\|[]]\\)+"))))
