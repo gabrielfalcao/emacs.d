@@ -5,7 +5,9 @@ set -e
 set -o pipefail
 export IFS=$'\n'
 
-if [ "$(whoami)" != "root" ]; then sudo bash $0; echo exit $?; fi
+this_script_path="${BASH_SOURCE[0]}"
+script_name="$(basename "${this_script_path}")"
+script_path="$(dirname "${this_script_path}")"
 
 declare -a argv=($@)
 declare argc=${#argv[@]}
@@ -36,7 +38,7 @@ trap on_ctrlc int
 trap on_ctrlc emt
 trap on_ctrlc bus
 trap on_ctrlc segv
-trap on_ctrlc sigsys
+trap on_ctrlc sys
 
 repl() {
     local -a stty_args=()
