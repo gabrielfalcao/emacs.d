@@ -1976,7 +1976,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 
 (defun current-notes-location()
   "."
-  (expand-file-name "~/projects/notes"))
+  (expand-file-name "~/notes"))
 
 (defun open-note(note-name)
   (let* ((name (file-name-base note-name))
@@ -2056,8 +2056,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
          (title (format "%s" (format-time-string "Note %Y-%m-%dT at %H:%M%p %Z")))
          (timestamp (format-time-string "%Y-%m-%dT%H:%M:%S%Z"))
          (name (read-string "New Note Name: " (format "note-%s.rst" file-compatible-timestamp) t))
-         (note-path (format "%s/%s%s.rst" (current-notes-location) name
-                            file-compatible-timestamp))
+         (note-path (format "%s/%s.rst" (current-notes-location) name))
          (rst-note-file-header (format "%s\n%s\n\n\n" title (replace-regexp-in-string "." "~" title)))
          (note-buffer (progn
            (find-file note-path)
@@ -2119,3 +2118,17 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
       (basic-save-buffer nil))
     (chmod target "+x")
     ))
+
+(defun today(&optional utc)
+  (interactive)
+  (insert (format-time-string "%Y-%m-%d"
+                              nil
+                              (if (not (null utc))
+                                  0 nil))))
+
+(defun now(&optional utc)
+  (interactive)
+  (insert (format-time-string "%Y-%m-%d %H:%M:%S%z"
+                              nil
+                              (if (not (null utc))
+                                  0 nil))))
