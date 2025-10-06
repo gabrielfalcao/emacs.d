@@ -2888,3 +2888,18 @@ BEG END."
   (interactive)
   (electric-indent-mode 1)
   )
+
+
+(defun today(&optional utc)
+  (interactive)
+  (insert (format-time-string "%Y-%m-%d"
+                              nil
+                              (if (not (null utc))
+                                  0 nil))))
+
+(defun now(&optional utc)
+  (interactive)
+  (insert (format-time-string "%Y-%m-%d %H:%M:%S%z"
+                              nil
+                              (if (not (null utc))
+                                  0 nil))))
