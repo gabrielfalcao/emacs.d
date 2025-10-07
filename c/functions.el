@@ -2940,3 +2940,25 @@ BEG END."
                               nil
                               (if (not (null utc))
                                   0 nil))))
+
+(defun delete-prefix-and-timestamp-from-bash-history-region(beg end)
+  (interactive "*r")
+  (let ((regexp "^\s-+[0-9]+\s-+[[][^]]+[]]\s-+")
+        (next-pos beg))
+    (save-mark-and-excursion
+    (goto-char beg)
+
+  (while (re-search-forward regexp end t)
+    (setq next-pos (match-end 0))
+    (replace-match "")
+    (goto-char next-pos)))))
+
+(defun delete-prefix-and-timestamp-from-bash-history-buffer()
+  (interactive)
+  (save-mark-and-excursion
+    (widen)
+    (let ((beg (point-min))
+          (end (point-max)))
+      (goto-char beg)
+      (delete-prefix-and-timestamp-from-bash-history-region beg end)
+      )))
