@@ -368,8 +368,6 @@
   "."
   (let ((data
          (buffer-substring-no-properties (point-min) (point-max))))
-
-
     (format "%s %s %s"
             (Ox33b4O/$/string-hash-take-last-n-chars 'sha256 8 data)
             (Ox33b4O/$/string-hash-take-last-n-chars 'sha1 8 data)
@@ -378,23 +376,20 @@
 (defun Ox33b4O/$/acl-owner(f)
   "F."
   (interactive)
-  (if (stringp f)
-      (Ox33b4O/$/mt (format "(%s)" f))
-    ""))
+  (format "(owner: %S)" f))
 
 (defun Ox33b4O/$/acl-group(f)
   "F."
   (interactive)
-  (if (stringp f)
-      (Ox33b4O/$/mt (format "(%s)" f))
-    ""))
+  (format "(group: %S)" f))
+
 
 (defun Ox33b4O/$/acl-other(f)
   "F."
   (interactive)
-  (if (stringp f)
-      (Ox33b4O/$/mt (format "(%s)" f))
-    ""))
+  (format "(group: %S)" f))
+
+
 
 
 ;; (defun current-column()
@@ -437,7 +432,10 @@
                                #'(lambda ()
                                    (collapse-string-2 region))))))
 
-(defun Ox33b4O/$/mt(p) "P." (interactive) p)
+(defun Ox33b4O/$/mt(p)
+  "P."
+  (interactive)
+  (format "%S" p))
 ;; (let* ((p (replace-regexp-in-string "[o-t]" "🧾" p))
 ;;        (p (replace-regexp-in-string "[s-w]" "🖍️" p))
 ;;        (p (replace-regexp-in-string "[xX]" "👥️" p)))
@@ -455,16 +453,21 @@
            (aclsl (proper-list-p acls)))
       (cond
        ((= 1 aclsl)
-        (format "%s" (Ox33b4O/$/acl-owner (car acls))))
+        (format "%s aclsl:%S" (Ox33b4O/$/acl-owner (nth 0 acls)) aclsl ))
+       ;; (t (progn
+       ;;           (format "WAT: %S" (car acls))))
        ((= 2 aclsl)
         (format "%s%s"
-                (Ox33b4O/$/acl-owner(car acls) (Ox33b4O/$/acl-group (elt 1 acls)))))
+                (Ox33b4O/$/acl-owner(nth 0 acls) (Ox33b4O/$/acl-group (nth 1 acls)))))
        ((= 3 aclsl)
         (format "%s%s%s"
-                (Ox33b4O/$/acl-owner(car acls)
-				    (Ox33b4O/$/acl-group (elt 1 acls))
-				    (Ox33b4O/$/acl-other(elt 1 acls)))))))))
-
+                (Ox33b4O/$/acl-owner(nth 0 acls)
+        			    (Ox33b4O/$/acl-group (nth 1 acls))
+        			    (Ox33b4O/$/acl-other(nth 1 acls)))))
+       (t (format "fallback ffb: %S" ffb))
+       )
+      ;; ;; (message (format "ffb:%S acls: %S\naclsl:%S" ffb acls aclsl))
+)))
 
 (defun Ox33b4O/$/flush-kill-ring ()
   "."
