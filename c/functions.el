@@ -1151,7 +1151,8 @@
            (replace-regexp-in-string
             "\\bbg\\b"
             "back"
-            (replace-regexp-in-string "\\bfg\\b" "fore" region)))))))
+            (replace-regexp-in-string "\\bfg\\b" "fore" region)
+            ))))))
 
 
 (defun comment-step-region(beg end)
@@ -1873,7 +1874,8 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
   (let* ((current-shell-buffer (current-buffer))
          (current-filename (expand-file-name (buffer-file-name)))
          (tmp-buffer-name (format "*shfmt:%s*" current-filename))
-         (tmp-buffer (get-buffer-create tmp-buffer-name))
+         (tmp-buffer (progn (ignore-errors (kill-buffer tmp-buffer-name))
+                            (get-buffer-create tmp-buffer-name)))
          (exit-code
           (call-process "shfmt"
                         nil
@@ -1892,17 +1894,25 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
          ))
      (progn
        (let
-           ((result t
-		    ;; (with-temp-buffer tmp-buffer
-		    ;;             (widen)
-		    ;;             (if (re-search-forward "^\s-*\\([^:]+\\):\\([0-9]+\\):\\([0-9]+\\)\s-*\\(.+\\)$" nil t)
-		    ;;                 (let* ((error-filename (match-string 1))
-		    ;;                    (error-lineno (match-string 2))
-		    ;;                    (error-column (match-string 3))
-		    ;;                    (error-message (match-string 4)))
-		    ;;                   (list error-filename error-lineno error-column error-message)))
-		    ;;               )
-                    ))
+           ((result
+             ;; t
+	     (with-current-buffer tmp-buffer
+	                       (widen)
+
+                               (goto-char (point-min))
+	                       (re-search-forward
+                                  "^\\([^:]+\\)[:]\\([0-9]+\\)[:]\\([0-9]+\\)[:]\s-*\\(.+\\)$"
+                                  ;; "^\s-*\\([^:]+\\):\\([0-9]+\\):\\([0-9]+\\)\s-*\\(.+\\)$"
+                                  (point-max) t)
+	                         (let* ((error-filename (match-string 1))
+	        			(error-lineno (match-string 2))
+	        			(error-column (match-string 3))
+	        			(error-message (match-string 4))
+	        			(result-list (list error-filename error-lineno error-column error-message)))
+                                   result-list)
+                                 )
+
+             ))
          (if (listp result)
              (let ((error-filename (nth 0 result))
                    (error-lineno (string-to-number (nth 1 result)))
@@ -1910,9 +1920,20 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
                    (error-message (nth 3 result)))
 	       (goto-line error-lineno current-shell-buffer)
 	       (beginning-of-line)
-	       (forward-char error-column)
-	       (user-error
-                (format "line %d: %s" error-lineno error-message)))
+                (let ((error-point (+ (point) (- error-column 1)))
+                      (eol (save-mark-and-excursion
+                            (end-of-line 1)
+                            (point))))
+                  (goto-char error-point)
+                  (push-mark error-point t t)
+                  ;; (goto-char eol)
+                  )
+	       (message
+                (format "line %d: %s" error-lineno
+             (propertize error-message 'face (list :foreground "#F13976"))
+             ))
+               (kill-buffer tmp-buffer)
+               )
 	   (switch-to-buffer tmp-buffer t t)
 	   (user-error
             (format "shfmt -bn -ci -i 4 -ln=bash -w %s failed with code: %s"
@@ -2943,15 +2964,17 @@ BEG END."
 
 (defun delete-prefix-and-timestamp-from-bash-history-region(beg end)
   (interactive "*r")
-  (let ((regexp "^\s-+[0-9]+\s-+[[][^]]+[]]\s-+")
+  (let ((regexp "^\\s-+[0-9]+\\s-+[[][^]]+[]]\\s-+")
         (next-pos beg))
+    ;; (replace-regexp-in-region regexp "" beg end)
     (save-mark-and-excursion
-    (goto-char beg)
 
-  (while (re-search-forward regexp end t)
-    (setq next-pos (match-end 0))
-    (replace-match "")
-    (goto-char next-pos)))))
+      (while (re-search-forward regexp end t)
+	(setq next-pos (match-end 0))
+	(replace-match "")
+	(goto-char next-pos)
+
+	))))
 
 (defun delete-prefix-and-timestamp-from-bash-history-buffer()
   (interactive)
