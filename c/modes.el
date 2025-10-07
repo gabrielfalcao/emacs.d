@@ -12,10 +12,11 @@
   (require 'company)
   (require 'go-mode)
   (require 'jinja2-mode)
-;;  (require 'toml)
+  (require 'toml)
   (require 'protobuf-mode)
-  ;; (require 'python-mode)
+  (require 'python-mode)
   (require 'elixir-mode)
+  (require 'terraform-mode)
   (require 'toml-mode)
   (require 'rust-mode)
   (require 'yaml-mode)
@@ -23,7 +24,7 @@
   (require 'jsonnet-mode)
   (require 'typescript-mode)
   (require 'whitespace)
-;;  (require 'blacken)
+  (require 'blacken)
   (require 'make-mode)
   (require 'ibuffer)
   (require 'calendar)
@@ -96,12 +97,12 @@
   (add-to-list 'auto-mode-alist '("\\.ts$" . typescript-mode))
   (add-to-list 'auto-mode-alist '("\\.tsx$" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.typ?$" . typst-mode))
+  (add-to-list 'auto-mode-alist '("\\.el\\.gz$" . emacs-lisp-mode))
   (add-to-list 'auto-mode-alist '("\\.ya?ml$" . yaml-mode))
   (add-to-list 'auto-mode-alist '("^---$" . yaml-mode))
   (add-to-list 'auto-mode-alist '("nginx.conf$" . nginx-mode))
+  (add-to-list 'auto-mode-alist '("[.][a-z]\{3,\}[a-z_-]+rc$" . conf-mode))
   (add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
-  (add-to-list 'auto-mode-alist '("\\.el$" . elisp-mode))
-  (add-to-list 'auto-mode-alist '("\\.el\\.gz$" . elisp-mode))
   (add-to-list 'auto-mode-alist '("\\.frm$" . visual-basic-mode))
   (add-to-list 'auto-mode-alist '("\\.vbp$" . visual-basic-mode))
   (add-to-list 'auto-mode-alist '("\\.pest$" . pest-mode))
@@ -110,10 +111,6 @@
   (setq web-mode-content-types-alist
         '(("json" . ".*[.]json$'")
           ("jsx"  . ".*[.]jsx")))
-
-
-  (setq sh-mode-map (make-sparse-keymap))
-
 
 
   (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))

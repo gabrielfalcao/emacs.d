@@ -1,8 +1,8 @@
-(defun $/mode-line-foreground ()  "#FF1978")
-(defun $/mode-line-background () "#3d3d3d")
-(defun $/mark-indicator-color() "#cad79d")
-(defun $/mode-line-arrow-right() " ⇒ ")
-(defun $/mode-line-arrow-left() " ⇐ ")
+(defun Ox33b4O/$/mode-line-foreground ()  "#FF1978")
+(defun Ox33b4O/$/mode-line-background () "#3d3d3d")
+(defun Ox33b4O/$/mark-indicator-color() "#cad79d")
+(defun Ox33b4O/$/mode-line-arrow-right() " ⇒ ")
+(defun Ox33b4O/$/mode-line-arrow-left() " ⇐ ")
 
 (defun $$$$$$$$()
   "."
@@ -75,8 +75,8 @@
     (set-face-attribute 'default nil :foreground $normal$ :background $background$)
     (set-face-attribute 'button nil :foreground $keywords$ :underline t)
     (set-face-attribute 'default nil :background $background$ :foreground $normal$)
-    (set-face-attribute 'header-line nil :background ($/mode-line-background) :foreground $normal$)
-    (set-face-attribute 'highlight nil :background $current-line$ :foreground ($/mode-line-foreground))
+    (set-face-attribute 'header-line nil :background (Ox33b4O/$/mode-line-background) :foreground $normal$)
+    (set-face-attribute 'highlight nil :background $current-line$ :foreground (Ox33b4O/$/mode-line-foreground))
     (set-face-attribute 'info-xref nil :foreground "#27CE79" :underline nil :bold nil)
     (set-face-attribute 'info-xref-visited nil
                         :foreground "#787878"
@@ -84,9 +84,9 @@
                         :underline "#D87101"
                         :bold t)
 
-    (set-face-attribute 'info-menu-star nil :foreground ($/mode-line-foreground) :underline nil :bold t)
+    (set-face-attribute 'info-menu-star nil :foreground (Ox33b4O/$/mode-line-foreground) :underline nil :bold t)
     (set-face-attribute 'info-header-xref nil  :foreground $keywords$ :underline t)
-    (set-face-attribute 'show-paren-match nil :background ($/mode-line-foreground) :foreground $background$ :weight 'bold)
+    (set-face-attribute 'show-paren-match nil :background (Ox33b4O/$/mode-line-foreground) :foreground $background$ :weight 'bold)
     (set-face-attribute 'show-paren-match-expression nil :background $type-face$  :weight 'bold)
     (set-face-attribute 'show-paren-mismatch nil :background $error$  :foreground $normal$ :weight 'bold)
     (set-face-attribute 'region nil :background $sel$ :foreground $background$)
@@ -122,11 +122,11 @@
     (set-face-attribute 'line-number-minor-tick nil :background $background$ :foreground $string$)
     (set-face-attribute 'minibuffer-prompt nil :foreground $variable$)
     (set-face-attribute 'rectangle-preview nil :background $line-number$)
-    (set-face-attribute 'mode-line nil :background ($/mode-line-background) :foreground ($/mode-line-foreground))
+    (set-face-attribute 'mode-line nil :background (Ox33b4O/$/mode-line-background) :foreground (Ox33b4O/$/mode-line-foreground))
     (set-face-attribute 'mode-line-inactive nil :background $mode-line-inactive-bg$ :foreground $mode-line-inactive-fg$)
     (set-face-attribute 'mode-line-emphasis nil :bold nil)
     (set-face-attribute 'vertical-border nil)
-    (set-face-attribute 'isearch nil :background ($/mode-line-foreground) :foreground ($/mode-line-background))
+    (set-face-attribute 'isearch nil :background (Ox33b4O/$/mode-line-foreground) :foreground (Ox33b4O/$/mode-line-background))
     (set-face-attribute 'isearch-fail nil :background $error$ :foreground $background$)
     (set-face-attribute 'error nil :background $error$ :foreground "#333")
     (set-face-attribute 'shadow nil :foreground "#333")

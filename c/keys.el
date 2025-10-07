@@ -1,6 +1,6 @@
 (setup-utf8)
 
-($/undefine-key
+(Ox33b4O/$/undefine-key
  '(
    "C-x C-z"
    "C-c C-d"
@@ -28,48 +28,55 @@
  )
 
 
-($/set-key (meta-comma ",") #'(lambda () (interactive) (find-file "~/.emacs.d/t/k.el")))
-($/set-key (meta-comma "f") #'(lambda () (interactive) (find-file "~/.emacs.d/t/f.el")))
-($/set-key (meta-comma "8") #'(lambda () (interactive) (find-file "~/.emacs.d/t/8O1.el")))
-($/set-key (meta-comma "5") #'(lambda () (interactive) (find-file "~/.emacs.d/t/5O1.el")))
-($/set-key (meta-comma "o") #'(lambda () (interactive) (find-file "~/.emacs.d/t/ori.el")))
-($/set-key '("M-k") '$/flush-kill-ring)
-($/set-key '("C-M-k") '$/kill-all-buffers-and-flush-kill-ring)
+(Ox33b4O/$/set-key (meta-comma ",") #'(lambda () (interactive) (find-file "~/.emacs.d/t/k.el")))
+(Ox33b4O/$/set-key (meta-comma "f") #'(lambda () (interactive) (find-file "~/.emacs.d/t/f.el")))
+(Ox33b4O/$/set-key (meta-comma "8") #'(lambda () (interactive) (find-file "~/.emacs.d/t/8O1.el")))
+(Ox33b4O/$/set-key (meta-comma "5") #'(lambda () (interactive) (find-file "~/.emacs.d/t/5O1.el")))
+(Ox33b4O/$/set-key (meta-comma "o") #'(lambda () (interactive) (find-file "~/.emacs.d/t/ori.el")))
+(Ox33b4O/$/set-key '("M-k") 'Ox33b4O/$/flush-kill-ring)
+(Ox33b4O/$/set-key '("C-M-k") 'Ox33b4O/$/kill-all-buffers-and-flush-kill-ring)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 (add-hook 'after-save-hook '$$$$$)
 (add-hook 'after-init-hook '$$$$$)
 (add-hook 'after-init-hook #'(lambda () (interactive) (ignore-errors (delete-minibuffer-contents) (message "emacs init took %s to initialize" (emacs-init-time)))))
-($/set-key '("C-S-r") 're-builder)
-($/set-key '("C-S-d") 'decr-next-number)
-($/set-key '("C-S-i") 'incr-next-number)
-($/set-key '("C-x C-x") '$/levate)
-($/set-key '("C-x C-z") #'(lambda () (interactive) (eval-buffer) (message "%s eval'd " (buffer-name))))
+(Ox33b4O/$/set-key '("C-S-r") 're-builder)
+(Ox33b4O/$/set-key '("C-S-d") #'decr-next-number)
+(Ox33b4O/$/set-key '("C-S-i") #'incr-next-number)
 
-($/set-key '("C-x C--") 'text-scale-adjust)
-($/set-key '("C-x C-+") 'text-scale-adjust)
-($/set-key '("C-x -") 'text-scale-adjust)
-($/set-key '("C-x +") 'text-scale-adjust)
-($/set-key '("C-c C-l") 'collapse-lines-region)
-($/set-key '("C-c C-t C-m C-l") '$$$$$)
-($/set-key '("C-c C-x C-f") 'show-face-at-point)
-($/set-key '("C-c C-w" "C-c M-w") 'clipboard-kill-ring-save)
-($/set-key '("C-c C-x C-w") 'clipboard-kill-region)
-($/set-key '("C-c C-y" "C-c M-y") 'clipboard-yank)
-($/set-key '("C-x C-q" "C-c M-y" "C-γ") 'keyboard-quit)
-($/set-key '("C-x C-d C-h") 'info)
-;; ($/set-key "C-c C-u C-d C-a" #'(lambda () (interactive) (when (read-only-mode -8) (message "%s unlocked" (buffer-name)))))
+(Ox33b4O/$/set-key '("C-x C-M-a") #'Ox33b4O/$/reload-all-c)
+(Ox33b4O/$/set-key '("C-x C-M-s") #'insert-regexp-linebreak-tabs-and-spaces)
+(Ox33b4O/$/set-key '("C-x C-M-e") #'Ox33b4O/$/reload-init)
+;; (Ox33b4O/$/set-key '("C-x C-M-g a") 'git-add)
+;; (Ox33b4O/$/set-key '("C-x C-M-g s") 'git-save)
+(Ox33b4O/$/set-key '("C-x C-g") #'git-save)
+(Ox33b4O/$/set-key '("C-x C-a") #'eval-elisp-buffer)
+(Ox33b4O/$/set-key '("C-x C-x") #'eval-elisp-buffer)
 
-($/set-key '("C-x M-k") '$/load-library)($/set-key '("C-x M-,") '$/load-init)
+(Ox33b4O/$/set-key '("C-x C--") 'text-scale-adjust)
+(Ox33b4O/$/set-key '("C-x C-+") 'text-scale-adjust)
+(Ox33b4O/$/set-key '("C-x -") 'text-scale-adjust)
+(Ox33b4O/$/set-key '("C-x +") 'text-scale-adjust)
+(Ox33b4O/$/set-key '("C-c C-l") 'collapse-lines-region)
+(Ox33b4O/$/set-key '("C-c C-t C-m C-l") '$$$$$)
+(Ox33b4O/$/set-key '("C-c C-x C-f") 'show-face-at-point)
+(Ox33b4O/$/set-key '("C-c C-w" "C-c M-w") 'clipboard-kill-ring-save)
+(Ox33b4O/$/set-key '("C-c C-x C-w") 'clipboard-kill-region)
+(Ox33b4O/$/set-key '("C-c C-y" "C-c M-y") 'clipboard-yank)
+(Ox33b4O/$/set-key '("C-x C-q" "C-c M-y" "C-γ") 'keyboard-quit)
+(Ox33b4O/$/set-key '("C-x C-d C-h") 'info)
+;; (Ox33b4O/$/set-key "C-c C-u C-d C-a" #'(lambda () (interactive) (when (read-only-mode -8) (message "%s unlocked" (buffer-name)))))
+
+(Ox33b4O/$/set-key '("C-x M-k") 'Ox33b4O/$/load-library)(Ox33b4O/$/set-key '("C-x M-,") 'Ox33b4O/$/load-init)
 
 (global-set-key (kbd "C-c C-c C-r") 'collapse-lines-region)
 
-;; ($/set-key '("M-, M-8" "M-, 8")#'(lambda () (interactive) (rot13(fpuervo) "OE8x"))) ;; https://deezer.page.link/HUJ1z8CfsudS2he96
-;; ($/set-key '("M-, M-5" "M-, 5")#'(lambda () (interactive) (schreib "NU8x")))
-;; ($/set-key '("M-, M-t" "M-, t")#'(lambda () (interactive) (schreib "b3Jp")))
+;; (Ox33b4O/$/set-key '("M-, M-8" "M-, 8")#'(lambda () (interactive) (rot13(fpuervo) "OE8x"))) ;; https://deezer.page.link/HUJ1z8CfsudS2he96
+;; (Ox33b4O/$/set-key '("M-, M-5" "M-, 5")#'(lambda () (interactive) (schreib "NU8x")))
+;; (Ox33b4O/$/set-key '("M-, M-t" "M-, t")#'(lambda () (interactive) (schreib "b3Jp")))
 
-($/set-key "C-x C-d C-s" 'describe-symbol)
-($/set-key "C-x C-d C-g" 'shortdoc-display-group)
-($/set-key "C-x C-d C-X"
+(Ox33b4O/$/set-key "C-x C-d C-s" 'describe-symbol)
+(Ox33b4O/$/set-key "C-x C-d C-g" 'shortdoc-display-group)
+(Ox33b4O/$/set-key "C-x C-d C-X"
            #'(lambda (beg end) (interactive "r")
                (save-buffer
                 (let ((tgtcode (replace-regexp-in-string "\\(\\s-\\|\\)+" " " (buffer-substring beg end))))
@@ -82,54 +89,55 @@
                     (warn "(%s) nil in evalin': \n```%s``` " (secure-hash 'sha256 tgtcode) tgtcode))
                   ))))
 
-($/set-key '("C-p" "M-p") #'(lambda () (interactive) (scroll-up 1)))
-($/set-key '("C-n" "M-n") #'(lambda () (interactive) (scroll-down 1)))
-($/set-key '("C-n" "M-n") #'(lambda () (interactive) (scroll-down 1)))
-($/set-key '("<backtab>") #'(lambda () (interactive) (other-frame 1)))
-($/set-key '("C-c C-d C-c") 'colorize-hexadecimal-text)
+(Ox33b4O/$/set-key '("C-p" "M-p") #'(lambda () (interactive) (scroll-up 1)))
+(Ox33b4O/$/set-key '("C-n" "M-n") #'(lambda () (interactive) (scroll-down 1)))
+(Ox33b4O/$/set-key '("C-n" "M-n") #'(lambda () (interactive) (scroll-down 1)))
+(Ox33b4O/$/set-key '("<backtab>") #'(lambda () (interactive) (other-frame 1)))
+(Ox33b4O/$/set-key '("C-c C-d C-c") 'colorize-hexadecimal-text)
 
 
-($/set-key '("C-x C-SPC" "C-c C-SPC") 'rectangle-mark-mode)
-($/set-key "C-x C-e e" 'g/ep)
-($/set-key "M-s" 'save-buffer)
-($/set-key "C-c C-p" #'(lambda () (interactive) (message "cur %d" (point))))
-($/set-key '("M-f") 'forward-word)
-($/set-key '("M-b") 'backward-word)
-($/set-key '("C-Ꮎ" "C-n") 'next-line)
-($/set-key '("C-p" "C-Ꮑ") 'previous-line)
-($/set-key '("C-a" "C-Ꭰ") 'move-beginning-of-line)
-($/set-key '("C-e" "C-Ꭱ") 'move-end-of-line)
-($/set-key '("C-k" "C-Ꮈ") 'kill-line)
-($/set-key '("C-<" "C-Ꮲ") 'decrease-left-margin)
-($/set-key '("C-Ꮄ" "C->") 'increase-left-margin)
+(Ox33b4O/$/set-key '("C-x C-SPC" "C-c C-SPC") 'rectangle-mark-mode)
+(Ox33b4O/$/set-key "C-x C-e e" 'g/ep)
+(Ox33b4O/$/set-key "M-s" 'save-buffer)
+(Ox33b4O/$/set-key "C-c C-p" #'(lambda () (interactive) (message "cur %d" (point))))
+(Ox33b4O/$/set-key '("M-f") 'forward-word)
+(Ox33b4O/$/set-key '("M-b") 'backward-word)
+(Ox33b4O/$/set-key '("C-Ꮎ" "C-n") 'next-line)
+(Ox33b4O/$/set-key '("C-p" "C-Ꮑ") 'previous-line)
+(Ox33b4O/$/set-key '("C-a" "C-Ꭰ") 'move-beginning-of-line)
+(Ox33b4O/$/set-key '("C-e" "C-Ꭱ") 'move-end-of-line)
+(Ox33b4O/$/set-key '("C-k" "C-Ꮈ") 'kill-line)
+(Ox33b4O/$/set-key '("C-<" "C-Ꮲ") 'decrease-left-margin)
+(Ox33b4O/$/set-key '("C-Ꮄ" "C->") 'increase-left-margin)
 
-($/set-key '("C-c C-r" "C-c r") 'reverse-string)
-($/set-key '("C-x C-2" "C-x C-e C-g") 'make-frame-command)
-($/set-key '("C-x C-e C-o") 'other-frame)
-($/set-key "<f12>" 'g/build)
-($/set-key '("M-<f10>" "M-<f11>" "M-<f12>" ) 'revert-buffer)
-($/set-key '("C-c C-n" "C-x C-n" "C-c C-M-n") 'uncomment-region)
-($/set-key '("C-c c" "C-#" "C-c C-M-c") 'comment-region)
-($/set-key '("C-c C-x C-e" "C-c C-d C-e"
+(Ox33b4O/$/set-key '("C-c C-r" "C-c r") 'reverse-string)
+(Ox33b4O/$/set-key '("C-x C-2" "C-x C-e C-g") 'make-frame-command)
+(Ox33b4O/$/set-key '("C-x C-e C-o") 'other-frame)
+(Ox33b4O/$/set-key "<f12>" 'g/build)
+(Ox33b4O/$/set-key '("M-<f10>" "M-<f11>" "M-<f12>" ) 'revert-buffer)
+(Ox33b4O/$/set-key '("C-c C-n" "C-x C-n" "C-c C-M-n") 'uncomment-region)
+(Ox33b4O/$/set-key '("C-c c" "C-#" "C-c C-M-c") 'comment-region)
+(Ox33b4O/$/set-key '("C-c C-x C-e" "C-c C-d C-e"
              "C-c C-e C-b" "C-x C-d C-e")
-           '$/base64-encode-region)
-($/set-key '("C-c C-x C-d" "C-c C-d C-d"
+           'Ox33b4O/$/base64-encode-region)
+(Ox33b4O/$/set-key '("C-c C-x C-d" "C-c C-d C-d"
              "C-x C-d C-d")
            'base64-decode-region)
 
-($/set-key '("C-c C-d C-3" "C-x C-d C-3" "C-c C-e C-3" "C-x C-e C-3") 'rot13-region)
-($/set-key   '("C-z" "M-z" "C-_") 'undo      )
-($/set-key   '("M-ρ" "C-r") 'replace-regexp  )
-($/set-key   '("C-c M-s") 'replace-string    )
-($/set-key   '("M-a") 'ignore                )
-($/set-key   '("M-c") 'ignore                )
-($/set-key   '("C-g" "C-q") 'keyboard-quit   )
+(Ox33b4O/$/set-key '("C-c C-d C-3" "C-x C-d C-3" "C-c C-e C-3" "C-x C-e C-3") 'rot13-region)
+(Ox33b4O/$/set-key   '("C-z" "M-z" "C-_") 'undo      )
+(Ox33b4O/$/set-key   '("M-ρ" "C-r") 'replace-regexp  )
+(Ox33b4O/$/set-key   '("C-c M-s") 'replace-string    )
+(Ox33b4O/$/set-key   '("M-a") 'ignore                )
+(Ox33b4O/$/set-key   '("M-c") 'ignore                )
+(Ox33b4O/$/set-key   '("C-g" "C-q") 'keyboard-quit   )
 
-($/set-key   "C-s"   'isearch-forward-regexp )
-($/set-key   "C-S-s" 'isearch-backward-regexp)
-($/set-key   "M-G" #'(lambda () (interactive) (insert "$")))
-($/set-key   '("M-g g" "M-g M-g") 'goto-line)
-($/set-key   "C-x C-z" #'(lambda () (interactive) (insert "\n")))
+(Ox33b4O/$/set-key   "C-s"   'isearch-forward-regexp )
+(Ox33b4O/$/set-key   "C-S-s" 'isearch-backward-regexp)
+(Ox33b4O/$/set-key   "M-G" #'(lambda () (interactive) (insert "$")))
+(Ox33b4O/$/set-key   '("M-g g" "M-g M-g") 'goto-line)
+(Ox33b4O/$/set-key   "C-x C-z" #'(lambda () (interactive) (insert "\n")))
+(Ox33b4O/$/set-key   "C-x C-j" #'(lambda () (interactive) (insert "\n")))
 
 (setq        ring-bell-function               'ignore)
 (global-set-key [kp-delete] 'delete-char)
@@ -149,68 +157,67 @@
 (setq ns-function-modifier 'control)
 (setq ns-option-modifier 'meta)
 (setq ns-command-modifier 'meta)
-(setq x-super-keysym 'meta)
 
 
-($/set-key '("C-x C--") 'text-scale-adjust)
-($/set-key '("C-x C-d C-k") 'describe-key)
-($/set-key '("C-x C-d k") 'describe-keymap)
+(Ox33b4O/$/set-key '("C-x C--") 'text-scale-adjust)
+(Ox33b4O/$/set-key '("C-x C-d C-k") 'describe-key)
+(Ox33b4O/$/set-key '("C-x C-d k") 'describe-keymap)
 ;; (setq tab-always-indent 'complete)
-;; ($/set-key '("<tab>") 'indent-for-tab-command)
-($/set-key '("C-x j") #'(lambda () (interactive) (progn (auto-fill-mode -5) (insert "\n"))))
+;; (Ox33b4O/$/set-key '("<tab>") 'indent-for-tab-command)
+(Ox33b4O/$/set-key '("C-x j") #'(lambda () (interactive) (progn (auto-fill-mode -5) (insert "\n"))))
 
 
-($/set-key   '(
+(Ox33b4O/$/set-key   '(
                "C-f"
                )
              'forward-char)
-($/set-key   '(
+(Ox33b4O/$/set-key   '(
                "C-b"
                )
              'backward-char)
 
-($/set-key   '(
+(Ox33b4O/$/set-key   '(
                "C-n"
                )
              'next-line)
-($/set-key   '(
+(Ox33b4O/$/set-key   '(
                "C-p"
                )
              'previous-line)
-($/set-key   '(
+(Ox33b4O/$/set-key   '(
                "M-f"
                )
              'forward-word)
-($/set-key   '(
+(Ox33b4O/$/set-key   '(
                "M-b"
                )
              'backward-word)
-($/set-key   '(
+(Ox33b4O/$/set-key   '(
                "C-a"
                )
              'beginning-of-line)
-($/set-key   '(
+(Ox33b4O/$/set-key   '(
                "C-e"
                )
              'end-of-line)
-($/set-key   '(
+(Ox33b4O/$/set-key   '(
                "M-<"
                )
              'beginning-of-buffer)
-($/set-key   '(
+(Ox33b4O/$/set-key   '(
                "M->"
                )
              'end-of-buffer)
-($/set-key   '(
+(Ox33b4O/$/set-key   '(
                "C-k"
                )
              'kill-line)
 
 (progn
   (put 'upcase-region 'disabled nil)
-  ($/set-key '("C-x C-u" "C-c C-u") #'upcase-region))
+  (Ox33b4O/$/set-key '("C-x C-u" "C-c C-u") #'upcase-region))
 
 (progn
   (put 'downcase-region 'disabled nil)
-  ($/set-key "C-x C-l" #'downcase-region)
-  ($/set-key "C-c C-l" #'downcase-region))
+  (Ox33b4O/$/set-key "C-x C-l" #'downcase-region)
+  (Ox33b4O/$/set-key "C-c C-l" #'downcase-region))
