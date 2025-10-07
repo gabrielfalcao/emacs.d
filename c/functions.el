@@ -2271,6 +2271,19 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
     (save-mark-and-excursion
       (replace-regexp-within-bounds regexp replacement beg end))))
 
+;;;;;;;
+;; WIP
+(defun shell-script-fix-variable-assignments-region (beg end) ;; WIP
+  "."
+  ;; WIP
+  (interactive "*r")
+  (let* ((regexp "^\\(\\s-*\\)\\([a-z0-9_]+\\)=\\([$][(].*[)]\\|[$][{][a-z_][a-z0-9_]+[^}]*[}]\\);?\\s-*$")
+         (replacement "\1\2=\"\3\""))
+    (save-mark-and-excursion
+      (replace-regexp-within-bounds regexp replacement beg end))))
+;; WIP
+;;;;;;;
+
 (defun shell-script-fix-variables-buffer ()
   (interactive)
   (let* ((beg (point-min))
