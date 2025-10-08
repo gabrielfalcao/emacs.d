@@ -65,9 +65,10 @@
 (add-hook 'shell-script-mode-hook
           #'(lambda ()
               (interactive)
+
               (setq 'sh-basic-offset 4)
               (local-unset-key (kbd "C-c C-f"))
-              (local-set-key (kbd "C-c C-f") 'shfmt)))
+              (local-set-key (kbd "C-c C-f") #'shfmt)))
 
 (add-hook 'web-mode-hook
           #'(lambda ()

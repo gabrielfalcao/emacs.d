@@ -72,7 +72,9 @@ process_argv() {
         exit_error "missing argument: <ARGUMENT>"
         exit 101
     fi
-    for arg in ${argv[@]}; do
+    for index in ${!argv[@]}; do
+        current=$(( $index + 1 ))
+        arg="${argv[$index]}"
         if [ -f "${arg}" ]; then
             regular_file_argv+=("${arg}")
         elif [ -d "${arg}" ]; then
