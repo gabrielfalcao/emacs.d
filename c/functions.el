@@ -2935,6 +2935,22 @@ BEG END."
 			   "\r")))
     (insert (format "\\(%s\\)" (string-join space-chars-list "\\|" )))))
 
+(defun insert-control-character-tab()
+  (interactive)
+  (insert "\t"))
+
+(defun insert-control-character-newline()
+  (interactive)
+  (insert "\n"))
+
+(defun insert-control-character-line-tabulation()
+  (interactive)
+  (insert "\b"))
+
+(defun insert-control-character-carriage-return()
+  (interactive)
+  (insert "\r"))
+
 (defun regexp-adoc-strip-all-but-spaces()
   (let ((regexp "\\([a-zA-Z0-9+=(.|*){@}%,:<>\"'`_-]+\\|[[]\\|[]]\\)+"))))
 
