@@ -38,23 +38,21 @@
          (revert-buffer 1 1))
        (kill-buffer b))
    (buffer-list))
-  (let* ((windows
-          (or (let ((windows 0))
-		(progn
-		  (walk-windows
-		   (lambda(window) (setq windows (1+ windows))))
-		  windows))
-              (list)))
-         (current (frame-first-window)))
-    (when (> windows 1) (delete-window))
-    (ignore-errors (erase-messages))
-    (ignore-errors (with-current-buffer "*scratch*"
-		     (read-only-mode -1)
-		     (widen)
-		     (replace-region-contents
-		      (point-min)
-		      (point-max)
-		      (lambda () ""))))))
+  (while (> (get-window-count t) 1)
+    (delete-window (frame-first-window)))
+  (ignore-errors (erase-messages))
+  (ignore-errors (erase-scratch))
+  (ignore-errors (erase-scratch))
+  )
+
+(defun get-window-count(&optional all-frames)
+  "returns integer."
+  (let ((windows 0))
+    (progn
+      (walk-windows
+       (lambda(window) (setq windows (1+ windows)))
+       nil (not (null all-frames)))
+      windows)))
 
 (defun minor-mode-slist()
   "."
@@ -467,7 +465,7 @@
        (t (format "fallback ffb: %S" ffb))
        )
       ;; ;; (message (format "ffb:%S acls: %S\naclsl:%S" ffb acls aclsl))
-)))
+      )))
 
 (defun Ox33b4O/$/flush-kill-ring ()
   "."
@@ -476,7 +474,7 @@
 (defun Ox33b4O/$/kill-all-buffers-and-flush-kill-ring ()
   "."
   (interactive)
-  (progn (kill-bufs) (Ox33b4O/$/flush-kill-ring) (erase-messages)     (while (> windows 1) (delete-window))
+  (progn (kill-bufs) (Ox33b4O/$/flush-kill-ring) (erase-messages)     (while (> (get-window-count) 1) (delete-window))
 	 ))
 
 (defun Ox33b4O/$/string-hash-take-last-n-chars (algo hwm contents)
@@ -1751,22 +1749,25 @@
         ))))
 
 
+(defun erase-buffer-by-name(buffer-name)
+  "."
+  (let ((buffer-to-erase (get-buffer  buffer-name)))
+    (if (bufferp buffer-to-erase)
+        (with-current-buffer buffer-to-erase
+          (read-only-mode -1)
+          (widen)
+          (erase-buffer)
+          (read-only-mode 1)))))
+
 (defun erase-messages()
   "."
   (interactive)
-  (with-current-buffer "*Messages*"
-    (read-only-mode -1)
-    (widen)
-    (erase-buffer)
-    (read-only-mode 1)))
+  (erase-buffer-by-name  "*Messages*"))
 
 (defun erase-scratch()
   "."
   (interactive)
-  (with-current-buffer "*scratch*"
-    (read-only-mode -1)
-    (erase-buffer)))
-
+  (erase-buffer-by-name  "*Scratch*"))
 
 (defun git-add()
   "."
@@ -1900,20 +1901,20 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
            ((result
              ;; t
 	     (with-current-buffer tmp-buffer
-	                       (widen)
+	       (widen)
 
-                               (goto-char (point-min))
-	                       (re-search-forward
-                                  "^\\([^:]+\\)[:]\\([0-9]+\\)[:]\\([0-9]+\\)[:]\s-*\\(.+\\)$"
-                                  ;; "^\s-*\\([^:]+\\):\\([0-9]+\\):\\([0-9]+\\)\s-*\\(.+\\)$"
-                                  (point-max) t)
-	                         (let* ((error-filename (match-string 1))
-	        			(error-lineno (match-string 2))
-	        			(error-column (match-string 3))
-	        			(error-message (match-string 4))
-	        			(result-list (list error-filename error-lineno error-column error-message)))
-                                   result-list)
-                                 )
+               (goto-char (point-min))
+	       (re-search-forward
+                "^\\([^:]+\\)[:]\\([0-9]+\\)[:]\\([0-9]+\\)[:]\s-*\\(.+\\)$"
+                ;; "^\s-*\\([^:]+\\):\\([0-9]+\\):\\([0-9]+\\)\s-*\\(.+\\)$"
+                (point-max) t)
+	       (let* ((error-filename (match-string 1))
+	              (error-lineno (match-string 2))
+	              (error-column (match-string 3))
+	              (error-message (match-string 4))
+	              (result-list (list error-filename error-lineno error-column error-message)))
+                 result-list)
+               )
 
              ))
          (if (listp result)
@@ -1923,18 +1924,18 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
                    (error-message (nth 3 result)))
 	       (goto-line error-lineno current-shell-buffer)
 	       (beginning-of-line)
-                (let ((error-point (+ (point) (- error-column 1)))
-                      (eol (save-mark-and-excursion
+               (let ((error-point (+ (point) (- error-column 1)))
+                     (eol (save-mark-and-excursion
                             (end-of-line 1)
                             (point))))
-                  (goto-char error-point)
-                  (push-mark error-point t t)
-                  ;; (goto-char eol)
-                  )
+                 (goto-char error-point)
+                 (push-mark error-point t t)
+                 ;; (goto-char eol)
+                 )
 	       (message
                 (format "line %d: %s" error-lineno
-             (propertize error-message 'face (list :foreground "#F13976"))
-             ))
+			(propertize error-message 'face (list :foreground "#F13976"))
+			))
                (kill-buffer tmp-buffer)
                )
 	   (switch-to-buffer tmp-buffer t t)
@@ -2054,7 +2055,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 	      windows)))
          (right (split-window-right))
          (current (frame-first-window)))
-    (when (> windows 1) (delete-window))
+    (while (> (get-window-count) 1) (delete-window))
     (set-window-buffer right "*Messages*")
     (set-window-buffer current "*scratch*")
     (erase-messages)
