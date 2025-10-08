@@ -231,8 +231,8 @@
           (consp key)
           (listp key)))
     (user-error "key %S has invalid type: %s" key (type-of key)))
-  (when (integerp key) (global-unset-key key))
-  (when (stringp key) (global-unset-key (kbd key)))
+  (when (integerp key) (keymap-global-unset key))
+  (when (stringp key) (keymap-global-unset (kbd key)))
 
   (when (or (consp key) (vectorp key)
             ;;            (arrayp key)
@@ -252,10 +252,10 @@
     (user-error "key %S has invalid type: %s" key (type-of key)))
 
   (when (integerp key)
-    (progn (Ox33b4O/$/undefine-key key) (global-set-key key)))
+    (progn (Ox33b4O/$/undefine-key key) (keymap-global-set key)))
 
   (when (stringp key)
-    (progn (Ox33b4O/$/undefine-key key) (global-set-key (kbd key) def)))
+    (progn (Ox33b4O/$/undefine-key key) (keymap-global-set (kbd key) def)))
   (when (or (consp key)
             ;;            (arrayp key)
             (vectorp key)
@@ -275,9 +275,9 @@
           (consp key)
           (listp key)))
     (user-error "key %S has invalid type: %s" key (type-of key)))
-  (when (integerp key) (global-set-key key def))
+  (when (integerp key) (keymap-global-set key def))
 
-  (when (stringp key) (global-set-key (kbd key) def))
+  (when (stringp key) (keymap-global-set (kbd key) def))
   (when (or (consp key) (vectorp key)
             ;;            (arrayp key)
             (listp key))
@@ -3023,3 +3023,10 @@ BEG END."
       (goto-char beg)
       (delete-prefix-and-timestamp-from-bash-history-region beg end)
       )))
+
+;; (defun inspect-keymap-in-buffer (buffer)
+;;   "WIP ."
+;;   (if (not (bufferp buffer))
+;;       (user-error "not a buffer: %S" buffer))
+;;   (let ((buffer-local-keymap (buffer-local-value 'keymap buffer)))
+;;     (message (format "keymap for %s: %S" (buffer-name) buffer-local-keymap))))
