@@ -2832,6 +2832,11 @@ BEG END."
   (interactive "*r")
   (heck-string-to-case-buffer "train" beg end))
 
+(defun string-to-title-region(beg end)
+  "BEG END."
+  (interactive "*r")
+  (heck-string-to-case-buffer "title" beg end))
+
 (defun string-to-kebab-region(beg end)
   "BEG END."
   (interactive "*r")
