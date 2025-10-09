@@ -67,8 +67,8 @@
               (interactive)
 
               (setq 'sh-basic-offset 4)
-              (keymap-local-unset (kbd "C-c C-f"))
-              (keymap-local-set (kbd "C-c C-f") #'shfmt)))
+              (local-unset-key (kbd "C-c C-f"))
+              (local-set-key (kbd "C-c C-f") #'shfmt)))
 
 (add-hook 'web-mode-hook
           #'(lambda ()
@@ -88,7 +88,7 @@
                (Ox33b4O/$/paint-mode-line nil "new buffer")))
 (add-hook 'toml-mode-hook #'(lambda ()
                               (setq fill-column 120)))
-;; (add-hook 'toml-mode-hook #'(lambda () ( (keymap-local-set (kbd '("C-c C-f") 'toml-prettify-buffer)))))
+;; (add-hook 'toml-mode-hook #'(lambda () ( (local-set-key (kbd '("C-c C-f") 'toml-prettify-buffer)))))
 ;; (add-hook 'local-write-file-hooks 'git-add-opt-libexec)
 
 (add-hook 'after-set-visited-file-name-hook

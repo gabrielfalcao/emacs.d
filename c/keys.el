@@ -75,7 +75,7 @@
 
 (Ox33b4O/$/set-key '("C-x M-k") 'Ox33b4O/$/load-library)(Ox33b4O/$/set-key '("C-x M-,") 'Ox33b4O/$/load-init)
 
-(keymap-global-set (kbd "C-c C-c C-r") 'collapse-lines-region)
+(global-set-key (kbd "C-c C-c C-r") 'collapse-lines-region)
 
 ;; (Ox33b4O/$/set-key '("M-, M-8" "M-, 8")#'(lambda () (interactive) (rot13(fpuervo) "OE8x"))) ;; https://deezer.page.link/HUJ1z8CfsudS2he96
 ;; (Ox33b4O/$/set-key '("M-, M-5" "M-, 5")#'(lambda () (interactive) (schreib "NU8x")))
@@ -147,7 +147,7 @@
 (Ox33b4O/$/set-key   "C-x C-j" #'(lambda () (interactive) (insert "\n")))
 
 (setq        ring-bell-function               'ignore)
-(keymap-global-set [kp-delete] 'delete-char)
+(global-set-key [kp-delete] 'delete-char)
 (setq select-enable-clipboard nil)
 (setq inhibit-splash-screen t)
 (setq inhibit-startup-screen t)
