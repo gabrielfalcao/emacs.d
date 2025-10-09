@@ -593,7 +593,7 @@
           "MHgwYzlmNjAwMCAtZCAtLSAnJXMn"))))))
 
 ;;(Ox33b4O/$/undefine-key (list "C-c C-e C-2" "C-c C-d C-2"))
-(progn
+(ignore-errors
   (Ox33b4O/$/set-key (list "C-c C-e C-2 C-0") 'Ox33b4O/$/encrypt-chacha20-hardcoded)
   (Ox33b4O/$/set-key
    (list "C-c C-e C-d C-2 C-0")
