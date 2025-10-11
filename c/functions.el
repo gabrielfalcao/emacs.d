@@ -2814,7 +2814,7 @@ BEG END."
          (tmp-buffer (get-buffer-create tmp-buffer-name))
          (input-string (buffer-substring-no-properties beg end))
          (exit-code (call-process "heck-string" nil tmp-buffer nil (format "--to=%s" case) input-string)))
-    (message tmp-buffer-name)
+
     (if (eq 0 exit-code)
         (let ((output (with-current-buffer tmp-buffer
 			(widen)
@@ -2866,7 +2866,7 @@ BEG END."
 (defun string-to-lower-camel-region(beg end)
   "BEG END."
   (interactive "*r")
-  (heck-string-to-case-buffer "lower-camel" beg end))
+  (heck-string-to-case-buffer "camel" beg end))
 
 (defun cargo-craft-get-replace-regexp-pattern-string()
   "."
@@ -3023,3 +3023,30 @@ BEG END."
       (goto-char beg)
       (delete-prefix-and-timestamp-from-bash-history-region beg end)
       )))
+
+
+(defun rust-format!-static-str-to-to-string-region(beg end)
+  "replaces occurrences of `format!(\"static string\")' with `\"static string\".to_string()' in region
+.
+"
+  (interactive "*r")
+  (when (not (numberp beg))
+      (user-error "argument BEG is not a number: %S" beg))
+  (when (not (numberp end))
+    (user-error "argument END is not a number: %S" end))
+
+ (let ((regexp "format!(\\(\"\\([^{}\"]+\\)\"\\))")
+        (replacement "\1.to_string()")
+        (initial-position (if (> beg 0)
+                              (- beg 1)
+                            (beg))))
+    (save-mark-and-excursion
+      (replace-regexp-in-region regexp replacement beg end))))
+
+(defun rust-format!-static-str-to-to-string-buffer()
+  "like `rust-format!-static-str-to-to-string-region' but for entire buffer.
+"
+  (interactive)
+  (save-mark-and-excursion
+    (widen)
+    (rust-format!-static-str-to-to-string-region (point-min) (point-max))))
