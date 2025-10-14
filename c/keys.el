@@ -47,6 +47,8 @@
 (Ox33b4O/$/set-key '("C-x C-M-s") #'insert-regexp-linebreak-tabs-and-spaces)
 (Ox33b4O/$/set-key '("C-x C-M-t") #'insert-control-character-tab)
 (Ox33b4O/$/set-key '("C-x C-M-c TAB") #'insert-control-character-tab)
+(Ox33b4O/$/set-key '("C-x C-M-c n") #'insert-control-character-newline)
+(Ox33b4O/$/set-key '("C-x C-M-i n") #'insert-control-character-newline)
 (Ox33b4O/$/set-key '("C-x C-M-c RET") #'insert-control-character-newline)
 (Ox33b4O/$/set-key '("C-x C-M-c DEL") #'insert-control-character-carriage-return)
 (Ox33b4O/$/set-key '("C-x C-M-i TAB") #'insert-control-character-tab)
