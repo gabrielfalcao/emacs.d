@@ -2428,6 +2428,18 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
   (interactive)
   (open-note "~/projects/notes/todo.rst"))
 
+(defun now-file-safe()
+  "."
+  (let ((ts (format-time-string "%Y-%m-%dT%H-%M-%S%z")))
+    (when (called-interactively-p interactive)
+      (insert ts))
+    ts))
+
+(defun context-switch-note()
+  "."
+  (interactive)
+  (open-note (format "~/todo/%s.rst" (now-file-safe))))
+
 (defun notes()
   "."
   (interactive)
