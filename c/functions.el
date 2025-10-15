@@ -116,7 +116,12 @@
 (defun contrast-color (c)
   "C."
   (interactive "s")
-  (compute-bright-dark-from-color-value c "#FFF" "#333"))
+
+  (compute-bright-dark-from-color-value c
+                                        "#919588"
+                                        "#1C1C1C"))
+
+
 (defun compute-bright-dark-from-color-value (c bright dark)
   "C."
   (interactive "s")
@@ -2551,11 +2556,33 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 (defun make-script()
   "."
   (interactive)
-  (let* ((target (expand-file-name (buffer-file-name))))
+  (let* ((target (expand-file-name (buffer-file-name)))
+         (executable (string-to-number "755" 8))
+         )
     (when (not (file-exists-p target))
       (basic-save-buffer nil))
-    (chmod target "+x")
+    (chmod target executable)
+
+    (message (format
+              "%s is now executable %o"
+              (auto-propertize-string (abbreviate-file-name target))
+              ;; (auto-propertize-string (file-name-base target))
+              executable
+              ))
+
     ))
+(defun auto-propertize-string (string)
+  "colorizes the given string."
+  (if (not (stringp string))
+      (user-error "%S is not a string (auto-propertize-string %S)" string string))
+  (let* ((foreground
+          (format "#%s" (Ox33b4O/$/hash-take-first-n-chars 'sha256 6 string)))
+         (background
+          (contrast-color foreground)))
+    (propertize
+     (format "%s" string)
+     'face
+     (list :foreground foreground :background background))))
 
 (defun cleanup-elc()
   "."
@@ -3043,11 +3070,11 @@ BEG END."
 "
   (interactive "*r")
   (when (not (numberp beg))
-      (user-error "argument BEG is not a number: %S" beg))
+    (user-error "argument BEG is not a number: %S" beg))
   (when (not (numberp end))
     (user-error "argument END is not a number: %S" end))
 
- (let ((regexp "format!(\\(\"\\([^{}\"]+\\)\"\\))")
+  (let ((regexp "format!(\\(\"\\([^{}\"]+\\)\"\\))")
         (replacement "\1.to_string()")
         (initial-position (if (> beg 0)
                               (- beg 1)
