@@ -107,6 +107,10 @@
               mode-name)
              ((t (format "%S" mode-name))))))))
 
+(defun Ox33b4O/$/display-mode-name()
+  (interactive "*")
+  (message (Ox33b4O/$/paint-mode-name))
+  )
 (defun Ox33b4O/$/paint-mode-name()
   (Ox33b4O/$/paint-mode-line-color (Ox33b4O/$/paint-mode-name-string)))
 

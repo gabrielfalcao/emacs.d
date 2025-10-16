@@ -9,6 +9,5 @@ custom.el
 /sandbox
 /tramp
 /transient
-
-
 tmp.el
+/*.html
