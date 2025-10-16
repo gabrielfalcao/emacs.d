@@ -46,3 +46,7 @@
 
 (setq history-length 1000)
 (setq history-delete-duplicates t)
+
+;; (set-window-buffer (split-window-right) "*Messages*")
+;; (erase-messages)
+;; (enable-debug-on-error)
