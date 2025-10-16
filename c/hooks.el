@@ -16,9 +16,7 @@
 (add-hook 'python-mode-hook
           #'(lambda ()
               (interactive)
-              (define-key python-mode-map
-                          (kbd "C-c C-f")
-                          'blacken-buffer)))
+              (define-key python-mode-map (kbd "C-c C-f") #'g/build)))
 (add-hook 'rust-mode-hook
           #'(lambda ()
               (interactive)
@@ -27,48 +25,91 @@
                           'rust-insert-members-from-file)
               (define-key rust-mode-map
                           (kbd "C-x C-e C-i")
-                          'rust-insert-members-from-file
-)
-              ))
+                          'rust-insert-members-from-file)))
 (add-hook 'typescript-mode-hook
           #'(lambda ()
               (interactive)
               (define-key typescript-mode-map
                           (kbd "C-c C-f")
-                          'prettierjs)))
+                          #'g/build)))
+(add-hook 'javascript-mode-hook
+          #'(lambda ()
+              (interactive)
+              (define-key javascript-mode-map
+                          (kbd "C-c C-f")
+                          #'g/build)))
+(add-hook 'web-mode-hook
+          #'(lambda ()
+              (interactive)
+              ;;(keymap-set web-mode-map KEY DEFINITION)
+
+              (define-key web-mode-map (kbd "C-c C-f") #'g/build)))
+
 (add-hook 'elisp-mode-hook
           #'(lambda ()
               (interactive)
-              (define-key elisp-mode-map (kbd "C-c C-f") 'elfmt)))
+              (define-key elisp-mode-map (kbd "C-c C-f") #'g/build)))
 (add-hook 'emacs-lisp-mode-hook
           #'(lambda ()
               (interactive)
-              (define-key emacs-lisp-mode-map (kbd "C-c C-f") 'elfmt)))
+              (define-key emacs-lisp-mode-map
+                          (kbd "C-c C-f")
+                          #'g/build)))
 
 (add-hook 'lua-mode-hook
           #'(lambda ()
               (interactive)
-              (define-key lua-mode-map (kbd "C-c C-f") 'stylua)))
-(add-hook 'javascript-mode-hook
-          #'(lambda ()
-              (interactive)
-              (define-key typescript-mode-map
-                          (kbd "C-c C-f")
-                          'prettierjs)))
+              (define-key lua-mode-map (kbd "C-c C-f") #'g/build)))
 
 ;; (add-hook 'sh-mode-hook 'flycheck-mode)
 ;; (add-hook 'shell-script-mode-hook 'flycheck-mode)
 
-(add-hook 'sh-mode-hook 'flymake-shellcheck-load)
-(add-hook 'shell-script-mode-hook 'flymake-shellcheck-load)
 
-(add-hook 'shell-script-mode-hook
-          #'(lambda ()
-              (interactive)
+(defun shell-script-remap-keymaps ()
+  (interactive)
 
-              (setq 'sh-basic-offset 4)
-              (local-unset-key (kbd "C-c C-f"))
-              (local-set-key (kbd "C-c C-f") #'shfmt)))
+  ;; ;; (setq 'sh-basic-offset 4)
+  ;; (defvar-keymap (current-local-map) "C-c C-f" #'g/build)
+  ;; (progn (local-unset-key (kbd "C-c C-f")))
+  ;; (progn (local-set-key (kbd "C-c C-f") #'g/build))
+  ;; (progn (keymap-local-unset "C-c C-f" nil))
+  ;; (progn (keymap-local-set "C-c C-f" #'g/build))
+  (message
+ "
+%s
+(current-global-map) = %S\n
+(current-local-map) = %S\n
+(current-active-maps) = %S\n
+(current-minor-mode-maps) = %S\n
+shell-script-mode-keymap = %S\n
+shell-script-mode-parent-keymap = %S\n
+%s
+"
+           (propertize "<debug shell-script-mode hook>" 'face
+                       (get-auto-propertize-face-fg-and-bg-list "debug shell-script-mode-hook"))
+           (current-global-map)
+           (current-local-map)
+           (current-active-maps)
+           (current-minor-mode-maps)
+           'shell-script-mode-map
+           (keymap-parent (current-local-map))
+           (propertize "</debug shell-script-mode hook>" 'face
+                       (get-auto-propertize-face-fg-and-bg-list "debug shell-script-mode-hook"))
+
+     ))
+
+
+(add-hook 'sh-mode-hook #'flymake-shellcheck-load)
+(add-hook 'shell-script-mode-hook #'flymake-shellcheck-load)
+
+(add-hook 'sh-mode-hook #'shell-script-remap-keymaps)
+(add-hook 'shell-script-mode-hook #'shell-script-remap-keymaps)
+
+;; (add-hook 'shell-script-mode-hook ;;
+;;           #'shell-script-remap-keymaps ;;
+;;           96 ;; 96=DEPTH
+;;           t ;; t=LOCAL
+;;           )
 
 (add-hook 'web-mode-hook
           #'(lambda ()
@@ -80,14 +121,14 @@
                                   (face-foreground font-lock-variable-name-face))
               (set-face-attribute 'web-mode-html-attr-value-face nil :foreground
                                   (face-foreground font-lock-type-face))))
+
 (add-hook 'pest-mode-hook 'flycheck-mode)
 
 (add-hook  'after-make-frame-functions
            #'(lambda (frame)
                (set-frame-parameter frame 'fullscreen 'maximized)
                (Ox33b4O/$/paint-mode-line nil "new buffer")))
-(add-hook 'toml-mode-hook #'(lambda ()
-                              (setq fill-column 120)))
+(add-hook 'toml-mode-hook #'(lambda () (setq fill-column 120)))
 ;; (add-hook 'toml-mode-hook #'(lambda () ( (local-set-key (kbd '("C-c C-f") 'toml-prettify-buffer)))))
 ;; (add-hook 'local-write-file-hooks 'git-add-opt-libexec)
 
@@ -105,7 +146,7 @@
 
 ;; (defvar shell-script-mode-map
 ;;   (let ((keymap (make-sparse-keymap)))
-;;     (define-key keymap (kbd "C-c C-f") #'shfmt)
+;;     (define-key keymap (kbd "C-c C-f")  #'g/build)
 ;;     keymap)
 ;;   "Keymap for `shell-script-mode'.")
 ;; (defalias 'sh-mode-map 'shell-script-mode-map)
