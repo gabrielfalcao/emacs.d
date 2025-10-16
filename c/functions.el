@@ -1876,14 +1876,6 @@
                      (save-excursion (end-of-line) (point))))
                 ;;^ ;; [error] index.ts: SyntaxError: Function type notation must be parenthesized when used in a union type. (96:46)
                 ;;  ;; [error] utils.ts: SyntaxError: Expression expected. (183:21)
-                (message "<debug regex>
-point-min = %S
-point-max = %S
-regex-point-beg = %S
-regex-point-end = %S
-regex-substring = %S
-<debug regex>" (point-min) (point-max) regex-point-beg regex-point-end (buffer-substring-no-properties regex-point-beg regex-point-end)
-)
                 (goto-char (point-min))
 
                 (if (re-search-forward
@@ -1891,24 +1883,6 @@ regex-substring = %S
                      regex-point-end
                      t 1)
                     (progn
-                (message "<debug regex in>
-match-string 0 = %S
-match-string 1 = %S
-match-string 2 = %S
-match-string 3 = %S
-match-string 4 = %S
-match-string 5 = %S
-
-<debug regex in>"
-(match-string 0)
-(match-string 1)
-(match-string 2)
-(match-string 3)
-(match-string 4)
-(match-string 5)
-
-)
-
                       (let ((error-filename (match-string 1))
                           (error-message (match-string 2))
                           (error-lineno
@@ -1929,16 +1903,6 @@ match-string 5 = %S
                   (error-message (nth 1 error-details))
                   (error-lineno (nth 2 error-details))
                   (error-column (nth 3 error-details)))
-             (message "<prettierjs>
-current-filename = %S
-error-filename = %S
-error-message = %S
-error-lineno = %S
-error-column = %S
-
-error-string = `%s'
-
-</prettierjs>"  current-filename error-filename error-message error-lineno error-column error-string)
              (goto-line error-lineno)
              (goto-char (+ (point) error-column))
              (message
