@@ -3246,3 +3246,27 @@ BEG END."
     (rust-format!-static-str-to-to-string-region
      (point-min)
      (point-max))))
+
+
+(defun tmpwindow()
+  "creates a new tmp buffer with the same mode as the current buffer, then creates a new emacs `frame' (which in terms of OS usually actually means `window') with that tmp buffer.
+"
+  (interactive)
+  (let* ((current-mode-name (format "%s" mode-name))
+         (current-mode-symbol (intern-soft current-mode-name))
+         (tmp-buffer-name (format "tmp-buffer-%s" current-mode-name))
+         (tmp-buffer (create-fresh-buffer tmp-buffer-name))
+         (tmp-frame (make-frame-on-current-monitor '((minibuffer . t)))) ;; (tmp-frame (make-frame-command)))
+         (tmp-frame-type (framep tmp-frame))
+         (tmp-frame-is-live (frame-live-p tmp-frame))
+         )
+    (setq major-mode current-mode-symbol)
+    (set-buffer-major-mode tmp-buffer)
+    (select-frame-set-input-focus tmp-frame t)
+    (pop-to-buffer-same-window tmp-buffer t)
+    ))
+
+
+    ;; 1. set mode in tmp-buffer to current-mode-name
+    ;; 2. open new frame and window with tmp-buffer
+    ;; 3. pop to window/tmp-buffer))
