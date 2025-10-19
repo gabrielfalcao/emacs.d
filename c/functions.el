@@ -3141,3 +3141,20 @@ BEG END."
 ;; 2. open new frame and window with tmp-buffer
 ;; 3. pop to window/tmp-buffer))
 ;; (ignore-errors (cleanup-elc))
+(setq
+ ;; resize-mini-windows is a variable defined in ‘C source code’.
+ ;;
+ ;; Its value is ‘grow-only’
+ ;;
+ ;; How to resize mini-windows (the minibuffer and the echo area).
+ ;; A value of nil means don’t automatically resize mini-windows.
+ ;; A value of t means resize them to fit the text displayed in them.
+ ;; A value of ‘grow-only’, the default, means let mini-windows grow only;
+ ;; they return to their normal size when the minibuffer is closed, or the
+ ;; echo area becomes empty.
+ ;;
+ ;; This variable does not affect resizing of the minibuffer window of
+ ;; minibuffer-only frames.  These are handled by ‘resize-mini-frames’
+ ;; only.
+
+ resize-mini-windows t)
