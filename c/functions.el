@@ -464,7 +464,7 @@
                                       (nth 1 acls))
         			     (Ox33b4O/$/acl-other (nth 1 acls)))))
        (t (format "fallback ffb: %S" ffb)))
-      ;; ;; (message (format "ffb:%S acls: %S\naclsl:%S" ffb acls aclsl))
+      ;; ;; (message  "ffb:%S acls: %S\naclsl:%S" ffb acls aclsl)
       )))
 
 (defun Ox33b4O/$/flush-kill-ring ()
@@ -940,7 +940,7 @@
                      "^\\s-*\\(\\s-+\\|}\\|impl\\|extern\\s-*crate\\|\\(pub\\(\s-*\\(in\s-*\\)?[a-z0-9:]+\\)?\\)?\\s-*mod\\|[#][[]\\|)\\).*"
                      ""
                      region))))))))
-      (if called-interactively-p (erase-messages) (message region))
+      (if called-interactively-p (erase-messages) (message "%s" region))
       region)
     (flush-lines "^$" beg end nil)))
 
@@ -1104,7 +1104,7 @@
   (messages-buffer)
   (erase-messages)
   (messages-buffer)
-  (message toml-entries)
+  (message "%s" (concat toml-entries))
   (find-file
    (file-name-concat (file-name-directory folder-path) "Cargo.toml"))
   (with-current-buffer "Cargo.toml"
@@ -1161,7 +1161,7 @@
 (defun git-diff-exitcode-output (&optional ref)
   "."
   (let* ((git-diff-output-buf
-          (get-buffer-create
+          (create-fresh-buffer
            (format "*git-diff:%s*" (buffer-file-name-relative))))
          (exitcode
           (or
@@ -1184,16 +1184,17 @@
 
 (defun git-diff-internal (&optional ref)
   (let* ((exitcode-output (git-diff-exitcode-output ref))
-         (exitcode (car exitcode-output))
-         (output (car (cdr exitcode-output)))
+         (exitcode (nth 0 exitcode-output))
+         (output (nth 1 exitcode-output))
          (buffer
-          (get-buffer-create
+          (create-fresh-buffer
            (format "*git-diff:%s*" (buffer-file-name-relative)))))
     (if (eq 0 exitcode-output)
         (progn
           (with-current-buffer buffer
             (widen)
             (diff-mode)
+            (setq major-mode 'diff-mode)
             (insert output))
           (pop-to-buffer-same-window buffer t))
       (user-error (format "git diff failed with status %d" exitcode)))))
@@ -1229,7 +1230,7 @@
          (output (car (cdr result))))
 
     (if (eq 0 exitcode)
-        (message (format "git status ok: %s" output))
+        (message "git status ok: %s" output)
       (user-error
        (format "git-status error (%s): %s" exitcode output)))))
 
@@ -1257,7 +1258,7 @@
                                    (format "'%s'" commit-message))))
                exitcode))
 	 (progn
-           (message (format "commited '%s'" commit-message))
+           (message "commited '%s'" commit-message)
            (kill-buffer git-commit-output-buf))
        (progn
          (user-error
@@ -1351,7 +1352,7 @@
   "returns list of cons cells where the head is the remote name and the tail is the remote url."
   (mapcar 'git-remote-get-url (git-remote-names)))
 
-;; (progn (message (format "%s" (git-remotes))))
+;; (progn (message  "%s" (git-remotes)))
 
 (defun git-commit-all ()
   "."
@@ -1397,14 +1398,14 @@
     (concat "^" (getenv "HOME") "/opt/libexec")
     filename)
    (git-autocommit-current-file-buffer)
-   (message (format "auto-commited %s" filename))))
+   (message  "auto-commited %s" filename)))
 
 (defun git-autocommit-emacs-d-c-sources ()
   "."
   (when-buffer-filename-matches
    (concat "^" (getenv "HOME") "/.emacs.d/c")
    (git-autocommit-current-file-buffer)
-   (message (format "auto-commited emacs file %s" filename))))
+   (message "auto-commited emacs file %s" filename)))
 
 (defmacro
     set-region-contents-with-fn (beg end fn)
@@ -1453,10 +1454,10 @@
     (if (eq pos (match-beginning 1))
         (progn
           (forward-line)
-          (message (format "forward-line %s" pos)))
+          (message "forward-line %s" pos))
       (progn
         (goto-char (match-beginning 1))
-        (message (format "goto-char %s" (match-beginning 1)))))))
+        (message "goto-char %s" (match-beginning 1))))))
 
 (defun incr-next-number ()
   "."
@@ -1472,10 +1473,10 @@
     (if (eq pos (match-beginning 1))
         (progn
           (forward-line)
-          (message (format "forward-line %s" pos)))
+          (message "forward-line %s" pos))
       (progn
         (goto-char (match-beginning 1))
-        (message (format "goto-char %s" (match-beginning 1)))))))
+        (message "goto-char %s" (match-beginning 1))))))
 
 (defun toml-prettify-buffer ()
   "."
@@ -1542,22 +1543,22 @@
     (defun state ()
       (format "{\n    open-count: %s,\n    close-count: %s,\n    open-pos: %s,\n    close-pos: %s\n}" open-count close-count open-pos close-pos))
 
-    (message (state))
+    (message "%s" (state))
     (if (not (use-region-p))
         (progn
-          (message (format "setting region at %s" beg-pos))
+          (message  "setting region at %s" beg-pos)
           (push-mark (point) t t)))
 
     (if (not (eq beg-pos (point)))
         (progn
           (goto-char beg-pos)
-          (message (format "current pos %s" beg-pos))))
+          (message "current pos %s" beg-pos)))
 
     (or
      (when (not (null (re-search-forward close-regexp nil t)))
        ;; search next close parenthesis
        (progn
-         (message (format "search next close parenthesis"))
+         (message  "search next close parenthesis")
          ;; close parenthesis found, set cur-pos to its match-end
          (setq cur-pos (match-end 0))
          (setq close-count (1+ close-count))
@@ -1568,7 +1569,7 @@
           (and
            (not (null (re-search-forward open-regexp nil t)))
            (progn
-             (message (format "peeking onto next open parenthesis"))
+             (message "peeking onto next open parenthesis")
 
              (setq open-count (1+ open-count))
              (if (<= (match-end 0) cur-pos)
@@ -1596,7 +1597,7 @@
      (when (not (null (re-search-forward open-regexp nil t)))
        ;; no close parenthesis found, search next open parenthesis
        (progn
-         (message (format "unexpected third case"))
+         (message "unexpected third case")
          (setq open-pos (match-end 0))
          (setq open-count (1+ open-count))
          (setq end-pos (match-end 0))
@@ -1610,7 +1611,7 @@
      (when too-many-open-parenthesis
        ;; not enough close parenthesis found, return what it can
        (progn
-         (message (format "too-many-open-parenthesis 4th case"))
+         (message  "too-many-open-parenthesis 4th case")
          (while too-many-open-parenthesis
            (progn
              (message
@@ -1675,7 +1676,7 @@
               (point)
               til-next-open til-next-close open-count close-count))
 
-    (message (state))
+    (message "%s" (state))
     (goto-next-close-parenthesis open-char close-char open-count close-count)
 
     ))
@@ -1967,7 +1968,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 
 (defun g/format/prettify ()
   (interactive "*")
-  ((ignore-errors erase-messages))
+  (ignore-errors (erase-messages))
   (cond
    ((string= "rust-mode" (Ox33b4O/$/mode-name))
     (rustfmt))
@@ -2072,7 +2073,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 
 ;; (defun existing-file-current-buffer ()
 ;;   (let* ((path (confirm-nonexistent-file-or-buffer)))
-;;     (message (format "confirm-nonexistent-file-or-buffer: %s" path))
+;;     (message  "confirm-nonexistent-file-or-buffer: %s" path)
 ;;     ;;(abbreviate-file-name (expand-file-name (buffer-file-name)))
 ;;     path
 ;;     ))
@@ -2342,7 +2343,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
           (progn
             ;; (copy-file old-path note-path t t t t)
             (rename-file old-path note-path t)
-            (message (format "renamed %s -> %s" old-path note-path)))
+            (message  "renamed %s -> %s" old-path note-path))
         ;; rename file to name with timestamp if note-path exists
         (progn
           (let ((stamped-note-path
@@ -2610,9 +2611,9 @@ The `:background' property is computed in contrast with its
             (buffer-substring-no-properties (point-min) (point-max)))))
     (cond
      ((eq 0 exit-code)
-      (message (format "elc cleanup ok" ))
+      (message  "elc cleanup ok" )
       (length> stderr 0)
-      (message (format "elc cleanup error:\n'%s'" stderr )))
+      (message "elc cleanup error:\n'%s'" stderr ))
      )))
 
 (defun shell-script-expand-oneliner (beg end)
@@ -2740,8 +2741,8 @@ which returns the exit-status and the string output.
 ;; ;; testing call-program-with-list-args
 ;; (progn
 ;;   (erase-messages)
-;;   (message (format "which shprettier: %S" (call-program-with-list-args "which" '("shprettier"))))
-;;   (message (format "hostname: %S" (call-program-with-list-args "hostname" nil t))))
+;;   (message  "which shprettier: %S" (call-program-with-list-args "which" '("shprettier")))
+;;   (message  "hostname: %S" (call-program-with-list-args "hostname" nil t)))
 
 (defun ack (regexp)
   "."
