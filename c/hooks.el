@@ -16,7 +16,7 @@
 (add-hook 'python-mode-hook
           #'(lambda ()
               (interactive)
-              (define-key python-mode-map (kbd "C-c C-f") #'g/build)))
+              (define-key python-mode-map (kbd "C-c C-f") #'g/format/prettify)))
 (add-hook 'rust-mode-hook
           #'(lambda ()
               (interactive)
@@ -31,35 +31,35 @@
               (interactive)
               (define-key typescript-mode-map
                           (kbd "C-c C-f")
-                          #'g/build)))
+                          #'g/format/prettify)))
 (add-hook 'javascript-mode-hook
           #'(lambda ()
               (interactive)
               (define-key javascript-mode-map
                           (kbd "C-c C-f")
-                          #'g/build)))
+                          #'g/format/prettify)))
 (add-hook 'web-mode-hook
           #'(lambda ()
               (interactive)
               ;;(keymap-set web-mode-map KEY DEFINITION)
 
-              (define-key web-mode-map (kbd "C-c C-f") #'g/build)))
+              (define-key web-mode-map (kbd "C-c C-f") #'g/format/prettify)))
 
 (add-hook 'elisp-mode-hook
           #'(lambda ()
               (interactive)
-              (define-key elisp-mode-map (kbd "C-c C-f") #'g/build)))
+              (define-key elisp-mode-map (kbd "C-c C-f") #'g/format/prettify)))
 (add-hook 'emacs-lisp-mode-hook
           #'(lambda ()
               (interactive)
               (define-key emacs-lisp-mode-map
                           (kbd "C-c C-f")
-                          #'g/build)))
+                          #'g/format/prettify)))
 
 (add-hook 'lua-mode-hook
           #'(lambda ()
               (interactive)
-              (define-key lua-mode-map (kbd "C-c C-f") #'g/build)))
+              (define-key lua-mode-map (kbd "C-c C-f") #'g/format/prettify)))
 
 ;; (add-hook 'sh-mode-hook 'flycheck-mode)
 ;; (add-hook 'shell-script-mode-hook 'flycheck-mode)
@@ -69,11 +69,11 @@
   (interactive)
 
   ;; ;; (setq 'sh-basic-offset 4)
-  ;; (defvar-keymap (current-local-map) "C-c C-f" #'g/build)
+  ;; (defvar-keymap (current-local-map) "C-c C-f" #'g/format/prettify)
   ;; (progn (local-unset-key (kbd "C-c C-f")))
-  ;; (progn (local-set-key (kbd "C-c C-f") #'g/build))
+  ;; (progn (local-set-key (kbd "C-c C-f") #'g/format/prettify))
   ;; (progn (keymap-local-unset "C-c C-f" nil))
-  ;; (progn (keymap-local-set "C-c C-f" #'g/build))
+  ;; (progn (keymap-local-set "C-c C-f" #'g/format/prettify))
   (message
  "
 %s
@@ -146,7 +146,7 @@ shell-script-mode-parent-keymap = %S\n
 
 ;; (defvar shell-script-mode-map
 ;;   (let ((keymap (make-sparse-keymap)))
-;;     (define-key keymap (kbd "C-c C-f")  #'g/build)
+;;     (define-key keymap (kbd "C-c C-f")  #'g/format/prettify)
 ;;     keymap)
 ;;   "Keymap for `shell-script-mode'.")
 ;; (defalias 'sh-mode-map 'shell-script-mode-map)
