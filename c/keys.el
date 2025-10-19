@@ -122,7 +122,7 @@
 (Ox33b4O/$/set-key '("C-c C-r" "C-c r") 'reverse-string)
 (Ox33b4O/$/set-key '("C-x C-2" "C-x C-e C-g") 'make-frame-command)
 (Ox33b4O/$/set-key '("C-x C-e C-o") 'other-frame)
-(Ox33b4O/$/set-key "<f12>" 'g/build)
+(Ox33b4O/$/set-key "<f12>" 'g/format/prettify)
 (Ox33b4O/$/set-key '("M-<f10>" "M-<f11>" "M-<f12>" ) 'revert-buffer)
 (Ox33b4O/$/set-key '("C-c C-n" "C-x C-n" "C-c C-M-n") 'uncomment-region)
 (Ox33b4O/$/set-key '("C-c c" "C-#" "C-c C-M-c") 'comment-region)

@@ -1,10 +1,11 @@
 (defun string-shift-right (g) "." (format "\t%s" g))
 
-(when (not (functionp 'scratch-buffer))
-  (defun scratch-buffer ()
-    "."
-    (interactive)
-    (switch-to-buffer (get-buffer-create "*scratch*" t) t t)))
+(progn ;; runtime/platform dependent defun
+  (when (not (functionp 'scratch-buffer))
+    (defun scratch-buffer ()
+      "."
+      (interactive)
+      (switch-to-buffer (get-buffer-create "*scratch*" t) t t))))
 
 (defun delete-package (pkg-desc &optional force nosave)
   "."
@@ -25,6 +26,7 @@
         (cdr (assoc package-name package-table))
         current-prefix-arg nil))))
   (package-delete pkg-desc force nosave))
+
 (defun kill-bufs ()
   "."
   (interactive)
@@ -113,13 +115,11 @@
   (interactive)
   (find-file "~/.emacs.d/t/k.el"))
 
-
 (defun contrast-color (c)
   "C."
   (interactive "s")
 
   (compute-bright-dark-from-color-value c "#919588" "#1C1C1C"))
-
 
 (defun compute-bright-dark-from-color-value (c bright dark)
   "C."
@@ -186,7 +186,6 @@
                              (contrast-color faber)
                              :background faber)))))))
 
-
 (defun buffer-elisp-heuristic ()
   "."
   (or
@@ -204,7 +203,6 @@
       (widen)
       (list (point-min) (point-max)))))
 
-
 (defun eval-elisp-buffer ()
   (interactive)
   "evaluates the entire buffer as emacs-lisp expression so long as calling `buffer-elisp-heuristic' returns non-nil."
@@ -213,12 +211,12 @@
         (widen)
         (eval-buffer)
         (message "%s eval'd " (buffer-name)))
-    (message "cannot evaluate buffer %s because it is not in %s"
-             (Ox33b4O/$/paint-mode-line-color (buffer-name))
-	     (Ox33b4O/$/paint-mode-line-color "elisp-mode"))
+    (progn
+      (message "cannot evaluate buffer %s because it is not in %s, trying to run pretty formatter instead"
+               (Ox33b4O/$/paint-mode-line-color (buffer-name))
+	       (Ox33b4O/$/paint-mode-line-color "elisp-mode"))
+      (g/format/prettify))
     ))
-
-
 
 (defun Ox33b4O/$/reload-all-c ()
   "."
@@ -276,7 +274,6 @@
     (cdr
      (mapc #'(lambda (key) (Ox33b4O/$/set-key key def)) key))))
 
-
 (defun Ox33b4O/$/set-extra-key (key def)
   "KEY DEF."
   (when (not
@@ -296,8 +293,6 @@
             (listp key))
     (cdr
      (mapc #'(lambda (key) (Ox33b4O/$/set-extra-key key def)) key))))
-
-
 
 (defun fold-file-name (file-name)
   "."
@@ -345,7 +340,6 @@
   (interactive)
   (message "%S" (face-at-point)))
 
-
 (defun Ox33b4O/$/hash-take-last-n-chars (algo count contents)
   "."
   (let* ((data (secure-hash algo contents))
@@ -372,7 +366,6 @@
   "."
   (format "%s" (file-relative-name (buffer-file-name))))
 
-
 ;; KGRlZnVuIGRlYnVnLyQvYmNocyAoKQogICIuIgogIChpbnRlcmFjdGl2ZSkKCiAgKG1lc3NhZ2UKICAgKGZvcm1hdCAiPCQvYmNocyBkZWJ1Zz5cblxubW9kZTogJyVTJ1xuXG5maWxlLWF0dHJpYnV0ZS1tb2RlOiAnJVMnXG5cbiQvYmZhbjogJyVzJ1xuXG5idWZmZXItbmFtZTogJyVTJ1xuPC8kL2JjaHMgZGVidWc+IgogICAgICAgICAgICgkL21vZGUtbmFtZSkKICAgICAgICAgICAoZmlsZS1hdHRyaWJ1dGUtbW9kZXMgKGZpbGUtYXR0cmlidXRlcyAoYnVmZmVyLWZpbGUtbmFtZSkpKQogICAgICAgICAgICgkL2JmYW4pCiAgICAgICAgICAgKGJ1ZmZlci1uYW1lKQoKICAgICAgICAgICApKQo=
 
 (defun Ox33b4O/$/bchs ()
@@ -394,14 +387,10 @@
   (interactive)
   (format "(group: %S)" f))
 
-
 (defun Ox33b4O/$/acl-other (f)
   "F."
   (interactive)
   (format "(group: %S)" f))
-
-
-
 
 ;; (defun current-column ()
 ;;   "returns the current column number."
@@ -420,8 +409,6 @@
   (format "line=%s col=%s"
           (line-number-at-pos (point))
           (current-column)))
-
-
 
 (defun Ox33b4O/$/base64-encode-region (beg end)
   (interactive "*r")
@@ -448,7 +435,6 @@
 ;;        (p (replace-regexp-in-string "[s-w]" "🖍️" p))
 ;;        (p (replace-regexp-in-string "[xX]" "👥️" p)))
 ;;   p))
-
 
 (defun Ox33b4O/$/fm ()
   "."
@@ -499,14 +485,12 @@
   ;; (format "%s:%s"  (symbol-name algo) (Ox33b4O/$/hash-take-last-n-chars algo hwm contents)))
   (format "%s" (Ox33b4O/$/hash-take-last-n-chars algo hwm contents)))
 
-
 (defun server-reboot ()
   "."
   (interactive)
   (ignore-errors (server-force-delete))
   (ignore-errors (server-mode 9))
   (ignore-errors (server-start)))
-
 
 (defun Ox33b4O/$/hash (algo)
   "."
@@ -532,14 +516,12 @@
          (hg (secure-hash algo bs)))
     (replace-region-contents pi pa (lambda () hg))))
 
-
 (defun Ox33b4O/$/delete-overlays-within (beg end)
   "."
   (let ((mp beg))
     (while (<= mp end)
       (setq mp (+ mp (/ #xe #xe)))
       (mapcar 'delete-overlay (overlays-in beg mp)))))
-
 
 (defun setup-utf8 ()
   (interactive)
@@ -556,7 +538,6 @@
          'set-selection-coding-system
          'set-terminal-coding-system
          'locale-coding-system )))
-
 
 (defun Ox33b4O/$/chacha20-hardcoded (text шоли$)
   "."
@@ -576,7 +557,6 @@
     (kill-buffer tmp)
     shell-result))
 
-
 (defun Ox33b4O/$/encrypt-chacha20-hardcoded ()
   "."
   (interactive)
@@ -590,7 +570,6 @@
          (Ox33b4O/$/chacha20-hardcoded
           (buffer-substring-no-properties pi pa)
           "MHgwYzlmNjAwMCAtLSAnJXMn"))))))
-
 
 (defun Ox33b4O/$/decrypt-chacha20-hardcoded ()
   "."
@@ -614,7 +593,6 @@
   (Ox33b4O/$/set-key
    (list "C-c C-e C-d C-2 C-0")
    'Ox33b4O/$/decrypt-chacha20-hardcoded))
-
 
 (defun string-list-region (beg end)
   "BEG END."
@@ -640,7 +618,6 @@
                                            region)))))))))
       (flush-lines "^$" beg end))))
 
-
 (defun refactor-test-node-info-buffer ()
   "."
   (interactive "*")
@@ -649,7 +626,6 @@
   (remove-trailing-commas-buffer)
   (fix-vec-buffer)
   (rust-format-buffer))
-
 
 (defun refactor-test-node-info-region (beg end)
   "BEG END."
@@ -670,7 +646,6 @@
      (regex-fix-begin-names
       (regex-fix-node-names (regex-fix-node-info string)))))))
 
-
 (defun regex-fix-node-names (string)
   "STRING."
   (let ((fixed
@@ -681,7 +656,6 @@
     (if (not (string= fixed string))
         (regex-fix-node-names fixed)
       fixed)))
-
 
 (defun regex-fix-operation-names (string)
   "STRING."
@@ -697,8 +671,6 @@
         (regex-fix-operation-names fixed)
       fixed)))
 
-
-
 (defun regex-fix-value-names (string)
   "STRING."
   (let ((fixed
@@ -712,7 +684,6 @@
     (if (not (string= fixed string))
         (regex-fix-value-names fixed)
       fixed)))
-
 
 (defun regex-fix-begin-names (string)
   "STRING."
@@ -739,8 +710,6 @@
         (regex-fix-node-info fixed)
       fixed)))
 
-
-
 (defun regex-fix-vec (string)
   "STRING."
   ;; (replace-regexp-in-string
@@ -764,7 +733,6 @@
   (interactive "*")
   (fix-vec-region (point-min) (point-max)))
 
-
 (defun regex-single-space-all-whitespace-and-newlines (string)
   "STRING."
   (replace-regexp-in-string
@@ -772,7 +740,6 @@
    (replace-regexp-in-string
     "^\\s-+" ""
     (replace-regexp-in-string "\\(\\s-\\|\n\\)+" " " string))))
-
 
 (defun single-space-all-whitespace-and-newlines-region (beg end)
   "BEG END."
@@ -823,7 +790,6 @@
   (interactive "*")
   (remove-trailing-commas-region (point-min) (point-max)))
 
-
 (defun regex-remove-duplicate-new-lines (string)
   "STRING."
   (replace-regexp-in-string
@@ -831,7 +797,6 @@
    (replace-regexp-in-string
     "^\\s-+" ""
     (replace-regexp-in-string "\\(\\s-*\n\\s-*\\|\n\\)+" "\n\n" string))))
-
 
 (defun remove-duplicate-new-lines-region (beg end)
   "BEG END."
@@ -847,9 +812,7 @@
   (interactive "*")
   (remove-duplicate-new-lines-region (point-min) (point-max)))
 
-
 (disable-bars)
-
 
 (defun fix-begin-names-region (beg end)
   "BEG END."
@@ -865,7 +828,6 @@
   (interactive "*")
   (fix-begin-names-region (point-min) (point-max)))
 
-
 (defun fix-node-info-region (beg end)
   "BEG END."
   (interactive "*r")
@@ -880,14 +842,11 @@
   (interactive "*")
   (fix-node-info-all-region (point-min) (point-max)))
 
-
 (defun regex-cargo-dependencies-normalize (string)
   "STRING."
   (replace-regexp-in-string
    "^\\([a-z][a-z0-9_-]+\\)\\(\\s-*\\|\n\\)*[=]\\(\\s-*\\|\n\\)*\"\\([0-9.]+\\)\""
    "\\1 = { version = \"\\4\" }" string))
-
-
 
 (defun cargo-dependencies-normalize-region (beg end)
   "BEG END."
@@ -898,8 +857,6 @@
        beg end
        #'(lambda () (regex-cargo-dependencies-normalize region))))))
 
-
-
 (defun regex-tm-theme (string)
   "STRING."
   (setq case-fold-search nil)
@@ -908,8 +865,6 @@
                  string)))
     (setq case-fold-search t)
     result))
-
-
 
 (defun tm-theme-region (beg end)
   "BEG END."
@@ -923,8 +878,6 @@
         (match-string 0)
         (match-string 0))
        t))))
-
-
 
 ;; (defun regex-cargo-dependencies-to-cargo-add (string)
 ;;   "STRING."
@@ -953,8 +906,6 @@
 ;;     ))))
 ;;    ;; )))))
 
-
-
 ;; (defun cargo-dependencies-to-cargo-add-region (beg end)
 ;;   "BEG END."
 ;;   (interactive "*r")
@@ -966,8 +917,6 @@
 ;;        #'(lambda ()
 ;;            (regex-cargo-dependencies-to-cargo-add region)))
 ;;       )))
-
-
 
 (defun rust-members-region (beg end)
   "BEG END."
@@ -995,8 +944,6 @@
       region)
     (flush-lines "^$" beg end nil)))
 
-
-
 (defun rust-path-to-current-file-mod ()
   (let* ((current-file-name (expand-file-name (buffer-file-name)))
          (no-extension
@@ -1014,7 +961,6 @@
     (if (string= no-extension "mod")
         (file-name-base (file-name-directory current-file-name))
       no-extension)))
-
 
 (defun rust-insert-members-from-file ()
   "BEG END."
@@ -1080,8 +1026,6 @@
                    (abbreviate-file-name (rust-file-name))))))
       )))
 
-
-
 (defun rust-delete-comments ()
   "."
   (interactive)
@@ -1092,7 +1036,6 @@
       (progn
         (widen)
         (flush-lines regexp (point-min) (point-max))))))
-
 
 (defun rust-add-error-variant ()
   "."
@@ -1111,8 +1054,6 @@
        (format "\\1\n    \2%s\3 => \"%s\"\n" error-name error-name)
        (point-min)
        (point-max)))))
-
-
 
 (defun rust-delete-docs ()
   "."
@@ -1173,7 +1114,6 @@
     (insert "\n")
     (mapcar #'(lambda (entry) (insert entry)) toml-entries)))
 
-
 (defun fgbg-foreback (beg end)
   "BEG END."
   (interactive "*r")
@@ -1187,7 +1127,6 @@
             "back"
             (replace-regexp-in-string "\\bfg\\b" "fore" region)))))))
 
-
 (defun comment-step-region (beg end)
   "BEG END."
   (interactive "*r")
@@ -1200,10 +1139,6 @@
             "^\\(\\s-*\\)\\(step\\(_test\\)?!\\)"
             "\\1 // \\2"
             region))))))
-
-
-
-
 
 (defmacro
     when-buffer-filename-meets (cond &rest body)
@@ -1222,7 +1157,6 @@
   `(let ((filename (expand-file-name (buffer-file-name))))
      (if (string-match-p ,regexp filename)
          (progn ,@body))))
-
 
 (defun git-diff-exitcode-output (&optional ref)
   "."
@@ -1261,7 +1195,7 @@
             (widen)
             (diff-mode)
             (insert output))
-          (switch-to-buffer buffer))
+          (pop-to-buffer-same-window buffer t))
       (user-error (format "git diff failed with status %d" exitcode)))))
 
 (defun git-diff () (interactive) (git-diff-internal))
@@ -1286,7 +1220,6 @@
 	    (buffer-string))))
     (ignore-errors (kill-buffer git-status-output-buf))
     (cons exitcode output)))
-
 
 (defun git-status ()
   "."
@@ -1333,7 +1266,6 @@
 		    (widen)
 		    (buffer-string)))
           (kill-buffer git-commit-output-buf)))))))
-
 
 (defun git-save () "." (interactive) (git-add) (git-commit))
 
@@ -1401,7 +1333,6 @@
 	(ignore-errors (kill-buffer git-push-output-buf))
 	(cons exitcode output))))))
 
-
 (defun git-remote-names ()
   "."
   (save-match-data
@@ -1416,14 +1347,11 @@
           (format "git remote get-url %s" remote-name))))
     (cons remote-name remote-url)))
 
-
 (defun git-remotes ()
   "returns list of cons cells where the head is the remote name and the tail is the remote url."
   (mapcar 'git-remote-get-url (git-remote-names)))
 
-
 ;; (progn (message (format "%s" (git-remotes))))
-
 
 (defun git-commit-all ()
   "."
@@ -1436,7 +1364,6 @@
         (progn
           (shell-command-to-string
            (format "git commit -a -m '%s'" commit-message))))))
-
 
 (defun git-autocommit-current-file-buffer ()
   (let* ((current-branch-name (git-current-branch))
@@ -1463,8 +1390,6 @@
                      (format-time-string "%Y-%m-%d %H:%M:%S"))))
     (set-buffer-modified-p nil)))
 
-
-
 (defun git-autocommit-opt-libexec ()
   "."
   (when-buffer-filename-meets
@@ -1489,9 +1414,6 @@
            (repl (,fn region)))
        (replace-region-contents beg end #'(lambda () repl)))))
 
-
-
-
 (defun delete-comments-region (beg end)
   "BEG END."
   (interactive "*r")
@@ -1505,7 +1427,6 @@
   (interactive)
   (delete-comments-region (point-min) (point-max)))
 
-
 (defun flush-empty-lines-region (beg end)
   "."
   (interactive "*r")
@@ -1517,8 +1438,6 @@
   (save-excursion
     (widen)
     (flush-empty-lines-region (point-min) (point-max))))
-
-
 
 (defun decr-next-number ()
   "."
@@ -1557,7 +1476,6 @@
       (progn
         (goto-char (match-beginning 1))
         (message (format "goto-char %s" (match-beginning 1)))))))
-
 
 (defun toml-prettify-buffer ()
   "."
@@ -1624,7 +1542,6 @@
     (defun state ()
       (format "{\n    open-count: %s,\n    close-count: %s,\n    open-pos: %s,\n    close-pos: %s\n}" open-count close-count open-pos close-pos))
 
-
     (message (state))
     (if (not (use-region-p))
         (progn
@@ -1635,8 +1552,6 @@
         (progn
           (goto-char beg-pos)
           (message (format "current pos %s" beg-pos))))
-
-
 
     (or
      (when (not (null (re-search-forward close-regexp nil t)))
@@ -1737,8 +1652,6 @@
            ("close-count" . close-count)
            ("end-pos" . end-pos)))))))
 
-
-
 (defun find-next-close-parens ()
   "."
   (interactive)
@@ -1775,8 +1688,6 @@
   "shortcut to (read-only-mode 1)"
   (read-only-mode 1))
 
-
-
 (defun erase-all-non-file-buffers ()
   "."
   (interactive)
@@ -1795,7 +1706,6 @@
         (widen)
         (erase-buffer)
         (if buffer-was-read-only (read-only-mode 1))))))
-
 
 (defun erase-buffer-by-name (buffer-name)
   "."
@@ -1932,7 +1842,6 @@
                           (list :background "#FF3232"
                                 :foreground "#3d3d3d"))
 
-
               ))
          ;; else
          (pop-to-buffer-same-window tmp-buffer)
@@ -1942,10 +1851,6 @@
                   exit-code)))
        ))
     ))
-
-
-
-
 
 (defun shfmt-break-onliner-region (beg end)
   "."
@@ -2037,7 +1942,6 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
                     (abbreviate-file-name current-filename)
                     exit-code))))))))
 
-
 (defun elfmt ()
   "."
   (interactive)
@@ -2061,8 +1965,9 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
                 (abbreviate-file-name current-filename)
                 exit-code))))))
 
-(defun g/build ()
+(defun g/format/prettify ()
   (interactive "*")
+  ((ignore-errors erase-messages))
   (cond
    ((string= "rust-mode" (Ox33b4O/$/mode-name))
     (rustfmt))
@@ -2085,22 +1990,17 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
    (format "git restore %s" (expand-file-name (buffer-file-name))))
   (revert-buffer t t t))
 
-
-
-
 (defun buffer-list-builtin-only ()
   "returns all open emacs-only buffers, i.e: starting and ending in `*'."
   (seq-filter
    (apply-partially #'string-match-p "^[*].*[*]$")
    (mapcar 'buffer-name (buffer-list))))
 
-
 (defun only-builtin-buffers-open-p ()
   "returns `t' if all open buffers are only emacs buffers as determined by `buffer-list-builtin-only'"
   (=
    (length (buffer-list))
    (length (buffer-list-builtin-only))))
-
 
 (defun buffer-list-existing-files-only ()
   "returns all open emacs buffers which point at actually existing files."
@@ -2110,7 +2010,6 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
         (not (null (buffer-file-name buf)))
         (file-exists-p (buffer-file-name buf))))
    (buffer-list)))
-
 
 ;; (defun ask-whether-to-kill-emacs (&optional predicate)
 ;;     (interactive)
@@ -2162,7 +2061,6 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
       (forward-char 1)
       (indent-for-tab-command))))
 
-
 ;; (defadvice find-file (before existing-file activate compile)
 ;;   "when interactive, try to auto-complete to existing file first."
 ;;   (interactive
@@ -2171,7 +2069,6 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 ;;                          (read-buffer "Find file: "
 ;;                                       (existing-file-current-buffer)
 ;;                                       (null current-prefix-arg))))))
-
 
 ;; (defun existing-file-current-buffer ()
 ;;   (let* ((path (confirm-nonexistent-file-or-buffer)))
@@ -2216,14 +2113,12 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
      '(char column)))
   (while (> column (current-column)) (insert char)))
 
-
 (defun insert-space-until-column (column)
   "."
   (interactive
    (let* ((column (read-number "insert space until column number: ")))
      '(column)))
   (while (> column (current-column)) (insert " ")))
-
 
 (defun format-peg (column)
   (interactive
@@ -2233,8 +2128,6 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
   (beginning-of-buffer)
   (while (> (point-max) (point))
     (format-peg-once column)))
-
-
 
 (defun c$dg$ (&rest substrate)
   (interactive)
@@ -2254,7 +2147,6 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
   (interactive)
   (ignore-errors (erase-messages))
   (setq debug-on-error nil))
-
 
 (defun replace-regexp-within-bounds (regexp replacement &optional beg end)
   "."
@@ -2316,7 +2208,6 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
    "\t\\([A-Za-z0-9]+\\)\t"
    "    @\\1                @" s))
 
-
 (defun shift-right-tabbed-table-lines-region (beg end)
   "BEG END."
   (interactive "*r")
@@ -2335,7 +2226,6 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
       (progn (fmakunbound symbol-name-param))
       (progn (unintern symbol-name-param obarray))
       (progn (unintern symbol-name-param obarray-cache)))))
-
 
 (defun decimal-to-hexadecimal-region (beg end)
   "BEG END."
@@ -2393,7 +2283,6 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
         (replace-regexp-within-bounds regexp replacement beg end)))))
 (setq debug-on-error nil)
 
-
 (defun find-file-if-exists (file-path)
   "."
   (if (file-exists-p file-path)
@@ -2412,7 +2301,6 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 
 (defun reload () "." (interactive) (revert-buffer nil t))
 
-
 (defun get-directory-path-mkdir (abbrev-path)
   "."
   (let ((location (expand-file-name abbrev-path)))
@@ -2427,7 +2315,6 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 (defun current-wip-location ()
   "."
   (get-directory-path-mkdir "~/projects/notes/wip/emacs"))
-
 
 (defun open-note (note-name)
   (let* ((name (file-name-base note-name))
@@ -2468,7 +2355,6 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
             (message
              (format "renamed %s -> %s" old-path stamped-note-path))))))
     (find-file note-path)))
-
 
 (defun insert-timestamp-for-mode (timestamp-to-insert)
   "."
@@ -2535,7 +2421,6 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
     (git-add)
     (insert-timestamp)))
 
-
 (defun todo ()
   "."
   (interactive)
@@ -2557,14 +2442,11 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
   (interactive)
   (open-note "~/projects/notes/notes.rst"))
 
-
 (defun regex-ansi-underline-to-spaced (string)
   "STRING."
   (replace-regexp-in-string
    "^\\(\\s-+\\)\\(bar_text_left\\s-+\\)\\([0-9]+\\)\\s-+\\([0-9]+\\)\\(\\s-*.*\\)[$](ansi_underline\\s-+\\(\"[^\"]+\"\\))"
    "\\1\\2 \\3 \\4\\5$(ansi_spaced \\4 \\3 \\6)"string))
-
-
 
 (defun ansi-underline-to-spaced-region (beg end)
   "BEG END."
@@ -2574,7 +2456,6 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
       (replace-region-contents
        beg end
        #'(lambda () (regex-ansi-underline-to-spaced region))))))
-
 
 (defun shebang () "." (interactive) (insert-shebang "shebang.sh"))
 
@@ -2592,7 +2473,6 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
   "."
   (interactive)
   (insert-shebang "shebang-simplest.sh"))
-
 
 (defun insert-shebang (template-name)
   "."
@@ -2740,8 +2620,6 @@ The `:background' property is computed in contrast with its
   (replace-regexp-in-region
    "\\b\\(do\\|done\\|then\\|else\\|fi\\)\\b" "\n\\1\n" beg end))
 
-
-
 (defun get-logwip-string ()
   "."
   (let* ((open-filenames
@@ -2776,14 +2654,12 @@ The `:background' property is computed in contrast with its
     (message
      (format "saved to %s" (abbreviate-file-name wip-log-file-path)))))
 
-
 (defun file-is-git-tracked ()
   "."
   (let* ((status-output (git-rev-parse (buffer-file-name)))
          (status (car status-output))
          (output (car (cdr status-output))))
     (eq 0 status)))
-
 
 (defun git-rev-parse (arg)
   "."
@@ -2802,7 +2678,6 @@ The `:background' property is computed in contrast with its
 	    (buffer-string))))
     (ignore-errors (kill-buffer git-rev-parse-output-buf))
     (cons exitcode output)))
-
 
 (defun git-delete ()
   "."
@@ -2908,8 +2783,6 @@ which returns the exit-status and the string output.
                 (abbreviate-file-name current-filename)
                 exit-code))))))
 
-
-
 (defun stylua ()
   "."
   (interactive)
@@ -2938,7 +2811,6 @@ which returns the exit-status and the string output.
                 (abbreviate-file-name current-filename)
                 exit-code))))))
 
-
 (defun enable-case-fold-search ()
   (interactive)
   (setq case-fold-search t))
@@ -2947,13 +2819,11 @@ which returns the exit-status and the string output.
   (interactive)
   (setq case-fold-search nil))
 
-
 (defun shell-wrap-variables-in-braces-region (beg end)
   "."
   (interactive "*r")
   (replace-regexp-in-region
    "[$]\b\([a-zA-Z_][a-zA-Z0-9_]+\)\b" "${\1}" beg end))
-
 
 (defun shell-wrap-variables-in-braces-buffer ()
   "."
@@ -2980,7 +2850,6 @@ which returns the exit-status and the string output.
       (replace-match
        (format "%x" (string-to-number (match-string 0)))))))
 
-
 (defun hex-rgb-to-ansi-region (beg end)
   "BEG END."
   (interactive "*r")
@@ -3005,7 +2874,6 @@ which returns the exit-status and the string output.
                     (buffer-substring-no-properties beg end)))
       )))
 
-
 (defun heck-string-to-case-buffer (case beg end)
   "depends on cargo crate heck-string-cli: `cargo install heck-string-cli'
 BEG END."
@@ -3029,7 +2897,6 @@ BEG END."
       (kill-buffer tmp-buffer)
       (user-error
        (format "command failed with status %d: string --to=%s '%s'"  case input-string)))))
-
 
 (defun string-to-train-region (beg end)
   "BEG END."
@@ -3171,18 +3038,15 @@ BEG END."
     ;; (replace-match "\\1,\n\"[\\2\\3'\\4']\"") ;; works
     ))
 
-
 (defun disable-delete-trailing-space ()
   (interactive)
   (setq delete-trailing-lines nil)
   (electric-indent-mode -1)
   (electric-indent-local-mode -1))
 
-
 (defun enable-electric-indent-mode ()
   (interactive)
   (electric-indent-mode 1))
-
 
 (defun today (&optional utc)
   (interactive)
@@ -3219,7 +3083,6 @@ BEG END."
       (goto-char beg)
       (delete-prefix-and-timestamp-from-bash-history-region beg end))))
 
-
 (defun rust-format!-static-str-to-to-string-region (beg end)
   "replaces occurrences of `format!(\"static string\")' with `\"static string\".to_string ()' in region
 .
@@ -3247,26 +3110,33 @@ BEG END."
      (point-min)
      (point-max))))
 
-
 (defun tmpwindow()
   "creates a new tmp buffer with the same mode as the current buffer, then creates a new emacs `frame' (which in terms of OS usually actually means `window') with that tmp buffer.
 "
   (interactive)
-  (let* ((current-mode-name (format "%s" mode-name))
+  (let* ((frame-params '((minibuffer . t)
+                         (ns-appearance . dark)
+                         (ns-transparent-titlebar . t)
+			 (border-color . "#FFFFFF")
+                         (cursor-color . "#44FF88")
+			 (foreground-color . "#FFFFFF")
+                         (background-color . "#000000")
+			 (vertical-scroll-bars)))
+         (current-mode-name (format "%s" mode-name))
          (current-mode-symbol (intern-soft current-mode-name))
          (tmp-buffer-name (format "tmp-buffer-%s" current-mode-name))
          (tmp-buffer (create-fresh-buffer tmp-buffer-name))
-         (tmp-frame (make-frame-on-current-monitor '((minibuffer . t)))) ;; (tmp-frame (make-frame-command)))
+         (tmp-frame (make-frame-on-current-monitor frame-params)) ;; (tmp-frame (make-frame-command)))
          (tmp-frame-type (framep tmp-frame))
          (tmp-frame-is-live (frame-live-p tmp-frame))
          )
     (setq major-mode current-mode-symbol)
     (set-buffer-major-mode tmp-buffer)
-    (select-frame-set-input-focus tmp-frame t)
-    (pop-to-buffer-same-window tmp-buffer t)
+    (select-frame-set-input-focus tmp-frame nil)
+    (pop-to-buffer-same-window tmp-buffer nil)
     ))
 
-
-    ;; 1. set mode in tmp-buffer to current-mode-name
-    ;; 2. open new frame and window with tmp-buffer
-    ;; 3. pop to window/tmp-buffer))
+;; 1. set mode in tmp-buffer to current-mode-name
+;; 2. open new frame and window with tmp-buffer
+;; 3. pop to window/tmp-buffer))
+;; (ignore-errors (cleanup-elc))
