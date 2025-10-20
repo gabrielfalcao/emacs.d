@@ -2428,6 +2428,11 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
   (interactive)
   (open-note "~/projects/notes/todo.rst"))
 
+(defun backlog ()
+  "."
+  (interactive)
+  (open-note "~/projects/notes/backlog.rst"))
+
 (defun now-file-safe ()
   "."
   (let ((ts (format-time-string "%Y-%m-%dT%H-%M-%S%z")))
