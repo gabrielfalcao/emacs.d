@@ -125,9 +125,10 @@
   "C."
   (interactive "s")
   (let* ((values (x-color-values c))
-         (fp (car values))
-         (sp (elt values 1))
-         (tp (elt values 2)))
+         (fp (or (car values) 1))
+         (sp (or (elt values 1) 1))
+         (tp (or (elt values 2) 1))
+         )
     (if (> #x0f
            (floor
             (+
