@@ -14,7 +14,7 @@
   (require 'jinja2-mode)
   (require 'toml)
   (require 'protobuf-mode)
-  (require 'python-mode)
+  ;; (require 'python-mode)
   (require 'elixir-mode)
   (require 'terraform-mode)
   (require 'toml-mode)
