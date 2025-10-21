@@ -3,11 +3,13 @@
 
 set -e
 set -o pipefail
+set -o noglob
+set -u
 export IFS=$'\n'
 
-this_script_path="${BASH_SOURCE[0]}"
-script_name="$(basename "${this_script_path}")"
-script_path="$(dirname "${this_script_path}")"
+script_name="$(basename "${BASH_SOURCE[0]}")"
+script_path="$(2>/dev/random 1>/dev/random cd $(dirname "${BASH_SOURCE[0]}") && pwd)"
+this_script_path="${script_path}/${script_name}"
 
 if [ "$(whoami)" != "root" ]; then sudo bash $0; echo exit $?; fi
 
@@ -42,7 +44,6 @@ on_ctrlc() {
 trap on_exit exit
 trap on_ctrlc hup
 trap on_ctrlc int
-trap on_ctrlc emt
 trap on_ctrlc bus
 trap on_ctrlc segv
 trap on_ctrlc sys
@@ -74,7 +75,9 @@ process_argv() {
         exit_error "missing argument: <ARGUMENT>"
         exit 101
     fi
-    for arg in ${argv[@]}; do
+    for index in ${!argv[@]}; do
+        current=$(( $index + 1 ))
+        arg="${argv[$index]}"
         if [ -f "${arg}" ]; then
             regular_file_argv+=("${arg}")
         elif [ -d "${arg}" ]; then

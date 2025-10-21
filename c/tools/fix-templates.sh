@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2004,SC2206,SC2068,SC2086
 
+
 set -e
 set -o pipefail
 set -o noglob
 set -u
-export IFS=$'\n'
+unset IFS
 
 script_name="$(basename "${BASH_SOURCE[0]}")"
 script_path="$(2>/dev/random 1>/dev/random cd $(dirname "${BASH_SOURCE[0]}") && pwd)"
@@ -15,14 +16,8 @@ declare -a argv=($@)
 declare argc=${#argv[@]}
 
 declare -a regular_file_argv=()
-declare -a directory_argv=()
-declare -a non_path_params=()
-declare -a other_file_types_argv=()
-
 declare -i regular_file_argv_count=0
-declare -i directory_argv_count=0
-declare -i non_path_params_count=0
-declare -i other_file_types_argv_count=0
+
 
 error_prefix_color_rgb="$((0xFF));$((0x00));$((0x42))"
 error_color_rgb="$((0xFF));$((0x32));$((0x32))"
@@ -42,6 +37,7 @@ on_ctrlc() {
 trap on_exit exit
 trap on_ctrlc hup
 trap on_ctrlc int
+trap on_ctrlc emt
 trap on_ctrlc bus
 trap on_ctrlc segv
 trap on_ctrlc sys
@@ -53,7 +49,7 @@ repl() {
 }
 usage() {
     repl no echo
-    1>&2 echo -e "$(basename $0) <ARGUMENT>"
+    1>&2 echo -e "$(basename $0) <SHELL SCRIPT FILES TO FIX>"
     repl sane
 }
 exit_error() {
@@ -74,55 +70,42 @@ process_argv() {
         exit 101
     fi
     for index in ${!argv[@]}; do
-        current=$(( $index + 1 ))
+        current=$(($index + 1))
         arg="${argv[$index]}"
         if [ -f "${arg}" ]; then
             regular_file_argv+=("${arg}")
         elif [ -d "${arg}" ]; then
-            directory_argv+=("${arg}")
-        elif [ ! -e "${arg}" ]; then
-            non_path_params+=("${arg}")
+            export IFS=$'\n'
+            regular_file_argv+=( $(file ~/opt/libexec/* | ack -i 'shell.*script' | firstcol | cut -d: -f1 ) );
+            unset IFS
         else
-            other_file_types_argv+=("${arg}")
+            warn "\x1b[0minvalid argument \x1b[1;38;5;220m[${current}/${argc}]\x1b[1;38;5;231m ${arg@Q}\x1b[0m: \x1b[1;38;5;196mnot a file"
         fi
     done
     regular_file_argv_count=${#regular_file_argv[@]}
-    directory_argv_count=${#directory_argv[@]}
-    non_path_params_count=${#non_path_params[@]}
-    other_file_types_argv_count=${#other_file_types_argv[@]}
     repl sane
 }
 
 main() {
+    local -- sed_command='s/\(script_path="\$[(]2>\/dev\/random 1>\/dev\/random cd \$[(]dirname "\)\$[{]this_script_path[}]\("[)] && pwd[)]\)"/\1${BASH_SOURCE[0]}\2/g'
 
-    if [ ${regular_file_argv_count} -gt 0 ]; then
-        echo "${regular_file_argv_count} regular_file_argv passed as argument"
-        for index in ${!regular_file_argv[@]}; do
-            param="${regular_file_argv[$index]}"
-            echo "    regular_file_argv[$index] ${param@Q}"
-        done
-    fi
-    if [ ${directory_argv_count} -gt 0 ]; then
-        echo "${directory_argv_count} directory_argv passed as argument"
-        for index in ${!directory_argv[@]}; do
-            param="${directory_argv[$index]}"
-            echo "    directory_argv[$index] ${param@Q}"
-        done
-    fi
-    if [ ${non_path_params_count} -gt 0 ]; then
-        echo "${non_path_params_count} non_path_params passed as argument"
-        for index in ${!non_path_params[@]}; do
-            param="${non_path_params[$index]}"
-            echo "    non_path_params[$index] ${param@Q}"
-        done
-    fi
-    if [ ${other_file_types_argv_count} -gt 0 ]; then
-        echo "${other_file_types_argv_count} other_file_types_argv passed as argument"
-        for index in ${!other_file_types_argv[@]}; do
-            param="${other_file_types_argv[$index]}"
-            echo "    other_file_types_argv[$index] ${param@Q}"
-        done
-    fi
+    for index in ${!regular_file_argv[@]}; do
+        current=$(( $index + 1 ))
+        path="${regular_file_argv[$index]}"
+        surrogate=$(mktemp)
+        sed "${sed_command}" "${path}" > ${surrogate}
+        local -- diff=""
+        if diff=$(2>/dev/random diff -u "${path}" "${surrogate}") && [ -n "${diff}" ]; then
+            sed "${sed_command}" -i "${path}"
+            exit_code=$?
+            if [ ${exit_code} -ne 0 ]; then
+                exit_error "\x1b[1;38;5;220m[${current}/${#regular_file_argv[@]}]\x1b[0m" "\x1b[1;38;5;231mcommand \x1b[1;38;5;202m${sed_call[@]}\x1b[1;38;5;231m failed with code \x1b[1;38;5;196m${exit_code}\x1b[0m (${current}/${regular_file_argv_count})"
+            else
+                1>&2 echo -e "\x1b[1;38;5;154mfixed file \x1b[1;38;5;220m${path}\x1b[0m"
+            fi
+        fi
+        rm -f "${surrogate}"
+    done
 }
 
 if [ "${0}" == "${BASH_SOURCE[0]}" ]; then

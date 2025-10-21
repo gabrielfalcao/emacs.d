@@ -1,4 +1,4 @@
-(defun Ox33b4O/$/mode-line-foreground ()  "#FF1978")
+(defun Ox33b4O/$/mode-line-foreground ()  "#FF1978") ;; #F13976
 (defun Ox33b4O/$/mode-line-background () "#3d3d3d")
 (defun Ox33b4O/$/mark-indicator-color() "#cad79d")
 (defun Ox33b4O/$/mode-line-arrow-right() " ⇒ ")
@@ -8,7 +8,7 @@
   "."
   (interactive)
 
-  (let* (($font-name$               "JetBrains Mono-14")
+  (let* (($font-name$               (font-name-for-system))
          ($sel$                     "#C6DCFC")
 	 ($sel$                     "#CFC6A6")
          ($background$              "#1C1C1C")
@@ -69,7 +69,7 @@
     ;; (setq display-line-numbers-major-tick 0)
     ;; (setq display-line-numbers-minor-tick 0)
     (set-face-attribute 'cursor nil :background $cursor$ :foreground $cursor$)
-    (setq-default cursor-type '(bar . 4))
+    (setq-default cursor-type (cursor-type-for-system))
     (set-face-attribute 'Info-quoted nil :bold nil :background $background$ :foreground $normal$ )
     (set-face-attribute 'bold nil        :bold t :background $background$ :foreground $normal$ )
     (set-face-attribute 'default nil :foreground $normal$ :background $background$)
@@ -155,7 +155,7 @@
         (require 'markdown-mode)
       (progn
         (set-face-attribute 'markdown-markup-face nil :foreground $variable$))
-        (set-face-attribute 'markdown-link-face nil :foreground "#79B9FF")
+      (set-face-attribute 'markdown-link-face nil :foreground "#79B9FF")
       )
 
     (mapc #'(lambda (s)
