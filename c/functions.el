@@ -2781,10 +2781,37 @@ which returns the exit-status and the string output.
      (when (eq exit-code 0)
        (progn
          (message
-          (format "%s formatted"
-                  (abbreviate-file-name current-filename)))
-         (revert-buffer t t t)))
-     (progn
+	  "%s formatted with rustfmt"
+          (abbreviate-file-name current-filename))
+         (revert-buffer t t t))
+
+       (progn
+	 (message
+          "flushing empty lines in %s"
+          (abbreviate-file-name current-filename))
+	 (flush-empty-lines-buffer))
+
+       (progn
+	 (message
+          "adding space between items in %s"
+          (abbreviate-file-name current-filename))
+
+
+	 (save-mark-and-excursion
+           (widen)
+           (goto-char (point-min))
+           ;; skip (pub )?(use|mod)
+           (while (re-search-forward "^\\(pub\\s-+\\((crate\\|self\\|in\\s-+[a-z0-9:]+)\\)?\\)?\s-*\\(use\\|mod\\)\\s-+\\(.*\\)$" nil t)
+             (goto-char (match-end 1))
+             (end-of-line)
+             )
+           (while (re-search-forward "}\n\\([a-zA-Z0-9#]+\\)" nil t)
+             (replace-match "}\n\n\\1")
+             (goto-char (match-end 1)))
+           ));;progn
+       );; when success
+
+     (progn ;; (or)  error
        (user-error
         (format "rustfmt %s failed with code: %s"
                 (abbreviate-file-name current-filename)
