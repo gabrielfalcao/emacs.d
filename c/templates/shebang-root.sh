@@ -44,7 +44,6 @@ on_ctrlc() {
 trap on_exit exit
 trap on_ctrlc hup
 trap on_ctrlc int
-trap on_ctrlc emt
 trap on_ctrlc bus
 trap on_ctrlc segv
 trap on_ctrlc sys

@@ -8,7 +8,7 @@
   "."
   (interactive)
 
-  (let* (($font-name$               "JetBrains Mono-21")
+  (let* (($font-name$               (font-name-for-system))
          ($sel$                     "#C6DCFC")
 	 ($sel$                     "#CFC6A6")
          ($background$              "#1C1C1C")
@@ -69,7 +69,7 @@
     ;; (setq display-line-numbers-major-tick 0)
     ;; (setq display-line-numbers-minor-tick 0)
     (set-face-attribute 'cursor nil :background $cursor$ :foreground $cursor$)
-    (setq-default cursor-type '(bar . 3))
+    (setq-default cursor-type (cursor-type-for-system))
     (set-face-attribute 'Info-quoted nil :bold nil :background $background$ :foreground $normal$ )
     (set-face-attribute 'bold nil        :bold t :background $background$ :foreground $normal$ )
     (set-face-attribute 'default nil :foreground $normal$ :background $background$)
