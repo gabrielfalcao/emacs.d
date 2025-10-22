@@ -14,7 +14,10 @@
   (require 'jinja2-mode)
   (require 'toml)
   (require 'protobuf-mode)
-  (require 'python-mode)
+  (if (runtime-is-osx)
+
+      (require 'python-mode)
+    )
   (require 'elixir-mode)
   (require 'terraform-mode)
   (require 'toml-mode)
