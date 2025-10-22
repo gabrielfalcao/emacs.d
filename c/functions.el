@@ -2312,11 +2312,11 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 
 (defun current-notes-location ()
   "."
-  (get-directory-path-mkdir "~/projects/notes"))
+  (get-directory-path-mkdir "~/notes"))
 
 (defun current-wip-location ()
   "."
-  (get-directory-path-mkdir "~/projects/notes/wip/emacs"))
+  (get-directory-path-mkdir "~/notes/wip/emacs"))
 
 (defun open-note (note-name)
   (let* ((name (file-name-base note-name))
@@ -2426,12 +2426,12 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 (defun todo ()
   "."
   (interactive)
-  (open-note "~/projects/notes/todo.rst"))
+  (open-note "~/notes/todo.rst"))
 
 (defun backlog ()
   "."
   (interactive)
-  (open-note "~/projects/notes/backlog.rst"))
+  (open-note "~/notes/backlog.rst"))
 
 (defun now-file-safe ()
   "."
@@ -2447,7 +2447,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 (defun notes ()
   "."
   (interactive)
-  (open-note "~/projects/notes/notes.rst"))
+  (open-note "~/notes/notes.rst"))
 
 (defun regex-ansi-underline-to-spaced (string)
   "STRING."
