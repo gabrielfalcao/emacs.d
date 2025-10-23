@@ -3169,3 +3169,49 @@ BEG END."
  ;; only.
 
  resize-mini-windows t)
+
+
+
+(defun string-to-secure-hash-region (algorithm beg end)
+  "replaces string in given region with `secure-hash' of region contents."
+  (if (not (symbolp algorithm))
+      (user-error "(string-to-secure-hash-region) argument ALGORITHM is not a symbol: %S" algorithm))
+  (if (not (numberp beg))
+      (user-error "(string-to-secure-hash-region) argument BEG is not a number: %S" beg))
+  (if (not (numberp end))
+      (user-error "(string-to-secure-hash-region) argument END is not a number: %S" end))
+
+  (save-mark-and-excursion
+    (let* ((contents (buffer-substring-no-properties beg end))
+           (checksum (secure-hash algorithm contents)))
+      (replace-region-contents beg end #'(lambda () checksum)))))
+
+(defun string-to-sha1-region (beg end)
+  "replaces the string in region with the sha1 checksum of its contents"
+  (interactive "*r")
+  (string-to-secure-hash-region 'sha1 beg end))
+
+(defun string-to-sha224-region (beg end)
+  "replaces the string in region with the sha224 checksum of its contents"
+  (interactive "*r")
+  (string-to-secure-hash-region 'sha224 beg end))
+
+(defun string-to-sha384-region (beg end)
+  "replaces the string in region with the sha384 checksum of its contents"
+  (interactive "*r")
+  (string-to-secure-hash-region 'sha384 beg end))
+
+(defun string-to-sha256-region (beg end)
+  "replaces the string in region with the sha256 checksum of its contents"
+  (interactive "*r")
+  (string-to-secure-hash-region 'sha256 beg end))
+
+(defun string-to-sha512-region (beg end)
+  "replaces the string in region with the sha512 checksum of its contents"
+  (interactive "*r")
+  (string-to-secure-hash-region 'sha512 beg end))
+
+(defun string-to-md5-region (beg end)
+  "replaces the string in region with the md5 checksum of its contents"
+  (interactive "*r")
+  (string-to-secure-hash-region 'md5 beg end))
