@@ -3144,6 +3144,28 @@ BEG END."
      (point-min)
      (point-max))))
 
+(defvar replace-regexp-all-buffer-replacement-history
+  (list))
+
+(defun replace-regexp-all-buffer()
+  "like `replace-regexp' but replaces all ocurrences of regex in
+the entire buffer without unmarking active regions or losing
+cursor position in buffer."
+  (interactive)
+  (let* ((regexp (read-regexp "replace all regexp in all buffer: "))
+         (replacement (read-string "replacement: " nil replace-regexp-all-buffer-replacement-history replace-regexp-all-buffer-replacement-history)))
+
+    (save-mark-and-excursion
+      (widen)
+      (beginning-of-buffer);;(goto-char (point-min))
+      (while (re-search-forward regexp nil t)
+        (replace-match replacement)
+        (goto-char (match-end 0))
+        ) ;;while
+      ) ;;save-mark-and-excursion
+    ) ;;let
+  );;defun
+
 (defun tmpwindow()
   "creates a new tmp buffer with the same mode as the current buffer, then creates a new emacs `frame' (which in terms of OS usually actually means `window') with that tmp buffer.
 "

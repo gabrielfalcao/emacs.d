@@ -137,8 +137,9 @@
 
 (Ox33b4O/$/set-key '("C-c C-d C-3" "C-x C-d C-3" "C-c C-e C-3" "C-x C-e C-3") 'rot13-region)
 (Ox33b4O/$/set-key   '("C-z" "M-z" "C-_") 'undo      )
-(Ox33b4O/$/set-key   '("M-ρ" "C-r") 'replace-regexp  )
-(Ox33b4O/$/set-key   '("C-c M-s") 'replace-string    )
+(Ox33b4O/$/set-key   '("M-ρ" "C-r") #'replace-regexp  )
+(Ox33b4O/$/set-key   '("C-M-s-r") #'replace-regexp-all-buffer  )
+(Ox33b4O/$/set-key   '("C-c M-s") #'replace-string    )
 (Ox33b4O/$/set-key   '("M-a") 'ignore                )
 (Ox33b4O/$/set-key   '("M-c") 'ignore                )
 (Ox33b4O/$/set-key   '("C-g" "C-q") 'keyboard-quit   )
