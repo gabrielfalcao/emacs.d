@@ -2434,12 +2434,12 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 (defun todo ()
   "."
   (interactive)
-  (open-note "~/projects/notes/todo.rst"))
+  (open-note (file-name-concat (current-notes-location) "todo.rst")))
 
 (defun backlog ()
   "."
   (interactive)
-  (open-note "~/projects/notes/backlog.rst"))
+  (open-note (file-name-concat (current-notes-location) "backlog.rst")))
 
 (defun now-file-safe ()
   "."
@@ -2455,7 +2455,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 (defun notes ()
   "."
   (interactive)
-  (open-note "~/projects/notes/notes.rst"))
+  (open-note (file-name-concat (current-notes-location) "notes.rst")))
 
 (defun regex-ansi-underline-to-spaced (string)
   "STRING."
