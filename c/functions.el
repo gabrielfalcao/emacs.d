@@ -2789,10 +2789,37 @@ which returns the exit-status and the string output.
      (when (eq exit-code 0)
        (progn
          (message
-          (format "%s formatted"
-                  (abbreviate-file-name current-filename)))
-         (revert-buffer t t t)))
-     (progn
+	  "%s formatted with rustfmt"
+          (abbreviate-file-name current-filename))
+         (revert-buffer t t t))
+
+       (progn
+	 (message
+          "flushing empty lines in %s"
+          (abbreviate-file-name current-filename))
+	 (flush-empty-lines-buffer))
+
+       (progn
+	 (message
+          "adding space between items in %s"
+          (abbreviate-file-name current-filename))
+
+
+	 (save-mark-and-excursion
+           (widen)
+           (goto-char (point-min))
+           ;; skip (pub )?(use|mod)
+           (while (re-search-forward "^\\(pub\\s-+\\((crate\\|self\\|in\\s-+[a-z0-9:]+)\\)?\\)?\s-*\\(use\\|mod\\)\\s-+\\(.*\\)$" nil t)
+             (goto-char (match-end 1))
+             (end-of-line)
+             )
+           (while (re-search-forward "}\n\\([a-zA-Z0-9#]+\\)" nil t)
+             (replace-match "}\n\n\\1")
+             (goto-char (match-end 1)))
+           ));;progn
+       );; when success
+
+     (progn ;; (or)  error
        (user-error
         (format "rustfmt %s failed with code: %s"
                 (abbreviate-file-name current-filename)
@@ -3124,6 +3151,28 @@ BEG END."
     (rust-format!-static-str-to-to-string-region
      (point-min)
      (point-max))))
+
+(defvar replace-regexp-all-buffer-replacement-history
+  (list))
+
+(defun replace-regexp-all-buffer()
+  "like `replace-regexp' but replaces all ocurrences of regex in
+the entire buffer without unmarking active regions or losing
+cursor position in buffer."
+  (interactive)
+  (let* ((regexp (read-regexp "replace all regexp in all buffer: "))
+         (replacement (read-string "replacement: " nil replace-regexp-all-buffer-replacement-history replace-regexp-all-buffer-replacement-history)))
+
+    (save-mark-and-excursion
+      (widen)
+      (beginning-of-buffer);;(goto-char (point-min))
+      (while (re-search-forward regexp nil t)
+        (replace-match replacement)
+        (goto-char (match-end 0))
+        ) ;;while
+      ) ;;save-mark-and-excursion
+    ) ;;let
+  );;defun
 
 (defun tmpwindow()
   "creates a new tmp buffer with the same mode as the current buffer, then creates a new emacs `frame' (which in terms of OS usually actually means `window') with that tmp buffer.
