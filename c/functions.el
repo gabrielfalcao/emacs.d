@@ -1698,31 +1698,32 @@
     (erase-messages)
     (mapcar #'erase-buffer-by-name (buffer-list-builtin-only))))
 
-(defun erase-buffer-by-name (buffer-or-name)
-  (if (not (stringp buffer-or-name))
-      (user-error "[erase-buffer-by-name] argument buffer-or-name is not a string: %S" buffer-or-name))
-  (ignore-errors
-    (with-current-buffer buffer-or-name
-      (let ((buffer-was-read-only (not (null buffer-read-only))))
-        (read-only-mode -1)
-        (widen)
-        (erase-buffer)
-        (if buffer-was-read-only (read-only-mode 1))))))
-
 (defun erase-buffer-by-name (buffer-name)
   "."
   (let ((buffer-to-erase (get-buffer  buffer-name)))
     (if (bufferp buffer-to-erase)
         (with-current-buffer buffer-to-erase
+          (let ((buffer-was-read-only (when (and (numberp buffer-read-only)
+                                                 (< buffer-read-only 0)))))
           (read-only-mode -1)
           (widen)
           (erase-buffer)
-          (read-only-mode 1)))))
+          (if buffer-was-read-only
+              (read-only-mode 1)))
+            ) ;; end inner let
+          ) ;;end if
+    ) ;; end outer let
+  )
 
 (defun erase-messages ()
   "."
   (interactive)
   (erase-buffer-by-name  "*Messages*"))
+
+(defun erase-c-messages ()
+  "."
+  (interactive)
+  (erase-buffer-by-name  "*C-Messages*"))
 
 (defun erase-scratch ()
   "."
@@ -1978,6 +1979,8 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
    ((string= "typescript-mode" (Ox33b4O/$/mode-name))
     (prettierjs))
    ((string= "shell-script-mode" (Ox33b4O/$/mode-name))
+    (shfmt))
+   ((string= "sh-mode" (Ox33b4O/$/mode-name))
     (shfmt))
    ((string= "javacript-mode" (Ox33b4O/$/mode-name))
     (prettierjs))
@@ -3264,3 +3267,45 @@ cursor position in buffer."
   "replaces the string in region with the md5 checksum of its contents"
   (interactive "*r")
   (string-to-secure-hash-region 'md5 beg end))
+
+(defun write-to-minibuffer (text)
+  "writes to minibuffer"
+  (let ((output (or (when (stringp text)
+        text)
+      (format "%S" text))))
+  (ignore-errors
+    (with-current-buffer (window-buffer (minibuffer-window))
+      (read-only-mode -1)
+      (widen)
+      (erase-buffer)
+      (end-of-buffer)
+      (insert output)
+      (read-only-mode 1)))))
+
+(defun erase-minibuffer ()
+  "erases the minibuffer in the current frame"
+  (interactive)
+
+  (ignore-errors
+    (with-current-buffer (window-buffer (minibuffer-window))
+      (read-only-mode -1)
+      (widen)
+      (erase-buffer)
+      (read-only-mode 1))))
+
+
+(defun c-message (fmt &rest args)
+  "drop-in replacement for `message' that output colorized messages to a buffer named \"*C-Messages*\""
+  (interactive "s")
+
+  (let (
+         (output (concat (apply #'format (append (list fmt) args)) "\n"))
+         (buffer (get-buffer-create "*C-Messages*"))
+         )
+    (ignore-errors (with-current-buffer buffer
+      (read-only-mode -1)
+      (widen)
+      (end-of-buffer)
+      (insert output)))
+    (ignore-errors (write-to-minibuffer output))
+  ))

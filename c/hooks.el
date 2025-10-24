@@ -66,37 +66,10 @@
 
 
 (defun shell-script-remap-keymaps ()
-  (interactive)
-
-  ;; ;; (setq 'sh-basic-offset 4)
-  ;; (defvar-keymap (current-local-map) "C-c C-f" #'g/format/prettify)
-  ;; (progn (local-unset-key (kbd "C-c C-f")))
-  ;; (progn (local-set-key (kbd "C-c C-f") #'g/format/prettify))
-  ;; (progn (keymap-local-unset "C-c C-f" nil))
-  ;; (progn (keymap-local-set "C-c C-f" #'g/format/prettify))
-  (message
- "
-%s
-(current-global-map) = %S\n
-(current-local-map) = %S\n
-(current-active-maps) = %S\n
-(current-minor-mode-maps) = %S\n
-shell-script-mode-keymap = %S\n
-shell-script-mode-parent-keymap = %S\n
-%s
-"
-           (propertize "<debug shell-script-mode hook>" 'face
-                       (get-auto-propertize-face-fg-and-bg-list "debug shell-script-mode-hook"))
-           (current-global-map)
-           (current-local-map)
-           (current-active-maps)
-           (current-minor-mode-maps)
-           'shell-script-mode-map
-           (keymap-parent (current-local-map))
-           (propertize "</debug shell-script-mode hook>" 'face
-                       (get-auto-propertize-face-fg-and-bg-list "debug shell-script-mode-hook"))
-
-     ))
+  (interactive "*")
+  (keymap-unset (current-local-map) "C-c C-f")
+  (keymap-set (current-local-map) "C-c C-f" #'g/format/prettify)
+  )
 
 
 (add-hook 'sh-mode-hook #'flymake-shellcheck-load)
