@@ -2788,6 +2788,7 @@ which returns the exit-status and the string output.
     (or
      (when (eq exit-code 0)
        (progn
+         (kill-buffer tmp-buffer)
          (message
 	  "%s formatted with rustfmt"
           (abbreviate-file-name current-filename))
