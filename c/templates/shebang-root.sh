@@ -39,7 +39,7 @@ on_ctrlc() {
     repl no echo
     1>&2 echo -e "\x1b[1;38;2;${error_color_rgb}m\rAborted with Ctrl-C\x1b[0m"
     repl sane
-    exit 101
+    exit 1
 }
 trap on_exit exit
 trap on_ctrlc hup
@@ -60,7 +60,7 @@ usage() {
 }
 exit_error() {
     error "${@}"
-    exit 101
+    exit 1
 }
 warn() {
     local linenum="${BASH_LINENO[1]}"
@@ -75,7 +75,7 @@ process_argv() {
     repl no echo
     if [ ${argc} -eq 0 ]; then
         exit_error "missing argument: <ARGUMENT>"
-        exit 101
+        exit 1
     fi
     for index in ${!argv[@]}; do
         current=$(( $index + 1 ))
