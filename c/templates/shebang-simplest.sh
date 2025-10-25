@@ -2,13 +2,35 @@
 
 set -e
 set -o pipefail
-set -o noglob
 set -u
 export IFS=$'\n'
-
-declare -a argv=($@)
-declare -i argc=${#argv[@]}
+unset IFS
 
 script_name="$(basename "${BASH_SOURCE[0]}")"
+script_path="$(2>/dev/random 1>/dev/random cd $(dirname "${BASH_SOURCE[0]}") && pwd)"
+this_script_path="${script_path}/${script_name}"
 
-1>&2 echo -e "\x1b[1;38;5;220m${script_name}\x1b[0m received \x1b[1;38;5;254m${argc} arguments\x1b[0m"
+declare -a argv=($@)
+declare argc=${#argv[@]}
+
+main() {
+    1>&2 echo -e "${script_name} received ${argc} arguments"
+}
+
+on_exit() {
+    stty sane
+}
+on_ctrlc() {
+    1>&2 echo -e "\rAborted with Ctrl-C"
+    exit 1
+}
+trap on_exit exit
+trap on_ctrlc hup
+trap on_ctrlc int
+
+
+if [ "${0}" == "${BASH_SOURCE[0]}" ]; then
+    main
+else
+    1>&2 echo -e "${BASH_SOURCE[0]} appears to being used as a library by ${0@Q}"
+fi
