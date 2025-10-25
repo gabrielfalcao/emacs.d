@@ -57,7 +57,9 @@
 (Ox33b4O/$/set-key '("C-x C-M-e") #'Ox33b4O/$/reload-init)
 ;; (Ox33b4O/$/set-key '("C-x C-M-g a") 'git-add)
 ;; (Ox33b4O/$/set-key '("C-x C-M-g s") 'git-save)
-(Ox33b4O/$/set-key '("C-x C-g") #'git-save)
+(Ox33b4O/$/set-key '("C-x C-g C-a") #'git-add)
+(Ox33b4O/$/set-key '("C-x C-g C-s") #'git-save)
+(Ox33b4O/$/set-key '("C-x C-g C-d") #'git-diff)
 (Ox33b4O/$/set-key '("C-x C-a") #'eval-elisp-buffer)
 (Ox33b4O/$/set-key '("C-x C-x") #'eval-elisp-buffer)
 
