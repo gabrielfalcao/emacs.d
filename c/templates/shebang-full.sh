@@ -24,11 +24,11 @@ declare -i directory_argv_count=0
 declare -i non_path_params_count=0
 declare -i other_file_types_argv_count=0
 
-error_prefix_color_rgb="$((0xFF));$((0x00));$((0x42))"
-error_color_rgb="$((0xFF));$((0x32));$((0x32))"
-error_color_rgb="$((0xFF));$((0x3E));$((0x5C))"
-warn_prefix_color_rgb="$((0xFF));$((0x6A));$((0x32))"
-warn_color_rgb="$((0xFF));$((0xA1));$((0x32))"
+error_prefix_color_rgb="255;0;66"
+error_color_rgb="255;50;50"
+error_color_rgb="255;62;92"
+warn_prefix_color_rgb="255;106;50"
+warn_color_rgb="255;161;50"
 
 on_exit() {
     repl sane
