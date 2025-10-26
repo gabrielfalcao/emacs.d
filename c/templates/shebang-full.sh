@@ -60,13 +60,26 @@ exit_error() {
     error "${@}"
     exit 1
 }
-warn() {
-    local linenum="${BASH_LINENO[1]}"
-    1>&2 echo -e "\x1b[1;38;2;${warn_prefix_color_rgb}m[${script_name} warn at ${linenum}]\x1b[1;38;2;${warn_color_rgb}m ${@}\x1b[0m"
+warn_prefixed() {
+    local -- prefix="$1"
+    shift
+    local -- message="$@"
+    1>&2 echo -e "\x1b[1;38;2;${warn_prefix_color_rgb}m[${prefix}]\x1b[1;38;2;${warn_color_rgb}m\n${message}\x1b[0m"
 }
+warn() {
+    local -- linenum="${BASH_LINENO[1]}"
+    warn_prefixed "[${script_name} warn at ${linenum}]" "${@}"
+}
+
 error() {
-    local linenum="${BASH_LINENO[1]}"
-    1>&2 echo -e "\x1b[1;38;2;${error_prefix_color_rgb}m[${script_name} error at ${linenum}]\x1b[1;38;2;${error_color_rgb}m ${@}\x1b[0m"
+    local -- linenum="${BASH_LINENO[1]}"
+    error_prefixed "[${script_name} error at ${linenum}]" "${@}"
+}
+error_prefixed() {
+    local -- prefix="$1"
+    shift
+    local -- message="$@"
+    1>&2 echo -e "\x1b[1;38;2;${error_prefix_color_rgb}m[${prefix}]\x1b[1;38;2;${error_color_rgb}m\n${message}\x1b[0m"
 }
 
 process_argv() {
