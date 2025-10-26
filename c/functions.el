@@ -3335,3 +3335,70 @@ cursor position in buffer."
       (insert output)))
     (ignore-errors (write-to-minibuffer output))
   ))
+
+
+(defun re-builder-debug-state()
+  (interactive)
+  ;; (if (not (string= reb-buffer "*RE-Builder*"))
+  ;;     (user-error "reb-buffer does not match name: `%s'" reb-buffer)
+  ;;   (c-message "reb-buffer is set: %S" reb-buffer)
+  ;;   )
+
+  (let* ((re-builder-buffer (get-buffer reb-buffer))
+         (reb-debug-local-vars (list "nothing"))
+         (reb-debug-local-vars
+           (if (bufferp re-builder-buffer)
+               ;; (with-current-buffer re-builder-buffer
+               (with-current-buffer reb-target-buffer
+                 (list
+                  (format "reb-regexp [buffer-local] =`%s'" reb-regexp)
+                  (format "reb-regexp-src [buffer-local] =`%S'" reb-regexp-src)
+                  (format "reb-overlays [buffer-local] =`%S'" reb-overlays)
+                  )
+                 )
+             (list (format "no buffer-local vars in %s buffer: %S" reb-buffer re-builder-buffer))
+             )
+           )
+         ) ;;end let* declarations
+    (c-message-open "re-builder vars:\n%s\n\nre-builder buffer-local vars:\n%s"
+                    (string-join (mapcar #'(lambda (string) (format "    %s" string))
+                                         (list
+                          (format "reb-mode =`%S'" reb-mode)
+                          (format "reb-target-buffer =`%S'" reb-target-buffer)
+                          (format "reb-target-window =`%S'" reb-target-window)
+                          (format "reb-window-config =`%S'" reb-window-config)
+                          (format "reb-subexp-mode =`%S'" reb-subexp-mode)
+                          (format "reb-subexp-displayed =`%S'" reb-subexp-displayed)
+                          (format "reb-mode-string =`%S'" reb-mode-string)
+                          (format "reb-valid-string =`%S'" reb-valid-string)
+                          ))
+                         "\n")
+            (string-join (mapcar #'(lambda (string) (format "    %s" string)) reb-debug-local-vars) "\n"))
+    )
+  )
+
+(defun re-builder-clean-and-reset()
+  (interactive)
+  (if (not (string= reb-buffer "*RE-Builder*"))
+      (user-error "reb-buffer does not match name: `%s'" reb-buffer))
+
+  (with-current-buffer reb-target-buffer
+    (setq-local  reb-regexp nil
+                 reb-regexp-src nil
+                 reb-overlays nil)
+    )
+
+  (let ((re-builder-buffer (get-buffer reb-buffer)))
+    (if (bufferp reb-target-buffer)
+        (kill-buffer re-builder-buffer)))
+
+  (setq reb-mode nil
+        reb-target-buffer nil
+        reb-target-window nil
+        reb-window-config nil
+        reb-subexp-mode nil
+        reb-subexp-displayed nil
+        reb-mode-string ""
+        reb-valid-string ""
+        )
+  )
