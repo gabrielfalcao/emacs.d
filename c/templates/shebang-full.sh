@@ -24,11 +24,11 @@ declare -i directory_argv_count=0
 declare -i non_path_params_count=0
 declare -i other_file_types_argv_count=0
 
-error_prefix_color_rgb="$((0xFF));$((0x00));$((0x42))"
-error_color_rgb="$((0xFF));$((0x32));$((0x32))"
-error_color_rgb="$((0xFF));$((0x3E));$((0x5C))"
-warn_prefix_color_rgb="$((0xFF));$((0x6A));$((0x32))"
-warn_color_rgb="$((0xFF));$((0xA1));$((0x32))"
+error_prefix_color_rgb="255;0;66"
+error_color_rgb="255;50;50"
+error_color_rgb="255;62;92"
+warn_prefix_color_rgb="255;106;50"
+warn_color_rgb="255;161;50"
 
 on_exit() {
     repl sane
@@ -37,7 +37,7 @@ on_ctrlc() {
     repl no echo
     1>&2 echo -e "\x1b[1;38;2;${error_color_rgb}m\rAborted with Ctrl-C\x1b[0m"
     repl sane
-    exit 101
+    exit 1
 }
 trap on_exit exit
 trap on_ctrlc hup
@@ -58,22 +58,35 @@ usage() {
 }
 exit_error() {
     error "${@}"
-    exit 101
+    exit 1
+}
+warn_prefixed() {
+    local -- prefix="$1"
+    shift
+    local -- message="$@"
+    1>&2 echo -e "\x1b[1;38;2;${warn_prefix_color_rgb}m[${prefix}]\x1b[1;38;2;${warn_color_rgb}m\n${message}\x1b[0m"
 }
 warn() {
-    local linenum="${BASH_LINENO[1]}"
-    1>&2 echo -e "\x1b[1;38;2;${warn_prefix_color_rgb}m[${script_name} warn at ${linenum}]\x1b[1;38;2;${warn_color_rgb}m ${@}\x1b[0m"
+    local -- linenum="${BASH_LINENO[1]}"
+    warn_prefixed "[${script_name} warn at ${linenum}]" "${@}"
 }
+
 error() {
-    local linenum="${BASH_LINENO[1]}"
-    1>&2 echo -e "\x1b[1;38;2;${error_prefix_color_rgb}m[${script_name} error at ${linenum}]\x1b[1;38;2;${error_color_rgb}m ${@}\x1b[0m"
+    local -- linenum="${BASH_LINENO[1]}"
+    error_prefixed "[${script_name} error at ${linenum}]" "${@}"
+}
+error_prefixed() {
+    local -- prefix="$1"
+    shift
+    local -- message="$@"
+    1>&2 echo -e "\x1b[1;38;2;${error_prefix_color_rgb}m[${prefix}]\x1b[1;38;2;${error_color_rgb}m\n${message}\x1b[0m"
 }
 
 process_argv() {
     repl no echo
     if [ ${argc} -eq 0 ]; then
         exit_error "missing argument: <ARGUMENT>"
-        exit 101
+        exit 1
     fi
     for index in ${!argv[@]}; do
         current=$(( $index + 1 ))
