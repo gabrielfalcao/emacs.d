@@ -2316,14 +2316,14 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 (defun current-notes-location ()
   "."
   (or (when (runtime-is-linux)
-        (get-directory-path-mkdir "~/notes"))
-      (get-directory-path-mkdir "~/projects/notes")))
+        (get-directory-path-mkdir "~/notes/linux/"))
+      (get-directory-path-mkdir "~/projects/notes/osx")))
 
 (defun current-wip-location ()
   "."
   (or (when (runtime-is-linux)
-        (get-directory-path-mkdir "~/notes/wip/emacs"))
-      (get-directory-path-mkdir "~/projects/notes/wip/emacs")))
+        (get-directory-path-mkdir "~/notes/linux/wip/emacs"))
+      (get-directory-path-mkdir "~/projects/notes/osx/wip/emacs")))
 
 
 (defun open-note (note-name)
