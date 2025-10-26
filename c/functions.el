@@ -2115,14 +2115,14 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
   (interactive
    (let* ((char (read-string "character (s) to insert: "))
           (column (read-number "column number")))
-     '(char column)))
+     (list char column)))
   (while (> column (current-column)) (insert char)))
 
 (defun insert-space-until-column (column)
   "."
   (interactive
    (let* ((column (read-number "insert space until column number: ")))
-     '(column)))
+     (list column)))
   (while (> column (current-column)) (insert " ")))
 
 (defun format-peg (column)
