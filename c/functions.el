@@ -2115,14 +2115,14 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
   (interactive
    (let* ((char (read-string "character (s) to insert: "))
           (column (read-number "column number")))
-     '(char column)))
+     (list char column)))
   (while (> column (current-column)) (insert char)))
 
 (defun insert-space-until-column (column)
   "."
   (interactive
    (let* ((column (read-number "insert space until column number: ")))
-     '(column)))
+     (list column)))
   (while (> column (current-column)) (insert " ")))
 
 (defun format-peg (column)
@@ -3294,6 +3294,32 @@ cursor position in buffer."
       (erase-buffer)
       (read-only-mode 1))))
 
+(defconst c-message-buffer "*C-Messages*"
+  "Name of buffer to use for `c-messages'.")
+
+(defun c-message-open (&rest args)
+  "drop-in replacement for `c-message' opens the `*C-Messages*' buffer after outputing the message"
+  (interactive "*s")
+  (erase-c-messages)
+  (apply #'c-message args)
+  (let* ((active-buffer (current-buffer))
+         (current (frame-first-window))
+         (windows
+          (let ((windows 0))
+            (progn
+	      (walk-windows
+	       (lambda (window) (setq windows (1+ windows))))
+	      windows)))
+         (right (progn
+                  (ignore-errors
+                  (while (> (get-window-count) 1) (delete-window)))
+                  (split-window-right)))
+         )
+
+    (set-window-buffer right c-message-buffer)
+    (set-window-buffer current active-buffer)
+  ))
+
 
 (defun c-message (fmt &rest args)
   "drop-in replacement for `message' that output colorized messages to a buffer named \"*C-Messages*\""
@@ -3301,7 +3327,7 @@ cursor position in buffer."
 
   (let (
          (output (concat (apply #'format (append (list fmt) args)) "\n"))
-         (buffer (get-buffer-create "*C-Messages*"))
+         (buffer (get-buffer-create c-message-buffer))
          )
     (ignore-errors (with-current-buffer buffer
       (read-only-mode -1)
@@ -3310,3 +3336,70 @@ cursor position in buffer."
       (insert output)))
     (ignore-errors (write-to-minibuffer output))
   ))
+
+
+(defun re-builder-debug-state()
+  (interactive)
+  ;; (if (not (string= reb-buffer "*RE-Builder*"))
+  ;;     (user-error "reb-buffer does not match name: `%s'" reb-buffer)
+  ;;   (c-message "reb-buffer is set: %S" reb-buffer)
+  ;;   )
+
+  (let* ((re-builder-buffer (get-buffer reb-buffer))
+         (reb-debug-local-vars (list "nothing"))
+         (reb-debug-local-vars
+           (if (bufferp re-builder-buffer)
+               ;; (with-current-buffer re-builder-buffer
+               (with-current-buffer reb-target-buffer
+                 (list
+                  (format "reb-regexp [buffer-local] =`%s'" reb-regexp)
+                  (format "reb-regexp-src [buffer-local] =`%S'" reb-regexp-src)
+                  (format "reb-overlays [buffer-local] =`%S'" reb-overlays)
+                  )
+                 )
+             (list (format "no buffer-local vars in %s buffer: %S" reb-buffer re-builder-buffer))
+             )
+           )
+         ) ;;end let* declarations
+    (c-message-open "re-builder vars:\n%s\n\nre-builder buffer-local vars:\n%s"
+                    (string-join (mapcar #'(lambda (string) (format "    %s" string))
+                                         (list
+                          (format "reb-mode =`%S'" reb-mode)
+                          (format "reb-target-buffer =`%S'" reb-target-buffer)
+                          (format "reb-target-window =`%S'" reb-target-window)
+                          (format "reb-window-config =`%S'" reb-window-config)
+                          (format "reb-subexp-mode =`%S'" reb-subexp-mode)
+                          (format "reb-subexp-displayed =`%S'" reb-subexp-displayed)
+                          (format "reb-mode-string =`%S'" reb-mode-string)
+                          (format "reb-valid-string =`%S'" reb-valid-string)
+                          ))
+                         "\n")
+            (string-join (mapcar #'(lambda (string) (format "    %s" string)) reb-debug-local-vars) "\n"))
+    )
+  )
+
+(defun re-builder-clean-and-reset()
+  (interactive)
+  (if (not (string= reb-buffer "*RE-Builder*"))
+      (user-error "reb-buffer does not match name: `%s'" reb-buffer))
+
+  (with-current-buffer reb-target-buffer
+    (setq-local  reb-regexp nil
+                 reb-regexp-src nil
+                 reb-overlays nil)
+    )
+
+  (let ((re-builder-buffer (get-buffer reb-buffer)))
+    (if (bufferp reb-target-buffer)
+        (kill-buffer re-builder-buffer)))
+
+  (setq reb-mode nil
+        reb-target-buffer nil
+        reb-target-window nil
+        reb-window-config nil
+        reb-subexp-mode nil
+        reb-subexp-displayed nil
+        reb-mode-string ""
+        reb-valid-string ""
+        )
+  )

@@ -67,8 +67,14 @@
 
 (defun shell-script-remap-keymaps ()
   (interactive "*")
-  (keymap-unset (current-local-map) "C-c C-f")
-  (keymap-set (current-local-map) "C-c C-f" #'g/format/prettify)
+  (cond ((runtime-is-darwin)
+         (progn
+           (keymap-unset (current-local-map) "C-c C-f")
+           (keymap-set (current-local-map) "C-c C-f" #'g/format/prettify)))
+        (or (not (functionp (symbol-value 'keymap-unset)))
+            (not (functionp (symbol-value 'keymap-set))))
+        (c-message "shfmt not available in C-c C-f")
+        )
   )
 
 
