@@ -3293,6 +3293,32 @@ cursor position in buffer."
       (erase-buffer)
       (read-only-mode 1))))
 
+(defconst c-message-buffer "*C-Messages*"
+  "Name of buffer to use for `c-messages'.")
+
+(defun c-message-open (&rest args)
+  "drop-in replacement for `c-message' opens the `*C-Messages*' buffer after outputing the message"
+  (interactive "*s")
+  (erase-c-messages)
+  (apply #'c-message args)
+  (let* ((active-buffer (current-buffer))
+         (current (frame-first-window))
+         (windows
+          (let ((windows 0))
+            (progn
+	      (walk-windows
+	       (lambda (window) (setq windows (1+ windows))))
+	      windows)))
+         (right (progn
+                  (ignore-errors
+                  (while (> (get-window-count) 1) (delete-window)))
+                  (split-window-right)))
+         )
+
+    (set-window-buffer right c-message-buffer)
+    (set-window-buffer current active-buffer)
+  ))
+
 
 (defun c-message (fmt &rest args)
   "drop-in replacement for `message' that output colorized messages to a buffer named \"*C-Messages*\""
@@ -3300,7 +3326,7 @@ cursor position in buffer."
 
   (let (
          (output (concat (apply #'format (append (list fmt) args)) "\n"))
-         (buffer (get-buffer-create "*C-Messages*"))
+         (buffer (get-buffer-create c-message-buffer))
          )
     (ignore-errors (with-current-buffer buffer
       (read-only-mode -1)
