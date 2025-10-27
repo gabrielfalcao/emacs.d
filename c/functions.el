@@ -204,20 +204,6 @@
       (widen)
       (list (point-min) (point-max)))))
 
-(defun eval-elisp-buffer ()
-  (interactive)
-  "evaluates the entire buffer as emacs-lisp expression so long as calling `buffer-elisp-heuristic' returns non-nil."
-  (if (buffer-elisp-heuristic)
-      (save-mark-and-excursion
-        (widen)
-        (eval-buffer)
-        (message "%s eval'd " (buffer-name)))
-    (progn
-      (message "cannot evaluate buffer %s because it is not in %s, trying to run pretty formatter instead"
-               (Ox33b4O/$/paint-mode-line-color (buffer-name))
-	       (Ox33b4O/$/paint-mode-line-color "elisp-mode"))
-      (g/format/prettify))
-    ))
 
 (defun Ox33b4O/$/reload-all-c ()
   "."
@@ -1978,15 +1964,36 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
     (stylua))
    ((string= "typescript-mode" (Ox33b4O/$/mode-name))
     (prettierjs))
+   ((string= "javacript-mode" (Ox33b4O/$/mode-name))
+    (prettierjs))
+   ((string= "json-mode" (Ox33b4O/$/mode-name))
+    (prettierjs))
+   ((string= "web-mode" (Ox33b4O/$/mode-name))
+    (prettierjs))
    ((string= "shell-script-mode" (Ox33b4O/$/mode-name))
     (shfmt))
    ((string= "sh-mode" (Ox33b4O/$/mode-name))
     (shfmt))
-   ((string= "javacript-mode" (Ox33b4O/$/mode-name))
-    (prettierjs))
    ((string= "elisp-mode" (Ox33b4O/$/mode-name))
     (elfmt))
-   ((nil t))))
+   (t (progn
+         (message "can't prettify `%s' yet" (Ox33b4O/$/mode-name))
+         ))))
+
+(defun eval-elisp-buffer ()
+  (interactive)
+  "evaluates the entire buffer as emacs-lisp expression so long as calling `buffer-elisp-heuristic' returns non-nil."
+  (if (buffer-elisp-heuristic)
+      (save-mark-and-excursion
+        (widen)
+        (eval-buffer)
+        (message "%s eval'd " (buffer-name)))
+    (progn
+      (message "cannot evaluate buffer %s because it is not in %s, trying to run pretty formatter instead"
+               (Ox33b4O/$/paint-mode-line-color (buffer-name))
+	       (Ox33b4O/$/paint-mode-line-color "elisp-mode"))
+      (g/format/prettify))
+    ))
 
 (defun git-restore ()
   "."
