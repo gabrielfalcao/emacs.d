@@ -3053,64 +3053,6 @@ BEG END."
 			        "\r")))
     (insert (format "\\(%s\\)" (string-join space-chars-list "\\|" )))))
 
-(defvar insert-regexp-negate-string-history
-  (list)
-  "history of strings input in previous calls to `insert-regexp-negate-string'"
-  )
-
-(enable-debug-on-error)
-(defun insert-regexp-negate-string (string)
-  (interactive
-   (list
-    (read-string
-     "string to negate: " "STRING" insert-regexp-negate-string-history)))
-  (c-message-open "")
-  (c-message "
-string=`%S'
-string-to-list=`%S'
-"
-             string (string-to-list string))
-
-  (let* ((string-members (mapcar #'(lambda (chr) (format "%s" chr)) (string-to-list string)))
-         (member-count (length string-members))
-         (index 1)
-         (remaining (length string-members))
-         (result (list)))
-    (c-message-open "string-members=%S"
-                    string-members)
-
-    (while (< (- index 1) remaining)
-      (let* ((current (nth (- index 1) string-members))
-             (next  (nth index string-members))
-             (debug-tag (auto-propertize-string (format "<debug index=`%S' current=`%S' next=`%S'>" index current next)))
-             (setq
-              result (append (format "[^%s]\|[%s][^%s]" current current next))
-              index (+ index 1))
-             (c-message  "%s
-<string-members>
-%S
-</string-members>
-<member-count>
-%S
-</member-count>
-<remaining>
-%S
-</remaining>
-<result>
-%S
-</result>
-%s"
-			 debug-tag
-			 string-members
-			 member-count
-			 remaining
-			 result
-			 debug-tag)
-             )
-        )
-      )
-    )
-  )
 
 (defun insert-control-character-tab () (interactive) (insert "\t"))
 
@@ -3491,3 +3433,74 @@ cursor position in buffer."
         reb-valid-string ""
         )
   )
+
+(defun string-to-list-of-strings (string)
+  "like `string-to-list' but returns a list of strings instead of a list of chars.
+signals error if the `string' argument is not a string"
+  (if (not (stringp string))
+      (error "string-to-list-of-strings %S" string))
+  (mapcar #'(lambda (chr) (format "%c" chr)) (string-to-list string)))
+
+(defvar insert-regexp-negate-string-history
+  (list)
+  "history of strings input in previous calls to `insert-regexp-negate-string'"
+  )
+
+(enable-debug-on-error)
+(defun insert-regexp-negate-string (string)
+  (interactive
+   (list
+    (read-string
+     "string to negate: " "STRING" insert-regexp-negate-string-history)))
+  (c-message-open "")
+
+  (let* ((string-members (string-to-list-of-strings string))
+         (member-count (length string-members))
+         (index 0)
+         (remaining (length string-members))
+         (result (list)))
+    (c-message "string-members=%S"
+                    string-members)
+
+    (while (< index remaining)
+      (let* ((previous (or (when (>= index 1)
+                         (mapcar #'(lambda (item) (format "[%s]" item))
+                                 (seq-subseq string-members 0 index)))
+                           (list)
+                           )
+                       );;previous
+             (current (nth index string-members))
+             (next  (nth (+ index 1) string-members))
+             (debug-tag (auto-propertize-string (format "<debug index=`%S' current=`%S' next=`%S'>" index current next))
+                        ))
+             (setq
+              result (append result (list (format "%s[^%s]\|[%s][^%s]" (string-join previous "") current current next)))
+              index (+ index 1))
+             (c-message  "%s
+<string-members>
+%S
+</string-members>
+<index>
+%S
+</index>
+<remaining>
+%S
+</remaining>
+<previous>
+%S
+</previous>
+<result>
+%S
+</result>
+%s"
+			 debug-tag
+			 string-members
+			 index
+			 remaining
+			 previous
+			 result
+			 debug-tag)
+             )
+        )
+      )
+    )
