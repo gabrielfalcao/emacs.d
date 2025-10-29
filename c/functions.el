@@ -1691,13 +1691,13 @@
         (with-current-buffer buffer-to-erase
           (let ((buffer-was-read-only (when (and (numberp buffer-read-only)
                                                  (< buffer-read-only 0)))))
-          (read-only-mode -1)
-          (widen)
-          (erase-buffer)
-          (if buffer-was-read-only
-              (read-only-mode 1)))
-            ) ;; end inner let
-          ) ;;end if
+            (read-only-mode -1)
+            (widen)
+            (erase-buffer)
+            (if buffer-was-read-only
+		(read-only-mode 1)))
+          ) ;; end inner let
+      ) ;;end if
     ) ;; end outer let
   )
 
@@ -1977,8 +1977,8 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
    ((string= "elisp-mode" (Ox33b4O/$/mode-name))
     (elfmt))
    (t (progn
-         (message "can't prettify `%s' yet" (Ox33b4O/$/mode-name))
-         ))))
+        (message "can't prettify `%s' yet" (Ox33b4O/$/mode-name))
+        ))))
 
 (defun eval-elisp-buffer ()
   (interactive)
@@ -3053,6 +3053,65 @@ BEG END."
 			        "\r")))
     (insert (format "\\(%s\\)" (string-join space-chars-list "\\|" )))))
 
+(defvar insert-regexp-negate-string-history
+  (list)
+  "history of strings input in previous calls to `insert-regexp-negate-string'"
+  )
+
+(enable-debug-on-error)
+(defun insert-regexp-negate-string (string)
+  (interactive
+   (list
+    (read-string
+     "string to negate: " "STRING" insert-regexp-negate-string-history)))
+  (c-message-open "")
+  (c-message "
+string=`%S'
+string-to-list=`%S'
+"
+             string (string-to-list string))
+
+  (let* ((string-members (mapcar #'(lambda (chr) (format "%s" chr)) (string-to-list string)))
+         (member-count (length string-members))
+         (index 1)
+         (remaining (length string-members))
+         (result (list)))
+    (c-message-open "string-members=%S"
+                    string-members)
+
+    (while (< (- index 1) remaining)
+      (let* ((current (nth (- index 1) string-members))
+             (next  (nth index string-members))
+             (debug-tag (auto-propertize-string (format "<debug index=`%S' current=`%S' next=`%S'>" index current next)))
+             (setq
+              result (append (format "[^%s]\|[%s][^%s]" current current next))
+              index (+ index 1))
+             (c-message  "%s
+<string-members>
+%S
+</string-members>
+<member-count>
+%S
+</member-count>
+<remaining>
+%S
+</remaining>
+<result>
+%S
+</result>
+%s"
+			 debug-tag
+			 string-members
+			 member-count
+			 remaining
+			 result
+			 debug-tag)
+             )
+        )
+      )
+    )
+  )
+
 (defun insert-control-character-tab () (interactive) (insert "\t"))
 
 (defun insert-control-character-newline ()
@@ -3279,16 +3338,16 @@ cursor position in buffer."
 (defun write-to-minibuffer (text)
   "writes to minibuffer"
   (let ((output (or (when (stringp text)
-        text)
-      (format "%S" text))))
-  (ignore-errors
-    (with-current-buffer (window-buffer (minibuffer-window))
-      (read-only-mode -1)
-      (widen)
-      (erase-buffer)
-      (end-of-buffer)
-      (insert output)
-      (read-only-mode 1)))))
+		      text)
+		    (format "%S" text))))
+    (ignore-errors
+      (with-current-buffer (window-buffer (minibuffer-window))
+	(read-only-mode -1)
+	(widen)
+	(erase-buffer)
+	(end-of-buffer)
+	(insert output)
+	(read-only-mode 1)))))
 
 (defun erase-minibuffer ()
   "erases the minibuffer in the current frame"
@@ -3304,28 +3363,6 @@ cursor position in buffer."
 (defconst c-message-buffer "*C-Messages*"
   "Name of buffer to use for `c-messages'.")
 
-(defun c-message-open (&rest args)
-  "drop-in replacement for `c-message' opens the `*C-Messages*' buffer after outputing the message"
-  (interactive "*s")
-  (erase-c-messages)
-  (apply #'c-message args)
-  (let* ((active-buffer (current-buffer))
-         (current (frame-first-window))
-         (windows
-          (let ((windows 0))
-            (progn
-	      (walk-windows
-	       (lambda (window) (setq windows (1+ windows))))
-	      windows)))
-         (right (progn
-                  (ignore-errors
-                  (while (> (get-window-count) 1) (delete-window)))
-                  (split-window-right)))
-         )
-
-    (set-window-buffer right c-message-buffer)
-    (set-window-buffer current active-buffer)
-  ))
 
 
 (defun c-message (fmt &rest args)
@@ -3333,17 +3370,61 @@ cursor position in buffer."
   (interactive "s")
 
   (let (
-         (output (concat (apply #'format (append (list fmt) args)) "\n"))
-         (buffer (get-buffer-create c-message-buffer))
-         )
-    (ignore-errors (with-current-buffer buffer
+        (output (format "%s\n" (apply #'format fmt args)))
+        ;; (output (concat (apply #'format (append (list fmt) args)) "\n"))
+        (buffer (get-buffer-create c-message-buffer))
+        )
+    (with-current-buffer buffer
       (read-only-mode -1)
       (widen)
       (end-of-buffer)
-      (insert output)))
-    (ignore-errors (write-to-minibuffer output))
-  ))
+      (insert output))
+    (write-to-minibuffer output)
+    ))
 
+(defun c-message-open (&rest args)
+  "drop-in replacement for `c-message' opens the `*C-Messages*' buffer after outputing the message"
+  (interactive "*s")
+  (delete-other-windows (frame-first-window))
+  (erase-c-messages)
+  (apply #'c-message args)
+  (or (when ;; c-message-buffer is open and is the first active buffer in current frame...
+          (and (not (null (get-buffer-window c-message-buffer)))
+               (eq (frame-first-window) (get-buffer-window c-message-buffer)))
+        (message "... then split frame horizontally with the c-message-buffer at the right side")
+        ;; ... then split frame horizontally with the c-message-buffer at the right side
+        (set-window-buffer (split-window-right) (get-buffer c-message-buffer))
+        ;; ... and set the previously active buffer (if any) to the left
+        (debug-active-buffers
+         ;; TODO: first lets figure out the most recent buffer before c-message-buffer
+         )
+        ) ;; `end' `when' c-message-buffer is open and is the first active buffer in current frame
+      (progn ;; currently active buffer is not c-message-buffer
+        ;; so let's split right and set c-message-buffer to the right
+        (let* ((right-side (split-window-right))
+               (cmbuffer (get-buffer-create c-message-buffer)))
+
+          (message "(set-window-buffer %S %S)" right-side cmbuffer)
+          (set-window-buffer right-side cmbuffer)))
+      );; `end' `or' clause
+  )
+(defun debug-active-buffers()
+  (interactive)
+  (message "<debug-active-buffers>")
+  (let* (
+         (active-buffers (buffer-list))
+         (active-buffer-count (length active-buffers))
+         (iter-active-buffer-index 0))
+    (message "active-buffers:\n%s" (string-join (mapcar #'(lambda (buf)
+                                                            (let ((bufstring (format "    %s[%d]" iter-active-buffer-index (buffer-name buf))))
+                                                              (setq active-buffer-count (+ active-buffer-count 1))
+                                                              bufstring))
+                                                        active-buffers)
+                                                "\n"))
+    )
+  (message "</debug-active-buffers>")
+
+  )
 
 (defun re-builder-debug-state()
   (interactive)
@@ -3355,33 +3436,33 @@ cursor position in buffer."
   (let* ((re-builder-buffer (get-buffer reb-buffer))
          (reb-debug-local-vars (list "nothing"))
          (reb-debug-local-vars
-           (if (bufferp re-builder-buffer)
-               ;; (with-current-buffer re-builder-buffer
-               (with-current-buffer reb-target-buffer
-                 (list
-                  (format "reb-regexp [buffer-local] =`%s'" reb-regexp)
-                  (format "reb-regexp-src [buffer-local] =`%S'" reb-regexp-src)
-                  (format "reb-overlays [buffer-local] =`%S'" reb-overlays)
-                  )
+          (if (bufferp re-builder-buffer)
+              ;; (with-current-buffer re-builder-buffer
+              (with-current-buffer reb-target-buffer
+                (list
+                 (format "reb-regexp [buffer-local] =`%s'" reb-regexp)
+                 (format "reb-regexp-src [buffer-local] =`%S'" reb-regexp-src)
+                 (format "reb-overlays [buffer-local] =`%S'" reb-overlays)
                  )
-             (list (format "no buffer-local vars in %s buffer: %S" reb-buffer re-builder-buffer))
-             )
-           )
+                )
+            (list (format "no buffer-local vars in %s buffer: %S" reb-buffer re-builder-buffer))
+            )
+          )
          ) ;;end let* declarations
     (c-message-open "re-builder vars:\n%s\n\nre-builder buffer-local vars:\n%s"
                     (string-join (mapcar #'(lambda (string) (format "    %s" string))
                                          (list
-                          (format "reb-mode =`%S'" reb-mode)
-                          (format "reb-target-buffer =`%S'" reb-target-buffer)
-                          (format "reb-target-window =`%S'" reb-target-window)
-                          (format "reb-window-config =`%S'" reb-window-config)
-                          (format "reb-subexp-mode =`%S'" reb-subexp-mode)
-                          (format "reb-subexp-displayed =`%S'" reb-subexp-displayed)
-                          (format "reb-mode-string =`%S'" reb-mode-string)
-                          (format "reb-valid-string =`%S'" reb-valid-string)
-                          ))
-                         "\n")
-            (string-join (mapcar #'(lambda (string) (format "    %s" string)) reb-debug-local-vars) "\n"))
+					  (format "reb-mode =`%S'" reb-mode)
+					  (format "reb-target-buffer =`%S'" reb-target-buffer)
+					  (format "reb-target-window =`%S'" reb-target-window)
+					  (format "reb-window-config =`%S'" reb-window-config)
+					  (format "reb-subexp-mode =`%S'" reb-subexp-mode)
+					  (format "reb-subexp-displayed =`%S'" reb-subexp-displayed)
+					  (format "reb-mode-string =`%S'" reb-mode-string)
+					  (format "reb-valid-string =`%S'" reb-valid-string)
+					  ))
+				 "\n")
+		    (string-join (mapcar #'(lambda (string) (format "    %s" string)) reb-debug-local-vars) "\n"))
     )
   )
 
