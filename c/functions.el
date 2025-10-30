@@ -3351,22 +3351,44 @@ cursor position in buffer."
           (set-window-buffer right-side cmbuffer)))
       );; `end' `or' clause
   )
+
+(defun c-message-debug-symbols (symbol-list &rest context-symbol-list)
+  (if (and (not (listp symbol-list))
+           (not (symbolp symbol-list)))
+      (error "c-message-debug-symbols `symbol-list' is neither a list or a symbol: `%S'" symbol-list))
+
+  (let* ((symbol-list (if (symbolp symbol-list) (list symbol-list)
+                        symbol-list))
+         (tag-attributes (mapcar #'(lambda (sym) (format "%s=`%S'" sym (if (symbolp sym)
+                                                                           (symbol-value sym)
+                                                                         (format "%S" sym))))
+                                     context-symbol-list)
+                         )
+         (inner-tags  (mapcar #'(lambda (sym) (auto-propertize-string (format "<%s>\n%S\n</%s>" sym (symbol-value sym) sym))) symbol-list)
+                      )
+         (debug-tag (auto-propertize-string (format "<debug %s>" (string-join tag-attributes " ")))
+                    ))
+
+    (c-message  "%s\n%s\n%s" debug-tag (string-join inner-tags "\n") debug-tag)))
+
 (defun debug-active-buffers()
   (interactive)
+  (erase-messages)
   (message "<debug-active-buffers>")
   (let* (
          (active-buffers (buffer-list))
          (active-buffer-count (length active-buffers))
          (iter-active-buffer-index 0))
-    (message "active-buffers:\n%s" (string-join (mapcar #'(lambda (buf)
-                                                            (let ((bufstring (format "    %s[%d]" iter-active-buffer-index (buffer-name buf))))
-                                                              (setq active-buffer-count (+ active-buffer-count 1))
-                                                              bufstring))
-                                                        active-buffers)
+    (message "active-buffers:\n%s"
+             (string-join (mapcar #'(lambda (buf)
+                                      (let ((bufstring (format "    %s[%d]" (buffer-name buf) iter-active-buffer-index)
+                                                       ))
+                                        (setq iter-active-buffer-index (+ iter-active-buffer-index 1))
+                                        bufstring))
+                                  active-buffers)
                                                 "\n"))
     )
   (message "</debug-active-buffers>")
-
   )
 
 (defun re-builder-debug-state()
@@ -3447,50 +3469,47 @@ signals error if the `string' argument is not a string"
   "history of strings input in previous calls to `insert-regexp-negate-string'"
   )
 
-(enable-debug-on-error)
-(defun insert-regexp-negate-string (string)
-  (interactive
-   (list
-    (read-string
-     "string to negate: " "STRING" insert-regexp-negate-string-history)))
-  (c-message-open "")
+;;(enable-debug-on-error)
+(defun get-regexp-string-negation (string)
+  (if (not (stringp string))
+      (error "string-to-list-of-strings %S" string))
 
   (let* ((string-members (string-to-list-of-strings string))
          (member-count (length string-members))
          (index 0)
          (result (list)))
-    (c-message "string-members=%S" string-members)
     (while (<  index (+ member-count 1))
       (let* ((previous (string-join (mapcar #'(lambda (item) (format "[%s]" item))
                                  (seq-subseq string-members 0 index)))
                        );;previous
              (current (nth index string-members))
              )
-        (c-message-debug-symbols (list 'previous 'result) 'index 'member-count 'current)
-        ;; (c-message  "%s\n<string-members>\n%S\n</string-members>\n<previous>\n%S\n</previous>\n<result>\n%S\n</result>\n%s" debug-tag string-members previous result debug-tag)
+        ;; (c-message-debug-symbols (list 'previous 'result) 'index 'member-count 'current)
         (setq
          result (append result (list (format "%s[^%s]" previous current)))
          index (+ index 1))
 
         )
       )
+    ;; (c-message-debug-symbols 'reb-mode-string)
+    (if (and (eq (get-buffer reb-buffer) (current-buffer))
+             (string= reb-re-syntax "read"))
+        (format "\\\\(%s\\\\)" (string-join result "\\\\|"))
+      (format "\\(%s\\)" (string-join result "\\|"))
+      )
     )
   )
-(defun c-message-debug-symbols (symbol-list &rest context-symbol-list)
-  (if (and (not (listp symbol-list))
-           (not (symbolp symbol-list)))
-      (error "c-message-debug-symbols `symbol-list' is neither a list or a symbol: `%S'" symbol-list))
 
-  (let* ((symbol-list (if (symbolp symbol-list) (list symbol-list)
-                        symbol-list))
-         (tag-attributes (mapcar #'(lambda (sym) (format "%s=`%S'" sym (if (symbolp sym)
-                                                                           (symbol-value sym)
-                                                                         (format "%S" sym))))
-                                     context-symbol-list)
-                         )
-         (inner-tags  (mapcar #'(lambda (sym) (auto-propertize-string (format "<%s>\n%S\n</%s>" sym (symbol-value sym) sym))) symbol-list)
-                      )
-         (debug-tag (auto-propertize-string (format "<debug %s>" (string-join tag-attributes " ")))
-                    ))
+(defun insert-regexp-negate-string (string)
+  (interactive
+   (list
+    (read-string
+     "string to negate as regexp group: " "STRING" insert-regexp-negate-string-history)))
 
-    (c-message  "%s\n%s\n%s" debug-tag (string-join inner-tags "\n") debug-tag)))
+  (let* ((regexp (get-regexp-string-negation string)))
+
+    ;; (c-message-open "%s" regexp)
+    ;; (c-message-debug-symbols (list 'reb-re-syntax 'regexp))
+    (insert regexp)
+    )
+  )
