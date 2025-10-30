@@ -2612,14 +2612,15 @@ The `:background' property is computed in contrast with its
          (background (contrast-color foreground)))
     (list :foreground foreground :background background)))
 
-(defun auto-propertize-string (string)
+(defun auto-propertize-string (string &optional algorithm)
   "colorizes the given string."
   (if (not (stringp string))
       (user-error "%S is not a string (auto-propertize-string %S)" string string))
   (propertize
    (format "%s" string)
    'face
-   (get-auto-propertize-face-fg-and-bg-list string 'sha256)))
+   (get-auto-propertize-face-fg-and-bg-list string (or algorithm
+                                                       'sha256))))
 
 (defun cleanup-elc ()
   "."
@@ -3459,20 +3460,37 @@ signals error if the `string' argument is not a string"
          (index 0)
          (result (list)))
     (c-message "string-members=%S" string-members)
-    (while (< index member-count)
-      (let* ((previous (mapcar #'(lambda (item) (format "[%s]" item))
-                                 (seq-subseq string-members 0 index))
+    (while (<  index (+ member-count 1))
+      (let* ((previous (string-join (mapcar #'(lambda (item) (format "[%s]" item))
+                                 (seq-subseq string-members 0 index)))
                        );;previous
              (current (nth index string-members))
-             (next  (nth (+ index 1) string-members))
-             (debug-tag (auto-propertize-string (format "<debug index=`%S' member-count=`%S'current=`%S' next=`%S'>" index member-count current next))
-                        ))
-        (c-message  "%s\n<string-members>\n%S\n</string-members>\n<previous>\n%S\n</previous>\n<result>\n%S\n</result>\n%s" debug-tag string-members previous result debug-tag)
+             )
+        (c-message-debug-symbols (list 'previous 'result) 'index 'member-count 'current)
+        ;; (c-message  "%s\n<string-members>\n%S\n</string-members>\n<previous>\n%S\n</previous>\n<result>\n%S\n</result>\n%s" debug-tag string-members previous result debug-tag)
         (setq
-         result (append result (list (format "%s[^%s]\|[%s][^%s]" (string-join previous "") current current next)))
+         result (append result (list (format "%s[^%s]" previous current)))
          index (+ index 1))
 
         )
       )
     )
   )
+(defun c-message-debug-symbols (symbol-list &rest context-symbol-list)
+  (if (and (not (listp symbol-list))
+           (not (symbolp symbol-list)))
+      (error "c-message-debug-symbols `symbol-list' is neither a list or a symbol: `%S'" symbol-list))
+
+  (let* ((symbol-list (if (symbolp symbol-list) (list symbol-list)
+                        symbol-list))
+         (tag-attributes (mapcar #'(lambda (sym) (format "%s=`%S'" sym (if (symbolp sym)
+                                                                           (symbol-value sym)
+                                                                         (format "%S" sym))))
+                                     context-symbol-list)
+                         )
+         (inner-tags  (mapcar #'(lambda (sym) (auto-propertize-string (format "<%s>\n%S\n</%s>" sym (symbol-value sym) sym))) symbol-list)
+                      )
+         (debug-tag (auto-propertize-string (format "<debug %s>" (string-join tag-attributes " ")))
+                    ))
+
+    (c-message  "%s\n%s\n%s" debug-tag (string-join inner-tags "\n") debug-tag)))
