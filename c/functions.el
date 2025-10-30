@@ -3457,50 +3457,22 @@ signals error if the `string' argument is not a string"
   (let* ((string-members (string-to-list-of-strings string))
          (member-count (length string-members))
          (index 0)
-         (remaining (length string-members))
          (result (list)))
-    (c-message "string-members=%S"
-                    string-members)
-
-    (while (< index remaining)
-      (let* ((previous (or (when (>= index 1)
-                         (mapcar #'(lambda (item) (format "[%s]" item))
-                                 (seq-subseq string-members 0 index)))
-                           (list)
-                           )
+    (c-message "string-members=%S" string-members)
+    (while (< index member-count)
+      (let* ((previous (mapcar #'(lambda (item) (format "[%s]" item))
+                                 (seq-subseq string-members 0 index))
                        );;previous
              (current (nth index string-members))
              (next  (nth (+ index 1) string-members))
-             (debug-tag (auto-propertize-string (format "<debug index=`%S' current=`%S' next=`%S'>" index current next))
+             (debug-tag (auto-propertize-string (format "<debug index=`%S' member-count=`%S'current=`%S' next=`%S'>" index member-count current next))
                         ))
-             (setq
-              result (append result (list (format "%s[^%s]\|[%s][^%s]" (string-join previous "") current current next)))
-              index (+ index 1))
-             (c-message  "%s
-<string-members>
-%S
-</string-members>
-<index>
-%S
-</index>
-<remaining>
-%S
-</remaining>
-<previous>
-%S
-</previous>
-<result>
-%S
-</result>
-%s"
-			 debug-tag
-			 string-members
-			 index
-			 remaining
-			 previous
-			 result
-			 debug-tag)
-             )
+        (c-message  "%s\n<string-members>\n%S\n</string-members>\n<previous>\n%S\n</previous>\n<result>\n%S\n</result>\n%s" debug-tag string-members previous result debug-tag)
+        (setq
+         result (append result (list (format "%s[^%s]\|[%s][^%s]" (string-join previous "") current current next)))
+         index (+ index 1))
+
         )
       )
     )
+  )
