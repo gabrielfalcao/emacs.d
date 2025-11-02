@@ -111,6 +111,7 @@
 (Ox33b4O/$/set-key "C-x C-e e" 'g/ep)
 (Ox33b4O/$/set-key "C-x C-e C-t" #'today)
 (Ox33b4O/$/set-key "C-x C-e C-n" #'now)
+(Ox33b4O/$/set-key "C-x C-e C-r" #'insert-regexp-negate-string)
 (Ox33b4O/$/set-key "M-s" 'save-buffer)
 (Ox33b4O/$/set-key "C-c C-p" #'(lambda () (interactive) (message "cur %d" (point))))
 (Ox33b4O/$/set-key '("M-f") 'forward-word)

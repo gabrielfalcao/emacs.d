@@ -1745,11 +1745,16 @@
   (let* ((current-filename (expand-file-name (buffer-file-name)))
          (tmp-buffer-name (format "*prettierjs:%s*" current-filename))
          (tmp-buffer (create-fresh-buffer tmp-buffer-name))
+         (prettierjs-args (list tmp-buffer nil "-w" current-filename ))
          (exit-code
-          (call-process "prettier"
-                        nil
-                        tmp-buffer
-                        nil "-w" current-filename )))
+          (apply #'call-process (append (list "prettier" nil) prettierjs-args))))
+    ;; (if (string-match "[.][a-z][a-z0-9-]+rc$" current-filename)
+    ;;     ;; explicitly specify parser to prettier when filename ends with `.*rc'
+    ;;     (append (list "--parser" "json") prettierjs-args)
+    ;;   ;;
+    ;;   prettierjs-args)
+    ;; ))))
+
     (message
      (format "prettier -w %s exitted with code: %s" current-filename exit-code))
 
@@ -1760,37 +1765,37 @@
           (format "%s formatted"
                   (abbreviate-file-name current-filename)))
          (revert-buffer t t t)
-         (ignore-errors (kill-buffer tmp-buffer))))
+         ))
      (let* ((error-string (with-current-buffer tmp-buffer
 			    (widen)
 			    (goto-char (point-min))
 			    (buffer-substring-no-properties (point-min) (point-max))
 			    ))
-            (error-details
-             (with-current-buffer tmp-buffer
-               (widen)
-               (goto-char (point-min))
-               (let ((regex-point-beg (point))
-                     (regex-point-end
-                      (save-excursion (end-of-line) (point))))
+	    (error-details
+	     (with-current-buffer tmp-buffer
+	       (widen)
+	       (goto-char (point-min))
+	       (let ((regex-point-beg (point))
+		     (regex-point-end
+		      (save-excursion (end-of-line) (point))))
                  ;;^ ;; [error] index.ts: SyntaxError: Function type notation must be parenthesized when used in a union type. (96:46)
                  ;;  ;; [error] utils.ts: SyntaxError: Expression expected. (183:21)
                  (goto-char (point-min))
 
                  (if (re-search-forward
-                      "^\\s-*[[]\\([^]]+\\)[]]\\s-*\\([^:]+\\):\\s-*\\([^:]+\\)[:]\\s-*\\([^(]+\\)\\s-+[(]\\([1-9][0-9]*\\):\\([1-9][0-9]*\\)[)]"
-                      regex-point-end
-                      t 1)
-                     (let ((message-type (match-string 1))
-                           (error-filename (match-string 2))
-                           (error-type (match-string 3))
+		      "^\\s-*[[]\\([^]]+\\)[]]\\s-*\\([^:]+\\):\\s-*\\([^:]+\\)[:]\\s-*\\([^(]+\\)\\s-+[(]\\([1-9][0-9]*\\):\\([1-9][0-9]*\\)[)]"
+		      regex-point-end
+		      t 1)
+		     (let ((message-type (match-string 1))
+			   (error-filename (match-string 2))
+			   (error-type (match-string 3))
 
-                           (error-message (match-string 4))
-                           (error-lineno
-                            (string-to-number (match-string 5)))
-                           (error-column
-                            (string-to-number (match-string 6))))
-                       (list
+			   (error-message (match-string 4))
+			   (error-lineno
+			    (string-to-number (match-string 5)))
+			   (error-column
+			    (string-to-number (match-string 6))))
+		       (list
                         message-type
                         error-filename
                         error-type
@@ -1798,14 +1803,14 @@
                         error-lineno
                         error-column
                         )
-                       )
-                   )
+		       )
+		   )
                  )
-               )
-             ))
-       (ignore-errors (kill-buffer tmp-buffer))
-       (if (listp error-details)
-           (let* (
+	       )
+	     ))
+       (if (and (listp error-details)
+                (not (null (nth 4 error-details))))
+	   (let* (
                   (message-type (nth 0 error-details))
                   (error-filename (nth 1 error-details))
                   (error-type (nth 2 error-details))
@@ -1813,25 +1818,25 @@
                   (error-lineno (nth 4 error-details))
                   (error-column (nth 5 error-details))
                   )
-             (goto-line error-lineno)
-             (goto-char (+ (point) error-column))
-             (message
-              "%s in %s line %d column %d => %s: %s"
-              (propertize (format "%s" message-type) 'face
+	     (goto-line error-lineno)
+	     (goto-char (+ (point) error-column))
+	     (message
+	      "%s in %s line %d column %d => %s: %s"
+	      (propertize (format "%s" message-type) 'face
                           (list :background "#3d3d3d"
                                 :foreground "#FF3232"))
 
-              error-filename
-              error-lineno
-              error-column
-              (propertize (format "%s" error-type) 'face
+	      error-filename
+	      error-lineno
+	      error-column
+	      (propertize (format "%s" error-type) 'face
                           (list :background "#3d3d3d"
                                 :foreground "#FF3232"))
-              (propertize (format "%s" error-message) 'face
+	      (propertize (format "%s" error-message) 'face
                           (list :background "#FF3232"
                                 :foreground "#3d3d3d"))
 
-              ))
+	      ))
          ;; else
          (pop-to-buffer-same-window tmp-buffer)
          (user-error
@@ -1839,6 +1844,7 @@
                   (abbreviate-file-name current-filename)
                   exit-code)))
        ))
+    (ignore-errors (kill-buffer tmp-buffer))
     ))
 
 (defun shfmt-break-onliner-region (beg end)
@@ -1849,8 +1855,8 @@
     (save-mark-and-excursion
       (goto-char beg)
       (replace-regexp break-up-oneliner-regex "\n\\1\n" nil
-                      (point-min)
-                      (point-max)))))
+		      (point-min)
+		      (point-max)))))
 
 (defun shfmt ()
   ".
@@ -1885,7 +1891,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
          (ignore-errors (kill-buffer tmp-buffer))))
      (progn
        (let ((result
-              ;; t
+	      ;; t
 	      (with-current-buffer tmp-buffer
 	        (widen)
 
@@ -1896,14 +1902,14 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
                  (point-max)
                  t)
 	        (let* ((error-filename (match-string 1))
-	               (error-lineno (match-string 2))
-	               (error-column (match-string 3))
-	               (error-message (match-string 4))
-	               (result-list
+		       (error-lineno (match-string 2))
+		       (error-column (match-string 3))
+		       (error-message (match-string 4))
+		       (result-list
                         (list error-filename error-lineno error-column error-message)))
                   result-list))
 
-              ))
+	      ))
          (if (listp result)
              (let ((error-filename (nth 0 result))
                    (error-lineno (string-to-number (nth 1 result)))
@@ -1911,9 +1917,9 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
                    (error-message (nth 3 result)))
 	       (goto-line error-lineno current-shell-buffer)
 	       (beginning-of-line)
-               (let ((error-point (+ (point) (- error-column 1)))
+	       (let ((error-point (+ (point) (- error-column 1)))
                      (eol
-                      (save-mark-and-excursion
+		      (save-mark-and-excursion
                         (end-of-line 1)
                         (point))))
                  (goto-char error-point)
@@ -1924,7 +1930,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
                 (format "line %d: %s" error-lineno
 			(propertize error-message 'face
                                     (list :foreground "#F13976"))))
-               (kill-buffer tmp-buffer))
+	       (kill-buffer tmp-buffer))
 	   (switch-to-buffer tmp-buffer t t)
 	   (user-error
             (format "shfmt -bn -ci -i 4 -ln=bash -w %s failed with code: %s"
@@ -1990,7 +1996,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
         (message "%s eval'd " (buffer-name)))
     (progn
       (message "cannot evaluate buffer %s because it is not in %s, trying to run pretty formatter instead"
-               (Ox33b4O/$/paint-mode-line-color (buffer-name))
+	       (Ox33b4O/$/paint-mode-line-color (buffer-name))
 	       (Ox33b4O/$/paint-mode-line-color "elisp-mode"))
       (g/format/prettify))
     ))
@@ -2177,7 +2183,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
             (if (null current-match)
                 (user-error
                  (format "failed to search regexp `%s'" regexp))
-              (match-beginning 0))))
+	      (match-beginning 0))))
 
       (while (and
 	      (not (null current-match)) ;; stop iteration when last re-search-forward returns nil
@@ -2381,10 +2387,10 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
     (let ((text-to-insert (format "%s " timestamp-to-insert)))
       (or
        (when (or
-              (string= "rest-mode" (Ox33b4O/$/mode-name))
-              (string= "markdown-mode" (Ox33b4O/$/mode-name)))
+	      (string= "rest-mode" (Ox33b4O/$/mode-name))
+	      (string= "markdown-mode" (Ox33b4O/$/mode-name)))
          (setq text-to-insert
-               (format "- at %s:\n  - Journal entry ..." timestamp-to-insert))
+	       (format "- at %s:\n  - Journal entry ..." timestamp-to-insert))
          (newline)
          (beginning-of-line 0)))
       (insert text-to-insert))))
@@ -2418,8 +2424,8 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
          (timestamp (format-time-string "%Y-%m-%dT%H:%M:%S%Z"))
          (name
           (read-string "New Note Name: "
-                       (format "note-%s.rst" file-compatible-timestamp)
-                       t))
+		       (format "note-%s.rst" file-compatible-timestamp)
+		       t))
          (note-path
           (format "%s/%s%s.rst"
                   (current-notes-location)
@@ -2606,7 +2612,7 @@ The `:background' property is computed in contrast with its
   (let* ((foreground
           (format "#%s"
                   (if (not (null hash-algorithm))
-                      (Ox33b4O/$/hash-take-first-n-chars hash-algorithm 6 string)
+		      (Ox33b4O/$/hash-take-first-n-chars hash-algorithm 6 string)
                     (Ox33b4O/$/hash-take-first-n-chars 'sha256 6 string)
                     )))
          (background (contrast-color foreground)))
@@ -2620,7 +2626,7 @@ The `:background' property is computed in contrast with its
    (format "%s" string)
    'face
    (get-auto-propertize-face-fg-and-bg-list string (or algorithm
-                                                       'sha256))))
+						       'sha256))))
 
 (defun cleanup-elc ()
   "."
@@ -2739,11 +2745,11 @@ which returns the exit-status and the string output.
        (format "call-process-with-list-args: args `%S' is not a list" args)))
   (let* ((extra-args
           (if (null args)
-              (list)
+	      (list)
 	    (if (listp args)
                 args
-              (user-error
-               (format "call-process-with-list-args: args `%S' is not a list" args)))
+	      (user-error
+	       (format "call-process-with-list-args: args `%S' is not a list" args)))
 	    ))
          (program-to-call-output-buf
           (get-buffer-create (format "*%s*" program)))
@@ -2771,13 +2777,13 @@ which returns the exit-status and the string output.
   ;; ack --output='$f +$. # $&' 'querySelectorAll' src/lib/dom.generated.d.ts
   (let* ((exit-status-output
           (call-program-with-list-args "ack"
-                                       (list
+				       (list
                                         "--output='(cons $. \"$f\") ;; $&" regexp)))
          (exit-status (car exit-status-output))
          (output (car (cdr ( exit-status-output)))))
     (if (eq 0 exit-status)
         (let ((ack-buffer
-               (get-buffer-create (format "ack `%s'" regexp))))
+	       (get-buffer-create (format "ack `%s'" regexp))))
           (with-current-buffer ack-buffer (insert output))
           (switch-to-buffer ack-buffer))
       (user-error
@@ -2913,13 +2919,13 @@ which returns the exit-status and the string output.
           (progn
             (goto-char (match-beginning 0))
             (while (re-search-forward regexp-2 end t)
-              (goto-char (match-beginning 0))
-              (replace-match
-               (format
+	      (goto-char (match-beginning 0))
+	      (replace-match
+	       (format
 		"$(( 0x%x ));"
                 (string-to-number (match-string 0) 16)))
-              (setq end (point))
-              (backward-word 0))
+	      (setq end (point))
+	      (backward-word 0))
             )
 	(user-error "no match for regex %S in %S" regexp-6
                     (buffer-substring-no-properties beg end)))
@@ -2938,7 +2944,7 @@ BEG END."
 
     (if (eq 0 exit-code)
         (let ((output
-               (with-current-buffer tmp-buffer
+	       (with-current-buffer tmp-buffer
 		 (widen)
 		 (string-trim (buffer-string)))))
           (kill-buffer tmp-buffer)
@@ -3109,8 +3115,8 @@ BEG END."
   (interactive)
   (insert
    (format-time-string "%Y-%m-%d %H:%M:%S%z"
-                       nil
-                       (if (not (null utc)) 0 nil))))
+		       nil
+		       (if (not (null utc)) 0 nil))))
 
 (defun delete-prefix-and-timestamp-from-bash-history-region (beg end)
   (interactive "*r")
@@ -3333,7 +3339,7 @@ cursor position in buffer."
   (apply #'c-message args)
   (or (when ;; c-message-buffer is open and is the first active buffer in current frame...
           (and (not (null (get-buffer-window c-message-buffer)))
-               (eq (frame-first-window) (get-buffer-window c-message-buffer)))
+	       (eq (frame-first-window) (get-buffer-window c-message-buffer)))
         (message "... then split frame horizontally with the c-message-buffer at the right side")
         ;; ... then split frame horizontally with the c-message-buffer at the right side
         (set-window-buffer (split-window-right) (get-buffer c-message-buffer))
@@ -3345,7 +3351,7 @@ cursor position in buffer."
       (progn ;; currently active buffer is not c-message-buffer
         ;; so let's split right and set c-message-buffer to the right
         (let* ((right-side (split-window-right))
-               (cmbuffer (get-buffer-create c-message-buffer)))
+	       (cmbuffer (get-buffer-create c-message-buffer)))
 
           (message "(set-window-buffer %S %S)" right-side cmbuffer)
           (set-window-buffer right-side cmbuffer)))
@@ -3362,10 +3368,10 @@ cursor position in buffer."
          (tag-attributes (mapcar #'(lambda (sym) (format "%s=`%S'" sym (if (symbolp sym)
                                                                            (symbol-value sym)
                                                                          (format "%S" sym))))
-                                     context-symbol-list)
+                                 context-symbol-list)
                          )
          (inner-tags  (mapcar #'(lambda (sym) (auto-propertize-string (format "<%s>\n%S\n</%s>" sym (symbol-value sym) sym))) symbol-list)
-                      )
+		      )
          (debug-tag (auto-propertize-string (format "<debug %s>" (string-join tag-attributes " ")))
                     ))
 
@@ -3381,12 +3387,12 @@ cursor position in buffer."
          (iter-active-buffer-index 0))
     (message "active-buffers:\n%s"
              (string-join (mapcar #'(lambda (buf)
-                                      (let ((bufstring (format "    %s[%d]" (buffer-name buf) iter-active-buffer-index)
-                                                       ))
+				      (let ((bufstring (format "    %s[%d]" (buffer-name buf) iter-active-buffer-index)
+						       ))
                                         (setq iter-active-buffer-index (+ iter-active-buffer-index 1))
                                         bufstring))
                                   active-buffers)
-                                                "\n"))
+                          "\n"))
     )
   (message "</debug-active-buffers>")
   )
@@ -3402,8 +3408,8 @@ cursor position in buffer."
          (reb-debug-local-vars (list "nothing"))
          (reb-debug-local-vars
           (if (bufferp re-builder-buffer)
-              ;; (with-current-buffer re-builder-buffer
-              (with-current-buffer reb-target-buffer
+	      ;; (with-current-buffer re-builder-buffer
+	      (with-current-buffer reb-target-buffer
                 (list
                  (format "reb-regexp [buffer-local] =`%s'" reb-regexp)
                  (format "reb-regexp-src [buffer-local] =`%S'" reb-regexp-src)
@@ -3477,18 +3483,19 @@ signals error if the `string' argument is not a string"
   (let* ((string-members (string-to-list-of-strings string))
          (member-count (length string-members))
          (index 0)
+         (current "")
          (result (list)))
-    (while (<  index (+ member-count 1))
+    (while (and (< index (+ member-count 1)) (stringp current))
       (let* ((previous (string-join (mapcar #'(lambda (item) (format "[%s]" item))
-                                 (seq-subseq string-members 0 index)))
-                       );;previous
-             (current (nth index string-members))
+					    (seq-subseq string-members 0 index)))
+		       );;previous
              )
         ;; (c-message-debug-symbols (list 'previous 'result) 'index 'member-count 'current)
         (setq
          result (append result (list (format "%s[^%s]" previous current)))
-         index (+ index 1))
-
+         index (+ index 1)
+         current (nth index string-members)
+         )
         )
       )
     ;; (c-message-debug-symbols 'reb-mode-string)
