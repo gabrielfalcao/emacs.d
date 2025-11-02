@@ -309,12 +309,6 @@
   (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
   (load-theme 'spolsky))
 
-(defun fpuervo (erjbys)
-  "https://gchq.github.io/CyberChef/#recipe=ROT13 (true,true,false,13)&input=ZnB1ZXJ2b3JlcnY
-."
-  (interactive)
-  (load-file-from-home (format "Ly5lbWFjcy5kL3Qv%sLmVs" erjbys)))
-
 (defun meta-comma (k)
   "."
   (interactive)
