@@ -81,10 +81,6 @@
 
 (global-set-key (kbd "C-c C-c C-r") 'collapse-lines-region)
 
-;; (Ox33b4O/$/set-key '("M-, M-8" "M-, 8")#'(lambda () (interactive) (rot13(fpuervo) "OE8x"))) ;; https://deezer.page.link/HUJ1z8CfsudS2he96
-;; (Ox33b4O/$/set-key '("M-, M-5" "M-, 5")#'(lambda () (interactive) (schreib "NU8x")))
-;; (Ox33b4O/$/set-key '("M-, M-t" "M-, t")#'(lambda () (interactive) (schreib "b3Jp")))
-
 (Ox33b4O/$/set-key "C-x C-d C-s" 'describe-symbol)
 (Ox33b4O/$/set-key "C-x C-d C-g" 'shortdoc-display-group)
 (Ox33b4O/$/set-key "C-x C-d C-X"
