@@ -3525,3 +3525,39 @@ signals error if the `string' argument is not a string"
     (insert regexp)
     )
   )
+
+(defun call-process-get-status-and-string (executable &rest arguments)
+  "calls process via `call-process' capturing the output in a temporary buffer.
+
+The first argument `executable' is the name of an executable in the PATH
+environment variable or a full path to an executable file (.e.g.: \"/bin/ls\")
+
+Any other positional `arguments' are forwarded to `call-process'.
+
+Returns a cons like '(exit-status . output) where the `car' is an
+integer with the exit code of the process and the `cdr' is a string
+containing both the stdout and stderr of that process.
+"
+  (if (not (stringp executable))
+      (error "`executable' must be a string, instead got: %S" executable))
+  (let ((error-args (seq-reduce #'(lambda (ok val)
+                  (if (not (stringp next))
+                      (list "nonstring argument %S" next))
+                  ok)
+                                arguments nil)))
+    (when (listp error-args)
+      (apply #'error error-args)))
+
+  (let* ((tmp-buffer-name (format "*call-process:%s%s" executable (concat arguments)))
+         (tmp-buffer (create-fresh-buffer tmp-buffer-name))
+         (full-process-call-string (format "%s %s" executable (string-join arguments " ")))
+         (exit-code
+          (apply #'call-process (append (list executable nil) arguments)))
+         (process-output-string (with-current-buffer tmp-buffer
+			    (widen)
+			    (goto-char (point-min))
+			    (buffer-substring-no-properties (point-min) (point-max))
+			    )))
+    (ignore-errors
+      (kill-buffer tmp-buffer))
+    (list :exit-code exit-code :output process-output-string :shell-command full-process-call-string)))
