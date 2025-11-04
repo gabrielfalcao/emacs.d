@@ -1716,6 +1716,18 @@
   (shell-command-to-string
    (format "git add -f %s" (expand-file-name (buffer-file-name)))))
 
+(defun git-rm-force ()
+  "."
+  (interactive)
+  (shell-command-to-string
+   (format "git rm --force %s" (expand-file-name (buffer-file-name)))))
+
+(defun git-rm-cached ()
+  "."
+  (interactive)
+  (shell-command-to-string
+   (format "git rm --cached %s" (expand-file-name (buffer-file-name)))))
+
 (defun git-restore-staged ()
   "."
   (interactive)
