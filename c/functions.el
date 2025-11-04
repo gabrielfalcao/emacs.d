@@ -1960,11 +1960,10 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
           (format "%s formatted"
                   (abbreviate-file-name current-filename)))
          (revert-buffer t t t)))
-     (progn
        (user-error
         (format "elfmt %s failed with code: %s"
                 (abbreviate-file-name current-filename)
-                exit-code))))))
+                exit-code)))))
 
 (defun g/format/prettify ()
   (interactive "*")
