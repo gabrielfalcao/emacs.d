@@ -1974,10 +1974,10 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
           (format "%s formatted"
                   (abbreviate-file-name current-filename)))
          (revert-buffer t t t)))
-       (user-error
-        (format "elfmt %s failed with code: %s"
-                (abbreviate-file-name current-filename)
-                exit-code)))))
+     (user-error
+      (format "elfmt %s failed with code: %s"
+              (abbreviate-file-name current-filename)
+              exit-code)))))
 
 (defun g/format/prettify ()
   (interactive "*")
@@ -3555,9 +3555,9 @@ containing both the stdout and stderr of that process.
   (if (not (stringp executable))
       (error "`executable' must be a string, instead got: %S" executable))
   (let ((error-args (seq-reduce #'(lambda (ok val)
-                  (if (not (stringp next))
-                      (list "nonstring argument %S" next))
-                  ok)
+				    (if (not (stringp next))
+					(list "nonstring argument %S" next))
+				    ok)
                                 arguments nil)))
     (when (listp error-args)
       (apply #'error error-args)))
@@ -3568,10 +3568,10 @@ containing both the stdout and stderr of that process.
          (exit-code
           (apply #'call-process (append (list executable nil) arguments)))
          (process-output-string (with-current-buffer tmp-buffer
-			    (widen)
-			    (goto-char (point-min))
-			    (buffer-substring-no-properties (point-min) (point-max))
-			    )))
+				  (widen)
+				  (goto-char (point-min))
+				  (buffer-substring-no-properties (point-min) (point-max))
+				  )))
     (ignore-errors
       (kill-buffer tmp-buffer))
     (list :exit-code exit-code :output process-output-string :shell-command full-process-call-string)))

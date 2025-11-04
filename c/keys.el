@@ -84,17 +84,17 @@
 (Ox33b4O/$/set-key "C-x C-d C-s" 'describe-symbol)
 (Ox33b4O/$/set-key "C-x C-d C-g" 'shortdoc-display-group)
 (Ox33b4O/$/set-key "C-x C-d C-X"
-           #'(lambda (beg end) (interactive "r")
-               (save-buffer
-                (let ((tgtcode (replace-regexp-in-string "\\(\\s-\\|\\)+" " " (buffer-substring beg end))))
-                  (with-current-buffer "*Messages*"
-                    (read-only-mode -1)
-                    (erase-buffer)
-                    (read-only-mode 4))
-                  (if (eval-region beg end)
-                      (message "(%s) eval'd: \n```%s``` " (secure-hash 'sha256 tgtcode) tgtcode)
-                    (warn "(%s) nil in evalin': \n```%s``` " (secure-hash 'sha256 tgtcode) tgtcode))
-                  ))))
+		   #'(lambda (beg end) (interactive "r")
+		       (save-buffer
+			(let ((tgtcode (replace-regexp-in-string "\\(\\s-\\|\\)+" " " (buffer-substring beg end))))
+			  (with-current-buffer "*Messages*"
+			    (read-only-mode -1)
+			    (erase-buffer)
+			    (read-only-mode 4))
+			  (if (eval-region beg end)
+			      (message "(%s) eval'd: \n```%s``` " (secure-hash 'sha256 tgtcode) tgtcode)
+			    (warn "(%s) nil in evalin': \n```%s``` " (secure-hash 'sha256 tgtcode) tgtcode))
+			  ))))
 
 (Ox33b4O/$/set-key '("C-p" "M-p") #'(lambda () (interactive) (scroll-up 1)))
 (Ox33b4O/$/set-key '("C-n" "M-n") #'(lambda () (interactive) (scroll-down 1)))
@@ -128,11 +128,11 @@
 (Ox33b4O/$/set-key '("C-c C-n" "C-x C-n" "C-c C-M-n") 'uncomment-region)
 (Ox33b4O/$/set-key '("C-c c" "C-#" "C-c C-M-c") 'comment-region)
 (Ox33b4O/$/set-key '("C-c C-x C-e" "C-c C-d C-e"
-             "C-c C-e C-b" "C-x C-d C-e")
-           'Ox33b4O/$/base64-encode-region)
+		     "C-c C-e C-b" "C-x C-d C-e")
+		   'Ox33b4O/$/base64-encode-region)
 (Ox33b4O/$/set-key '("C-c C-x C-d" "C-c C-d C-d"
-             "C-x C-d C-d")
-           'base64-decode-region)
+		     "C-x C-d C-d")
+		   'base64-decode-region)
 
 (Ox33b4O/$/set-key '("C-c C-d C-3" "C-x C-d C-3" "C-c C-e C-3" "C-x C-e C-3") 'rot13-region)
 (Ox33b4O/$/set-key   '("C-z" "M-z" "C-_") 'undo      )
@@ -179,50 +179,50 @@
 
 
 (Ox33b4O/$/set-key   '(
-               "C-f"
-               )
-             'forward-char)
+		       "C-f"
+		       )
+		     'forward-char)
 (Ox33b4O/$/set-key   '(
-               "C-b"
-               )
-             'backward-char)
+		       "C-b"
+		       )
+		     'backward-char)
 
 (Ox33b4O/$/set-key   '(
-               "C-n"
-               )
-             'next-line)
+		       "C-n"
+		       )
+		     'next-line)
 (Ox33b4O/$/set-key   '(
-               "C-p"
-               )
-             'previous-line)
+		       "C-p"
+		       )
+		     'previous-line)
 (Ox33b4O/$/set-key   '(
-               "M-f"
-               )
-             'forward-word)
+		       "M-f"
+		       )
+		     'forward-word)
 (Ox33b4O/$/set-key   '(
-               "M-b"
-               )
-             'backward-word)
+		       "M-b"
+		       )
+		     'backward-word)
 (Ox33b4O/$/set-key   '(
-               "C-a"
-               )
-             'beginning-of-line)
+		       "C-a"
+		       )
+		     'beginning-of-line)
 (Ox33b4O/$/set-key   '(
-               "C-e"
-               )
-             'end-of-line)
+		       "C-e"
+		       )
+		     'end-of-line)
 (Ox33b4O/$/set-key   '(
-               "M-<"
-               )
-             'beginning-of-buffer)
+		       "M-<"
+		       )
+		     'beginning-of-buffer)
 (Ox33b4O/$/set-key   '(
-               "M->"
-               )
-             'end-of-buffer)
+		       "M->"
+		       )
+		     'end-of-buffer)
 (Ox33b4O/$/set-key   '(
-               "C-k"
-               )
-             'kill-line)
+		       "C-k"
+		       )
+		     'kill-line)
 
 (progn
   (put 'upcase-region 'disabled nil)
