@@ -119,7 +119,7 @@
   "."
   (if (null (file-attribute-modes (file-attributes (buffer-file-name))))
       (Ox33b4O/$/paint-file-buffer-nil)
-      (Ox33b4O/$/paint-file-buffer-existing-file)))
+    (Ox33b4O/$/paint-file-buffer-existing-file)))
 
 (defun Ox33b4O/$/paint-file-buffer-existing-file()
   "."
