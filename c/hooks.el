@@ -21,23 +21,23 @@
           #'(lambda ()
               (interactive)
               (define-key rust-mode-map
-                          (kbd "C-x C-e i")
-                          'rust-insert-members-from-file)
+                (kbd "C-x C-e i")
+                'rust-insert-members-from-file)
               (define-key rust-mode-map
-                          (kbd "C-x C-e C-i")
-                          'rust-insert-members-from-file)))
+                (kbd "C-x C-e C-i")
+                'rust-insert-members-from-file)))
 (add-hook 'typescript-mode-hook
           #'(lambda ()
               (interactive)
               (define-key typescript-mode-map
-                          (kbd "C-c C-f")
-                          #'g/format/prettify)))
+                (kbd "C-c C-f")
+                #'g/format/prettify)))
 (add-hook 'javascript-mode-hook
           #'(lambda ()
               (interactive)
               (define-key javascript-mode-map
-                          (kbd "C-c C-f")
-                          #'g/format/prettify)))
+                (kbd "C-c C-f")
+                #'g/format/prettify)))
 (add-hook 'web-mode-hook
           #'(lambda ()
               (interactive)
@@ -53,8 +53,8 @@
           #'(lambda ()
               (interactive)
               (define-key emacs-lisp-mode-map
-                          (kbd "C-c C-f")
-                          #'g/format/prettify)))
+                (kbd "C-c C-f")
+                #'g/format/prettify)))
 
 (add-hook 'lua-mode-hook
           #'(lambda ()
@@ -65,7 +65,7 @@
 ;; (add-hook 'shell-script-mode-hook 'flycheck-mode)
 
 
-(defun shell-script-remap-keymaps ()
+(defun remap-hook-local-map-to-g-format-prettify ()
   (interactive "*")
   (cond ((runtime-is-darwin)
          (progn
@@ -81,14 +81,6 @@
 (add-hook 'sh-mode-hook #'flymake-shellcheck-load)
 (add-hook 'shell-script-mode-hook #'flymake-shellcheck-load)
 
-(add-hook 'sh-mode-hook #'shell-script-remap-keymaps)
-(add-hook 'shell-script-mode-hook #'shell-script-remap-keymaps)
-
-;; (add-hook 'shell-script-mode-hook ;;
-;;           #'shell-script-remap-keymaps ;;
-;;           96 ;; 96=DEPTH
-;;           t ;; t=LOCAL
-;;           )
 
 (add-hook 'web-mode-hook
           #'(lambda ()
@@ -123,9 +115,6 @@
                 (progn
                   (setq buffer-auto-save-file-name auto-save-filename)))))
 
-;; (defvar shell-script-mode-map
-;;   (let ((keymap (make-sparse-keymap)))
-;;     (define-key keymap (kbd "C-c C-f")  #'g/format/prettify)
-;;     keymap)
-;;   "Keymap for `shell-script-mode'.")
-;; (defalias 'sh-mode-map 'shell-script-mode-map)
+(add-hook 'web-mode-hook #'remap-hook-local-map-to-g-format-prettify)
+(add-hook 'sh-mode-hook #'remap-hook-local-map-to-g-format-prettify)
+(add-hook 'shell-script-mode-hook #'remap-hook-local-map-to-g-format-prettify)
