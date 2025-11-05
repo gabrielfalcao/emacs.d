@@ -3402,17 +3402,29 @@ cursor position in buffer."
 
   (let* ((symbol-list (if (symbolp symbol-list) (list symbol-list)
                         symbol-list))
-         (tag-attributes (mapcar #'(lambda (sym) (format "%s=`%S'" sym (if (symbolp sym)
-                                                                           (symbol-value sym)
-                                                                         (format "%S" sym))))
+         (tag-attributes (mapcar #'(lambda (sym) (format "%s=`%s'" sym (if (symbolp sym)
+                                                                           (format "%S" (symbol-value sym))
+                                                                         (format "%s" sym))))
                                  context-symbol-list)
                          )
-         (inner-tags  (mapcar #'(lambda (sym) (auto-propertize-string (format "<%s>\n%S\n</%s>" sym (symbol-value sym) sym))) symbol-list)
+         (inner-tags  (mapcar #'(lambda (sym) (auto-propertize-string
+                                               ;;string
+                                               (format
+                                                "    <%s>\n    %s\n    </%s>"
+                                                sym
+                                                (string-join
+                                                 (mapcar #'(lambda (line) (format "    %s" line))
+                                                         (string-lines (format "%S" (symbol-value sym))))
+                                                 "\n")
+                                                sym)))
+
+                              symbol-list)
 		      )
          (debug-tag (auto-propertize-string (format "<debug %s>" (string-join tag-attributes " ")))
                     ))
 
-    (c-message  "%s\n%s\n%s" debug-tag (string-join inner-tags "\n") debug-tag)))
+    (c-message  "%s\n%s\n%s" debug-tag (string-join inner-tags "\n") debug-tag))
+  )
 
 (defun debug-active-buffers()
   (interactive)
@@ -3558,7 +3570,7 @@ signals error if the `string' argument is not a string"
     )
   )
 
-(defun call-process-get-status-and-string (executable &rest arguments)
+(defun call-process-get-status-and-string (executable &optional mix-output &rest arguments)
   "calls process via `call-process' capturing the output in a temporary buffer.
 
 The first argument `executable' is the name of an executable in the PATH
@@ -3572,27 +3584,76 @@ containing both the stdout and stderr of that process.
 "
   (if (not (stringp executable))
       (error "`executable' must be a string, instead got: %S" executable))
-  (let ((error-args (seq-reduce #'(lambda (ok val)
+  (let ((error-args (seq-reduce #'(lambda (ok next)
 				    (if (not (stringp next))
 					(list "nonstring argument %S" next))
 				    ok)
                                 arguments nil)))
-    (when (listp error-args)
-      (apply #'error error-args)))
+    (when (and (listp error-args)
+               (length> error-args 0))
+      (apply #'error (append (list "error: %S") error-args))))
 
-  (let* ((tmp-buffer-name (format "*call-process:%s%s" executable (concat arguments)))
+  (let* ((tmp-buffer-name (format "*call-process:%s%s" executable (string-join arguments "*")))
          (tmp-buffer (create-fresh-buffer tmp-buffer-name))
-         (full-process-call-string (format "%s %s" executable (string-join arguments " ")))
+         ;; TODO: use (slugify-string (format "%s %s" executable (string-join arguments " ")))
+         (stderr-file (make-temp-file "" )) ;; TODO: use (slugify-string (format "%s %s" executable (string-join arguments " ")))
+         ;; TODO: use (slugify-string (format "%s %s" executable (string-join arguments " ")))
+
+         (call-process-destination
+          (if (null mix-output)
+	      ;; mix-output is nil meaning stderr ought to go to a file and read later
+	      (list tmp-buffer stderr-file)
+	    (list tmp-buffer
+		  (progn
+		    (ignore-errors
+		      ;; mixing stdout and stderr means stderr-file is no longer needed
+		      (delete-file stderr-file))
+		    ;; t here means mix-output)
+		    t))
+	    ))
+         (call-process-args (append
+                             (list executable ;;PROGRAM
+                                          nil ;; INFILE
+                                          call-process-destination ;; DESTINATION
+                                          nil ;; DISPLAY
+                                          )
+                                    arguments))
+         (full-process-call-string (mapcar #'(lambda (arg) (if (or (not (stringp arg))
+                                                                   (not (characterp arg)))
+                                                               ;; then
+                                                               (format "%S" arg)
+                                                             ;; else
+                                                             (format "%s" arg)) ;;end if
+                                               )
+                                   call-process-args))
          (exit-code
-          (apply #'call-process (append (list executable nil) arguments)))
-         (process-output-string (with-current-buffer tmp-buffer
+	  (apply #'call-process call-process-args))
+         (process-stdout-string (with-current-buffer tmp-buffer
 				  (widen)
 				  (goto-char (point-min))
 				  (buffer-substring-no-properties (point-min) (point-max))
-				  )))
+				  ))
+         (process-stderr-string (when (null mix-output)
+                                  (let ((stderr-string
+                                         (with-temp-buffer
+                                           (save-mark-and-excursion
+                                             (insert-file-contents stderr-file nil nil t))
+                                           (widen)
+                                           (beginning-of-buffer)
+                                           (buffer-substring-no-properties (point-min) (point-max)))))
+                                    (ignore-errors (delete-file stderr-file))
+                                    stderr-string)))
+         ); end let* varlist
+
     (ignore-errors
       (kill-buffer tmp-buffer))
-    (list :exit-code exit-code :output process-output-string :shell-command full-process-call-string)))
+    (list
+     :exit-code exit-code
+     :stdout process-stdout-string
+     :stderr process-stderr-string
+     :call-process-args call-process-args
+     :shell-command full-process-call-string)))
+
 
 
 ;; git-status-porcelain stuff
@@ -3810,3 +3871,168 @@ classified-paths=%S
       );; end let[debug]
     ) ;;end let*
   );; end defun git-status-get-filenames
+
+
+(enable-debug-on-error)
+(defun flat-assoc-list-p (seq &optional signal-error)
+  "returns `t' if `seq' is valid flat-assoc-list or else `nil', unless
+`signal-error' is not nil, in which case signals an `error' instead.
+"
+  (let* ((error-or-nil #'(lambda (&rest error-args)
+			   (if (not (null signal-error))
+			       (apply #'error error-args)
+			     nil)))
+         (len (or (when (listp seq) (length seq))
+                  -1)) ;; set len
+         ;; end varlist
+         )
+    (cond ((= len -1)
+           (error-or-nil "`seq' must be a list, instead got %S" seq))
+          ((or (< len 2)
+	       (not (= (% len 2) 0)))
+           (error-or-nil "length `seq' should be even but actually is %d" len))
+          (t t))))
+
+(defun flat-list-get-assoc-key-value (seq key &optional signal-error)
+  "Retrieves value under `key' within sequence `seq' as long as the sequence
+is even-numbered with an even number of items where every even-numbered
+nth item is a symbol and its subsequent odd-numbered nth neighbor is a
+value.
+
+Returns `nil' if key is not found in `seq'.
+
+Signals error if
+
+* `seq' is odd-numbered or not a valid list
+* `key' is neither a symbol nor a string
+"
+  (if (flat-assoc-list-p seq signal-error)
+      (let* ((pairs (seq-partition seq 2))
+             (kv (alist-get key pairs)))
+        (cond ((and (not (null kv))
+                    (listp kv))
+	       (car kv))
+	      (t nil)))
+    ))
+
+
+(defun flat-list-get-assoc-keys (seq)
+  "`SEQ' `SIGNAL-ERROR'."
+
+  (if (flat-assoc-list-p seq)
+      (let* ((pairs (seq-partition seq 2))
+             (keys
+	      (mapcar #'(lambda (pair) (car pair)) pairs)))
+        keys)))
+
+(defun flat-list-get-assoc-values (seq)
+  "`SEQ' `SIGNAL-ERROR'."
+
+  (if (flat-assoc-list-p seq)
+      (let* ((pairs (seq-partition seq 2))
+             (values
+	      (mapcar #'(lambda (pair) (car (cdr pair))) pairs)))
+        values)))
+
+;; (defconst slugify-string-default-separator
+;;   "-"
+;;   "the separator that replaces non-slug-compatible characters of target string")
+;;
+;; (defun slugify-string-get-nonstandard-sep-assoc(sep)
+;;   (if (not (stringp sep))
+;;       (error "`sep' is not a string: %s" sep))
+;;   (save-match-data
+;;     (when (string-match "^\\(\\([a-zA-Z0-9@+/\\~!*_-]+\\)\\|\\([^a-zA-Z0-9[:space:]\n_-]+\\)\\)+$" sep)
+;;       (list :all (match-string 0 sep) ;;body
+;;             :outer (match-string 1 sep)
+;;             :ascii (match-string 2 sep)
+;;             :non-space (match-string 3 sep)) ;;end when body
+;;             )
+;;     ))
+;;
+;; (defun slugify-string-regexp-middle(sep)
+;;   "returns the regexp to slugify string based on a given separator"
+;;   (if (not (stringp sep))
+;;       (error "`sep' is not a string: %s" sep))
+;;
+;;   (let ((nonstandard-sep
+;;          (slugify-string-get-nonstandard-sep-assoc sep))
+;;         );; end let varlist
+;;     (or (when (or (string= sep "_")
+;;                   (string= sep slugify-string-default-separator)
+;;                   (not (listp nonstandard-sep)))
+;;           ;; body
+;;           "[^a-zA-Z0-9_-]+") ;;end when body
+;;         (when (listp nonstandard-sep)
+;;           (let ((nons-all (flat-list-get-assoc-key-value nonstandard-sep :all))
+;;                 (nons-outer (flat-list-get-assoc-key-value nonstandard-sep :outer))
+;;                 (nons-ascii (flat-list-get-assoc-key-value nonstandard-sep :ascii))
+;;                 (nons-nspc (flat-list-get-assoc-key-value nonstandard-sep :non-space)))
+;;             (c-message-debug-symbols (list 'nonstandard-sep
+;;                                            'nons-all  'nons-outer  'nons-ascii  'nons-nspc 'sep)
+;;                                      'sep 'nons-all  'nons-outer  'nons-ascii  'nons-nspc)
+;;
+;;             (format "[^a-zA-Z0-9_%s-]+" slugify-string-default-separator)))
+;;         slugify-string-default-separator))
+;;   )
+;;
+;;
+;;
+;; (defun slugify-string-regexp-ends(sep)
+;;   "returns the regexp to fix the ends of the string post slugifying it"
+;;   (if (not (stringp sep))
+;;       (error "`sep' is not a string: %s" sep))
+;;   (let ((nonstandard-sep
+;;          (slugify-string-get-nonstandard-sep-assoc sep))
+;;         );; end let varlist
+;;     (or (when (or (string= sep "_")
+;;                   (string= sep slugify-string-default-separator)
+;;                   (not (listp nonstandard-sep)))
+;;           (format "\\(^[%s]+\\|[%s]+$\\)" sep sep))
+;;         (when (listp nonstandard-sep)
+;;           (let ((nons-all (flat-list-get-assoc-key-value nonstandard-sep :all))
+;;                 (nons-outer (flat-list-get-assoc-key-value nonstandard-sep :outer))
+;;                 (nons-ascii (flat-list-get-assoc-key-value nonstandard-sep :ascii))
+;;                 (nons-nspc (flat-list-get-assoc-key-value nonstandard-sep :non-space))
+;;                 (actual-sep slugify-string-default-separator))
+;;             (c-message-debug-symbols (list 'nonstandard-sep
+;;                                            'nons-all  'nons-outer  'nons-ascii  'nons-nspc 'sep)
+;;                                      'sep 'nons-all  'nons-outer  'nons-ascii  'nons-nspc)
+;;
+;;             (format "\\(^[%s]+\\|[%s]+$\\)" actual-sep actual-sep)))
+;;         slugify-string-default-separator)
+;;     )
+;;   )
+;;
+;;
+;; (defun slugify-string (string &optional separator)
+;;   "returns a slugified version of `string'"
+;;   (let* ((raw-sep  (string-trim (cond ((stringp separator)
+;; 				       separator)
+;; 				      ((characterp separator)
+;; 				       (format "%s" separator))
+;; 				      ((null separator) slugify-string-default-separator)
+;; 				      (t (progn
+;;                                            (warn "ignoring slugify-string argument `separator' because it unexpected type: %S"
+;;                                                  separator)
+;;                                            slugify-string-default-separator)))))
+;;          (n-sep (replace-regexp-in-string "[[:space:]]+" "" raw-sep))
+;;          (n-len (length n-sep))
+;;          (sep (or (when (= n-len 0) slugify-string-default-separator)
+;;                   n-sep)))
+;;
+;;     (replace-regexp-in-string slugify-string-regexp-middle  ))
+;;
+;;
+(let* ((result (call-process-get-status-and-string "uname" "-a"))
+       (keys (flat-list-get-assoc-keys result))
+       (values (flat-list-get-assoc-values result))
+       (exit-code (flat-list-get-assoc-key-value result :exit-code))
+       (stdout (flat-list-get-assoc-key-value result :stdout))
+       (stderr (flat-list-get-assoc-key-value result :stderr))
+       (call-process-args (flat-list-get-assoc-key-value result :call-process-args))
+       (shell-command (flat-list-get-assoc-key-value result :shell-command)))
+
+  (erase-c-messages)
+  (c-message-debug-symbols (list 'result 'keys 'values 'exit-code 'stdout 'stderr 'call-process-args) 'shell-command)
+  )
