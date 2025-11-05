@@ -1,3 +1,11 @@
+;; (defun meta-function-map-git-status-man-output-class-characters-to-assoc-lists(beg end)
+;;   (interactive "*r")
+;;   (let* ((regexp "^`\\([[:space:]ACDMRTU!?]\\)'\\s-*=\\s-*\\(\\([a-z]+\\)\\(\\s-*\\([a-z]+\\|\\s-*\\)*\\)\\(\\s-+\\([(].*\\)\\)*\\)?$")
+;;          (replace-groups "
+;; ((string= \"\1\" input)
+;;  (list '\3
+;; "))))
+;; 
 (defconst git-status-porcelain-class-regexp
   "^`\\([[:space:]ACDMRTU!?]\\)'\\s-*=\\s-*\\(\\([a-z]+\\)\\(\\s-*\\([a-z]+\\|\\s-*\\)*\\)\\(\\s-+\\([(].*\\)\\)*\\)?$")
 
