@@ -10,6 +10,8 @@
   ;; (setq case-fold-search t)
   (defalias 'yes-or-no-p #'y-or-n-p)
   (defalias 'describe #'describe-symbol)
+  (defalias 'file-name-canonicalize #'expand-file-name)
+  (defalias 'file-name-full-path #'expand-file-name)
   )
 (add-to-list 'custom-safe-themes "5bd001a0f95d54174370e9275b1f594829930a1a95ed82741a5492facb7415e7")
 (setq find-function-C-source-directory (expand-file-name "~/projects/third_party/emacs/src"))

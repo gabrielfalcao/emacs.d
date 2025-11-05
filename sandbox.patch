@@ -1,0 +1,319 @@
+diff --git a/sandbox/git-porcelain-2.el b/sandbox/git-porcelain-2.el
+new file mode 100644
+index 0000000..8e2a157
+--- /dev/null
++++ b/sandbox/git-porcelain-2.el
+@@ -0,0 +1,97 @@
++(save-mark-and-excursion
++(widen)
++(beginning-of-buffer)
++(save-mark-and-excursion
++(replace-regexp-in-region
++ "^`\\([[:space:]ACDMRTU!?]\\)'\\s-*=\\s-*\\(\\([a-z]+\\)\\(\\s-*\\([a-z]+\\|\\s-*\\)*\\)\\(\\s-+\\([(].*\\)\\)*\\)?$"
++ ";; <begin `\\1'>\n;; \\\1 => \"\\1\"\n;; \\\2 => \"\\2\"\n;; \\\3 => \"\\3\"\n;; \\\4 => \"\\4\"\n;; \\\5 => \"\\5\"\n;; \\\6 => \"\\6\"\n;; \\\7 => \"\\7\"\n;; \\\8 => \"\\8\"\n;; \\\9 => \"\\9\"\n;; </end `\\1'>\n\n"
++ (point-min)
++ (point-max)
++ ))
++(save-mark-and-excursion
++ (flush-lines "[=][>]\\s-+\"\\(\\s-[^\"]\\)?" (point-min) (point-max) nil)
++ )
++)
++(defun map-git-porcelain(char)
++  "."
++  (cond
++
++;; <begin ` '>
++;; \1 => " "
++;; \2 => "unmodified"
++;; \3 => "unmodified"
++;; </end ` '>
++
++
++;; <begin `!'>
++;; \1 => "!"
++;; \2 => "ignored"
++;; \3 => "ignored"
++;; </end `!'>
++
++
++;; <begin `?'>
++;; \1 => "?"
++;; \2 => "untracked"
++;; \3 => "untracked"
++;; </end `?'>
++
++
++;; <begin `A'>
++;; \1 => "A"
++;; \2 => "added"
++;; \3 => "added"
++;; </end `A'>
++
++
++;; <begin `C'>
++;; \1 => "C"
++;; \2 => "copied (if config option status.renames is set to \"copies\")"
++;; \3 => "copied"
++;; \6 => " (if config option status.renames is set to \"copies\")"
++;; \7 => "(if config option status.renames is set to \"copies\")"
++;; </end `C'>
++
++
++;; <begin `D'>
++;; \1 => "D"
++;; \2 => "deleted"
++;; \3 => "deleted"
++;; </end `D'>
++
++
++;; <begin `M'>
++;; \1 => "M"
++;; \2 => "modified"
++;; \3 => "modified"
++;; </end `M'>
++
++
++;; <begin `R'>
++;; \1 => "R"
++;; \2 => "renamed"
++;; \3 => "renamed"
++;; </end `R'>
++
++
++;; <begin `T'>
++;; \1 => "T"
++;; \2 => "file type changed (regular file, symbolic link or submodule)"
++;; \3 => "file"
++;; \4 => " type changed"
++;; \6 => " (regular file, symbolic link or submodule)"
++;; \7 => "(regular file, symbolic link or submodule)"
++;; </end `T'>
++
++
++;; <begin `U'>
++;; \1 => "U"
++;; \2 => "updated but unmerged"
++;; \3 => "updated"
++;; \4 => " but unmerged"
++;; </end `U'>
++
++
++
++)
++  )
+diff --git a/sandbox/git-porcelain-3.el b/sandbox/git-porcelain-3.el
+new file mode 100644
+index 0000000..fa92142
+--- /dev/null
++++ b/sandbox/git-porcelain-3.el
+@@ -0,0 +1,105 @@
++;; (defconst git-status-porcelain-class-regexp
++;;   "^`\\([[:space:]ACDMRTU!?]\\)'\\s-*=\\s-*\\(\\([a-z]+\\)\\(\\s-*\\([a-z]+\\|\\s-*\\)*\\)\\(\\s-+\\([(].*\\)\\)*\\)?$")
++
++;; (defconst git-status-porcelain-class-replacement
++;;   "((string= \"\1\" input)\n (list :sym '\3\n :desc \"\4\"\n :long_desc \"\2\"\n :note \"\7\"\n) \n;; \\3 => \3\n;; \\6 => \6\n;; end list \n);; end clause\n\n"
++;;   )
++
++;; (save-mark-and-excursion
++;;   (widen)
++;;   (beginning-of-buffer)
++;;   (save-mark-and-excursion
++;;     (replace-regexp-in-region
++;;      git-status-porcelain-class-regexp
++;;      git-status-porcelain-class-replacement
++;;      (point-min)
++;;      (point-max)
++;;      ))
++;;   (save-mark-and-excursion
++;;     (flush-lines ":note\s-+\"\"" (point-min) (point-max) nil)
++;;     )
++;;   (save-mark-and-excursion
++;;     (flush-lines ";\s-*\\[36]" (point-min) (point-max) nil)
++;;     )
++;;   )
++
++(defun map-git-porcelain(char)
++  "."
++  (cond
++   ((string= " " input)
++    (list :sym 'unmodified
++	  :long_desc "unmodified"
++	  )
++
++    )
++
++   ((string= "!" input)
++    (list :sym 'ignored
++	  :long_desc "ignored"
++	  )
++
++    )
++
++   ((string= "?" input)
++    (list :sym 'untracked
++	  :long_desc "untracked"
++	  )
++
++    )
++
++   ((string= "A" input)
++    (list :sym 'added
++	  :long_desc "added"
++	  )
++
++    )
++
++   ((string= "C" input)
++    (list :sym 'copied
++	  :long_desc "copied (if config option status.renames is set to \"copies\")"
++	  :note "(if config option status.renames is set to \"copies\")"
++	  )
++
++    )
++
++   ((string= "D" input)
++    (list :sym 'deleted
++	  :long_desc "deleted"
++	  )
++
++    )
++
++   ((string= "M" input)
++    (list :sym 'modified
++	  :long_desc "modified"
++	  )
++
++    )
++
++   ((string= "R" input)
++    (list :sym 'renamed
++	  :long_desc "renamed"
++	  )
++
++    )
++
++   ((string= "T" input)
++    (list :sym 'file
++	  :desc " type changed"
++	  :long_desc "file type changed (regular file, symbolic link or submodule)"
++	  :note "(regular file, symbolic link or submodule)"
++	  )
++
++    )
++
++   ((string= "U" input)
++    (list :sym 'updated
++	  :desc " but unmerged"
++	  :long_desc "updated but unmerged"
++	  )
++
++    )
++
++   (t (list))
++   )
++  )
+diff --git a/sandbox/git-porcelain.el b/sandbox/git-porcelain.el
+new file mode 100644
+index 0000000..6edcef9
+--- /dev/null
++++ b/sandbox/git-porcelain.el
+@@ -0,0 +1,75 @@
++;; (widen)
++;; (beginning-of-buffer)
++;; (replace-regexp
++;;  "^`\\([[:space:]ACDMRTU!?]\\)'\\s-*=\\s-*\\(\\([a-z]+\\)\\(\\s-*\\([a-z]+\\|\\s-*\\)*\\)\\(\\s-+\\([(].*\\)\\)*\\)?$"
++;;  ";; <begin `\\1'\\n;; \\\\1 => \"\\1\"\\n;; \\\\2 => \"\\2\"\\n;; \\\\3 => \"\\3\"\\n;; \\\\4 => \"\\4\"\\n;; \\\\5 => \"\\5\"\\n;; \\\\6 => \"\\6\"\\n;; \\\\7 => \"\\7\"\\n;; \\\\8 => \"\\8\"\\n;; \\\\9 => \"\\9\"\\n;; </end `\\1'>\\n\\n\\n"
++;;  );; replace-regexp
++;; (flush-lines "[=][>]\\s-+\"\\(\\s-[^\"]\\)?")
++(defun git-status-porcelain-categorized()
++  "runs git status --porcelain=v1 in the current working directory and parses the status characters according to the list below:
++
++;; <begin ` '
++;; \1 => " "
++;; \2 => "unmodified"
++;; \3 => "unmodified"
++;; </end ` '>
++
++;; <begin `!'
++;; \1 => "!"
++;; \2 => "ignored"
++;; \3 => "ignored"
++;; </end `!'>
++
++;; <begin `?'
++;; \1 => "?"
++;; \2 => "untracked"
++;; \3 => "untracked"
++;; </end `?'>
++
++;; <begin `A'
++;; \1 => "A"
++;; \2 => "added"
++;; \3 => "added"
++;; </end `A'>
++
++;; <begin `C'
++;; \1 => "C"
++;; \2 => "copied (if config option status.renames is set to \"copies\")"
++;; \3 => "copied"
++;; \7 => "(if config option status.renames is set to \"copies\")"
++;; </end `C'>
++
++;; <begin `D'
++;; \1 => "D"
++;; \2 => "deleted"
++;; \3 => "deleted"
++;; </end `D'>
++
++;; <begin `M'
++;; \1 => "M"
++;; \2 => "modified"
++;; \3 => "modified"
++;; </end `M'>
++
++;; <begin `R'
++;; \1 => "R"
++;; \2 => "renamed"
++;; \3 => "renamed"
++;; </end `R'>
++
++;; <begin `T'
++;; \1 => "T"
++;; \2 => "file type changed (regular file, symbolic link or submodule)"
++;; \3 => "file"
++;; \7 => "(regular file, symbolic link or submodule)"
++;; </end `T'>
++
++;; <begin `U'
++;; \1 => "U"
++;; \2 => "updated but unmerged"
++;; \3 => "updated"
++;; </end `U'>
++."
++  (interactive)
++  ;;(replace-regexp-in-string regexp rep string &optional fixedcase literal subexp start)
++)
+diff --git a/sandbox/reb-tmp.el b/sandbox/reb-tmp.el
+new file mode 100644
+index 0000000..c33a304
+--- /dev/null
++++ b/sandbox/reb-tmp.el
+@@ -0,0 +1,18 @@
++(defun git-status-get-filenames()
++  "runs git status --porcelain=v1 in the current working directory and parses the status characters according to the list below:
++
++` ' = unmodified
++`!' = ignored
++`?' = untracked
++`A' = added
++`C' = copied (if config option status.renames is set to \"copies\")
++`D' = deleted
++`M' = modified
++`R' = renamed
++`T' = file type changed (regular file, symbolic link or submodule)
++`U' = updated but unmerged
++
++."
++  (interactive)
++  ;;(replace-regexp-in-string regexp rep string &optional fixedcase literal subexp start)
++)

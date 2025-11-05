@@ -1,0 +1,5 @@
+M  c/boot.el
+MM c/functions.el
+A  c/git-status-porcelain.rst
+D  c/git-status.man
+?? c/git.st.porc
