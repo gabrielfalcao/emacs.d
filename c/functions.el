@@ -1203,19 +1203,7 @@
   (let ((ref (read-string "git diff against ref: " "HEAD")))
     (git-diff-internal ref)))
 
-(defun git-status-porcelain ()
-  "."
-  (let* ((git-status-output-buf
-          (get-buffer-create "*git-status-porcelain*"))
-         (exitcode
-          (call-process
-           "git" nil git-status-output-buf nil "status" "--porcelain"))
-         (output
-          (with-current-buffer git-status-output-buf
-	    (widen)
-	    (buffer-string))))
-    (ignore-errors (kill-buffer git-status-output-buf))
-    (cons exitcode output)))
+
 
 (defun git-status ()
   "."
@@ -1250,8 +1238,37 @@
                      (call-process "git" nil git-commit-output-buf nil "commit"
                                    (buffer-file-name-relative)
                                    "-m"
-                                   (format "'%s'" commit-message))))
-               exitcode))
+                                   (format "%s" commit-message))))
+	       exitcode))
+	 (progn
+           (message "commited '%s'" commit-message)
+           (kill-buffer git-commit-output-buf))
+       (progn
+         (user-error
+          (format "failed to commit '%s': %s" commit-message
+                  (with-current-buffer git-commit-output-buf
+		    (widen)
+		    (buffer-string)))
+          (kill-buffer git-commit-output-buf)))))))
+
+
+(defun git-commit-staged ()
+  "."
+  (interactive)
+  (let* ((git-commit-output-buf (get-buffer-create "*git-commit*"))
+         (current-working-dir (file-name-directory (expand-file-name (buffer-file-name))))
+         (commit-message
+          (read-string "Commit Message: " (format "saves %s" current-working-dir)))
+         ) ;; let
+    (or
+     (when (zerop (length commit-message))
+       (user-error "aborted due to empty commit message"))
+     (if (eq 0
+             (let* ((exitcode
+                     (call-process "git" nil git-commit-output-buf nil "commit"
+                                   "-m"
+                                   (format "%s" commit-message))))
+	       exitcode))
 	 (progn
            (message "commited '%s'" commit-message)
            (kill-buffer git-commit-output-buf))
@@ -1267,11 +1284,11 @@
 
 (defun get-regexp-github-remote-url ()
   "."
-  "\(https://github[.]com[/]\|git@github[.]com[:]\)\([a-zA-Z0-9_-]+\)[/]\([a-zA-Z0-9_-]+\)[.]git")
+  "\\(https://github[.]com[/]\\|git@github[.]com[:]\\)\\([a-zA-Z0-9_-]+\\)[/]\\([a-zA-Z0-9_-]+\\)[.]git")
 
 (defun get-git-remote-url-vendor-username-and-repo ()
   "."
-  "\(https://[^.]+[.][^.]+[/]\|git@[^.]+[.][^.]+[:]\)\([a-zA-Z0-9_-]+\)[/]\([a-zA-Z0-9_-]+\)[.]git")
+  "\\(https://[^.]+[.][^.]+[/]\\|git@[^.]+[.][^.]+[:]\\)\\([a-zA-Z0-9_-]+\\)[/]\\([a-zA-Z0-9_-]+\\)[.]git")
 
 (defun git-push (allow-github)
   "."
@@ -1284,7 +1301,7 @@
          (github-remote
           (-first
            #'(lambda (remote)
-               (string-match
+	       (string-match
                 (get-regexp-github-remote-url)
                 (cdr remote)
                 nil t )))
@@ -1318,12 +1335,12 @@
       (let* ((remote-name (car push-remote))
              (remote-url (cdr push-remote))
              (git-push-output-buf
-              (get-buffer-create (format "*git-push-%s*" remote-name)))
+	      (get-buffer-create (format "*git-push-%s*" remote-name)))
              (exitcode
-              (call-process
-               "git" nil git-push-output-buf nil "push" remote-name))
+	      (call-process
+	       "git" nil git-push-output-buf nil "push" remote-name))
              (output
-              (with-current-buffer git-push-output-buf
+	      (with-current-buffer git-push-output-buf
 	        (widen)
 	        (buffer-string))))
 	(ignore-errors (kill-buffer git-push-output-buf))
@@ -1483,16 +1500,16 @@
    (save-excursion
      (let* ((beg
              (progn
-               (goto-char (point-min))
-               (forward-word)
-               (point)))
+	       (goto-char (point-min))
+	       (forward-word)
+	       (point)))
             (end (point-max))
             (region (buffer-substring-no-properties beg end))
             (repl
              (replace-regexp-in-string
-              "^\\([#]\\s-*\\)?\\([[].*\\)"
-              "\n\\1\\2"
-              region)))
+	      "^\\([#]\\s-*\\)?\\([[].*\\)"
+	      "\n\\1\\2"
+	      region)))
        (replace-region-contents beg end #'(lambda () repl ))
 
        (if (not (string= region repl))
@@ -1573,8 +1590,8 @@
                    (message
                     (format "found open parenthesis before next open parenthesis, recursive call should happen next"))
                    t)
-               ;; else, done!
-               '(("beg-pos" . beg-pos)
+	       ;; else, done!
+	       '(("beg-pos" . beg-pos)
                  ("open-pos" . open-pos)
                  ("open-count" . open-count)
                  ("close-pos" . close-pos)
@@ -1587,7 +1604,7 @@
              ;; go backward to the last close parenthesis so that while in recursive call fast-forwards it
              (goto-char open-pos)
              (message
-              (format "recursive call to (goto-next-close-parenthesis open-char: %s close-char: %s open-count: %s close-count: %s close-pos: %s)"  open-char close-char open-count close-count close-pos))
+	      (format "recursive call to (goto-next-close-parenthesis open-char: %s close-char: %s open-count: %s close-count: %s close-pos: %s)"  open-char close-char open-count close-count close-pos))
              (goto-next-close-parenthesis open-char close-char open-count close-count open-pos))))))
      (when (not (null (re-search-forward open-regexp nil t)))
        ;; no close parenthesis found, search next open parenthesis
@@ -1610,7 +1627,7 @@
          (while too-many-open-parenthesis
            (progn
              (message
-              (format "too-many-open-parenthesis: %s" (state)))
+	      (format "too-many-open-parenthesis: %s" (state)))
              (if (not (null (re-search-forward close-regexp nil t)))
                  (progn
                    (message
@@ -1620,24 +1637,24 @@
                    (goto-char close-pos)
 
                    (if (> open-pos close-pos)
-                       (progn
+		       (progn
                          (message
                           (format "and such close parenthesis happens to appear before open parenthesis: %s"
                                   (state)))
                          ;; (setq open-count (1+ close-count))
                          )
                      (progn
-                       (message
+		       (message
                         (format "but close parenthesis appears after close parenthesis: %s"
                                 (state)))
-                       (setq open-count (1+ close-count))))
+		       (setq open-count (1+ close-count))))
 
                    (setq too-many-open-parenthesis
                          (or
                           (> open-pos close-pos)
                           (> open-count close-count))))
-               ;;else, exit loop
-               (setq too-many-open-parenthesis nil));; end if
+	       ;;else, exit loop
+	       (setq too-many-open-parenthesis nil));; end if
              t))
          (setq end-pos close-pos)
 
@@ -1660,16 +1677,16 @@
            (concat "\\(\\s-\\|\n\\)*[" close-char "]")))
          (open-count
           (if (>= (point) til-next-open)
-              (progn (goto-char til-next-open) 1)
+	      (progn (goto-char til-next-open) 1)
             0))
          (close-count
           (if (and (eq 1 open-count) (> (point) til-next-close))
-              (progn (goto-char til-next-close) 1)
+	      (progn (goto-char til-next-close) 1)
             0)))
     (defun state ()
       (format "{\n    point: %s\n    til-next-open: %s,\n    til-next-close: %s,\n    open-count: %s,\n    close-count: %s\n}"
-              (point)
-              til-next-open til-next-close open-count close-count))
+	      (point)
+	      til-next-open til-next-close open-count close-count))
 
     (message "%s" (state))
     (goto-next-close-parenthesis open-char close-char open-count close-count)
@@ -1976,8 +1993,8 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
          (revert-buffer t t t)))
      (user-error
       (format "elfmt %s failed with code: %s"
-              (abbreviate-file-name current-filename)
-              exit-code)))))
+	      (abbreviate-file-name current-filename)
+	      exit-code)))))
 
 (defun g/format/prettify ()
   (interactive "*")
@@ -2728,9 +2745,10 @@ The `:background' property is computed in contrast with its
     (cons exitcode output)))
 
 (defun git-delete ()
-  "."
+  "runs \"git rm -rf \" against `buffer-file-name'."
+  (interactive)
   (let* ((git-status-output-buf
-          (get-buffer-create "*git-status-porcelain*"))
+          (get-buffer-create "*git-delete*"))
          (exitcode
           (call-process
            "git" nil git-status-output-buf nil "rm" "-rf"
@@ -3575,3 +3593,220 @@ containing both the stdout and stderr of that process.
     (ignore-errors
       (kill-buffer tmp-buffer))
     (list :exit-code exit-code :output process-output-string :shell-command full-process-call-string)))
+
+
+;; git-status-porcelain stuff
+(defun git-status-porcelain ()
+  "."
+  (let* ((git-status-output-buf
+          (get-buffer-create "*git-status-porcelain*"))
+         (exitcode
+          (call-process
+           "git" nil git-status-output-buf nil "status" "--porcelain"))
+         (output
+          (with-current-buffer git-status-output-buf
+	    (widen)
+	    (buffer-string))))
+    (ignore-errors (kill-buffer git-status-output-buf))
+    (list exitcode output)))
+
+;; (defconst git-status-porcelain-class-group-regexp
+;;   "\\([[:space:]!?ACDMRTU]\\)"
+
+;;   "regular expression used within `git-status-porcelain-class-group-regexp' in call to `string-match'."
+;;   )
+
+(defconst git-status-porcelain-regexp
+  ;; "^\\(.\\)\\(.\\)\\s-+\\(.+\\)$"
+  "^\\([[:space:]!?ACDMRTU]\\)\\([[:space:]!?ACDMRTU]\\)[[:space:]]+\\(.*\\)$"
+
+  "regular expression used within `git-status-get-filenames' in call to `string-match'."
+  )
+
+(defun git-status-porcelain-class-char-to-symbol(char)
+  "`maps the given `char' to semantic symbols according to table below:
+
+' ' = unmodified
+`!' = ignored
+`?' = untracked
+`A' = added
+`C' = copied (if config option status.renames is set to \"copies\")
+`D' = deleted
+`M' = modified
+`R' = renamed
+`T' = file type changed (regular file, symbolic link or submodule)
+`U' = updated but unmerged
+."
+  (let ((input (cond ((or (stringp char) (characterp char))
+		      (format "%s" char))
+		     ((and (listp char)
+                           (length= char 1))
+		      (car char))
+		     (t
+		      (error "invalid value (neither string nor character) for argument `char': %S" char))))
+        (len (length input)))
+    (if (> len 1)
+        (error "`char' argument must be a string of length 1, instead got `%S' (normalized to `%s' of length `%d')"
+	       char input len))
+    (cond
+
+     ((string= " " input)
+      (list :sym 'unmodified
+	    :desc ""
+	    :long_desc "unmodified"
+	    )
+      ;; end list
+      );; end clause
+
+     ((string= "!" input)
+      (list :sym 'ignored
+	    :desc ""
+	    :long_desc "ignored"
+	    )
+      ;; end list
+      );; end clause
+
+     ((string= "?" input)
+      (list :sym 'untracked
+	    :desc ""
+	    :long_desc "untracked"
+	    )
+      ;; end list
+      );; end clause
+
+     ((string= "A" input)
+      (list :sym 'added
+	    :desc ""
+	    :long_desc "added"
+	    )
+      ;; end list
+      );; end clause
+
+     ((string= "C" input)
+      (list :sym 'copied
+	    :desc ""
+	    :long_desc "copied (if config option status.renames is set to \"copies\")"
+	    :note "(if config option status.renames is set to \"copies\")"
+	    )
+      ;; end list
+      );; end clause
+
+     ((string= "D" input)
+      (list :sym 'deleted
+	    :desc ""
+	    :long_desc "deleted"
+	    )
+      ;; end list
+      );; end clause
+
+     ((string= "M" input)
+      (list :sym 'modified
+	    :desc ""
+	    :long_desc "modified"
+	    )
+      ;; end list
+      );; end clause
+
+     ((string= "R" input)
+      (list :sym 'renamed
+	    :desc ""
+	    :long_desc "renamed"
+	    )
+      ;; end list
+      );; end clause
+
+     ((string= "T" input)
+      (list :sym 'file
+	    :desc " type changed"
+	    :long_desc "file type changed (regular file, symbolic link or submodule)"
+	    :note "(regular file, symbolic link or submodule)"
+	    )
+      ;; end list
+      );; end clause
+
+     ((string= "U" input)
+      (list :sym 'updated
+	    :desc " but unmerged"
+	    :long_desc "updated but unmerged"
+	    )
+      ;; end list
+      );; end clause
+
+
+     );;end cond
+    );;end let
+  );; end defun git-status-porcelain-class-char-to-symbol
+
+(defun git-status-porcelain-categorized()
+  "runs git status --porcelain=v1 in the current working directory and parses the status characters according to the list below:
+
+` ' = unmodified
+`!' = ignored
+`?' = untracked
+`A' = added
+`C' = copied (if config option status.renames is set to \"copies\")
+`D' = deleted
+`M' = modified
+`R' = renamed
+`T' = file type changed (regular file, symbolic link or submodule)
+`U' = updated but unmerged
+
+."
+  (interactive)
+  ;;(replace-regexp-in-string regexp rep string &optional fixedcase literal subexp start)
+
+  (let* ((status-code-and-output (git-status-porcelain))
+         (status (car status-code-and-output))
+         (output (car (cdr status-code-and-output)))
+         (output-lines (save-match-data (string-lines output t)))
+	 ;; (seq-filter #'numberp '(a b 3 4 f 6))
+	 ;;   ⇒ (3 4 6)
+	 ;;
+	 ;; (seq-remove #'numberp '(1 2 c d 5))
+	 ;;   ⇒ (c d)
+
+         (classified-paths
+	  ;;(seq-remove #'null
+          (mapcar #'(lambda (line)
+		      (save-match-data
+                        (setq case-fold-search nil) ;; case sensitive
+			(if (string-match git-status-porcelain-regexp line)
+			    (let ((staged (match-string 1 line))   ;; then
+				  (unstaged (match-string 2 line)) ;; then
+				  (path (match-string 3 line)))    ;; then
+			      (list 'staged staged             ;; then
+				    'unstaged unstaged         ;; then
+				    'path path))               ;; end inner let varlist
+
+                          ;; else
+                          nil ;; else ;; KGxpc3QgJ3N0YWdlZCBuaWwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICd1bnN0YWdlZCBuaWwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICdwYXRoIG5pbCkpKQ==
+                          ) ;;end if
+                        ) ;; end save-match-data
+		      ) ;;end lambda
+                  ;; sequence
+                  output-lines ;; sequence
+                  ) ;; mapcar
+	  ;; ) ;;seq-remove
+          )
+         )  ;; end let* varlist
+    ;; let* [body]
+    (let ;; [debug]
+        ((result (format "
+status=%S
+output=%S
+output-lines=%S
+classified-paths=%S
+"
+                         status
+                         output
+                         output-lines
+                         classified-paths
+                         ))
+         ) ;; end varlist let[debug]
+      ;; let[debug] body
+      (erase-messages)
+      (message "%s" result)
+      (c-message-open "%s" result)
+      );; end let[debug]
+    ) ;;end let*
+  );; end defun git-status-get-filenames
