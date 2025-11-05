@@ -35,14 +35,22 @@
       t
     nil))
 
-(defun runtime-is-macos()
-  "returns `t' if emacs is currently running in GNU/Darwin"
+(defun runtime-is-darwin()
+  "returns `t' if emacs is currently running in Apple/Darwin"
   (if (string= kernel-name "Darwin")
       t
     nil))
 
-(defalias 'runtime-is-osx #'runtime-is-macos)
-(defalias 'runtime-is-darwin #'runtime-is-macos)
+(defconst kernel-is-linux
+  (runtime-is-linux)
+  "constant that is `t' when emacs is running on GNU/Linux kernel or `nil' otherwise")
+(defconst kernel-is-darwin
+  (runtime-is-darwin)
+  "constant that is `t' when emacs is running on Apple/Darwin kernel or `nil' otherwise")
+
+(defalias 'runtime-is-gnu #'runtime-is-linux)
+(defalias 'runtime-is-osx #'runtime-is-darwin)
+(defalias 'runtime-is-macos #'runtime-is-darwin)
 
 (defun font-size-for-system()
   "retrieve font-size based on `kernel-name'"
@@ -98,7 +106,8 @@
 (defalias 'quotient #'/)
 (defalias 'times #'*)
 (defalias 'difference #'-)
-(line-number-mode)
+(linum-mode 1)       ;; enable display of numbers in the left margin
+(line-number-mode 1) ;; enable display of line number in the mode line
 
 (setq debug-on-error nil)
 

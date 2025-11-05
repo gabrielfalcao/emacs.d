@@ -69,14 +69,13 @@
   (interactive "*")
   (cond ((runtime-is-darwin)
          (progn
-           (keymap-unset (current-local-map) "C-c C-f")
-           (keymap-set (current-local-map) "C-c C-f" #'g/format/prettify)))
-        (or (not (functionp (symbol-value 'keymap-unset)))
-            (not (functionp (symbol-value 'keymap-set))))
-        (c-message "shfmt not available in C-c C-f")
+        (keymap-unset (current-local-map) "C-c C-f")
+        (keymap-set (current-local-map) "C-c C-f" #'g/format/prettify)))
+        ((or (not (functionp (intern 'keymap-unset)))
+             (not (functionp (intern 'keymap-set))))
+         (c-message "shfmt not available via C-c C-f"))
         )
   )
-
 
 (add-hook 'sh-mode-hook #'flymake-shellcheck-load)
 (add-hook 'shell-script-mode-hook #'flymake-shellcheck-load)
