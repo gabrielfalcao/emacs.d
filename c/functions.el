@@ -164,6 +164,7 @@
                                #'(lambda ()
                                    (collapse-string region))))))
 
+
 (defun colorize-hexadecimal-text ()
   (interactive)
   (save-excursion
@@ -3395,6 +3396,18 @@ cursor position in buffer."
       );; `end' `or' clause
   )
 
+(defun display-symbol (sym &optional fallback)
+  "returns a string with the symbol's value"
+  (format "%S" (or (when (stringp sym)
+                     (intern sym))
+                   (when (symbolp sym)
+                     (symbol-value sym))
+                   (when (not (null fallback))
+                     fallback)
+                   sym
+                   )))
+(defalias 'symbol-display #'display-symbol)
+
 (defun c-message-debug-symbols (symbol-list &rest context-symbol-list)
   (if (and (not (listp symbol-list))
            (not (symbolp symbol-list)))
@@ -3402,11 +3415,12 @@ cursor position in buffer."
 
   (let* ((symbol-list (if (symbolp symbol-list) (list symbol-list)
                         symbol-list))
-         (tag-attributes (mapcar #'(lambda (sym) (format "%s=`%s'" sym (if (symbolp sym)
-                                                                           (format "%S" (symbol-value sym))
-                                                                         (format "%s" sym))))
-                                 context-symbol-list)
-                         )
+         (tag-attributes
+          (mapcar #'(lambda (sym)
+                      (format "%s=%s" sym (display-symbol sym))
+                      ) ;;end lambda
+                  context-symbol-list) ;; end mapcar
+          ) ;;end var tag-attributes
          (inner-tags  (mapcar #'(lambda (sym) (auto-propertize-string
                                                ;;string
                                                (format
@@ -3414,14 +3428,15 @@ cursor position in buffer."
                                                 sym
                                                 (string-join
                                                  (mapcar #'(lambda (line) (format "    %s" line))
-                                                         (string-lines (format "%S" (symbol-value sym))))
+                                                         (string-lines (display-symbol sym)) ;;end string-lines
+                                                         );;end mapcar
                                                  "\n")
-                                                sym)))
-
-                              symbol-list)
-		      )
+                                                sym))) ;; end mapcar lambda
+                              symbol-list) ;; end mapcar
+		      ) ;;end var inner-tags
          (debug-tag (auto-propertize-string (format "<debug %s>" (string-join tag-attributes " ")))
-                    ))
+                    ) ;;end var debug-tag
+         )
 
     (c-message  "%s\n%s\n%s" debug-tag (string-join inner-tags "\n") debug-tag))
   )
@@ -3613,11 +3628,11 @@ containing both the stdout and stderr of that process.
 	    ))
          (call-process-args (append
                              (list executable ;;PROGRAM
-                                          nil ;; INFILE
-                                          call-process-destination ;; DESTINATION
-                                          nil ;; DISPLAY
-                                          )
-                                    arguments))
+                                   nil ;; INFILE
+                                   call-process-destination ;; DESTINATION
+                                   nil ;; DISPLAY
+                                   )
+                             arguments))
          (full-process-call-string (mapcar #'(lambda (arg) (if (or (not (stringp arg))
                                                                    (not (characterp arg)))
                                                                ;; then
@@ -3625,7 +3640,7 @@ containing both the stdout and stderr of that process.
                                                              ;; else
                                                              (format "%s" arg)) ;;end if
                                                )
-                                   call-process-args))
+					   call-process-args))
          (exit-code
 	  (apply #'call-process call-process-args))
          (process-stdout-string (with-current-buffer tmp-buffer
@@ -4024,6 +4039,8 @@ Signals error if
 ;;     (replace-regexp-in-string slugify-string-regexp-middle  ))
 ;;
 ;;
+
+
 (let* ((result (call-process-get-status-and-string "uname" "-a"))
        (keys (flat-list-get-assoc-keys result))
        (values (flat-list-get-assoc-values result))
@@ -4036,3 +4053,4 @@ Signals error if
   (erase-c-messages)
   (c-message-debug-symbols (list 'result 'keys 'values 'exit-code 'stdout 'stderr 'call-process-args) 'shell-command)
   )
+                                        ;
