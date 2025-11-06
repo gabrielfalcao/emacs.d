@@ -3611,21 +3611,16 @@ containing both the stdout and stderr of that process.
   (let* ((tmp-buffer-name (format "*call-process:%s%s" executable (string-join arguments "*")))
          (tmp-buffer (create-fresh-buffer tmp-buffer-name))
          ;; TODO: use (slugify-string (format "%s %s" executable (string-join arguments " ")))
-         (stderr-file (make-temp-file "" )) ;; TODO: use (slugify-string (format "%s %s" executable (string-join arguments " ")))
+         (stderr-file (when (null mix-output)
+                        (make-temp-file (file-name-nondirectory executable) ))) ;; TODO: use (slugify-string (format "%s %s" executable (string-join arguments " ")))
          ;; TODO: use (slugify-string (format "%s %s" executable (string-join arguments " ")))
 
          (call-process-destination
-          (if (null mix-output)
-	      ;; mix-output is nil meaning stderr ought to go to a file and read later
-	      (list tmp-buffer stderr-file)
-	    (list tmp-buffer
-		  (progn
-		    (ignore-errors
-		      ;; mixing stdout and stderr means stderr-file is no longer needed
-		      (delete-file stderr-file))
-		    ;; t here means mix-output)
-		    t))
-	    ))
+          (or (when (null mix-output)
+		;; mix-output is nil meaning stderr ought to go to a file and read later
+		(list tmp-buffer stderr-file))
+	      tmp-buffer)
+	  )
          (call-process-args (append
                              (list executable ;;PROGRAM
                                    nil ;; INFILE
@@ -3648,17 +3643,9 @@ containing both the stdout and stderr of that process.
 				  (goto-char (point-min))
 				  (buffer-substring-no-properties (point-min) (point-max))
 				  ))
-         (process-stderr-string (when (null mix-output)
-                                  (let ((stderr-string
-                                         (with-temp-buffer
-                                           (save-mark-and-excursion
-                                             (insert-file-contents stderr-file nil nil t))
-                                           (widen)
-                                           (beginning-of-buffer)
-                                           (buffer-substring-no-properties (point-min) (point-max)))))
-                                    (ignore-errors (delete-file stderr-file))
-                                    stderr-string)))
+         (process-stderr-string (read-file-to-string stderr-file))
          ); end let* varlist
+
 
     (ignore-errors
       (kill-buffer tmp-buffer))
@@ -3668,6 +3655,7 @@ containing both the stdout and stderr of that process.
      :stderr process-stderr-string
      :call-process-args call-process-args
      :shell-command full-process-call-string)))
+
 
 
 
@@ -4041,7 +4029,7 @@ Signals error if
 ;;
 
 
-(let* ((result (call-process-get-status-and-string "uname" "-a"))
+(let* ((result (call-process-get-status-and-string "uname" nil "-a"))
        (keys (flat-list-get-assoc-keys result))
        (values (flat-list-get-assoc-values result))
        (exit-code (flat-list-get-assoc-key-value result :exit-code))
