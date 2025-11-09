@@ -67,12 +67,12 @@ warn_prefixed() {
     1>&2 echo -e "\x1b[1;38;2;${warn_prefix_color_rgb}m[${prefix}]\x1b[1;38;2;${warn_color_rgb}m\n${message}\x1b[0m"
 }
 warn() {
-    local -- linenum="${BASH_LINENO[1]}"
+    local -- linenum="${BASH_LINENO[0]}"
     warn_prefixed "[${script_name} warn at ${linenum}]" "${@}"
 }
 
 error() {
-    local -- linenum="${BASH_LINENO[1]}"
+    local -- linenum="${BASH_LINENO[0]}"
     error_prefixed "[${script_name} error at ${linenum}]" "${@}"
 }
 error_prefixed() {
