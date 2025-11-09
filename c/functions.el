@@ -2482,9 +2482,16 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
     (insert-timestamp)))
 
 (defun todo ()
-  "."
+  "opens the todo page."
   (interactive)
   (open-note (file-name-concat (current-notes-location) "todo.rst")))
+
+(defun todo-today (&optional utc)
+  "inserts a new <h2> entry in the `todo' document with the format 'TODO %Y-%m-%d'"
+  (interactive)
+  (insert
+   (format-time-string "%Y-%m-%d" nil (if (not (null utc)) 0 nil))))
+
 
 (defun backlog ()
   "."
@@ -3937,6 +3944,19 @@ Signals error if
 	      (mapcar #'(lambda (pair) (car (cdr pair))) pairs)))
         values)))
 
+(defun rename-current-file(new-file)
+  "renames the file being edited in the current buffer and updates the file
+name in the current buffer accordingly such that subsequent calls to
+`buffer-file-name' point at the new file name.
+
+if the current buffer is not a file buffer, then this function simply
+writes the buffer's content to the `new-file' file name, which
+essentially the same as calling `write-file' with the exception that
+that no hooks get triggered incurring changes to current buffer's major
+and minor modes. To be precise, no `auto-mode' changes happen.
+"
+
+  )
 ;; (defconst slugify-string-default-separator
 ;;   "-"
 ;;   "the separator that replaces non-slug-compatible characters of target string")
@@ -4029,16 +4049,20 @@ Signals error if
 ;;
 
 
-(let* ((result (call-process-get-status-and-string "uname" nil "-a"))
-       (keys (flat-list-get-assoc-keys result))
-       (values (flat-list-get-assoc-values result))
-       (exit-code (flat-list-get-assoc-key-value result :exit-code))
-       (stdout (flat-list-get-assoc-key-value result :stdout))
-       (stderr (flat-list-get-assoc-key-value result :stderr))
-       (call-process-args (flat-list-get-assoc-key-value result :call-process-args))
-       (shell-command (flat-list-get-assoc-key-value result :shell-command)))
+;; (let* ((result (call-process-get-status-and-string "uname" nil "-a"))
+;;        (keys (flat-list-get-assoc-keys result))
+;;        (values (flat-list-get-assoc-values result))
+;;        (exit-code (flat-list-get-assoc-key-value result :exit-code))
+;;        (stdout (flat-list-get-assoc-key-value result :stdout))
+;;        (stderr (flat-list-get-assoc-key-value result :stderr))
+;;        (call-process-args (flat-list-get-assoc-key-value result :call-process-args))
+;;        (shell-command (flat-list-get-assoc-key-value result :shell-command)))
 
-  (erase-c-messages)
-  (c-message-debug-symbols (list 'result 'keys 'values 'exit-code 'stdout 'stderr 'call-process-args) 'shell-command)
-  )
-                                        ;
+;;   (erase-c-messages)
+;;   (c-message-debug-symbols (list 'result 'keys 'values 'exit-code 'stdout 'stderr 'call-process-args) 'shell-command)
+;;   )
+;;                                         ;
+
+(defun shell-script-insert-ansi-clear()
+  (interactive)
+  (insert "\necho -en \"\\x1b[2J\\x1b[3J\\x1b[H\""))
