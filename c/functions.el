@@ -127,8 +127,7 @@
   (let* ((values (x-color-values c))
          (fp (or (car values) 1))
          (sp (or (elt values 1) 1))
-         (tp (or (elt values 2) 1))
-         )
+         (tp (or (elt values 2) 1)))
     (if (> #x0f
            (floor
             (+
@@ -216,8 +215,7 @@
       (message "cannot evaluate buffer %s because it is not in %s, trying to run pretty formatter instead"
                (Ox33b4O/$/paint-mode-line-color (buffer-name))
 	       (Ox33b4O/$/paint-mode-line-color "elisp-mode"))
-      (g/format/prettify))
-    ))
+      (g/format/prettify))))
 
 (defun Ox33b4O/$/reload-all-c ()
   "."
@@ -449,15 +447,15 @@
        ;;           (format "WAT: %S" (car acls))))
        ((= 2 aclsl)
         (format "%s%s"
-                (Ox33b4O/$/acl-owner (nth 0 acls)
-                                     (Ox33b4O/$/acl-group
-                                      (nth 1 acls)))))
+                (Ox33b4O/$/acl-owner
+                 (nth 0 acls)
+                 (Ox33b4O/$/acl-group (nth 1 acls)))))
        ((= 3 aclsl)
         (format "%s%s%s"
-                (Ox33b4O/$/acl-owner (nth 0 acls)
-        			     (Ox33b4O/$/acl-group
-                                      (nth 1 acls))
-        			     (Ox33b4O/$/acl-other (nth 1 acls)))))
+                (Ox33b4O/$/acl-owner
+                 (nth 0 acls)
+        	 (Ox33b4O/$/acl-group (nth 1 acls))
+        	 (Ox33b4O/$/acl-other (nth 1 acls)))))
        (t (format "fallback ffb: %S" ffb)))
       ;; ;; (message  "ffb:%S acls: %S\naclsl:%S" ffb acls aclsl)
       )))
@@ -935,7 +933,9 @@
                      "^\\s-*\\(\\s-+\\|}\\|impl\\|extern\\s-*crate\\|\\(pub\\(\s-*\\(in\s-*\\)?[a-z0-9:]+\\)?\\)?\\s-*mod\\|[#][[]\\|)\\).*"
                      ""
                      region))))))))
-      (if called-interactively-p (erase-messages) (message "%s" region))
+      (if called-interactively-p
+          (erase-messages)
+        (message "%s" region))
       region)
     (flush-lines "^$" beg end nil)))
 
@@ -986,8 +986,7 @@
           (switch-to-buffer tmp-buffer)
           (user-error
            (format "failed to list items of file %s"
-                   (abbreviate-file-name (rust-file-name))))))
-      )))
+                   (abbreviate-file-name (rust-file-name)))))))))
 
 (defun rust-insert-members-from-file-with-docs ()
   "BEG END."
@@ -1018,8 +1017,7 @@
           (switch-to-buffer tmp-buffer)
           (user-error
            (format "failed to list items of file %s"
-                   (abbreviate-file-name (rust-file-name))))))
-      )))
+                   (abbreviate-file-name (rust-file-name)))))))))
 
 (defun rust-delete-comments ()
   "."
@@ -1136,18 +1134,21 @@
             region))))))
 
 (defmacro
-    when-buffer-filename-meets (cond &rest body)
+    when-buffer-filename-meets
+    (cond &rest body)
   "REGEXP FN."
   `(let ((filename (expand-file-name (buffer-file-name))))
      (if ,cond (progn ,@body))))
 
 (defmacro
-    when-buffer-meets (cond &rest body)
+    when-buffer-meets
+    (cond &rest body)
   "REGEXP FN."
   `(if ,cond (progn ,@body)))
 
 (defmacro
-    when-buffer-filename-matches (regexp &rest body)
+    when-buffer-filename-matches
+    (regexp &rest body)
   "REGEXP FN."
   `(let ((filename (expand-file-name (buffer-file-name))))
      (if (string-match-p ,regexp filename)
@@ -1256,10 +1257,11 @@
   "."
   (interactive)
   (let* ((git-commit-output-buf (get-buffer-create "*git-commit*"))
-         (current-working-dir (file-name-directory (expand-file-name (buffer-file-name))))
+         (current-working-dir
+          (file-name-directory (expand-file-name (buffer-file-name))))
          (commit-message
-          (read-string "Commit Message: " (format "saves %s" current-working-dir)))
-         ) ;; let
+          (read-string "Commit Message: "
+                       (format "saves %s" current-working-dir)))) ;; let
     (or
      (when (zerop (length commit-message))
        (user-error "aborted due to empty commit message"))
@@ -1420,7 +1422,8 @@
    (message "auto-commited emacs file %s" filename)))
 
 (defmacro
-    set-region-contents-with-fn (beg end fn)
+    set-region-contents-with-fn
+    (beg end fn)
   "BEG END FN."
   `(save-excursion
      (let ((region (buffer-substring-no-properties beg end))
@@ -1464,9 +1467,7 @@
      t)
     (re-search-forward "\\([0-9]+\\)" nil t)
     (if (eq pos (match-beginning 1))
-        (progn
-          (forward-line)
-          (message "forward-line %s" pos))
+        (progn (forward-line) (message "forward-line %s" pos))
       (progn
         (goto-char (match-beginning 1))
         (message "goto-char %s" (match-beginning 1))))))
@@ -1483,9 +1484,7 @@
      t)
     (re-search-forward "\\([0-9]+\\)" nil t)
     (if (eq pos (match-beginning 1))
-        (progn
-          (forward-line)
-          (message "forward-line %s" pos))
+        (progn (forward-line) (message "forward-line %s" pos))
       (progn
         (goto-char (match-beginning 1))
         (message "goto-char %s" (match-beginning 1))))))
@@ -1714,14 +1713,14 @@
   (let ((buffer-to-erase (get-buffer  buffer-name)))
     (if (bufferp buffer-to-erase)
         (with-current-buffer buffer-to-erase
-          (let ((buffer-was-read-only (when (and (numberp buffer-read-only)
-                                                 (< buffer-read-only 0)))))
+          (let ((buffer-was-read-only
+                 (when (and
+                        (numberp buffer-read-only)
+                        (< buffer-read-only 0)))))
             (read-only-mode -1)
             (widen)
             (erase-buffer)
-            (if buffer-was-read-only
-		(read-only-mode 1)))
-          ) ;; end inner let
+            (if buffer-was-read-only (read-only-mode 1)))) ;; end inner let
       ) ;;end if
     ) ;; end outer let
   )
@@ -1757,7 +1756,8 @@
   "."
   (interactive)
   (shell-command-to-string
-   (format "git rm --cached %s" (expand-file-name (buffer-file-name)))))
+   (format "git rm --cached %s"
+           (expand-file-name (buffer-file-name)))))
 
 (defun git-restore-staged ()
   "."
@@ -1771,8 +1771,7 @@
 
 (defun create-fresh-buffer (new-buffer-name &optional inhibit-buffer-hooks)
   (let ((existing-buffer (get-buffer new-buffer-name)))
-    (when (not (null existing-buffer))
-      (kill-buffer existing-buffer)))
+    (when (not (null existing-buffer)) (kill-buffer existing-buffer)))
   (get-buffer-create new-buffer-name inhibit-buffer-hooks))
 
 (defun prettierjs ()
@@ -1784,7 +1783,8 @@
          (tmp-buffer (create-fresh-buffer tmp-buffer-name))
          (prettierjs-args (list tmp-buffer nil "-w" current-filename ))
          (exit-code
-          (apply #'call-process (append (list "prettier" nil) prettierjs-args))))
+          (apply #'call-process
+                 (append (list "prettier" nil) prettierjs-args))))
     ;; (if (string-match "[.][a-z][a-z0-9-]+rc$" current-filename)
     ;;     ;; explicitly specify parser to prettier when filename ends with `.*rc'
     ;;     (append (list "--parser" "json") prettierjs-args)
@@ -1801,13 +1801,12 @@
          (message
           (format "%s formatted"
                   (abbreviate-file-name current-filename)))
-         (revert-buffer t t t)
-         ))
-     (let* ((error-string (with-current-buffer tmp-buffer
-			    (widen)
-			    (goto-char (point-min))
-			    (buffer-substring-no-properties (point-min) (point-max))
-			    ))
+         (revert-buffer t t t)))
+     (let* ((error-string
+             (with-current-buffer tmp-buffer
+	       (widen)
+	       (goto-char (point-min))
+	       (buffer-substring-no-properties (point-min) (point-max))))
 	    (error-details
 	     (with-current-buffer tmp-buffer
 	       (widen)
@@ -1838,40 +1837,39 @@
                         error-type
                         error-message
                         error-lineno
-                        error-column
-                        )
-		       )
-		   )
-                 )
-	       )
+                        error-column)
+		       ))
+                 ))
 	     ))
-       (if (and (listp error-details)
-                (not (null (nth 4 error-details))))
-	   (let* (
-                  (message-type (nth 0 error-details))
+       (if (and
+            (listp error-details)
+            (not (null (nth 4 error-details))))
+	   (let* ((message-type (nth 0 error-details))
                   (error-filename (nth 1 error-details))
                   (error-type (nth 2 error-details))
                   (error-message (nth 3 error-details))
                   (error-lineno (nth 4 error-details))
-                  (error-column (nth 5 error-details))
-                  )
+                  (error-column (nth 5 error-details)))
 	     (goto-line error-lineno)
 	     (goto-char (+ (point) error-column))
 	     (message
 	      "%s in %s line %d column %d => %s: %s"
-	      (propertize (format "%s" message-type) 'face
-                          (list :background "#3d3d3d"
-                                :foreground "#FF3232"))
+	      (propertize
+               (format "%s" message-type)
+               'face
+               (list :background "#3d3d3d" :foreground "#FF3232"))
 
 	      error-filename
 	      error-lineno
 	      error-column
-	      (propertize (format "%s" error-type) 'face
-                          (list :background "#3d3d3d"
-                                :foreground "#FF3232"))
-	      (propertize (format "%s" error-message) 'face
-                          (list :background "#FF3232"
-                                :foreground "#3d3d3d"))
+	      (propertize
+               (format "%s" error-type)
+               'face
+               (list :background "#3d3d3d" :foreground "#FF3232"))
+	      (propertize
+               (format "%s" error-message)
+               'face
+               (list :background "#FF3232" :foreground "#3d3d3d"))
 
 	      ))
          ;; else
@@ -1879,10 +1877,8 @@
          (user-error
           (format "prettier -w %s failed with code: %s"
                   (abbreviate-file-name current-filename)
-                  exit-code)))
-       ))
-    (ignore-errors (kill-buffer tmp-buffer))
-    ))
+                  exit-code)))))
+    (ignore-errors (kill-buffer tmp-buffer))))
 
 (defun shfmt-break-onliner-region (beg end)
   "."
@@ -1895,29 +1891,38 @@
 		      (point-min)
 		      (point-max)))))
 
+(defconst
+  shfmt-cli-flags
+  (list "-sr" "-kp" "-bn" "-ci" "-i" "4" "-ln=bash" "-w" )
+  "default command-line flags used in `shfmt'")
+
 (defun shfmt ()
   ".
 ;; https://github.com/mvdan/sh
 ;; go install mvdan.cc/sh/v3/cmd/shfmt@latest
 
-shfmt -bn -ci -i 4 -ln=bash -w %s
+formats current buffer's shellscript via shfmt with flags `shfmt-cli-flags'
 "
   (interactive)
   ;; (shfmt-break-onliner)
   (let* ((current-shell-buffer (current-buffer))
          (current-filename (expand-file-name (buffer-file-name)))
          (tmp-buffer-name (format "*shfmt:%s*" current-filename))
+         (shfmt-cli-args
+          (append shfmt-cli-flags (list current-filename)))
          (tmp-buffer
           (progn
             (ignore-errors (kill-buffer tmp-buffer-name))
             (get-buffer-create tmp-buffer-name)))
          (exit-code
-          (call-process "shfmt"
-                        nil
-                        tmp-buffer
-                        nil "-bn" "-ci" "-i" "4" "-ln=bash" "-w" current-filename )))
+          (apply #'call-process
+                 (append
+                  (list "shfmt" nil tmp-buffer nil)
+                  shfmt-cli-args))))
     (message
-     (format "shfmt -bn -ci -i 4 -ln=bash -w %s exitted with code: %s" current-filename exit-code))
+     (format "shfmt %s exitted with code: %s"
+             (string-join shfmt-cli-args " ")
+             exit-code))
     (or
      (when (eq exit-code 0)
        (progn
@@ -2018,9 +2023,8 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
     (shfmt))
    ((string= "elisp-mode" (Ox33b4O/$/mode-name))
     (elfmt))
-   (t (progn
-        (message "can't prettify `%s' yet" (Ox33b4O/$/mode-name))
-        ))))
+   (t
+    (progn (message "can't prettify `%s' yet" (Ox33b4O/$/mode-name))))))
 
 (defun eval-elisp-buffer ()
   (interactive)
@@ -2034,8 +2038,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
       (message "cannot evaluate buffer %s because it is not in %s, trying to run pretty formatter instead"
 	       (Ox33b4O/$/paint-mode-line-color (buffer-name))
 	       (Ox33b4O/$/paint-mode-line-color "elisp-mode"))
-      (g/format/prettify))
-    ))
+      (g/format/prettify))))
 
 (defun git-restore ()
   "."
@@ -2364,15 +2367,17 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 
 (defun current-notes-location ()
   "."
-  (or (when (runtime-is-linux)
-        (get-directory-path-mkdir "~/notes/linux/"))
-      (get-directory-path-mkdir "~/projects/notes/osx")))
+  (or
+   (when (runtime-is-linux)
+     (get-directory-path-mkdir "~/notes/linux/"))
+   (get-directory-path-mkdir "~/projects/notes/osx")))
 
 (defun current-wip-location ()
   "."
-  (or (when (runtime-is-linux)
-        (get-directory-path-mkdir "~/notes/linux/wip/emacs"))
-      (get-directory-path-mkdir "~/projects/notes/osx/wip/emacs")))
+  (or
+   (when (runtime-is-linux)
+     (get-directory-path-mkdir "~/notes/linux/wip/emacs"))
+   (get-directory-path-mkdir "~/projects/notes/osx/wip/emacs")))
 
 
 (defun open-note (note-name)
@@ -2488,7 +2493,8 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 (defun backlog ()
   "."
   (interactive)
-  (open-note (file-name-concat (current-notes-location) "backlog.rst")))
+  (open-note
+   (file-name-concat (current-notes-location) "backlog.rst")))
 
 (defun now-file-safe ()
   "."
@@ -2558,8 +2564,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 
 	(save-buffer 0)
 	(chmod buf-filename (string-to-number "755" 8))
-	(shfmt)))
-    ))
+	(shfmt)))))
 
 (defun read-file-to-string (filename)
   "inserts template file at beginning of current buffer."
@@ -2603,8 +2608,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
         (user-error
          (format "insert-template: file not readable: %s" template-path)))
     (let ((template-contents (read-file-to-string template-path)))
-      template-contents)
-    ))
+      template-contents)))
 
 (defun make-script ()
   "."
@@ -2649,8 +2653,7 @@ The `:background' property is computed in contrast with its
           (format "#%s"
                   (if (not (null hash-algorithm))
 		      (Ox33b4O/$/hash-take-first-n-chars hash-algorithm 6 string)
-                    (Ox33b4O/$/hash-take-first-n-chars 'sha256 6 string)
-                    )))
+                    (Ox33b4O/$/hash-take-first-n-chars 'sha256 6 string))))
          (background (contrast-color foreground)))
     (list :foreground foreground :background background)))
 
@@ -2661,8 +2664,8 @@ The `:background' property is computed in contrast with its
   (propertize
    (format "%s" string)
    'face
-   (get-auto-propertize-face-fg-and-bg-list string (or algorithm
-						       'sha256))))
+   (get-auto-propertize-face-fg-and-bg-list string
+                                            (or algorithm 'sha256))))
 
 (defun cleanup-elc ()
   "."
@@ -2677,8 +2680,7 @@ The `:background' property is computed in contrast with its
      ((eq 0 exit-code)
       (message  "elc cleanup ok" )
       (length> stderr 0)
-      (message "elc cleanup error:\n'%s'" stderr ))
-     )))
+      (message "elc cleanup error:\n'%s'" stderr )))))
 
 (defun shell-script-expand-oneliner (beg end)
   (interactive "r")
@@ -2747,8 +2749,7 @@ The `:background' property is computed in contrast with its
 (defun git-delete ()
   "runs \"git rm -rf \" against `buffer-file-name'."
   (interactive)
-  (let* ((git-status-output-buf
-          (get-buffer-create "*git-delete*"))
+  (let* ((git-status-output-buf (get-buffer-create "*git-delete*"))
          (exitcode
           (call-process
            "git" nil git-status-output-buf nil "rm" "-rf"
@@ -2786,8 +2787,7 @@ which returns the exit-status and the string output.
 	    (if (listp args)
                 args
 	      (user-error
-	       (format "call-process-with-list-args: args `%S' is not a list" args)))
-	    ))
+	       (format "call-process-with-list-args: args `%S' is not a list" args)))))
          (program-to-call-output-buf
           (get-buffer-create (format "*%s*" program)))
          (call-process-args
@@ -2798,7 +2798,7 @@ which returns the exit-status and the string output.
          (output
           (with-current-buffer program-to-call-output-buf
 	    (widen)
-	    (buffer-string))) )
+	    (buffer-string))))
     (ignore-errors (kill-buffer program-to-call-output-buf))
     (cons exitcode
           (if (not (null trim-output)) (string-trim output) output))))
@@ -2861,14 +2861,13 @@ which returns the exit-status and the string output.
            (widen)
            (goto-char (point-min))
            ;; skip (pub )?(use|mod)
-           (while (re-search-forward "^\\(pub\\s-+\\((crate\\|self\\|in\\s-+[a-z0-9:]+)\\)?\\)?\s-*\\(use\\|mod\\)\\s-+\\(.*\\)$" nil t)
+           (while (re-search-forward
+                   "^\\(pub\\s-+\\((crate\\|self\\|in\\s-+[a-z0-9:]+)\\)?\\)?\s-*\\(use\\|mod\\)\\s-+\\(.*\\)$" nil t)
              (goto-char (match-end 1))
-             (end-of-line)
-             )
+             (end-of-line))
            (while (re-search-forward "}\n\\([a-zA-Z0-9#]+\\)" nil t)
              (replace-match "}\n\n\\1")
-             (goto-char (match-end 1)))
-           ));;progn
+             (goto-char (match-end 1)))));;progn
        );; when success
 
      (progn ;; (or)  error
@@ -2962,11 +2961,9 @@ which returns the exit-status and the string output.
 		"$(( 0x%x ));"
                 (string-to-number (match-string 0) 16)))
 	      (setq end (point))
-	      (backward-word 0))
-            )
+	      (backward-word 0)))
 	(user-error "no match for regex %S in %S" regexp-6
-                    (buffer-substring-no-properties beg end)))
-      )))
+                    (buffer-substring-no-properties beg end))))))
 
 (defun heck-string-to-case-buffer (case beg end)
   "depends on cargo crate heck-string-cli: `cargo install heck-string-cli'
@@ -3058,8 +3055,7 @@ BEG END."
             (save-buffer 0)
             (shfmt))
 
-	(user-error "no regexp match for: %S" regexp))
-      ))
+	(user-error "no regexp match for: %S" regexp))))
   ;; OzsgOzsgKGRlZnVuIGNhcmdvLWNyYWZ0LWJyZWFrLW9uZWxpbmVyLWNhbGwoKQo7OyA7OyAgICIuIgo7OyA7OyAgIChpbnRlcmFjdGl2ZSkKOzsgOzsgICA7OyBjYXJnbyBjcmFmdCAtY3NtIC1DIGJvb2xlYW4gLUMgbnVtYmVyIC1DIGRhdGV0aW1lIC1DIGpzb24gLUMgeWFtbCAtQyB0b21sIC1DIGluaSAtQyBkYXRlIC1DIHRpbWUgLWQgJ2Nocm9ubyAtRiBjbG9jaycgaXMKOzsKOzsgOzsgICAobGV0ICgocmVnZXhwICJeXFwoY2FyZ29cXChccy0rXHxbLV1cXCljcmFmdFxcKVxcKFxccy0rWy1dW2Etel0rXFx8XFxzLStbLV1bQ11ccy0rW2Etel1bYS16MC05Xy1dK1xcfFxccy0rWy1dW2RdXFxzLStcXCgnW14nXSsnXFx8W2EtekEtWl1bYS16QS1aMC05Xy1dK1xcKVxccy0rXFwoW2EtekEtWl1bYS16QS1aMC05Xy1dK1xcKVxcKSIpKQo7OyA7OyAgICAgKHNhdmUtZXhjdXJzaW9uCjs7IDs7ICAgICAgICh3aWRlbikKOzsgOzsgICAgICAgKGdvdG8tY2hhciAocG9pbnQtbWluKSkKOzsgOzsgICAgICAgKGlmIChyZS1zZWFyY2gtZm9yd2FyZCByZWdleHAgbmlsIHQgMSkKOzsgOzsgICAgICAgICAgIChyZXBsYWNlLW1hdGNoICJcXDEgXFxcblxcMyIpCjs7Cjs7Cjs7IDs7IAkodXNlci1lcnJvciAibm8gcmVnZXhwIG1hdGNoIGZvcjogJVMiIHJlZ2V4cCkKOzsgOzsgCSkKOzsgOzsgICAgICAgKSkKOzsgOzsgICApCjs7ICh1bmRlZnVuICdjYXJnby1jcmFmdC1icmVhay1vbmVsaW5lci1jYWxsKQo=
   )
 
@@ -3074,8 +3070,7 @@ BEG END."
         (replace-match "`\\1`,\n`[\\2\\3'\\4']`,\n`[\\2\\3\"\\4\"]`") ;; works
         ;; (replace-match "\\1,\n\"[\\2\\3'\\4']\",\n\"[\\2\\3\\\"\\4\\\"]\"")
         ;; (replace-match "\\1,\n\"[\\2\\3'\\4']\"") ;; works
-        ))
-    ))
+        ))))
 
 (defun regexp-adoc-to-markdown ()
   "."
@@ -3205,8 +3200,7 @@ BEG END."
      (point-min)
      (point-max))))
 
-(defvar replace-regexp-all-buffer-replacement-history
-  (list))
+(defvar replace-regexp-all-buffer-replacement-history (list))
 
 (defun replace-regexp-all-buffer()
   "like `replace-regexp' but replaces all ocurrences of regex in
@@ -3214,15 +3208,15 @@ the entire buffer without unmarking active regions or losing
 cursor position in buffer."
   (interactive)
   (let* ((regexp (read-regexp "replace all regexp in all buffer: "))
-         (replacement (read-string "replacement: " nil replace-regexp-all-buffer-replacement-history replace-regexp-all-buffer-replacement-history)))
+         (replacement
+          (read-string "replacement: " nil replace-regexp-all-buffer-replacement-history replace-regexp-all-buffer-replacement-history)))
 
     (save-mark-and-excursion
       (widen)
       (beginning-of-buffer);;(goto-char (point-min))
       (while (re-search-forward regexp nil t)
         (replace-match replacement)
-        (goto-char (match-end 0))
-        ) ;;while
+        (goto-char (match-end 0))) ;;while
       ) ;;save-mark-and-excursion
     ) ;;let
   );;defun
@@ -3231,27 +3225,26 @@ cursor position in buffer."
   "creates a new tmp buffer with the same mode as the current buffer, then creates a new emacs `frame' (which in terms of OS usually actually means `window') with that tmp buffer.
 "
   (interactive)
-  (let* ((frame-params '((minibuffer . t)
-                         (ns-appearance . dark)
-                         (ns-transparent-titlebar . t)
-			 (border-color . "#FFFFFF")
-                         (cursor-color . "#44FF88")
-			 (foreground-color . "#FFFFFF")
-                         (background-color . "#000000")
-			 (vertical-scroll-bars)))
+  (let* ((frame-params
+          '((minibuffer . t)
+            (ns-appearance . dark)
+            (ns-transparent-titlebar . t)
+	    (border-color . "#FFFFFF")
+            (cursor-color . "#44FF88")
+	    (foreground-color . "#FFFFFF")
+            (background-color . "#000000")
+	    (vertical-scroll-bars)))
          (current-mode-name (format "%s" mode-name))
          (current-mode-symbol (intern-soft current-mode-name))
          (tmp-buffer-name (format "tmp-buffer-%s" current-mode-name))
          (tmp-buffer (create-fresh-buffer tmp-buffer-name))
          (tmp-frame (make-frame-on-current-monitor frame-params)) ;; (tmp-frame (make-frame-command)))
          (tmp-frame-type (framep tmp-frame))
-         (tmp-frame-is-live (frame-live-p tmp-frame))
-         )
+         (tmp-frame-is-live (frame-live-p tmp-frame)))
     (setq major-mode current-mode-symbol)
     (set-buffer-major-mode tmp-buffer)
     (select-frame-set-input-focus tmp-frame nil)
-    (pop-to-buffer-same-window tmp-buffer nil)
-    ))
+    (pop-to-buffer-same-window tmp-buffer nil)))
 
 ;; 1. set mode in tmp-buffer to current-mode-name
 ;; 2. open new frame and window with tmp-buffer
@@ -3280,11 +3273,14 @@ cursor position in buffer."
 (defun string-to-secure-hash-region (algorithm beg end)
   "replaces string in given region with `secure-hash' of region contents."
   (if (not (symbolp algorithm))
-      (user-error "(string-to-secure-hash-region) argument ALGORITHM is not a symbol: %S" algorithm))
+      (user-error
+       "(string-to-secure-hash-region) argument ALGORITHM is not a symbol: %S" algorithm))
   (if (not (numberp beg))
-      (user-error "(string-to-secure-hash-region) argument BEG is not a number: %S" beg))
+      (user-error
+       "(string-to-secure-hash-region) argument BEG is not a number: %S" beg))
   (if (not (numberp end))
-      (user-error "(string-to-secure-hash-region) argument END is not a number: %S" end))
+      (user-error
+       "(string-to-secure-hash-region) argument END is not a number: %S" end))
 
   (save-mark-and-excursion
     (let* ((contents (buffer-substring-no-properties beg end))
@@ -3323,9 +3319,8 @@ cursor position in buffer."
 
 (defun write-to-minibuffer (text)
   "writes to minibuffer"
-  (let ((output (or (when (stringp text)
-		      text)
-		    (format "%S" text))))
+  (let ((output
+         (or (when (stringp text) text) (format "%S" text))))
     (ignore-errors
       (with-current-buffer (window-buffer (minibuffer-window))
 	(read-only-mode -1)
@@ -3355,18 +3350,15 @@ cursor position in buffer."
   "drop-in replacement for `message' that output colorized messages to a buffer named \"*C-Messages*\""
   (interactive "s")
 
-  (let (
-        (output (format "%s\n" (apply #'format fmt args)))
+  (let ((output (format "%s\n" (apply #'format fmt args)))
         ;; (output (concat (apply #'format (append (list fmt) args)) "\n"))
-        (buffer (get-buffer-create c-message-buffer))
-        )
+        (buffer (get-buffer-create c-message-buffer)))
     (with-current-buffer buffer
       (read-only-mode -1)
       (widen)
       (end-of-buffer)
       (insert output))
-    (write-to-minibuffer output)
-    ))
+    (write-to-minibuffer output)))
 
 (defun c-message-open (&rest args)
   "drop-in replacement for `c-message' opens the `*C-Messages*' buffer after outputing the message"
@@ -3374,65 +3366,82 @@ cursor position in buffer."
   (delete-other-windows (frame-first-window))
   (erase-c-messages)
   (apply #'c-message args)
-  (or (when ;; c-message-buffer is open and is the first active buffer in current frame...
-          (and (not (null (get-buffer-window c-message-buffer)))
-	       (eq (frame-first-window) (get-buffer-window c-message-buffer)))
-        (message "... then split frame horizontally with the c-message-buffer at the right side")
-        ;; ... then split frame horizontally with the c-message-buffer at the right side
-        (set-window-buffer (split-window-right) (get-buffer c-message-buffer))
-        ;; ... and set the previously active buffer (if any) to the left
-        (debug-active-buffers
-         ;; TODO: first lets figure out the most recent buffer before c-message-buffer
-         )
-        ) ;; `end' `when' c-message-buffer is open and is the first active buffer in current frame
-      (progn ;; currently active buffer is not c-message-buffer
-        ;; so let's split right and set c-message-buffer to the right
-        (let* ((right-side (split-window-right))
-	       (cmbuffer (get-buffer-create c-message-buffer)))
+  (or
+   (when ;; c-message-buffer is open and is the first active buffer in current frame...
+       (and
+        (not (null (get-buffer-window c-message-buffer)))
+	(eq
+         (frame-first-window)
+         (get-buffer-window c-message-buffer)))
+     (message "... then split frame horizontally with the c-message-buffer at the right side")
+     ;; ... then split frame horizontally with the c-message-buffer at the right side
+     (set-window-buffer
+      (split-window-right)
+      (get-buffer c-message-buffer))
+     ;; ... and set the previously active buffer (if any) to the left
+     (debug-active-buffers
+      ;; TODO: first lets figure out the most recent buffer before c-message-buffer
+      )) ;; `end' `when' c-message-buffer is open and is the first active buffer in current frame
+   (progn ;; currently active buffer is not c-message-buffer
+     ;; so let's split right and set c-message-buffer to the right
+     (let* ((right-side (split-window-right))
+	    (cmbuffer (get-buffer-create c-message-buffer)))
 
-          (message "(set-window-buffer %S %S)" right-side cmbuffer)
-          (set-window-buffer right-side cmbuffer)))
-      );; `end' `or' clause
+       (message "(set-window-buffer %S %S)" right-side cmbuffer)
+       (set-window-buffer right-side cmbuffer))));; `end' `or' clause
   )
 
 (defun c-message-debug-symbols (symbol-list &rest context-symbol-list)
-  (if (and (not (listp symbol-list))
-           (not (symbolp symbol-list)))
+  (if (and
+       (not (listp symbol-list))
+       (not (symbolp symbol-list)))
       (error "c-message-debug-symbols `symbol-list' is neither a list or a symbol: `%S'" symbol-list))
 
-  (let* ((symbol-list (if (symbolp symbol-list) (list symbol-list)
-                        symbol-list))
-         (tag-attributes (mapcar #'(lambda (sym) (format "%s=`%S'" sym (if (symbolp sym)
-                                                                           (symbol-value sym)
-                                                                         (format "%S" sym))))
-                                 context-symbol-list)
-                         )
-         (inner-tags  (mapcar #'(lambda (sym) (auto-propertize-string (format "<%s>\n%S\n</%s>" sym (symbol-value sym) sym))) symbol-list)
-		      )
-         (debug-tag (auto-propertize-string (format "<debug %s>" (string-join tag-attributes " ")))
-                    ))
+  (let* ((symbol-list
+          (if (symbolp symbol-list) (list symbol-list) symbol-list))
+         (tag-attributes
+          (mapcar
+           #'(lambda (sym)
+               (format "%s=`%S'" sym
+                       (if (symbolp sym)
+                           (symbol-value sym)
+                         (format "%S" sym))))
+           context-symbol-list))
+         (inner-tags
+          (mapcar
+           #'(lambda (sym)
+               (auto-propertize-string
+                (format "<%s>\n%S\n</%s>" sym (symbol-value sym) sym)))
+           symbol-list))
+         (debug-tag
+          (auto-propertize-string
+           (format "<debug %s>" (string-join tag-attributes " ")))))
 
-    (c-message  "%s\n%s\n%s" debug-tag (string-join inner-tags "\n") debug-tag)))
+    (c-message  "%s\n%s\n%s" debug-tag
+                (string-join inner-tags "\n")
+                debug-tag)))
 
 (defun debug-active-buffers()
   (interactive)
   (erase-messages)
   (message "<debug-active-buffers>")
-  (let* (
-         (active-buffers (buffer-list))
+  (let* ((active-buffers (buffer-list))
          (active-buffer-count (length active-buffers))
          (iter-active-buffer-index 0))
     (message "active-buffers:\n%s"
-             (string-join (mapcar #'(lambda (buf)
-				      (let ((bufstring (format "    %s[%d]" (buffer-name buf) iter-active-buffer-index)
-						       ))
-                                        (setq iter-active-buffer-index (+ iter-active-buffer-index 1))
-                                        bufstring))
-                                  active-buffers)
-                          "\n"))
-    )
-  (message "</debug-active-buffers>")
-  )
+             (string-join
+              (mapcar
+               #'(lambda (buf)
+		   (let ((bufstring
+                          (format "    %s[%d]"
+                                  (buffer-name buf)
+                                  iter-active-buffer-index)))
+                     (setq iter-active-buffer-index
+                           (+ iter-active-buffer-index 1))
+                     bufstring))
+               active-buffers)
+              "\n")))
+  (message "</debug-active-buffers>"))
 
 (defun re-builder-debug-state()
   (interactive)
@@ -3450,28 +3459,30 @@ cursor position in buffer."
                 (list
                  (format "reb-regexp [buffer-local] =`%s'" reb-regexp)
                  (format "reb-regexp-src [buffer-local] =`%S'" reb-regexp-src)
-                 (format "reb-overlays [buffer-local] =`%S'" reb-overlays)
-                 )
+                 (format "reb-overlays [buffer-local] =`%S'" reb-overlays))
                 )
-            (list (format "no buffer-local vars in %s buffer: %S" reb-buffer re-builder-buffer))
-            )
-          )
-         ) ;;end let* declarations
+            (list
+             (format "no buffer-local vars in %s buffer: %S" reb-buffer re-builder-buffer)))
+          )) ;;end let* declarations
     (c-message-open "re-builder vars:\n%s\n\nre-builder buffer-local vars:\n%s"
-                    (string-join (mapcar #'(lambda (string) (format "    %s" string))
-                                         (list
-					  (format "reb-mode =`%S'" reb-mode)
-					  (format "reb-target-buffer =`%S'" reb-target-buffer)
-					  (format "reb-target-window =`%S'" reb-target-window)
-					  (format "reb-window-config =`%S'" reb-window-config)
-					  (format "reb-subexp-mode =`%S'" reb-subexp-mode)
-					  (format "reb-subexp-displayed =`%S'" reb-subexp-displayed)
-					  (format "reb-mode-string =`%S'" reb-mode-string)
-					  (format "reb-valid-string =`%S'" reb-valid-string)
-					  ))
-				 "\n")
-		    (string-join (mapcar #'(lambda (string) (format "    %s" string)) reb-debug-local-vars) "\n"))
-    )
+                    (string-join
+                     (mapcar
+                      #'(lambda (string) (format "    %s" string))
+                      (list
+		       (format "reb-mode =`%S'" reb-mode)
+		       (format "reb-target-buffer =`%S'" reb-target-buffer)
+		       (format "reb-target-window =`%S'" reb-target-window)
+		       (format "reb-window-config =`%S'" reb-window-config)
+		       (format "reb-subexp-mode =`%S'" reb-subexp-mode)
+		       (format "reb-subexp-displayed =`%S'" reb-subexp-displayed)
+		       (format "reb-mode-string =`%S'" reb-mode-string)
+		       (format "reb-valid-string =`%S'" reb-valid-string)))
+		     "\n")
+		    (string-join
+                     (mapcar
+                      #'(lambda (string) (format "    %s" string))
+                      reb-debug-local-vars)
+                     "\n")))
   )
 
 (defun re-builder-clean-and-reset()
@@ -3480,14 +3491,10 @@ cursor position in buffer."
       (user-error "reb-buffer does not match name: `%s'" reb-buffer))
 
   (with-current-buffer reb-target-buffer
-    (setq-local  reb-regexp nil
-                 reb-regexp-src nil
-                 reb-overlays nil)
-    )
+    (setq-local  reb-regexp nil reb-regexp-src nil reb-overlays nil))
 
   (let ((re-builder-buffer (get-buffer reb-buffer)))
-    (if (bufferp reb-target-buffer)
-        (kill-buffer re-builder-buffer)))
+    (if (bufferp reb-target-buffer) (kill-buffer re-builder-buffer)))
 
   (setq reb-mode nil
         reb-target-buffer nil
@@ -3496,8 +3503,7 @@ cursor position in buffer."
         reb-subexp-mode nil
         reb-subexp-displayed nil
         reb-mode-string ""
-        reb-valid-string ""
-        )
+        reb-valid-string "")
   )
 
 (defun string-to-list-of-strings (string)
@@ -3505,12 +3511,13 @@ cursor position in buffer."
 signals error if the `string' argument is not a string"
   (if (not (stringp string))
       (error "string-to-list-of-strings %S" string))
-  (mapcar #'(lambda (chr) (format "%c" chr)) (string-to-list string)))
+  (mapcar
+   #'(lambda (chr) (format "%c" chr))
+   (string-to-list string)))
 
 (defvar insert-regexp-negate-string-history
   (list)
-  "history of strings input in previous calls to `insert-regexp-negate-string'"
-  )
+  "history of strings input in previous calls to `insert-regexp-negate-string'")
 
 ;;(enable-debug-on-error)
 (defun get-regexp-string-negation (string)
@@ -3523,26 +3530,28 @@ signals error if the `string' argument is not a string"
          (current "")
          (result (list)))
     (while (and (< index (+ member-count 1)) (stringp current))
-      (let* ((previous (string-join (mapcar #'(lambda (item) (format "[%s]" item))
-					    (seq-subseq string-members 0 index)))
-		       );;previous
+      (let* ((previous
+              (string-join
+               (mapcar
+                #'(lambda (item) (format "[%s]" item))
+	        (seq-subseq string-members 0 index))));;previous
              )
         ;; (c-message-debug-symbols (list 'previous 'result) 'index 'member-count 'current)
         (setq
-         result (append result (list (format "%s[^%s]" previous current)))
-         index (+ index 1)
-         current (nth index string-members)
-         )
-        )
-      )
+         result
+         (append result (list (format "%s[^%s]" previous current)))
+         index
+         (+ index 1)
+         current
+         (nth index string-members))
+        ))
     ;; (c-message-debug-symbols 'reb-mode-string)
-    (if (and (eq (get-buffer reb-buffer) (current-buffer))
-             (string= reb-re-syntax "read"))
+    (if (and
+         (eq (get-buffer reb-buffer) (current-buffer))
+         (string= reb-re-syntax "read"))
         (format "\\\\(%s\\\\)" (string-join result "\\\\|"))
-      (format "\\(%s\\)" (string-join result "\\|"))
-      )
-    )
-  )
+      (format "\\(%s\\)" (string-join result "\\|")))
+    ))
 
 (defun insert-regexp-negate-string (string)
   (interactive
@@ -3554,8 +3563,7 @@ signals error if the `string' argument is not a string"
 
     ;; (c-message-open "%s" regexp)
     ;; (c-message-debug-symbols (list 'reb-re-syntax 'regexp))
-    (insert regexp)
-    )
+    (insert regexp))
   )
 
 (defun call-process-get-status-and-string (executable &rest arguments)
@@ -3572,26 +3580,29 @@ containing both the stdout and stderr of that process.
 "
   (if (not (stringp executable))
       (error "`executable' must be a string, instead got: %S" executable))
-  (let ((error-args (seq-reduce #'(lambda (ok val)
-				    (if (not (stringp next))
-					(list "nonstring argument %S" next))
-				    ok)
-                                arguments nil)))
-    (when (listp error-args)
-      (apply #'error error-args)))
+  (let ((error-args
+         (seq-reduce
+          #'(lambda (ok val)
+	      (if (not (stringp next))
+		  (list "nonstring argument %S" next))
+	      ok)
+          arguments nil)))
+    (when (listp error-args) (apply #'error error-args)))
 
-  (let* ((tmp-buffer-name (format "*call-process:%s%s" executable (concat arguments)))
+  (let* ((tmp-buffer-name
+          (format "*call-process:%s%s" executable (concat arguments)))
          (tmp-buffer (create-fresh-buffer tmp-buffer-name))
-         (full-process-call-string (format "%s %s" executable (string-join arguments " ")))
+         (full-process-call-string
+          (format "%s %s" executable (string-join arguments " ")))
          (exit-code
-          (apply #'call-process (append (list executable nil) arguments)))
-         (process-output-string (with-current-buffer tmp-buffer
-				  (widen)
-				  (goto-char (point-min))
-				  (buffer-substring-no-properties (point-min) (point-max))
-				  )))
-    (ignore-errors
-      (kill-buffer tmp-buffer))
+          (apply #'call-process
+                 (append (list executable nil) arguments)))
+         (process-output-string
+          (with-current-buffer tmp-buffer
+	    (widen)
+	    (goto-char (point-min))
+	    (buffer-substring-no-properties (point-min) (point-max)))))
+    (ignore-errors (kill-buffer tmp-buffer))
     (list :exit-code exit-code :output process-output-string :shell-command full-process-call-string)))
 
 
@@ -3620,8 +3631,7 @@ containing both the stdout and stderr of that process.
   ;; "^\\(.\\)\\(.\\)\\s-+\\(.+\\)$"
   "^\\([[:space:]!?ACDMRTU]\\)\\([[:space:]!?ACDMRTU]\\)[[:space:]]+\\(.*\\)$"
 
-  "regular expression used within `git-status-get-filenames' in call to `string-match'."
-  )
+  "regular expression used within `git-status-get-filenames' in call to `string-match'.")
 
 (defun git-status-porcelain-class-char-to-symbol(char)
   "`maps the given `char' to semantic symbols according to table below:
@@ -3637,13 +3647,14 @@ containing both the stdout and stderr of that process.
 `T' = file type changed (regular file, symbolic link or submodule)
 `U' = updated but unmerged
 ."
-  (let ((input (cond ((or (stringp char) (characterp char))
-		      (format "%s" char))
-		     ((and (listp char)
-                           (length= char 1))
-		      (car char))
-		     (t
-		      (error "invalid value (neither string nor character) for argument `char': %S" char))))
+  (let ((input
+         (cond
+          ((or (stringp char) (characterp char))
+	   (format "%s" char))
+	  ((and (listp char) (length= char 1))
+	   (car char))
+	  (t
+	   (error "invalid value (neither string nor character) for argument `char': %S" char))))
         (len (length input)))
     (if (> len 1)
         (error "`char' argument must be a string of length 1, instead got `%S' (normalized to `%s' of length `%d')"
@@ -3651,34 +3662,22 @@ containing both the stdout and stderr of that process.
     (cond
 
      ((string= " " input)
-      (list :sym 'unmodified
-	    :desc ""
-	    :long_desc "unmodified"
-	    )
+      (list :sym 'unmodified :desc "" :long_desc "unmodified")
       ;; end list
       );; end clause
 
      ((string= "!" input)
-      (list :sym 'ignored
-	    :desc ""
-	    :long_desc "ignored"
-	    )
+      (list :sym 'ignored :desc "" :long_desc "ignored")
       ;; end list
       );; end clause
 
      ((string= "?" input)
-      (list :sym 'untracked
-	    :desc ""
-	    :long_desc "untracked"
-	    )
+      (list :sym 'untracked :desc "" :long_desc "untracked")
       ;; end list
       );; end clause
 
      ((string= "A" input)
-      (list :sym 'added
-	    :desc ""
-	    :long_desc "added"
-	    )
+      (list :sym 'added :desc "" :long_desc "added")
       ;; end list
       );; end clause
 
@@ -3692,26 +3691,17 @@ containing both the stdout and stderr of that process.
       );; end clause
 
      ((string= "D" input)
-      (list :sym 'deleted
-	    :desc ""
-	    :long_desc "deleted"
-	    )
+      (list :sym 'deleted :desc "" :long_desc "deleted")
       ;; end list
       );; end clause
 
      ((string= "M" input)
-      (list :sym 'modified
-	    :desc ""
-	    :long_desc "modified"
-	    )
+      (list :sym 'modified :desc "" :long_desc "modified")
       ;; end list
       );; end clause
 
      ((string= "R" input)
-      (list :sym 'renamed
-	    :desc ""
-	    :long_desc "renamed"
-	    )
+      (list :sym 'renamed :desc "" :long_desc "renamed")
       ;; end list
       );; end clause
 
@@ -3727,8 +3717,7 @@ containing both the stdout and stderr of that process.
      ((string= "U" input)
       (list :sym 'updated
 	    :desc " but unmerged"
-	    :long_desc "updated but unmerged"
-	    )
+	    :long_desc "updated but unmerged")
       ;; end list
       );; end clause
 
@@ -3759,54 +3748,53 @@ containing both the stdout and stderr of that process.
          (status (car status-code-and-output))
          (output (car (cdr status-code-and-output)))
          (output-lines (save-match-data (string-lines output t)))
-	 ;; (seq-filter #'numberp '(a b 3 4 f 6))
-	 ;;   ⇒ (3 4 6)
-	 ;;
-	 ;; (seq-remove #'numberp '(1 2 c d 5))
-	 ;;   ⇒ (c d)
+         ;; (seq-filter #'numberp '(a b 3 4 f 6))
+         ;;   ⇒ (3 4 6)
+         ;;
+         ;; (seq-remove #'numberp '(1 2 c d 5))
+         ;;   ⇒ (c d)
 
          (classified-paths
 	  ;;(seq-remove #'null
-          (mapcar #'(lambda (line)
-		      (save-match-data
-                        (setq case-fold-search nil) ;; case sensitive
-			(if (string-match git-status-porcelain-regexp line)
-			    (let ((staged (match-string 1 line))   ;; then
-				  (unstaged (match-string 2 line)) ;; then
-				  (path (match-string 3 line)))    ;; then
-			      (list 'staged staged             ;; then
-				    'unstaged unstaged         ;; then
-				    'path path))               ;; end inner let varlist
+          (mapcar
+           #'(lambda (line)
+	       (save-match-data
+                 (setq case-fold-search nil) ;; case sensitive
+	         (if (string-match git-status-porcelain-regexp line)
+		     (let ((staged (match-string 1 line))   ;; then
+			   (unstaged (match-string 2 line)) ;; then
+			   (path (match-string 3 line)))    ;; then
+		       (list 'staged staged             ;; then
+			     'unstaged unstaged         ;; then
+			     'path path))               ;; end inner let varlist
 
-                          ;; else
-                          nil ;; else ;; KGxpc3QgJ3N0YWdlZCBuaWwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICd1bnN0YWdlZCBuaWwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICdwYXRoIG5pbCkpKQ==
-                          ) ;;end if
-                        ) ;; end save-match-data
-		      ) ;;end lambda
-                  ;; sequence
-                  output-lines ;; sequence
-                  ) ;; mapcar
+                   ;; else
+                   nil ;; else ;; KGxpc3QgJ3N0YWdlZCBuaWwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICd1bnN0YWdlZCBuaWwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICdwYXRoIG5pbCkpKQ==
+                   ) ;;end if
+                 ) ;; end save-match-data
+	       ) ;;end lambda
+           ;; sequence
+           output-lines ;; sequence
+           ) ;; mapcar
 	  ;; ) ;;seq-remove
-          )
-         )  ;; end let* varlist
+          ))  ;; end let* varlist
     ;; let* [body]
     (let ;; [debug]
-        ((result (format "
+        ((result
+          (format "
 status=%S
 output=%S
 output-lines=%S
 classified-paths=%S
 "
-                         status
-                         output
-                         output-lines
-                         classified-paths
-                         ))
+                  status
+                  output
+                  output-lines
+                  classified-paths))
          ) ;; end varlist let[debug]
       ;; let[debug] body
       (erase-messages)
       (message "%s" result)
-      (c-message-open "%s" result)
-      );; end let[debug]
+      (c-message-open "%s" result));; end let[debug]
     ) ;;end let*
   );; end defun git-status-get-filenames
