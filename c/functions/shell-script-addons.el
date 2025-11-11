@@ -4066,3 +4066,8 @@ and minor modes. To be precise, no `auto-mode' changes happen.
 (defun shell-script-insert-ansi-clear()
   (interactive)
   (insert "\necho -en \"\\x1b[2J\\x1b[3J\\x1b[H\""))
+
+(defun shell-script-post-shfmt-fix-missing-semicolons()
+  (interactive)
+  (let ((regexp "^\\(\\(\\s-*\\)\\(\\b\\(echo\\|unset\\|declare\\|done\\)\\b\\s-+.*[a-z]+.*[^;]$\\)\\)")
+        (replacement "^\(\(\s-*\)\(\b\(echo\|unset\|declare\|done\)\b\s-+.*[a-z]+.*[^;]$\)\) → \&;"))))
