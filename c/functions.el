@@ -4066,3 +4066,264 @@ and minor modes. To be precise, no `auto-mode' changes happen.
 (defun shell-script-insert-ansi-clear()
   (interactive)
   (insert "\necho -en \"\\x1b[2J\\x1b[3J\\x1b[H\""))
+
+(defun shell-script-single-quote-string(string)
+  "returns single-quoted `string' unless already single-quoted or double-quoted"
+  (or (when (string-match "^\\s-*\".*\"\\s-*$" string)
+        (string-trim string))
+      (when (string-match "^\\s-*'.*'\\s-*$" string)
+        (string-trim string))
+      (format "'%s'" string)
+      );; end of
+  );; end defun shell-script-single-quote-string
+
+(defun shell-script-string-list-to-bash-indexed-array (string-list &optional item-separator-string noerror)
+  (let* ((default-separator "\n")
+         (separator (or (when (and (stringp item-separator-string)
+                                   (length> item-separator-string 0))
+                          item-separator-string)
+                        (when (stringp item-separator-string)
+                          (warn "item-separator-string is empty, falling back to \"%S\"" default-separator)
+                          default-separator)
+                        (error "item-separator-string is not a string but rather: %S" item-separator-string))
+                    );; end (let* (separator ...
+         (safe-string-only-list (if (listp string-list)
+                                    (seq-filter #'stringp string-list)
+                                  (error "string-list is not a list but rather: %S" string-list)
+                                  )
+                                );; end (let* safe-string-only-list
+         (safe-string-coerced-list (mapcar #'(lambda (value)
+                                               (if (stringp value)
+                                                   value
+                                                 (format "%S" value)))
+                                           string-list));; end (let* (safe-string-coerced-list
+         (total-items (length string-list))
+         (total-valid-strings (length safe-string-only-list))
+         (total-invalid-items (- total-items total-valid-strings))
+
+         );; end (let* (...varlist...))
+    (if (not (= total-invalid-items 0))
+        (if (null noerror)
+            (let ((invalid-items (seq-filter #'(lambda (item) (not (stringp item))) string-list)))
+                (error "%d invalid items - nonstring - items in `string-list' (%d total items)\n\ninvalid: %S\n\nall: %S"
+               total-invalid-items
+               total-items
+               invalid-items
+               safe-string-coerced-list));; end if (not (null noerror)) / then => (let ((invalid-items ...
+          ;; else
+          (setq string-values-list safe-string-coerced-list)
+          ))
+
+  (if (and (not (stringp item-separator-string))
+           (not (null item-separator-string))
+           (not noerror)
+           )
+      (error "item-separator-string is not a string but rather: %S" item-separator-string) ;; end if/then
+
+    (progn ;; else
+        (if (and (not (null item-separator-string))
+                 (not noerror)) ;; end if/then -> and
+            (error "ignoring nonnull and nonstring `item-separator-string' `%S'" item-separator-string) ;; end if/then
+          ) ;; end if not null item-separator-string
+        (setq item-separator-string default-separator));;end (progn ...)
+    ) ;; end if
+
+  ;; end input validation
+
+  (format "( %s )"
+          (string-join (mapcar #'shell-script-single-quote-string
+                               string-values-list)
+                       "\n" )) ;; result
+  ) ;; end (let*
+  ) ;;end (defun shell-script-string-list-to-bash-indexed-array ...)
+
+(defun shell-script-gen-safe-variable-name-from-string(variable-name)
+  "returns string with valid bash variable name from input string in `variable-name' parameter.
+
+this function works by passing `variable-name' into a pipelines of processes:
+
+1. (if available) runs the string through the program `slugify-string'
+2. or; (if available) fallbacks to running through the program `heck-string' with args ~--to=snake~
+3. replaces all INVALID SEQUENCES of characters with \"_\" (underscore)
+4. removes all sequences of underscores from the beginning and/or from the end of the string, if any.
+
+
+this function first /slugifies/ the input string by passing it to the program `slugify-string' (if available in the `PATH' environment variable).
+
+In the context of this function, the regular expression
+\"\\(^[_]+\\|[_]+$\\)\" constitutes INVALID SEQUENCES.
+
+This function is significantly more effective when the command-line tool
+`slugify-string' is available because it \"nicely downgrades\" all
+non-ascii unicode letters to their unicode equivalents via unicode transliteration.
+
+Examples:
+
+(shell-script-gen-safe-variable-name-from-string \"άνθρωποι\")
+=> \"anthropoi\"
+(shell-script-gen-safe-variable-name-from-string \" 𐐢𐐮𐐻𐑊e 𐐝𐐻𐐪𐑉\")
+=> \"litle_star\"
+
+
+the string is then pipelined by 2 regular expressions before returing
+
+the slugify-string
+
+
+"
+  (let* ((raw-pipeline
+          (list
+                      (or (when (executable-find "slugify-string")
+                            #'(lambda (string)
+                                (let* (
+                                       (result (call-program-with-list-args "slugify-string" nil t nil string))
+                                       (exit-code (flat-list-get-assoc-key-value result :exit-code))
+                                       (output (string-trim (flat-list-get-assoc-key-value result :output)))
+                                       )
+                                  (or (when (and (= exit-code 0)
+                                                 (length> output 0)
+                                                 ) ;; end (when (and ...
+                                        output) ;end (when ...)
+                                      (progn
+                                        (when (length= output 0)
+                                          (warn "slugify-string `%S' returned empty string" string))
+                                        (when (not (length= output 0))
+                                          (warn "slugify-string `%S' exited with code %s" string exit-code))
+                                        ;; return string as is
+                                        string) ;; end progn
+                                      ) ;; end or
+                                  )  ;; end let*
+                                );; end lambda
+                            ) ;; end (when (executable-find "slugify-string" ...
+                          (when (executable-find "heck-string")
+                            #'(lambda (string)
+                                (let* (
+                                       (result (call-program-with-list-args "heck-string" nil t nil "--to=snake" string))
+                                       (exit-code (flat-list-get-assoc-key-value result :exit-code))
+                                       (output (string-trim (flat-list-get-assoc-key-value result :output)))
+                                       )
+                                  (or (when (and (= exit-code 0)
+                                                 (length> output 0)
+                                                 ) ;; end (when (and ...
+                                        output) ;end (when ...)
+                                      (progn
+                                        (when (length= output 0)
+                                          (warn "heck-string --to=snake `%S' returned empty string" string))
+                                        (when (not (length= output 0))
+                                          (warn "heck-string --to=snake `%S' exited with code %s" string exit-code))
+                                        ;; return string as is
+                                        string) ;; end progn
+                                      ) ;; end or
+                                  )  ;; end let*
+                                );; end lambda
+                            ) ;; end (when (executable-find "heck-string --to=snake" ...
+                          (list) ;; fallback to empty list
+                          );; end (or ...
+                      #'(lambda (string)
+                          (replace-regexp-in-string "[^a-z0-9_]+" "_" string)) ;; replaces INVALID SEQUENCES with underscore
+                      #'(lambda (string)
+                          (replace-regexp-in-string "\\(^[_]+\\|[_]+$\\)" "" string)) ;; removes sequences of underscores from beginning and end of string
+                      #'(lambda (string)
+                            (downcase string)) ;; lowercases string
+                      ) ;; end (list ...
+          ) ;; end (let* ...(raw-pipeline (list ...functions...)))
+
+         (pipeline (seq-filter #'functionp raw-pipeline)
+                   );; end (let* ...(pipeline seq-filter #'functionp)...)
+         )
+    (seq-reduce #'(lambda (value process)
+                    (apply #'process (list value)));; end #'(lambda ... )
+                pipeline ;; SEQUENCE
+                variable-name ;; INITIAL-VALUE
+                )
+    ) ;; end (let* ...)
+  ) ;; end (defun shell-script-gen-safe-variable-name-from-string ...)
+
+(defun shell-script-gen-variable-declaration (variable-name
+                                              variable-value
+                                              &optional variable-is-local
+                                              noerror)
+  "returns a string with a valid bash variable declaration
+examples:
+
+(shell-script-gen-variable-declaration \"my_array\" (list \"item pos 0\" \"item-pos-1\" \"item3\" 1010 \"$HOME\") \"\n\" t t)
+=> \"declare -a my_array=( \\\"item pos 0\\\" \\\"item-pos-1\\\" \\\"item3\\\" \\\"1010\\\"  \\\"$HOME\\\"  )\"
+"
+  (let ((declaration-keyword (if (not (null variable-is-local))
+                                 "local"
+                               "declare"))
+        (declaration-flag "--")
+        (post-declaration-comment nil)
+        (safe-variable-name (shell-script-gen-safe-variable-name-from-string variable-name))
+        (safe-variable-value (format "%S" variable-value))
+        (string-values-list nil)
+        ); end let
+    (cond (
+           ((or (stringp variable-value)
+                (and (numberp variable-value)
+                     (not (integerp variable-value)))
+                )
+            (setq
+             safe-variable-value (shell-script-single-quote-string variable-value)
+             declaration-flag "--"
+             ))
+
+           ((integerp variable-value)
+            (setq
+             safe-variable-value (format "%d" variable-value)
+             declaration-flag "-i"
+             ))
+
+
+           ((and (not flat-assoc-list-p variable-value)
+                 (listp variable-value))
+            (setq
+             safe-variable-value (shell-script-string-list-to-bash-indexed-array string-values-list "\n" noerror )
+             declaration-flag "-a"
+             ))
+
+           ((flat-assoc-list-p variable-value)
+            (setq
+             safe-variable-value (shell-script-string-list-to-bash-associative-array string-values-list "\n" noerror )
+             declaration-flag "-A"
+             ))
+           ((not (null noerror))
+            (let ((coerced-string (shell-script-single-quote-string (format "%S" variable-value))))
+              (warn "coercing unsupported variable (type) `%S' to string: %s" variable-value coerced-string)
+              (setq
+               safe-variable-value coerced-string
+               declaration-flag "--")))
+           (t
+            (error "unsupported variable (type) %S" variable-value))
+           );; end...clauses...
+          );; end cond
+    (format "%s %s=%s" declaration-keyword declaration-flag safe-variable-name safe-variable-value)
+    ) ;; end (let
+  );; end (defun shell-script-gen-variable-declaration ...)
+
+
+(defun shell-script-insert-for-each-in-indexed-array(array-name
+                                                     &optional variable-is-local
+                                                     )
+  (interactive)
+  (let* ((current-pos (marker-position (mark-marker)))
+         (current-line-number (line-number-at-pos current-pos))
+         (current-column-number (column-at-pos current-pos))
+         (editing-function nil)
+         (variable-declaration-keyword (if (not (null editing-function))
+                                           "local"
+                                         "declare"))
+         )
+
+
+
+  (insert "
+    %s -a argv=( $@ )
+    %s -i argc=${#argv[@]}
+    if [ ${argc} -gt 0 ]; then
+        local -- arg=""
+        for index in ${!argv[@]}; do
+            current=$(( $index + 1 ))
+        done
+    fi
+" variable-declaration-keyword ))
