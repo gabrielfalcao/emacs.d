@@ -2303,7 +2303,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
              (char-to-string (string-to-number (match-string 0))))
      t)))
 
-(defun shell-script-fix-variables-region (beg end)
+(defun shell-script-curly-wrap-variables-region (beg end)
   "."
   (interactive "*r")
   (let* ((regexp "[$]\\([a-zA-Z0-9_][a-zA-Z0-9_]*\\)")
@@ -2311,31 +2311,19 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
     (save-mark-and-excursion
       (replace-regexp-within-bounds regexp replacement beg end))))
 
-;;;;;;;
-;; WIP
-(defun shell-script-fix-variable-assignments-region (beg end) ;; WIP
-  "."
-  ;; WIP
-  (interactive "*r")
-  (let* ((regexp
-          "^\\(\\s-*\\)\\([a-z0-9_]+\\)=\\([$][(].*[)]\\|[$][{][a-z_][a-z0-9_]+[^}]*[}]\\);?\\s-*$")
-         (replacement "\1\2=\"\3\""))
-    (save-mark-and-excursion
-      (replace-regexp-within-bounds regexp replacement beg end))))
-;; WIP
-;;;;;;;
-
-(defun shell-script-fix-variables-buffer ()
+(defun shell-script-curly-wrap-variables-buffer ()
   (interactive)
+  (save-mark-and-excursion
   (let* ((beg (point-min))
-         (end (point-max))
-         (regexp "[$]\\([a-zA-Z0-9_][a-zA-Z0-9_]*\\)")
-         (replacement "${\\1}"))
-    (if mark-active
-        (user-error "mark is active, use shell-script-fix-variables-region instead.")
-      (save-excursion
-        (widen)
-        (replace-regexp-within-bounds regexp replacement beg end)))))
+         (end (point-max)))
+    (widen)
+    (shell-script-curly-wrap-variables-region beg end))))
+(defalias 'shell-script-fix-variables-region
+  #'shell-script-curly-wrap-variables-region)
+
+(defalias 'shell-script-fix-variables-buffer
+  #'shell-script-curly-wrap-variables-buffer)
+
 (setq debug-on-error nil)
 
 (defun find-file-if-exists (file-path)
