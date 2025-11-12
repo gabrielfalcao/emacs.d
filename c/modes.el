@@ -95,6 +95,7 @@
 (add-to-list 'auto-mode-alist '("\\.sh$" . shell-script-mode))
 (add-to-list 'auto-mode-alist '("\\.shell$" . shell-script-mode))
 (add-to-list 'auto-mode-alist '("\\.swift$" . swift-mode))
+(add-to-list 'auto-mode-alist '("\\.reb$" . reb-mode))
 (add-to-list 'auto-mode-alist '("\\.tf$" . terraform-mode))
 (add-to-list 'auto-mode-alist '("\\.toml$" . toml-mode))
 (add-to-list 'auto-mode-alist '("\\.ts$" . typescript-mode))
