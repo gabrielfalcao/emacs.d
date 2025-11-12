@@ -4097,6 +4097,7 @@ and minor modes. To be precise, no `auto-mode' changes happen.
                                                    value
                                                  (format "%S" value)))
                                            string-list));; end (let* (safe-string-coerced-list
+         (string-values-list (list))
          (total-items (length string-list))
          (total-valid-strings (length safe-string-only-list))
          (total-invalid-items (- total-items total-valid-strings))
@@ -4239,6 +4240,184 @@ the slugify-string
     ) ;; end (let* ...)
   ) ;; end (defun shell-script-gen-safe-variable-name-from-string ...)
 
+(defun shell-script-meta-gen-variable-declaration (variable-name
+                                                   variable-value
+                                                   &optional variable-is-local
+                                                   noerror
+                                                   )
+  "returns `flat-assoc-list-p' with context for declaration of one variable
+with elisp-to-bash value conversion and (optionally) an additional
+variable with the count (`length') of items if and when the main
+variable is an array and `with-count-variable' is not null."
+  (let ((declaration-keyword (if (not (null variable-is-local))
+                                 "local"
+                               "declare"))
+        (declaration-flag "--")
+        (post-declaration-comment nil)
+        (safe-variable-name (shell-script-gen-safe-variable-name-from-string variable-name))
+        (safe-variable-value (format "%S" variable-value))
+        (string-values-list (list))
+
+        (is-array nil)
+        (array-length-declaration-flag "-i")
+        (array-length-variable-name "-i")
+        (array-length-variable-value 0)
+        ); end (let ...varlist...)
+    (cond (
+           ((or (stringp variable-value)
+                (and (numberp variable-value)
+                     (not (integerp variable-value)))
+                )
+            (setq
+             safe-variable-value (shell-script-single-quote-string variable-value)
+             declaration-flag "--"
+             ))
+
+           ((integerp variable-value)
+            (setq
+             safe-variable-value (format "%d" variable-value)
+             declaration-flag "-i"
+             ))
+
+
+           ((and (not flat-assoc-list-p variable-value)
+                 (listp variable-value))
+            (setq
+             safe-variable-value (shell-script-string-list-to-bash-indexed-array string-values-list "\n" noerror )
+             declaration-flag "-a"
+             safe-variable-name (format "%s_items" safe-variable-name)
+
+             is-array t
+             array-length-variable-name (format "%s_count" safe-variable-name)
+             array-length-variable-value (length safe-variable-value)
+             array-length-declaration-flag "-i"
+             ))
+
+           ((flat-assoc-list-p variable-value)
+            (setq
+             safe-variable-value (shell-script-string-list-to-bash-associative-array string-values-list "\n" noerror )
+             declaration-flag "-A"
+             safe-variable-name (format "%s_items" safe-variable-name)
+
+             is-array t
+             array-length-variable-name (format "%s_count" safe-variable-name)
+             array-length-variable-value (length safe-variable-value)
+             array-length-declaration-flag "-i"
+             ))
+           ((not (null noerror))
+            (let ((coerced-string (shell-script-single-quote-string (format "%S" variable-value))))
+              (setq
+               post-declaration-comment (format "coercing unsupported variable (type) `%S' to string: %s" variable-value coerced-string)
+               is-array nil
+               safe-variable-value coerced-string
+               declaration-flag "--")))
+           (t
+            (error "unsupported variable (type) %S" variable-value))
+           );; end...clauses...
+          );; end cond
+    (or (when is-array
+          (list
+           :declaration-keyword declaration-keyword                     ;; (if (not (null variable-is-local)) "local" "declare")
+           :declaration-flag declaration-flag                           ;; (cond (
+;                                                                       ;;    (listp             "-a")
+;                                                                       ;;    (flat-assoc-list-p "-A")
+;                                                                       ;; )
+           :is-array is-array                                           ;; nil
+           :post-declaration-comment post-declaration-comment           ;; string or nil
+           :safe-variable-name safe-variable-name                       ;; (shell-script-gen-safe-variable-name-from-string variable-name)
+           :safe-variable-value safe-variable-value                     ;; string, integer or list of strings
+           :array-length-declaration-flag array-length-declaration-flag ;; "-i"
+           :array-length-variable-name array-length-variable-name       ;; (format "%s_count" safe-variable-name)
+           :array-length-variable-value array-length-variable-value     ;; (length safe-variable-value)
+           ))
+        (list
+         :declaration-keyword declaration-keyword                     ;; (if (not (null variable-is-local)) "local" "declare")
+           :declaration-flag declaration-flag                           ;; (cond (
+;                                                                       ;;    (stringp           "--")
+;                                                                       ;;    (integerp          "-i")
+;                                                                       ;;    (t                 "--") ;; fallback is always string via `%S'
+;                                                                       ;; )
+         :is-array is-array                                           ;; nil
+         :post-declaration-comment post-declaration-comment           ;; string or nil
+         :safe-variable-name safe-variable-name                       ;; (shell-script-gen-safe-variable-name-from-string variable-name)
+         :safe-variable-value safe-variable-value                     ;; string or integer
+         )
+        );; end (or ...
+    );; end (defun (let ...)))
+  );; end defun shell-script-meta-gen-variable-declaration
+
+
+(defun shell-script-gen-variable-declaration-from-flat-assoc-list (context)
+  "returns a string with bash code containing variable declaration(s) in addition to a for-each iteration when the main variable is an array (indexed or associative)
+  CONTEXT must be a valid `flat-assoc-list-p'."
+
+  (if (not (flat-assoc-list-p context))
+      (error "`context' is not a 'flat-assoc-list-p': %S" context))
+
+  (let (
+           declaration-keyword           (flat-list-get-assoc-key-value context :declaration-keyword)
+           declaration-flag              (flat-list-get-assoc-key-value context :declaration-flag)
+           is-array                      (flat-list-get-assoc-key-value context :is-array)
+           post-declaration-comment      (flat-list-get-assoc-key-value context :post-declaration-comment)
+           safe-variable-name            (flat-list-get-assoc-key-value context :safe-variable-name)
+           safe-variable-value           (flat-list-get-assoc-key-value context :safe-variable-value)
+           array-length-declaration-flag (flat-list-get-assoc-key-value context :array-length-declaration-flag)
+           array-length-variable-name    (flat-list-get-assoc-key-value context :array-length-variable-name)
+           array-length-variable-value   (flat-list-get-assoc-key-value context :array-length-variable-value)
+           )
+    (let* (
+           (indent-length 4)
+           (padding-left (string-join (-repeat indent-length " ")))
+           (declarations (append
+                          (list (format "%s %s=%s" declaration-keyword declaration-flag safe-variable-name safe-variable-value))
+                          (when is-array
+                            (list (format "%s %s=%s" declaration-keyword array-length-declaration-flag array-length-variable-name array-length-variable-value)
+                                  );; end (list
+                            )) ;; end (append
+                         );; end (let ((declarations ...))
+           (index-variable-name (if (and is-array is-flat-assoc-list)
+                                    "key"
+                                  "index"))
+           (index-variable-declaration-flag (if (and is-array is-flat-assoc-list)
+                                    "--"
+                                  "-i"))
+           (bash-snippet-for-each
+            (when is-array
+              (string-join (list
+                            (format "if [ ${%s} -gt 0 ]; then" array-length-variable-name)
+                            (format "%s%s %s %s=0"
+                                    padding-left declaration-keyword
+                                    index-variable-declaration-flag
+                                    index-variable-name)
+                            (format "%s%s -- arg=\"\"" padding-left declaration-keyword)
+                            (format "%sfor %s in ${!%s[@]}; do"
+                                    padding-left
+                                    index-variable-name safe-variable-name)
+                            (format "%s%s%s %s %s current=$(( $%s + 1 ))"
+                                    padding-left padding-left
+                                    (if is-flat-assoc-list
+                                        "#" ;; comment this declaration when flat-list because index-variable most likely has non-numerical characters
+                                      "" ;;
+                                      )
+                                    declaration-keyword
+                                    index-variable-declaration-flag
+                                    index-variable-name)
+                            (format "%s%sarg=${%s[$%s]}"
+                                    padding-left padding-left
+                                    safe-variable-name
+                                    index-variable-name
+                                    )
+                            (format "%sdone" padding-left)
+                            (format "fi")
+                            );; end (string-join (list ...
+                           );; end (string-join (list ... "\n"))
+              );; end (when is-array
+            );; end (let* ...(bash-snippet-for-each ...))
+           );; end (let* ...varlist...)
+      );; end (let* ...)
+    );; end (defun (let ...
+  );; end (defun shell-script-gen-variable-declaration-from-flat-assoc-list ...
+
 (defun shell-script-gen-variable-declaration (variable-name
                                               variable-value
                                               &optional variable-is-local
@@ -4289,8 +4468,8 @@ examples:
              ))
            ((not (null noerror))
             (let ((coerced-string (shell-script-single-quote-string (format "%S" variable-value))))
-              (warn "coercing unsupported variable (type) `%S' to string: %s" variable-value coerced-string)
               (setq
+               post-declaration-comment (format "coercing unsupported variable (type) `%S' to string: %s" variable-value coerced-string)
                safe-variable-value coerced-string
                declaration-flag "--")))
            (t
@@ -4302,28 +4481,44 @@ examples:
   );; end (defun shell-script-gen-variable-declaration ...)
 
 
-(defun shell-script-insert-for-each-in-indexed-array(array-name
-                                                     &optional variable-is-local
-                                                     )
-  (interactive)
-  (let* ((current-pos (marker-position (mark-marker)))
-         (current-line-number (line-number-at-pos current-pos))
-         (current-column-number (column-at-pos current-pos))
-         (editing-function nil)
-         (variable-declaration-keyword (if (not (null editing-function))
-                                           "local"
-                                         "declare"))
-         )
+;; (defun shell-script-insert-for-each-in-indexed-array(array-variable-name
+;;                                                      array-variable-value
+;;                                                      &optional variable-is-local
+;;                                                      noerror
+;;                                                      )
+;;   (interactive)
+;;   (if (not (stringp array-variable-name))
+;;       (error "`array-variable-name' is not a string: %S" array-variable-name))
+;;   (if (not (listp array-variable-value))
+;;       (error "`array-variable-value' is not a list: %S" array-variable-value))
+
+;;   (let* ((current-pos (marker-position (mark-marker)))
+;;          (current-line-number (line-number-at-pos current-pos))
+;;          (current-column-number (column-at-pos current-pos))
+;;          (editing-function variable-is-local)
+;;          (result (shell-script-meta-gen-variable-declaration
+;;                   array-variable-name
+;;                   array-variable-value
+;;                   variable-is-local
+;;                   noerror
+;;                   t
+;;                   "\n"))
+;;          (declarations-string (shell-script-gen-variable-declaration-from-flat-assoc-list result))
+;;          (safe-variable-declare-keyword (flat-list-get-assoc-key-value result :declaration-keyword))
+;;          (safe-variable-flag (flat-list-get-assoc-key-value result :declaration-flag))
+;;          (safe-variable-name (flat-list-get-assoc-key-value result :variable-name))
+;;          (safe-variable-value (flat-list-get-assoc-key-value result :variable-value))
+;;          )
 
 
-
-  (insert "
-    %s -a argv=( $@ )
-    %s -i argc=${#argv[@]}
-    if [ ${argc} -gt 0 ]; then
-        local -- arg=""
-        for index in ${!argv[@]}; do
-            current=$(( $index + 1 ))
-        done
-    fi
-" variable-declaration-keyword ))
+;;   (insert "
+;;     %s
+;;     if [ ${%s} -gt 0 ]; then
+;;         %s -- arg=""
+;;         for index in ${!%s[@]}; do
+;;             %s -i current=$(( $index + 1 ))
+;;             arg=${%s[$index]}
+;;         done
+;;     fi
+;; " variable-declaration-keyword ))
+;;   )
