@@ -3,6 +3,7 @@
 set -e
 set -o pipefail
 set -o noglob
+set -o errtrace # or set -E
 set -u
 export IFS=$'\n'
 

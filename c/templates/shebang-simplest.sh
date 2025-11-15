@@ -2,6 +2,7 @@
 
 set -e
 set -o pipefail
+set -o errtrace # or set -E
 set -u
 export IFS=$'\n'
 unset IFS
