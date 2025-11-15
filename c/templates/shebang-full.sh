@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC2004,SC2206,SC2068,SC2086
 
 set -e
 set -o pipefail
