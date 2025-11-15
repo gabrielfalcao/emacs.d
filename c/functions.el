@@ -396,15 +396,11 @@
   "returns the current column number at marker."
   (save-mark-and-excursion (goto-char pos) (current-column)))
 
-(defun marker-begin ()
+(defun marker-pos-line-and-column ()
   (format
    "line=%s col=%s"
    (line-number-at-pos (marker-position (mark-marker)))
    (column-at-pos (marker-position (mark-marker)))))
-(defun marker-end ()
-  (format "line=%s col=%s"
-          (line-number-at-pos (point))
-          (current-column)))
 
 (defun Ox33b4O/$/base64-encode-region (beg end)
   (interactive "*r")
