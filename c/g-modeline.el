@@ -21,7 +21,7 @@
      (list
       (or
        (when mark-active
-         (format "%s%s %s %s%s"
+         (format "%s%s %s%s"
                  (propertize
                   (Ox33b4O/$/mode-line-arrow-right)
                   'face
@@ -35,21 +35,15 @@
                   (list :background
                         (Ox33b4O/$/mode-line-background)
                         :foreground (Ox33b4O/$/mark-indicator-color)))
-                 (propertize
-                  (format "%s" (marker-end))
-                  'face
-                  (list :background
-                        (Ox33b4O/$/mode-line-background)
-                        :foreground (Ox33b4O/$/mark-indicator-color)))
 
                  (propertize
                   (let ((line-count
                          (count-lines
                           (marker-position (mark-marker))
                           (point))))
-                    (format "[%s %s]"
+                    (format "[%s line%s]"
                             line-count
-                            (if (= line-count 1) "line" "lines")))
+                            (if (= line-count 1) "" "s")))
                   'face
                   (list :background
                         (Ox33b4O/$/mark-indicator-color)
@@ -198,3 +192,46 @@
              ((stringp mode-name)
               mode-name)
              ((t (format "%S" mode-name))))))))
+
+(defun Ox33b4O/$/mark-indicator/active()
+  "."
+  (format "%s%s %s%s"
+          (propertize
+           (Ox33b4O/$/mode-line-arrow-right)
+           'face
+           (list :background
+                 (Ox33b4O/$/mode-line-background)
+                 :foreground "#F5BF08")
+           )
+          (propertize
+           (format "%s" (marker-begin))
+           'face
+           (list :background
+                 (Ox33b4O/$/mode-line-background)
+                 :foreground (Ox33b4O/$/mark-indicator-color)))
+
+          (propertize
+           (let ((line-count
+                  (count-lines
+                   (marker-position (mark-marker))
+                   (point))))
+             (format "[%s line%s]"
+                     line-count
+                     (if (= line-count 1) "" "s")))
+           'face
+           (list :background
+                 (Ox33b4O/$/mark-indicator-color)
+                 :foreground (Ox33b4O/$/mode-line-background)
+                 ))
+          (propertize
+           (Ox33b4O/$/mode-line-arrow-left)
+           'face
+           (list :background
+                 (Ox33b4O/$/mode-line-background)
+                 :foreground "#F5BF08")
+           ))
+  )
+
+(defun Ox33b4O/$/mark-indicator/inactive()
+  "."
+  (string-join (list " ") ""))
