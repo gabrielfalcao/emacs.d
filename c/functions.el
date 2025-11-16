@@ -1728,10 +1728,12 @@
   (interactive)
   (erase-buffer-by-name  "*Messages*"))
 
-(defun erase-c-messages ()
+(defun erase-c-messages (&optional dont-erase-minibuffer)
   "."
   (interactive)
-  (erase-buffer-by-name  "*C-Messages*"))
+  (erase-buffer-by-name  "*C-Messages*")
+  (unless (not (null dont-erase-minibuffer))
+    (erase-minibuffer)))
 
 (defun erase-scratch ()
   "."
@@ -3356,16 +3358,20 @@ cursor position in buffer."
       (read-only-mode -1)
       (widen)
       (end-of-buffer)
-      (insert output))
-    (write-to-minibuffer output)
+      (insert output)
+      (end-of-buffer)
+      (goto-char (point-max))
+      )
+    (write-to-minibuffer (string-trim output))
+
     ))
 
-(defun c-message-open (&rest args)
+(defun c-message-open (fmt &rest args)
   "drop-in replacement for `c-message' opens the `*C-Messages*' buffer after outputing the message"
   (interactive "*s")
   (delete-other-windows (frame-first-window))
   (erase-c-messages)
-  (apply #'c-message args)
+  (apply #'c-message (append (list fmt) args))
   (or (when ;; c-message-buffer is open and is the first active buffer in current frame...
           (and (not (null (get-buffer-window c-message-buffer)))
 	       (eq (frame-first-window) (get-buffer-window c-message-buffer)))
@@ -3389,14 +3395,38 @@ cursor position in buffer."
 
 (defun display-symbol (sym &optional fallback)
   "returns a string with the symbol's value"
-  (format "%S" (or (when (stringp sym)
-                     (intern sym))
-                   (when (symbolp sym)
-                     (symbol-value sym))
-                   (when (not (null fallback))
-                     fallback)
-                   sym
-                   )))
+  (format "%s" (condition-case err
+                   (or (when (stringp sym)
+                         (message "symbol %S is stringp" sym)
+                         (intern-soft sym))
+                       (when (symbolp sym)
+                         (message "symbol %S is symbolp" sym)
+                         (symbol-value sym))
+                       (when (listp sym)
+                         (message "symbol %S is listp" sym)
+                         (format "'(%s)" (string-join (mapcar #'display-symbol sym)
+                                      " ")))
+                       (when (sequencep sym)
+                         (message "symbol %S is listp" sym)
+                         (format ";; sequencep\n(%s)" (string-join (mapcar #'display-symbol sym)
+                                      " ")))
+                       (when (not (null fallback))
+                         (message "displaying fallback %S because symbol is %S" sym)
+                         fallback)
+                       (progn
+                         (message "displaying symbol %S because there is no fallback" sym)
+                         sym
+                         )
+                       ) ;; end (or
+
+                 (error (let (
+                              (error-message (format "error in `display-symbol': %s" (error-message-string err)))
+                              ) ;;end let varlist
+                          (message "%s" error-message)
+                        error-message) ;; end let
+                        )) ;; end condition-case
+          )
+  );;end defun display-symbol
 (defalias 'symbol-display #'display-symbol)
 
 (defun c-message-debug-symbols (symbol-list &rest context-symbol-list)
@@ -3545,7 +3575,8 @@ signals error if the `string' argument is not a string"
 					    (seq-subseq string-members 0 index)))
 		       );;previous
              )
-        ;; (c-message-debug-symbols (list 'previous 'result) 'index 'member-count 'current)
+
+        ;; KGMtbWVzc2FnZS1kZWJ1Zy1zeW1ib2xzIChsaXN0ICdwcmV2aW91cyAncmVzdWx0KSAnaW5kZXggJ21lbWJlci1jb3VudCAnY3VycmVudCk=
         (setq
          result (append result (list (format "%s[^%s]" previous current)))
          index (+ index 1)
@@ -3553,7 +3584,7 @@ signals error if the `string' argument is not a string"
          )
         )
       )
-    ;; (c-message-debug-symbols 'reb-mode-string)
+    ;; KGMtbWVzc2FnZS1kZWJ1Zy1zeW1ib2xzICdyZWItbW9kZS1zdHJpbmcp
     (if (and (eq (get-buffer reb-buffer) (current-buffer))
              (string= reb-re-syntax "read"))
         (format "\\\\(%s\\\\)" (string-join result "\\\\|"))
@@ -3570,8 +3601,7 @@ signals error if the `string' argument is not a string"
 
   (let* ((regexp (get-regexp-string-negation string)))
 
-    ;; (c-message-open "%s" regexp)
-    ;; (c-message-debug-symbols (list 'reb-re-syntax 'regexp))
+    ;; KGMtbWVzc2FnZS1vcGVuICIlcyIgcmVnZXhwKQogICAgKGMtbWVzc2FnZS1kZWJ1Zy1zeW1ib2xzIChsaXN0ICdyZWItcmUtc3ludGF4ICdyZWdleHApKQ==
     (insert regexp)
     )
   )
@@ -3975,9 +4005,7 @@ and minor modes. To be precise, no `auto-mode' changes happen.
 ;;                 (nons-outer (flat-list-get-assoc-key-value nonstandard-sep :outer))
 ;;                 (nons-ascii (flat-list-get-assoc-key-value nonstandard-sep :ascii))
 ;;                 (nons-nspc (flat-list-get-assoc-key-value nonstandard-sep :non-space)))
-;;             (c-message-debug-symbols (list 'nonstandard-sep
-;;                                            'nons-all  'nons-outer  'nons-ascii  'nons-nspc 'sep)
-;;                                      'sep 'nons-all  'nons-outer  'nons-ascii  'nons-nspc)
+;;            KGMtbWVzc2FnZS1kZWJ1Zy1zeW1ib2xzIChsaXN0ICdub25zdGFuZGFyZC1zZXAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICdub25zLWFsbCAgJ25vbnMtb3V0ZXIgICdub25zLWFzY2lpICAnbm9ucy1uc3BjICdzZXApCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAnc2VwICdub25zLWFsbCAgJ25vbnMtb3V0ZXIgICdub25zLWFzY2lpICAnbm9ucy1uc3BjKQ==
 ;;
 ;;             (format "[^a-zA-Z0-9_%s-]+" slugify-string-default-separator)))
 ;;         slugify-string-default-separator))
@@ -4002,9 +4030,7 @@ and minor modes. To be precise, no `auto-mode' changes happen.
 ;;                 (nons-ascii (flat-list-get-assoc-key-value nonstandard-sep :ascii))
 ;;                 (nons-nspc (flat-list-get-assoc-key-value nonstandard-sep :non-space))
 ;;                 (actual-sep slugify-string-default-separator))
-;;             (c-message-debug-symbols (list 'nonstandard-sep
-;;                                            'nons-all  'nons-outer  'nons-ascii  'nons-nspc 'sep)
-;;                                      'sep 'nons-all  'nons-outer  'nons-ascii  'nons-nspc)
+;;           ;; KGMtbWVzc2FnZS1kZWJ1Zy1zeW1ib2xzIChsaXN0ICdub25zdGFuZGFyZC1zZXAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICdub25zLWFsbCAgJ25vbnMtb3V0ZXIgICdub25zLWFzY2lpICAnbm9ucy1uc3BjICdzZXApCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAnc2VwICdub25zLWFsbCAgJ25vbnMtb3V0ZXIgICdub25zLWFzY2lpICAnbm9ucy1uc3BjKQ==
 ;;
 ;;             (format "\\(^[%s]+\\|[%s]+$\\)" actual-sep actual-sep)))
 ;;         slugify-string-default-separator)
@@ -4043,7 +4069,7 @@ and minor modes. To be precise, no `auto-mode' changes happen.
 ;;        (shell-command (flat-list-get-assoc-key-value result :shell-command)))
 
 ;;   (erase-c-messages)
-;;   (c-message-debug-symbols (list 'result 'keys 'values 'exit-code 'stdout 'stderr 'call-process-args) 'shell-command)
+;;   KGMtbWVzc2FnZS1kZWJ1Zy1zeW1ib2xzIChsaXN0ICdyZXN1bHQgJ2tleXMgJ3ZhbHVlcyAnZXhpdC1jb2RlICdzdGRvdXQgJ3N0ZGVyciAnY2FsbC1wcm9jZXNzLWFyZ3MpICdzaGVsbC1jb21tYW5kKQ==
 ;;   )
 ;;                                         ;
 
@@ -4506,3 +4532,157 @@ examples:
 ;;     fi
 ;; " variable-declaration-keyword ))
 ;;   )
+
+(defvar debug-fun-history
+  (list)
+  "history of calls to `debug-fun'")
+
+(defun debug-fun-get-completing-read-collection (string pred action)
+  (let ((prefix-completions (mapcar #'intern (all-completions string definition-prefixes))))
+    (complete-with-action action obarray string
+                          (if pred (lambda (sym)
+                                       (or (funcall pred sym)
+                                           (memq sym prefix-completions)))))
+      )
+  )
+(defun debug-fun-get-completing-read-predicate (f)
+  (or (commandp f) (fboundp f) (get f 'function-documentation)))
+
+(defun debug-fun-read-function-from-minibuffer (&rest unused-args)
+  (let* (
+        ;; (completing-read-function #'debug-completing-read-function)
+        (collection #'debug-fun-get-completing-read-collection)
+        (predicate #'debug-fun-get-completing-read-predicate)
+        (function-name (completing-read  "function to call: " collection predicate t nil debug-fun-history))
+        (function-symbol (condition-case err
+                             (intern function-name)
+                           (error (let ((error-message "error in `debug-fun-read-function-from-minibuffer': %s"
+                                                       (error-message-string err)))
+                                    (c-message "%s" error-message)
+                                    error-message)
+                                  ) ;; end condition-case (error
+                           ) ;; end condition-case
+                         ) ;; end (let* ... function-symbol
+        (function-object (format "%S" function-symbol))
+
+        ) ;;end varlist (let*
+    (when (not (null unused-args))
+      (c-message-debug-symbols (list 'unused-args)))
+
+    ;; KGxldCAoKHRoaXMtZnVuY3Rpb24gImRlYnVnLWZ1bi1yZWFkLWZ1bmN0aW9uLWZyb20tbWluaWJ1ZmZlciIpKQogICAgICAoYy1tZXNzYWdlLWRlYnVnLXN5bWJvbHMKICAgICAgIChsaXN0ICdmdW5jdGlvbi1uYW1lICdmdW5jdGlvbi1zeW1ib2wgJ2Z1bmN0aW9uLW9iamVjdCAncmVzdWx0ICkKICAgICAgICd0aGlzLWZ1bmN0aW9uKSk=
+
+    (list function-symbol)
+  ))
+
+(defun debug-fun(function-name)
+  (interactive (debug-fun-read-function-from-minibuffer));; end interactive
+  ;; (c-message-open "%s\n%s" function-name (apply function-to-call args-to-function-to-call))
+  (erase-c-messages)
+  (let* (
+         (function-symbol (condition-case err
+                              (or (when (or (functionp function-name)
+                                            (commandp function-name))
+                                    (c-message "function-name is function")
+                                    function-name)
+                                  (when (symbolp function-name)
+                                    (c-message "function-name is symbol")
+                                    (symbol-value function-name))
+                                  (when (stringp function-name)
+                                    (c-message "function-name is string")
+                                    (intern function-name))
+                                  (user-error "unexpected function-name argument: %S" function-name))
+
+                           (error (let ((error-message (format "error in `debug': %s" (error-message-string err))))
+                                    (c-message "%s" error-message)
+                                    error-message)
+                                  )))
+         (function-arity (car (func-arity function-symbol)))
+         ) ;; end let* varlist
+    (let ((this-function "debug-fun")
+          (function-symbol-is-list (if (listp function-symbol) "t" "nil"))
+          (function-name-is-list (if (listp function-name) "t" "nil"))
+          )
+      (c-message-debug-symbols
+       (list 'function-name 'function-symbol 'function-arity 'function-name-is-list 'function-symbol-is-list)
+       'this-function 'function-symbol-is-list 'function-name-is-list 'function-arity
+       ) ;; end c-message-debug-symbols
+      );; end let
+
+    (if (= 0 function-arity)
+        (c-message "(%s)\n%S" function-name
+                 (condition-case err
+                     (funcall function-symbol)
+                   (error (format "failed to call function %S: %S" function-name err ))
+                   )) ;; end c-message
+      ;; else
+      (user-error "cannot call function %S without args because it takes %s argument%s"
+             function-name
+             function-arity
+             (if (= 1 function-arity) "" "s")) ;; end handler (error ...)
+      ) ;; end if
+    ) ;;end (let*
+  )
+
+(defun debug/Ox33b4O/$/mark-indicator/active()
+  (interactive)
+  (enable-debug-on-error)
+  (erase-c-messages)
+  (c-message-open "(Ox33b4O/$/mark-indicator/active)\n%s" (Ox33b4O/$/mark-indicator/active)))
+
+
+(defun debug-completing-read-function (prompt collection &optional predicate
+                                       require-match initial-input
+                                       hist def inherit-input-method)
+  "fork of `completing-read-function' that debugs buffer-local variables set within the `minibuffer-with-setup-hook' call "
+
+  (when (consp initial-input)
+    (setq initial-input
+          (cons (car initial-input)
+                ;; `completing-read' uses 0-based index while
+                ;; `read-from-minibuffer' uses 1-based index.
+                (1+ (cdr initial-input)))))
+
+  (let* ((base-keymap (if require-match
+                         minibuffer-local-must-match-map
+                        minibuffer-local-completion-map))
+         (keymap (if (memq minibuffer-completing-file-name '(nil lambda))
+                     base-keymap
+                   ;; Layer minibuffer-local-filename-completion-map
+                   ;; on top of the base map.
+                   (make-composed-keymap
+                    minibuffer-local-filename-completion-map
+                    ;; Set base-keymap as the parent, so that nil bindings
+                    ;; in minibuffer-local-filename-completion-map can
+                    ;; override bindings in base-keymap.
+                    base-keymap)))
+         (keymap (if minibuffer-visible-completions
+                     (make-composed-keymap
+                      (list minibuffer-visible-completions-map
+                            keymap))
+                   keymap))
+         (buffer (current-buffer))
+         (c-i-c completion-ignore-case)
+         (result
+          (progn
+            (let ((minibuffer-completion-table collection) (minibuffer-completion-predicate predicate) (minibuffer-completion-confirm (unless (eq require-match t) require-match)) (minibuffer--require-match require-match) (minibuffer--original-buffer buffer) (completion-ignore-case c-i-c))
+              (c-message-debug-symbols (list 'minibuffer-completion-table 'minibuffer-completion-predicate 'minibuffer-completion-confirm 'minibuffer--require-match 'minibuffer--original-buffer 'completion-ignore-case))
+              )
+
+          (minibuffer-with-setup-hook
+              (lambda ()
+
+                (setq-local minibuffer-completion-table collection)
+                (setq-local minibuffer-completion-predicate predicate)
+                ;; FIXME: Remove/rename this var, see the next one.
+                (setq-local minibuffer-completion-confirm
+                            (unless (eq require-match t) require-match))
+                (setq-local minibuffer--require-match require-match)
+                (setq-local minibuffer--original-buffer buffer)
+                ;; Copy the value from original buffer to the minibuffer.
+                (setq-local completion-ignore-case c-i-c))
+            (read-from-minibuffer prompt initial-input keymap
+                                  nil hist def inherit-input-method)))))
+    (when (and (equal result "") def)
+      (setq result (if (consp def) (car def) def)))
+    result))
+(erase-c-messages)
