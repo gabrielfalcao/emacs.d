@@ -3370,7 +3370,7 @@ cursor position in buffer."
   "drop-in replacement for `c-message' opens the `*C-Messages*' buffer after outputing the message"
   (interactive "*s")
   (delete-other-windows (frame-first-window))
-  (erase-c-messages)
+  ;;(erase-c-messages)
   (apply #'c-message (append (list fmt) args))
   (or (when ;; c-message-buffer is open and is the first active buffer in current frame...
           (and (not (null (get-buffer-window c-message-buffer)))
