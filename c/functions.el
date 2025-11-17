@@ -2517,6 +2517,16 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 
 (defun shebang () "." (interactive) (insert-shebang "shebang.sh"))
 
+(defun shebang-files ()
+  "."
+  (interactive)
+  (insert-shebang "shebang-files.sh"))
+
+(defun shebang-argparse ()
+  "."
+  (interactive)
+  (insert-shebang "shebang-argparse.sh"))
+
 (defun shebang-full ()
   "."
   (interactive)
