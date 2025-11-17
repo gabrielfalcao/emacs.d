@@ -2,33 +2,28 @@
 
 set -e
 set -o pipefail
-set -o noglob
-set -o errtrace # or set -E
 set -u
 export IFS=$'\n'
 
 script_name="$(basename "${BASH_SOURCE[0]}")"
 script_path="$(2>/dev/random 1>/dev/random cd $(dirname "${BASH_SOURCE[0]}") && pwd)"
 this_script_path="${script_path}/${script_name}"
-
 declare -a argv=($@)
 declare argc=${#argv[@]}
 
-declare -a regular_file_argv=()
-declare -a directory_argv=()
-declare -a non_path_params=()
-declare -a other_file_types_argv=()
+declare -A cli_args_option_list=()
+declare -A cli_args_flag_list=()
+declare -a cli_args_value_list=()
+declare -a valid_argument_types=('flag' 'option' 'value')
 
-declare -i regular_file_argv_count=0
-declare -i directory_argv_count=0
-declare -i non_path_params_count=0
-declare -i other_file_types_argv_count=0
-
-error_prefix_color_rgb="255;0;66"
-error_color_rgb="255;50;50"
-error_color_rgb="255;62;92"
-warn_prefix_color_rgb="255;106;50"
-warn_color_rgb="255;161;50"
+declare -- error_prefix_color_rgb="255;0;66"
+declare -- error_color_rgb="255;62;92"
+declare -- warn_prefix_color_rgb="255;106;50"
+declare -- warn_color_rgb="255;161;50"
+declare -- info_prefix_color_rgb="0;66;255"
+declare -- info_color_rgb="62;92;255"
+declare -- debug_prefix_color_rgb="50;255;106"
+declare -- debug_color_rgb="50;255;161"
 
 on_exit() {
     repl sane
@@ -64,85 +59,187 @@ warn_prefixed() {
     local -- prefix="$1"
     shift
     local -- message="$@"
-    1>&2 echo -e "\x1b[1;38;2;${warn_prefix_color_rgb}m[${prefix}]\x1b[1;38;2;${warn_color_rgb}m\n${message}\x1b[0m"
+    1>&2 echo -e "\x1b[1;38;2;${warn_prefix_color_rgb}m${prefix}\x1b[1;38;2;${warn_color_rgb}m ${message}\x1b[0m"
 }
 warn() {
     local -- linenum="${BASH_LINENO[0]}"
-    warn_prefixed "[${script_name} warn at ${linenum}]" "${@}"
+    warn_prefixed "[warn]  [${script_name}:${linenum}]" "${@}"
 }
-
 error() {
     local -- linenum="${BASH_LINENO[0]}"
-    error_prefixed "[${script_name} error at ${linenum}]" "${@}"
+    error_prefixed "[error] [${script_name}:${linenum}]" "${@}"
 }
 error_prefixed() {
     local -- prefix="$1"
     shift
     local -- message="$@"
-    1>&2 echo -e "\x1b[1;38;2;${error_prefix_color_rgb}m[${prefix}]\x1b[1;38;2;${error_color_rgb}m\n${message}\x1b[0m"
+    1>&2 echo -e "\x1b[1;38;2;${error_prefix_color_rgb}m${prefix}\x1b[1;38;2;${error_color_rgb}m ${message}\x1b[0m"
+}
+info() {
+    local -- linenum="${BASH_LINENO[0]}"
+    info_prefixed "[info]  [${script_name}:${linenum}]" "${@}"
+}
+info_prefixed() {
+    local -- prefix="$1"
+    shift
+    local -- message="$@"
+    1>&2 echo -e "\x1b[1;38;2;${info_prefix_color_rgb}m${prefix}\x1b[1;38;2;${info_color_rgb}m ${message}\x1b[0m"
+}
+debug_prefixed() {
+    local -- prefix="$1"
+    shift
+    local -- message="$@"
+    1>&2 echo -e "\x1b[1;38;2;${debug_prefix_color_rgb}m${prefix}\x1b[1;38;2;${debug_color_rgb}m ${message}\x1b[0m"
+}
+debug() {
+    local -- linenum="${BASH_LINENO[0]}"
+    debug_prefixed "[debug] [${script_name}:${linenum}]" "${@}"
+}
+trace() {
+    if [ -z "${BASH_TRACE}" ] && [ "${BASH_LOGLEVEL}" != "trace" ]; then
+        return 0
+    fi
+
+    local -- linenum="${BASH_LINENO[0]}"
+    local -- funcname="${FUNCNAME[1]}"
+    debug_prefixed "[${FUNCNAME[0]} ${script_name}::${funcname}:${linenum}]" "${@}"
 }
 
-process_argv() {
-    repl no echo
-    if [ ${argc} -eq 0 ]; then
-        exit_error "missing argument: <ARGUMENT>"
+get_arg_value() {
+    local -a g_argv=($@)
+    local -i g_argc=${#g_argv[@]}
+    local -- index_arg="${1}"
+    local -- linenum="${BASH_LINENO[0]}"
+    if [ ${g_argc} -eq 0 ]; then
+        error_prefixed "[error in call to get_arg_value:${linenum}]" "missing argument <INDEX>"
+        exit 1
+    elif ! 2>/dev/random grep -E '^[0-9]+$' <<<"${index}"; then
+        error_prefixed "[error in call to get_arg_value:${linenum}]" "argument <INDEX> is not a positive number: ${index_arg@Q}"
         exit 1
     fi
+    local -i index=${1}
+    local -i current=$(($index + 1))
+    local -- arg="${argv[$index]}"
+    if [ ${argc} -lt ${current} ]; then
+        return 1
+    elif 2>/dev/random grep -i -E '^[-]{1,2}[a-z0-9_-]+$' <<<"${arg}"; then
+        return 1
+    fi
+    echo "${g_argv[$index]}"
+}
+get_arg_type_from_dash_type() {
+    local -- dash_type="${1}"
+    case "${dash_type}" in
+        '--')
+            echo "option"
+            ;;
+        '-')
+            echo "flag"
+            ;;
+        '')
+            echo "value"
+            ;;
+        *)
+            trace "unexpected dash type ${dash_type@Q}, cannot map argument type accurately"
+            echo "value"
+            return 63 #?
+            ;;
+    esac
+    return 0
+}
+get_arg_meta() {
+    local -i index=${1}
+    local -i next_index=$(($index + 1))
+    local -- arg="${argv[${index}]}"
+    if [ ${next_index} -gt ${argc} ]; then
+        trace "no argument for ${index} because index is out of range ${next_index}/${argc}"
+        return 1
+    fi
+    local -- sed_command="s/^([-]{1,2})(([a-z])([a-z0-9_]+[-]?)*)([=]([^=]*))?(.*?)$/\1\n\2\n\6\n/gp"
+    local -a arg_meta=($({
+        unset IFS
+        sed -n -E "${sed_command}" <<<"${arg}"
+        export IFS=$'\n'
+    }))
+    local -a result=(${arg_meta[@]})
+    debug "${arg_meta[@]@A}"
+    # debug "${result[@]@A}"
+    if [ ${#arg_meta[@]} -eq 0 ]; then
+        result=('value' '' "${arg}")
+    else
+        local -- dash_type="${arg_meta[0]}"
+        result[0]=$(get_arg_type_from_dash_type "${dash_type}")
+        if [ ${#result[@]} -eq 2 ] && [ $next_index -le ${argc} ]; then
+            local -a next_arg_meta=($(get_arg_meta ${next_index}))
+            local -- next_arg_type="${next_arg_meta[0]}"
+            local -- next_arg_value="${next_arg_meta[0]}"
+            if [ "${next_arg_type}" == "value" ]; then
+                result[2]="${next_arg_value}"
+                result[3]=${next_index}
+            fi
+        fi
+    fi
+    printf "%s\n" "${result[@]}"
+}
+process_argv() {
+    repl no echo
+    local -i current=0
+    local -i index=0
+    local -i skip_index=-1
+    local -a arg_meta=()
+    local -- arg=""
+    local -- arg_type=""
+    local -- is_option=""
+    local -- key=""
+    local -- sed_command=""
+    local -- value=""
+
     for index in ${!argv[@]}; do
-        current=$(( $index + 1 ))
+        if [ ${skip_index} -eq ${index} ]; then
+            warn "${skip_index@A}"
+            skip_index=-1
+            continue
+        fi
+        current=$(($index + 1))
         arg="${argv[$index]}"
-        if [ -f "${arg}" ]; then
-            regular_file_argv+=("${arg}")
-        elif [ -d "${arg}" ]; then
-            directory_argv+=("${arg}")
-        elif [ ! -e "${arg}" ]; then
-            non_path_params+=("${arg}")
+        is_option="false"
+        sed_command="s/^([-]{1,2})(([a-z])([a-z0-9_]+[-]?)*)([=]([^=]*))?(.*?)$/\1\n\2\n\6\n/gp"
+        local -a arg_meta=($(get_arg_meta ${index}))
+        info "${arg_meta[@]@A}"
+
+        arg_type=${arg_meta[0]}
+        key=${arg_meta[1]}
+
+        if [ ${#arg_meta[@]} -ge 3 ]; then
+            value=${arg_meta[2]}
+            if [ ${#arg_meta[@]} -eq 4 ]; then
+                skip_index=${arg_meta[3]}
+            fi
+        fi
+        # echo "${arg_type@A}"
+        # echo "${arg_meta[@]@A}"
+        # continue
+        local -I -n target_array="cli_args_${arg_type}_list"
+        debug "target array" "${target_array[@]@A}"
+        if [ -n "${key}" ]; then
+            target_array+=(["${key}"]="${value}")
         else
-            other_file_types_argv+=("${arg}")
+            target_array+=("${value}")
         fi
     done
-    regular_file_argv_count=${#regular_file_argv[@]}
-    directory_argv_count=${#directory_argv[@]}
-    non_path_params_count=${#non_path_params[@]}
-    other_file_types_argv_count=${#other_file_types_argv[@]}
     repl sane
 }
 
 main() {
-
-    if [ ${regular_file_argv_count} -gt 0 ]; then
-        echo "${regular_file_argv_count} regular_file_argv passed as argument"
-        for index in ${!regular_file_argv[@]}; do
-            param="${regular_file_argv[$index]}"
-            echo "    regular_file_argv[$index] ${param@Q}"
-        done
-    fi
-    if [ ${directory_argv_count} -gt 0 ]; then
-        echo "${directory_argv_count} directory_argv passed as argument"
-        for index in ${!directory_argv[@]}; do
-            param="${directory_argv[$index]}"
-            echo "    directory_argv[$index] ${param@Q}"
-        done
-    fi
-    if [ ${non_path_params_count} -gt 0 ]; then
-        echo "${non_path_params_count} non_path_params passed as argument"
-        for index in ${!non_path_params[@]}; do
-            param="${non_path_params[$index]}"
-            echo "    non_path_params[$index] ${param@Q}"
-        done
-    fi
-    if [ ${other_file_types_argv_count} -gt 0 ]; then
-        echo "${other_file_types_argv_count} other_file_types_argv passed as argument"
-        for index in ${!other_file_types_argv[@]}; do
-            param="${other_file_types_argv[$index]}"
-            echo "    other_file_types_argv[$index] ${param@Q}"
-        done
-    fi
+    error "${cli_args_flag_list[@]@A}"
+    warn "${cli_args_option_list[@]@A}"
+    info "${cli_args_value_list[@]@A}"
 }
 
 if [ "${0}" == "${BASH_SOURCE[0]}" ]; then
-    process_argv ${argv[@]}
-    main
+    if process_argv ${argv[@]}; then
+        main
+    fi
 else
     1>&2 echo -e "${BASH_SOURCE[0]} appears to being used as a library by ${0@Q}"
 fi
