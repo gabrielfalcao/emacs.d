@@ -3364,7 +3364,9 @@ cursor position in buffer."
 (defconst c-message-buffer "*C-Messages*"
   "Name of buffer to use for `c-messages'.")
 
-
+(defvar c-message-write-to-minibuffer
+  t
+  "`c-message' will always write to minibuffer unless this var is set to `nil'")
 
 (defun c-message (fmt &rest args)
   "drop-in replacement for `message' that output colorized messages to a buffer named \"*C-Messages*\""
@@ -3383,7 +3385,9 @@ cursor position in buffer."
       (end-of-buffer)
       (goto-char (point-max))
       )
-    (write-to-minibuffer (string-trim output))
+
+    (unless (null c-message-write-to-minibuffer)
+      (write-to-minibuffer (string-trim output)))
 
     ))
 
@@ -3876,7 +3880,7 @@ classified-paths=%S
   );; end defun git-status-get-filenames
 
 
-(enable-debug-on-error)
+;;(enable-debug-on-error)
 (defun flat-assoc-list-p (seq &optional signal-error)
   "returns `t' if `seq' is valid flat-assoc-list or else `nil', unless
 `signal-error' is not nil, in which case signals an `error' instead.
@@ -4604,7 +4608,7 @@ examples:
 
 (defun debug/Ox33b4O/$/mark-indicator/active()
   (interactive)
-  (enable-debug-on-error)
+  ;;(enable-debug-on-error)
   (erase-c-messages)
   (c-message-open "(Ox33b4O/$/mark-indicator/active)\n%s" (Ox33b4O/$/mark-indicator/active)))
 
@@ -4673,7 +4677,7 @@ examples:
   (let* ((current-filename (expand-file-name (buffer-file-name)))
          (tmp-buffer-name (format "*blackpy:%s*" current-filename))
          (tmp-buffer (create-fresh-buffer tmp-buffer-name))
-         (blackpy-args (list tmp-buffer nil "-w" current-filename ))
+         (blackpy-args (list tmp-buffer nil current-filename ))
          (exit-code
           (apply #'call-process (append (list "black" nil) blackpy-args))))
     (message
@@ -4761,63 +4765,37 @@ examples:
          ;; else
          (pop-to-buffer-same-window tmp-buffer)
          (user-error
-          (format "prettier -w %s failed with code: %s"
+          (format "black %s failed with code: %s"
                   (abbreviate-file-name current-filename)
                   exit-code)))
        ))
     (ignore-errors (kill-buffer tmp-buffer))
     ))
 
-(defvar isearch-input-regexp-prefixes
-  (make-hash-table)
-  "prefixes of regexes `isearch-input-regexp'")
-
-(defvar isearch-input-regexp-history
-  (list)
-  "history of calls to `isearch-input-regexp'")
-
-(defun isearch-input-regexp-get-completing-read-collection (string pred action)
-  (let ((prefix-completions (all-completions string isearch-input-regexp-prefixes)))
-    (complete-with-action action isearch-input-regexp-prefixes string
-                          (if pred (lambda (sym)
-                                     (or (funcall pred sym)
-                                         (memq sym prefix-completions)))))
-    )
-  )
-(defun isearch-input-regexp-get-completing-read-predicate (pred)
-  (condition-case err
-      (progn
-        (string-match pred "")
-        ;; return t to succeed predicate
-        t)
-    (invalid-regexp (let ((error-message (format-error-string err (format"invalid regex %S" pred))))
-                      (message "%s" error-message)
-                      ;; return nil to fail predicate
-                      nil))
-  ))
-
-
-(defun isearch-input-regexp-read-function-from-minibuffer (&rest unused-args)
+(defun isearch-input-regexp-read-function-from-minibuffer (prompt)
+  (setq c-message-write-to-minibuffer nil)
+  ;; (c-message-open "")
   (let* (
-
-         (collection #'isearch-input-regexp-get-completing-read-collection)
-         (predicate #'isearch-input-regexp-get-completing-read-predicate)
-         (regexp (completing-read  "isearch-forward-regexp: " collection predicate t nil isearch-input-regexp-history))
-         ) ;;end varlist (let*
-
+         (regexp-ring (symbol-value 'regexp-search-ring))
+         (initial-input (car regexp-ring))
+         (regexp (read-string (format "%s: " prompt) initial-input
+                                 'regexp-search-ring))
+         )
+    (add-to-history 'regexp-search-ring regexp)
     (list regexp)
     ))
 
 (defun isearch-forward-input-regexp(regexp)
   "updates isearch ring with `regexp' and subsequently calls isearch-forward-regexp"
-  (interactive (isearch-input-regexp-read-function-from-minibuffer))
-  (isearch-update-ring regexp)
-  (isearch-forward-regexp nil t)
+  (interactive (isearch-input-regexp-read-function-from-minibuffer "isearch-forward-regexp"))
+  (c-message-debug-symbols 'regexp)
+  (isearch-update-ring regexp t)
+  ;; (isearch-forward-regexp nil t)
   )
 (defun isearch-backward-input-regexp(regexp)
   "updates isearch ring with `regexp' and subsequently calls isearch-backward-regexp"
-  (interactive (isearch-input-regexp-read-function-from-minibuffer))
-  (isearch-update-ring regexp)
+  (interactive (isearch-input-regexp-read-function-from-minibuffer "isearch-backward-regexp"))
+  (isearch-update-ring regexp t)
   (isearch-backward-regexp nil t)
   )
 
