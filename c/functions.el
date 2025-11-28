@@ -2285,7 +2285,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
                                    (shift-right-tabbed-table-string region))))))
 
 (defun undefun (symbol-name-param)
-  (if (nil (symbolp symbol-name-param))
+  (if (null (symbolp symbol-name-param))
       (user-error
        (format "undefun: param '%S' is not a symbol-name-param" symbol-name-param))
 
@@ -2696,10 +2696,11 @@ The `:background' property is computed in contrast with its
       (message "elc cleanup error:\n'%s'" stderr ))
      )))
 
-(defun shell-script-expand-oneliner (beg end)
-  (interactive "r")
-  (replace-regexp-in-region
-   "\\b\\(do\\|done\\|then\\|else\\|fi\\)\\b" "\n\\1\n" beg end))
+;; (defun shell-script-expand-oneliner (beg end)
+;;   (interactive "r")
+;;   (replace-regexp-in-region
+;;    "\\b\\(do\\|done\\|then\\|else\\|fi\\)\\b" "\n\\1\n" beg end))
+(undefun #'shell-script-expand-oneliner)
 
 (defun get-logwip-string ()
   "."
@@ -3369,9 +3370,102 @@ cursor position in buffer."
   t
   "`c-message' will always write to minibuffer unless this var is set to `nil'")
 
+(defvar interactive-read-fmt-and-args-history
+  nil)
+
+(defun number-to-ordinal (n)
+  "Converts an integer N into its ordinal string representation (e.g., \"1st\", \"2nd\")."
+  (let* ((abs-n (abs n)) ; Use absolute value for suffix logic
+         (last-two-digits (% abs-n 100))
+         (last-digit (% abs-n 10))
+         (suffix
+          (cond
+           ;; Exception for numbers ending in 11, 12, or 13
+           ((memq last-two-digits '(11 12 13)) "th")
+           ;; Suffixes based on the last digit
+           ((eq last-digit 1) "st")
+           ((eq last-digit 2) "nd")
+           ((eq last-digit 3) "rd")
+           ;; Default suffix for all others
+           (t "th"))))
+    (format "%d%s" n suffix)))
+
+(defun interactive-read-fmt-and-args ()
+  (let* ((args (list))
+         (fmt (read-string "format string: " nil interactive-read-fmt-and-args-history))
+         (expected-fmt-specs (save-match-data
+                              (let ((specs (list))
+                                    (start nil))
+
+                              (while (string-match "\b\\(%[^%][^[:space:]\n]*[a-zA-F]+\\)\b\\s-*" fmt start t)
+                                (setq start (match-end))
+                                (push (match-string 1 fmt) specs)
+                                );; while
+                              );;let
+                              );;save-match-data
+                            )
+         );; let* varlist
+    (seq-do-indexed #'(lambda (spec index)
+                        (let* ((arg-number (+ 1 index))
+                               (nth-arg (number-to-ordinal arg-number))
+                               (initial-prompt (format "%s format arg `%s': " nth-arg (auto-propertize-string spec)))
+                               (prompt initial-prompt)
+                               (sexp (read--expression prompt))
+                               (prop-sexp (auto-propertize-string (format "%S" sexp)))
+                               (prop-spec (auto-propertize-string spec))
+
+                               (last-error nil)
+                               (prompt-errors (list))
+                               sexp-value)
+                          (push
+                           (let* ((sexp-invalid (while
+                                                    (condition-case eval-err
+                                                        (and (setq sexp-value (eval-expression sexp))
+                                                             nil)
+                                                      (error (progn
+                                                               (setq
+                                                                last-error (format "error evaluating expression %s: %s"
+                                                                                   prop-sexp
+                                                                                   (propertize-error-string eval-err))
+                                                                prompt-errors (append (cons eval-err sexp)))
+                                                               eval-err)))
+                                                  (setq prompt (string-join (list last-error
+                                                                                  initial-prompt)
+                                                                            "\n"))
+                                                  (setq sexp (read--expression prompt))
+                                                  (setq prop-sexp (auto-propertize-string (format "%S" sexp)))
+                                                  ) ;;while
+                                                );;let* sexp-invalid
+
+                                  (value-invalid-for-spec (while
+                               (condition-case format-err
+                                   (and (funcall #'format (list spec sexp-value ))
+                                        nil)
+                                 (error (progn
+                                          (setq
+                                           last-error format-err
+                                           prompt-errors (append (cons format-err sexp)))
+                                          format-err)))
+                             (setq prompt (string-join (list (format "value %s is invalid for %s format arg `%s': %s"
+                                                                     sexp-value
+                                                                     nth-arg
+                                                                     prop-spec
+                                                                     last-error)
+                                                             initial-prompt)
+                                                       "\n"))
+                             (setq sexp (read--expression prompt)) ;;setq sexp
+                             );;while
+                                                          );; let* value-invalid-for-spec
+                                  );;let*
+
+                         );;push sexp-value to args
+                         expected-fmt-specs));; seq-do-indexed
+
+  )))))
+
 (defun c-message (fmt &rest args)
   "drop-in replacement for `message' that output colorized messages to a buffer named \"*C-Messages*\""
-  (interactive "s")
+  (interactive (interactive-read-fmt-and-args))
 
   (let (
         (output (format "%s\n" (apply #'format fmt args)))
@@ -3391,6 +3485,12 @@ cursor position in buffer."
       (write-to-minibuffer (string-trim output)))
 
     ))
+
+(defun c-message-force-minibuffer (fmt &rest args)
+  (interactive (interactive-read-fmt-and-args))
+  (setq c-message-write-to-minibuffer t)
+  (funcall #'c-message (append (list fmt) args)))
+
 
 (defun c-message-eval-expression (expression)
   (interactive "X")
@@ -5057,23 +5157,47 @@ element to string like `princ' would.
      (save-mark-and-excursion
        ,@body)))
 
+;; (defun interactive-read-region-enabling-prompt ()
+;;   (unless (region-active-p)
+;;     (user-error "no region active is not active"))
+;;   (list region-beginning region-end))
+
+
 (defun shell-script-expand-oneliner-region (beg end)
+  ;;   (interactive (interactive-read-region-enabling-prompt))
   (interactive "*r")
-  (let* (new-end (copy-marker end))
-  (save-mark-excursion-and-match-data
+  (let* ((new-end (copy-marker end))
+         last-column last-line last-pos)
+;;   (save-mark-excursion-and-match-data
    ;; (replace-regexp-in-region "\\s-+" " " beg end)
-    (while (re-search-forward
-           "\\(;\\s-+\b\\(then\\|do\\|else\\|fi\\|done\\)\b\\)" end t)
+    (while (or (re-search-forward
+                "\\(;\\s-+\b\\(then\\|else\\|fi\\|done\\)\b\\)" end t)
+               (message
+     (when (y-or-n-p (format "indent delete line %s columns %s to %s?" (line-number-at-pos) last-column (current-column)))
+       (indent-region (point) new-end))
      (replace-match ";\n\\2")
-     (setq new-end (point)));while
-    (unless (= new-end end)
-      (set-mark beg)
-      (goto-char new-end)
-      (indent-region beg new-end)
-      (set-mark beg)
-      (goto-char new-end)
-      (flush-lines "^\\s-*;\\s-*$" "" beg new-end)
-     );unless
-   ) ;; save-mark-excursion-and-match-data
+     (setq new-end (point)
+           last-column (current-column)
+           )
+     (beginning-of-line)
+     (set-mark (point))
+     (end-of-line)
+     (when (y-or-n-p (format "indent delete line %s columns %s to %s?" (line-number-at-pos) last-column (current-column)))
+       (indent-region (point) new-end))
+     );while
+;;     (unless (= new-end end)
+;;       (goto-char beg)
+;;       (while (re-search-forward
+;;               "^\\s-*;\\s-*$" new-end t)
+;;         (goto-char (match-beginning))
+;;         (when (y-or-n-p (format "delete line %s column %s?" (line-number-at-pos) (current-column)))
+;;           (kill-line)
+;;           (kill-line)
+;; )
+;;         );while
+
+
+;;      );unless
+;;    ) ;; save-mark-excursion-and-match-data
   );; let*
   );defun
