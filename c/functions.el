@@ -409,10 +409,14 @@
   "returns the current column number at marker."
   (save-mark-and-excursion (goto-char pos) (current-column)))
 
+(defun current-line ()
+  "returns the current line number at marker."
+  (line-number-at-pos (point)))
+
 (defun marker-pos-line-and-column ()
   (format
    "line=%s col=%s"
-   (line-number-at-pos (marker-position (mark-marker)))
+   (line-number-at-pos (marker-position (mark-marker)) t)
    (column-at-pos (marker-position (mark-marker)))))
 
 (defun Ox33b4O/$/base64-encode-region (beg end)
@@ -2260,7 +2264,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
             (message
              (format "replaced %s in line %s col %s"
                      (match-string-no-properties 0)
-                     (line-number-at-pos (match-beginning 1))
+                     (line-number-at-pos (match-beginning 1) t)
                      (column-at-pos (match-beginning 1)))))
 
 	))))
@@ -4064,67 +4068,6 @@ and minor modes. To be precise, no `auto-mode' changes happen.
 ;;   )
 ;;                                         ;
 
-(defun shell-script-insert-argv-skel(local)
-  ;; (let ((declare-stmt (if (or (equal t (not local))
-  ;;                             (equal local 'local)
-  ;;                             (equal local :local))
-  ;;                         "local"
-  ;;                       "declare"))
-
-  (let ((declare-stmt (cond ((or (equal t (not local))
-                                 (equal local 'local)
-                                 (equal local :local))
-                             "local")
-                       ((or (null local)
-                                (equal local 'declare)
-                                (equal local :declare))
-                        "declare")
-                       ("declare")))
-        (col (current-column))
-        (statements (mapcar #'(lambda (fmt)
-                                (format fmt declare-stmt))
-                            '(
-                              "%s -a argv=($@)"
-                              "%s -i argc=${!argv[@]}"
-                              "%s -i index=0"
-                              "%s -i current=0"
-                              "%s -- arg=\"\""
-                              ""
-                              "for index in ${!argv[@]}; do"
-                              "    current=$(($index + 1))"
-                              "    arg=\"${argv[$index]}\""
-                              "    case \"${arg}\" in"
-                              "        -h|--help)"
-                              "            1>&2 echo -e \"HELP\""
-                              "            ;;"
-                              "        *)"
-                              "            ;;"
-                              "    esac"
-                              "done"
-                              ""
-                              )))
-        )
-
-    (save-mark-and-excursion
-      (seq-do #'(lambda (stmt)
-                  (beginning-of-line)
-                  (forward-char col)
-                  (insert stmt "\n")
-                  (next-line))
-              statements))
-    ))
-
-
-
-(defun shell-script-declare-argv()
-  (interactive)
-  (shell-script-insert-argv-skel))
-
-(defun shell-script-local-argv()
-  (interactive)
-  (shell-script-insert-argv-skel t))
-
-
 (defun shell-script-insert-ansi-clear()
   (interactive)
   (insert "\necho -en \"\\x1b[2J\\x1b[3J\\x1b[H\""))
@@ -4835,13 +4778,15 @@ examples:
   (interactive (isearch-input-regexp-read-function-from-minibuffer "isearch-forward-regexp"))
   (c-message-debug-symbols 'regexp)
   (isearch-update-ring regexp t)
-  ;; (isearch-forward-regexp nil t)
+  (isearch-forward-regexp)
+  (isearch-update)
   )
 (defun isearch-backward-input-regexp(regexp)
   "updates isearch ring with `regexp' and subsequently calls isearch-backward-regexp"
   (interactive (isearch-input-regexp-read-function-from-minibuffer "isearch-backward-regexp"))
   (isearch-update-ring regexp t)
-  (isearch-backward-regexp nil t)
+  (isearch-backward-regexp)
+  (isearch-update)
   )
 
 (defun format-error-string (message &optional short-desc label)
@@ -4970,3 +4915,137 @@ element to string like `princ' would.
      (indent-strings (list open (string-join values "\n") close))
      "\n")
     ))
+
+(defun current-indentation-data()
+  "returns a plist with the line-number, column and position of the current or next line's indentation"
+  (save-match-data
+    (save-mark-and-excursion
+      (beginning-of-line)
+      (let* (
+             (initial-column (current-column))
+             (initial-line (line-number-at-pos (point)))
+             (initial-pos (point))
+             (indentation-col initial-column)
+             (indentation-line initial-line)
+             (indentation-pos initial-pos)
+             (nline initial-line)
+             (ncol initial-column)
+             )
+        (while (and (not (eobp))
+                    (string-match "[[:space:]]" (format "%c" (char-after (point)))))
+          (forward-char)
+          (setq
+           indentation-column (current-column)
+           indentation-line (line-number-at-pos (point))
+           indentation-pos (point));;setq
+          (let* ((delta (- indentation-pos initial-pos))
+                (plural (or (and (= delta 1) "") "s")))
+            (c-message "forwarded %d char%s" delta plural)
+            (c-message-debug-symbols (list 'indentation-column 'indentation-line 'indentation-pos)))
+          )
+
+
+        (while (and (not (eobp))
+                    (not (string-match "[[:space:]]" (format "%c" (char-after (point))))))
+          (forward-char)
+          (setq
+           indentation-column (current-column)
+           indentation-line (line-number-at-pos (point))
+           indentation-pos (point)
+           )
+          (let* ((delta (- indentation-pos initial-pos))
+                (plural (or (and (= delta 1) "") "s")))
+            (c-message "forwarded %d char%s" delta plural)
+            (c-message-debug-symbols (list 'indentation-column 'indentation-line 'indentation-pos)))
+
+          );; while
+        (unless (> indentation-pos initial-pos)
+        (list
+         :column (current-column)
+         :line-number (line-number-at-pos (point))
+         :pos (point)));list ; return value
+        );;let*
+    );;save-mark-and-excursion
+    );;save-match-data
+  );; defun current-indentation-data
+
+(defun current-indentation()
+  (or (plist-get (current-indentation-data) :column) 0))
+
+(defun shell-script-insert-argv-skel(&optional local arg-prefix)
+  (let* ((declare-stmt (cond ((or (equal t local)
+                                 (equal local 'local)
+                                 (equal local :local))
+                             "local")
+                       ((or (null local)
+                                (equal local 'declare)
+                                (equal local :declare))
+                        "declare")
+                       ("declare")))
+         (arg-prefix (cond
+                      ((stringp arg-prefix)
+                       (format "%s_" (string-trim-right arg-prefix "_+")))
+                      ((null arg-prefix) "")
+                      (t
+                       (error "shell-script-insert-argv-skel argument arg-prefix should be string or nil, got %S" arg-prefix))
+                      ))
+         (replacements (list (cons "%declare%" declare-stmt) (cons "%arg_prefix%" arg-prefix ) ))
+         (col (current-indentation))
+         (statements (mapcar #'(lambda (stmt)
+                                (seq-reduce #'(lambda (string kv)
+                                                (let ((from (car kv))
+                                                      (to (cdr kv)))
+                                                  (replace-regexp-in-string from to string t)))
+                                            replacements stmt))
+                            '(
+                              "%declare% -a %arg_prefix%argv=($@)"
+                              "%declare% -i %arg_prefix%argc=${!%arg_prefix%argv[@]}"
+                              "%declare% -i index=0"
+                              "%declare% -i current=0"
+                              "%declare% -- arg=\"\""
+                              ""
+                              "for index in ${!%arg_prefix%argv[@]}; do"
+                              "    current=$(($index + 1))"
+                              "    arg=\"${%arg_prefix%argv[$index]}\""
+                              "    case \"${arg}\" in"
+                              "        -h|--help)"
+                              "            1>&2 echo -e \"HELP\""
+                              "            ;;"
+                              "        *)"
+                              "            ;;"
+                              "    esac"
+                              "done"
+                              ""
+                              )))
+        )
+
+    (save-mark-and-excursion
+      (seq-do #'(lambda (stmt)
+                    (beginning-of-line)
+                    (forward-char col)
+                    (insert stmt "\n" (string-join (make-list col " ")))
+                  );;end lambda
+              statements))
+    ))
+
+(defun shell-script-declare-argv()
+  (interactive)
+  (shell-script-insert-argv-skel))
+
+(defvar shell-script-local-argv-read-input-history
+  (list))
+
+(defun shell-script-local-argv-read-input (prompt)
+  (setq c-message-write-to-minibuffer nil)
+  (let* (
+         (initial-input (car shell-script-local-argv-read-input-history))
+         (arg-prefix (string-trim (read-string (format "%s: " prompt) initial-input
+                              'shell-script-local-argv-read-input-history)))
+         )
+    (add-to-history 'shell-script-local-argv-read-input-history arg-prefix)
+    (list arg-prefix)
+    ))
+
+(defun shell-script-local-argv(arg-prefix)
+  (interactive (shell-script-local-argv-read-input "prefix (optional)"))
+  (shell-script-insert-argv-skel t arg-prefix))
