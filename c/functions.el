@@ -317,9 +317,13 @@
   "."
   (interactive)
   (cond
-   ((file-exists-p (buffer-file-name))
+   (
+    (file-exists-p (buffer-file-name))
     (file-name-directory (buffer-file-name))
-    (expand-file-name "~/.emacs.d"))))
+    (expand-file-name "~/.emacs.d")
+    )
+   )
+  )
 
 (defun show-face-at-point ()
   "."
@@ -1736,13 +1740,6 @@
   "."
   (interactive)
   (erase-buffer-by-name  "*Messages*"))
-
-(defun erase-c-messages (&optional dont-erase-minibuffer)
-  "."
-  (interactive)
-  (erase-buffer-by-name  "*C-Messages*")
-  (unless (not (null dont-erase-minibuffer))
-    (erase-minibuffer)))
 
 (defun erase-scratch ()
   "."
@@ -3391,6 +3388,17 @@ cursor position in buffer."
 
     ))
 
+(defun c-message-eval-expression (expression)
+  (interactive "X")
+  (c-message-open "%s" expression))
+
+(defun erase-c-messages (&optional dont-erase-minibuffer)
+  "."
+  (interactive)
+  (erase-buffer-by-name  "*C-Messages*")
+  (unless (not (null dont-erase-minibuffer))
+    (erase-minibuffer)))
+
 (defun c-message-open (fmt &rest args)
   "drop-in replacement for `c-message' opens the `*C-Messages*' buffer after outputing the message"
   (interactive "*s")
@@ -4056,6 +4064,67 @@ and minor modes. To be precise, no `auto-mode' changes happen.
 ;;   )
 ;;                                         ;
 
+(defun shell-script-insert-argv-skel(local)
+  ;; (let ((declare-stmt (if (or (equal t (not local))
+  ;;                             (equal local 'local)
+  ;;                             (equal local :local))
+  ;;                         "local"
+  ;;                       "declare"))
+
+  (let ((declare-stmt (cond ((or (equal t (not local))
+                                 (equal local 'local)
+                                 (equal local :local))
+                             "local")
+                       ((or (null local)
+                                (equal local 'declare)
+                                (equal local :declare))
+                        "declare")
+                       ("declare")))
+        (col (current-column))
+        (statements (mapcar #'(lambda (fmt)
+                                (format fmt declare-stmt))
+                            '(
+                              "%s -a argv=($@)"
+                              "%s -i argc=${!argv[@]}"
+                              "%s -i index=0"
+                              "%s -i current=0"
+                              "%s -- arg=\"\""
+                              ""
+                              "for index in ${!argv[@]}; do"
+                              "    current=$(($index + 1))"
+                              "    arg=\"${argv[$index]}\""
+                              "    case \"${arg}\" in"
+                              "        -h|--help)"
+                              "            1>&2 echo -e \"HELP\""
+                              "            ;;"
+                              "        *)"
+                              "            ;;"
+                              "    esac"
+                              "done"
+                              ""
+                              )))
+        )
+
+    (save-mark-and-excursion
+      (seq-do #'(lambda (stmt)
+                  (beginning-of-line)
+                  (forward-char col)
+                  (insert stmt "\n")
+                  (next-line))
+              statements))
+    ))
+
+
+
+(defun shell-script-declare-argv()
+  (interactive)
+  (shell-script-insert-argv-skel))
+
+(defun shell-script-local-argv()
+  (interactive)
+  (shell-script-insert-argv-skel t))
+
+
 (defun shell-script-insert-ansi-clear()
   (interactive)
   (insert "\necho -en \"\\x1b[2J\\x1b[3J\\x1b[H\""))
@@ -4474,47 +4543,7 @@ examples:
   );; end (defun shell-script-gen-variable-declaration ...)
 
 
-;; (defun shell-script-insert-for-each-in-indexed-array(array-variable-name
-;;                                                      array-variable-value
-;;                                                      &optional variable-is-local
-;;                                                      noerror
-;;                                                      )
-;;   (interactive)
-;;   (if (not (stringp array-variable-name))
-;;       (error "`array-variable-name' is not a string: %S" array-variable-name))
-;;   (if (not (listp array-variable-value))
-;;       (error "`array-variable-value' is not a list: %S" array-variable-value))
-
-;;   (let* ((current-pos (marker-position (mark-marker)))
-;;          (current-line-number (line-number-at-pos current-pos))
-;;          (current-column-number (column-at-pos current-pos))
-;;          (editing-function variable-is-local)
-;;          (result (shell-script-meta-gen-variable-declaration
-;;                   array-variable-name
-;;                   array-variable-value
-;;                   variable-is-local
-;;                   noerror
-;;                   t
-;;                   "\n"))
-;;          (declarations-string (shell-script-gen-variable-declaration-from-flat-assoc-list result))
-;;          (safe-variable-declare-keyword (flat-list-get-assoc-key-value result :declaration-keyword))
-;;          (safe-variable-flag (flat-list-get-assoc-key-value result :declaration-flag))
-;;          (safe-variable-name (flat-list-get-assoc-key-value result :variable-name))
-;;          (safe-variable-value (flat-list-get-assoc-key-value result :variable-value))
-;;          )
-
-
-;;   (insert "
-;;     %s
-;;     if [ ${%s} -gt 0 ]; then
-;;         %s -- arg=""
-;;         for index in ${!%s[@]}; do
-;;             %s -i current=$(( $index + 1 ))
-;;             arg=${%s[$index]}
-;;         done
-;;     fi
-;; " variable-declaration-keyword ))
-;;   )
+;; WIP defun shell-script... OzsgKGRlZnVuIHNoZWxsLXNjcmlwdC1pbnNlcnQtZm9yLWVhY2gtaW4taW5kZXhlZC1hcnJheShhcnJheS12YXJpYWJsZS1uYW1lCjs7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgYXJyYXktdmFyaWFibGUtdmFsdWUKOzsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAmb3B0aW9uYWwgdmFyaWFibGUtaXMtbG9jYWwKOzsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBub2Vycm9yCjs7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKQo7OyAgIChpbnRlcmFjdGl2ZSkKOzsgICAoaWYgKG5vdCAoc3RyaW5ncCBhcnJheS12YXJpYWJsZS1uYW1lKSkKOzsgICAgICAgKGVycm9yICJgYXJyYXktdmFyaWFibGUtbmFtZScgaXMgbm90IGEgc3RyaW5nOiAlUyIgYXJyYXktdmFyaWFibGUtbmFtZSkpCjs7ICAgKGlmIChub3QgKGxpc3RwIGFycmF5LXZhcmlhYmxlLXZhbHVlKSkKOzsgICAgICAgKGVycm9yICJgYXJyYXktdmFyaWFibGUtdmFsdWUnIGlzIG5vdCBhIGxpc3Q6ICVTIiBhcnJheS12YXJpYWJsZS12YWx1ZSkpCgo7OyAgIChsZXQqICgoY3VycmVudC1wb3MgKG1hcmtlci1wb3NpdGlvbiAobWFyay1tYXJrZXIpKSkKOzsgICAgICAgICAgKGN1cnJlbnQtbGluZS1udW1iZXIgKGxpbmUtbnVtYmVyLWF0LXBvcyBjdXJyZW50LXBvcykpCjs7ICAgICAgICAgIChjdXJyZW50LWNvbHVtbi1udW1iZXIgKGNvbHVtbi1hdC1wb3MgY3VycmVudC1wb3MpKQo7OyAgICAgICAgICAoZWRpdGluZy1mdW5jdGlvbiB2YXJpYWJsZS1pcy1sb2NhbCkKOzsgICAgICAgICAgKHJlc3VsdCAoc2hlbGwtc2NyaXB0LW1ldGEtZ2VuLXZhcmlhYmxlLWRlY2xhcmF0aW9uCjs7ICAgICAgICAgICAgICAgICAgIGFycmF5LXZhcmlhYmxlLW5hbWUKOzsgICAgICAgICAgICAgICAgICAgYXJyYXktdmFyaWFibGUtdmFsdWUKOzsgICAgICAgICAgICAgICAgICAgdmFyaWFibGUtaXMtbG9jYWwKOzsgICAgICAgICAgICAgICAgICAgbm9lcnJvcgo7OyAgICAgICAgICAgICAgICAgICB0Cjs7ICAgICAgICAgICAgICAgICAgICJcbiIpKQo7OyAgICAgICAgICAoZGVjbGFyYXRpb25zLXN0cmluZyAoc2hlbGwtc2NyaXB0LWdlbi12YXJpYWJsZS1kZWNsYXJhdGlvbi1mcm9tLWZsYXQtYXNzb2MtbGlzdCByZXN1bHQpKQo7OyAgICAgICAgICAoc2FmZS12YXJpYWJsZS1kZWNsYXJlLWtleXdvcmQgKGZsYXQtbGlzdC1nZXQtYXNzb2Mta2V5LXZhbHVlIHJlc3VsdCA6ZGVjbGFyYXRpb24ta2V5d29yZCkpCjs7ICAgICAgICAgIChzYWZlLXZhcmlhYmxlLWZsYWcgKGZsYXQtbGlzdC1nZXQtYXNzb2Mta2V5LXZhbHVlIHJlc3VsdCA6ZGVjbGFyYXRpb24tZmxhZykpCjs7ICAgICAgICAgIChzYWZlLXZhcmlhYmxlLW5hbWUgKGZsYXQtbGlzdC1nZXQtYXNzb2Mta2V5LXZhbHVlIHJlc3VsdCA6dmFyaWFibGUtbmFtZSkpCjs7ICAgICAgICAgIChzYWZlLXZhcmlhYmxlLXZhbHVlIChmbGF0LWxpc3QtZ2V0LWFzc29jLWtleS12YWx1ZSByZXN1bHQgOnZhcmlhYmxlLXZhbHVlKSkKOzsgICAgICAgICAgKQoKCjs7ICAgKGluc2VydCAiCjs7ICAgICAlcwo7OyAgICAgaWYgWyAkeyVzfSAtZ3QgMCBdOyB0aGVuCjs7ICAgICAgICAgJXMgLS0gYXJnPSIiCjs7ICAgICAgICAgZm9yIGluZGV4IGluICR7ISVzW0BdfTsgZG8KOzsgICAgICAgICAgICAgJXMgLWkgY3VycmVudD0kKCggJGluZGV4ICsgMSApKQo7OyAgICAgICAgICAgICBhcmc9JHslc1skaW5kZXhdfQo7OyAgICAgICAgIGRvbmUKOzsgICAgIGZpCjs7ICIgdmFyaWFibGUtZGVjbGFyYXRpb24ta2V5d29yZCApKQo7OyAgICkK
 
 (defvar debug-fun-history
   (list)
@@ -4670,6 +4699,10 @@ examples:
     result))
 (erase-c-messages)
 
+(defconst blackpy-regex-error-details
+  "^\\(error:\\s-*\\)?\\(cannot\\s-*format\\s-*\\(\\s-*\\([^:[:space:]]+\\)\\(:?\\)\\(\\s-*\\)\\)\\)\\(\\s-*\\([^:]+\\)\\(:\\)?\\(\\s-*\\)\\)\\(\\s-*\\([^:]+\\)\\(:\\)?\\(\\s-*\\)\\)\\(\\s-*\\([^:]+\\)\\(:\\)?\\(\\s-*\\)\\)\\(\\s-*\\(.+\\)\\(\\s-*\\)\\)$"
+  )
+
 (defun blackpy ()
   "TODO: use `call-process-get-status-and-info' instead of duplicating most of the code of `blackpy'."
   (interactive)
@@ -4705,31 +4738,43 @@ examples:
 		      (save-excursion (end-of-line) (point))))
                  ;;^ ;; [error] index.ts: SyntaxError: Function type notation must be parenthesized when used in a union type. (96:46)
                  ;;  ;; [error] utils.ts: SyntaxError: Expression expected. (183:21)
+                 (beginning-of-buffer)
                  (goto-char (point-min))
 
                  (if (re-search-forward
-		      "^\\(error:\\s-*\\)?\\(cannot\\s-*format\\s-*\\(\\s-*\\([^:[:space:]]+\\)\\(:?\\)\\(\\s-*\\)\\)\\)\\(\\s-*\\([^:]+\\)\\(:\\)?\\(\\s-*\\)\\)\\(\\s-*\\([^:]+\\)\\(:\\)?\\(\\s-*\\)\\)\\(\\s-*\\([^:]+\\)\\(:\\)?\\(\\s-*\\)\\)\\(\\s-*\\(.+\\)\\(\\s-*\\)\\)$"
+		      blackpy-regex-error-details
 		      regex-point-end
 		      t 1)
-		     (let ((message-type (match-string 1))
-			   (error-filename (match-string 2))
-			   (error-type (match-string 3))
+                     (progn
+                       ;; (let ((full-match (match-string 0))
+                       ;;       (matched-groups (mapcar #'(lambda (group-num)
+                       ;;                                   ;;(cons group-num (match-string group-num))
+                       ;;                                   (list
+                       ;;                                    (format "<match-string-%d>" group-num (match-string group-num))
+                       ;;                                    )
+                       ;;                                   (number-sequence 1 21))))
+                       ;;       (c-message-debug-symbols (list 'matched-groups 'full-match 'error-string 'blackpy-regex-error-details ) 'full-match)
+                       ;;       )
+		       (let ((message-type (match-string 1))
+			     (error-filename (match-string 2))
+			     (error-type (match-string 3))
 
-			   (error-message (match-string 4))
-			   (error-lineno
-			    (string-to-number (match-string 5)))
-			   (error-column
-			    (string-to-number (match-string 6))))
-		       (list
-                        message-type
-                        error-filename
-                        error-type
-                        error-message
-                        error-lineno
-                        error-column
-                        )
+			     (error-message (match-string 4))
+			     (error-lineno
+			      (string-to-number (match-string 5)))
+			     (error-column
+			      (string-to-number (match-string 6))))
+		         (list
+                          message-type
+                          error-filename
+                          error-type
+                          error-message
+                          error-lineno
+                          error-column
+                          )
+		         )
 		       )
-		   )
+                   )
                  )
 	       )
 	     ))
@@ -4779,7 +4824,7 @@ examples:
          (regexp-ring (symbol-value 'regexp-search-ring))
          (initial-input (car regexp-ring))
          (regexp (read-string (format "%s: " prompt) initial-input
-                                 'regexp-search-ring))
+                              'regexp-search-ring))
          )
     (add-to-history 'regexp-search-ring regexp)
     (list regexp)
@@ -4806,6 +4851,7 @@ examples:
 `SHORT-DESC', if provided, should be a string.
 `LABEL', if provided, should be a string.
 "
+  (declare (pure t) (side-effect-free t) (important-return-value t))
   (when (null short-desc)
     (setq label ""))
   (when (null label)
@@ -4814,31 +4860,113 @@ examples:
          (prefix (propertize prefix-noproperties
                              'face
                              (list :foreground "#F13976" ;; #FC580C ;;
-                                                         ;; #DB5045 ;;
-                                                         ;; #F80101 ;;
-                                                         ;; #F5BF08 ;;
-                                                         ;; #F6CA51 ;;
-                                                         ;; #DCDC88 ;;
-                                                         ;; #F49101 ;;
+                                   ;; #DB5045 ;;
+                                   ;; #F80101 ;;
+                                   ;; #F5BF08 ;;
+                                   ;; #F6CA51 ;;
+                                   ;; #DCDC88 ;;
+                                   ;; #F49101 ;;
                                    :background "#211F17" ;; #1C1C1C ;;
-                                                         ;; #312F27 ;;
-                                                         ;; #211F17
+                                   ;; #312F27 ;;
+                                   ;; #211F17
                                    ))
                  )
          (inner-message (format "%s" message))
          (message (propertize inner-message
                               'face
                               (list :foreground "#F6A3D7" ;; #F937B9
-                                                          ;; #C63367
-                                                          ;; #F479C4
-                                                          ;; #EF5AAA
-                                                          ;; #FF79C6
+                                    ;; #C63367
+                                    ;; #F479C4
+                                    ;; #EF5AAA
+                                    ;; #FF79C6
                                     :background "#3d3d3d" ;; #211F17
-                                                          ;; #1C1C1C
-                                                          ;; #312F27
-                                                          ;; #211F17
+                                    ;; #1C1C1C
+                                    ;; #312F27
+                                    ;; #211F17
                                     )))
          )
     (format "%s %s" prefix message)
     )
   )
+
+
+
+(defconst make-indent-default-width
+  4)
+
+
+(defun make-indent (&optional width)
+  (declare (pure t) (side-effect-free t) (important-return-value t))
+
+  (let ((width (cond ((null width)
+                      make-indent-default-width)
+                     ((and (numberp width)
+                           (> width 0))
+                      width)
+                     ((numberp width)
+                      (error "`width' is a negative number: %S" width))
+                     (error "`width' is not a positive number: %S" width))))
+    (string-join (make-list width ""))))
+
+;; OzsgKGRlZnVuIGVuc3VyZS1saXN0LW9mLXN0cmluZ3MgKHN0cmluZ3MgJm9wdGlvbmFsIG5vZXJyb3IpCjs7ICAgInRha2VzIGEgbGlzdCBvZiBzdHJpbmdzIGFuZCByZXR1cm5zIGEgbGlzdCB3aGVyZSBldmVyeSBpdGVtIGlzIGEgc3RyaW5nCjs7IGBTVFJJTkdTJyBpcyBhIGxpc3Qgb2Ygc3RyaW5ncwoKOzsgVGhlIG9wdGlvbmFsIHRoaXJkIGFyZ3VtZW50IGBOT0VSUk9SJyBpbmRpY2F0ZXMgd2hhdCBzaG91bGQgaGFwcGVuIHdoZW4KOzsgYW55IGVsZW1lbnQgaW4gdGhlIGBTVFJJTkdTJyBsaXN0IGlzIG5vdCBhIHN0cmluZzogaWYgaXQgaXMgbmlsIG9yCjs7IG9taXR0ZWQsIGVtaXQgYW4gZXJyb3I7Cjs7IGZsYXR0ZW5zIG5lc3RlZCBsaXN0cyBpZiBgQVJHJyBpcyBgZmxhdCcuCjs7IG1vZGUgaWYgQVJHIGlzIG5pbCwgb21pdHRlZCwgb3IgaXMgYSBwb3NpdGl2ZSBudW1iZXIuICBEaXNhYmxlIHRoZSBtb2RlCjs7IGlmIEFSRyBpcyBhIG5lZ2F0aXZlIG51bWJlci4KCjs7IGlmIGl0IGlzIHQgb3IgYW55IG5vbi1uaWwgdmFsdWUsIGNvbnZlcnQgdGhlCjs7IGVsZW1lbnQgdG8gc3RyaW5nIGxpa2UgYHByaW5jJyB3b3VsZC4KOzsgIgo7OyAgIChsZXQgKChwYWRkaW5nIChtYWtlLWluZGVudCB3aWR0aCkpCjs7ICAgICAgICAgKGl0ZW1zIChzZXEtbWFwLWluZGV4ZWQKOzsgICAgICAgICAgICAgICAgICMnKGxhbWJkYSAoaW5kZXggaXRlbSkKOzsgICAgICAgICAgICAgICAgICAgICAodW5sZXNzIChhbmQgKHN0cmluZ3AgaXRlbSkgbm9lcnJvcikKOzsgICAgICAgICAgICAgICAgICAgICAgIChlcnJvciAiYHN0cmluZ3MnIGVsZW1lbnQgJXMgaXMgbm90IGEgc3RyaW5nIGNvbnM6ICVTIiBpbmRleCBpdGVtKSkKOzsgICAgICAgICAgICAgICAgICAgICAoZm9ybWF0ICIlcyVzIiBwYWRkaW5nIGl0ZW0pKSkpKSkpCg==
+(defun indent-strings (strings &optional width noerror)
+  "takes a list of strings and return a new list indenting each string
+`STRINGS' is a list of strings
+`WIDTH' has the behavior of `make-indent'.
+
+The optional third argument `NOERROR' indicates what should happen when
+any element in the `STRINGS' list is not a string: if it is nil or
+omitted, emit an error; if it is t or any non-nil value, convert the
+element to string like `princ' would.
+"
+  (declare (pure t) (side-effect-free t) (important-return-value t))
+  (let* ((padding (make-indent width))
+        (items (seq-map-indexed
+                #'(lambda (index item)
+                    (unless (or (stringp item) noerror)
+                      (error "`strings' element %s is not a string cons: %S" index item))
+                    (format "%s%s" padding item))
+                strings)))))
+
+(defun create-debug-tag-pair (name &optional attributes)
+  "returns a pair of strings that look like the open and close of an xml element.
+`NAME' is the string with the tag name.
+`ATTRIBUTES' if provided, must be a list where each element is either a string or a cons corresponding to an attribute name and its value."
+  (declare (pure t) (side-effect-free t) (important-return-value t))
+  (unless (stringp name)
+    (error "`name' is not a string: %S" name))
+  (unless (listp attributes)
+    (setq attributes (ensure-list attributes)))
+
+  (let ((items (seq-map-indexed
+                #'(lambda (index attr)
+                    (cond ((stringp name)
+                           name)
+                          ((consp attr)
+                           (let ((key (car attr))
+                                 (value (cdr attr)))
+                             (unless (or (stringp key)
+                                         (numberp key))
+                               (error "the car of `attributes' index %s is neither a string nor a number: %S" index key))
+                             (format "%s=%S" key value)))
+                          (t
+                           (error "`attributes' index %s is neither a string nor a cons: %S" index attr))
+                          ))
+                attributes)))
+    (cons (format "<%s>" (string-join (list name (string-join items))))
+          (format "</%s>" name))))
+
+(defun make-debug-tag (name &optional attributes &rest debug-values)
+  "returns a string to debug `debug-values'"
+  (declare (pure t) (side-effect-free t) (important-return-value t))
+
+  (let* ((values (indent-strings debug-values nil t))
+         (closes (length> values 0))
+         (pair (create-debug-tag-pair name (append attributes (and closes '/))))
+         (open (car pair))
+         (close (unless (not closes) (cdr pair))))
+
+    (string-join
+     (indent-strings (list open (string-join values "\n") close))
+     "\n")
+    ))
