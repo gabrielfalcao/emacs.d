@@ -5049,3 +5049,31 @@ element to string like `princ' would.
 (defun shell-script-local-argv(arg-prefix)
   (interactive (shell-script-local-argv-read-input "prefix (optional)"))
   (shell-script-insert-argv-skel t arg-prefix))
+
+(defmacro save-mark-excursion-and-match-data (&rest body)
+  "shortcut to nesting macro calls to `save-match-data' and `save-mark-and-excursion'."
+  (declare (indent 0) (debug t))
+  `(save-match-data
+     (save-mark-and-excursion
+       ,@body)))
+
+(defun shell-script-expand-oneliner-region (beg end)
+  (interactive "*r")
+  (let* (new-end (copy-marker end))
+  (save-mark-excursion-and-match-data
+   ;; (replace-regexp-in-region "\\s-+" " " beg end)
+    (while (re-search-forward
+           "\\(;\\s-+\b\\(then\\|do\\|else\\|fi\\|done\\)\b\\)" end t)
+     (replace-match ";\n\\2")
+     (setq new-end (point)));while
+    (unless (= new-end end)
+      (set-mark beg)
+      (goto-char new-end)
+      (indent-region beg new-end)
+      (set-mark beg)
+      (goto-char new-end)
+      (flush-lines "^\\s-*;\\s-*$" "" beg new-end)
+     );unless
+   ) ;; save-mark-excursion-and-match-data
+  );; let*
+  );defun
