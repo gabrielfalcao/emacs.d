@@ -3394,16 +3394,16 @@ cursor position in buffer."
   (let* ((args (list))
          (fmt (read-string "format string: " nil interactive-read-fmt-and-args-history))
          (expected-fmt-specs (save-match-data
-                              (let ((specs (list))
-                                    (start nil))
+                               (let ((specs (list))
+                                     (start nil))
 
-                              (while (string-match "\b\\(%[^%][^[:space:]\n]*[a-zA-F]+\\)\b\\s-*" fmt start t)
-                                (setq start (match-end))
-                                (push (match-string 1 fmt) specs)
-                                );; while
-                              );;let
-                              );;save-match-data
-                            )
+                                 (while (string-match "\b\\(%[^%][^[:space:]\n]*[a-zA-F]+\\)\b\\s-*" fmt start t)
+                                   (setq start (match-end))
+                                   (push (match-string 1 fmt) specs)
+                                   );; while
+                                 );;let
+                               );;save-match-data
+                             )
          );; let* varlist
     (seq-do-indexed #'(lambda (spec index)
                         (let* ((arg-number (+ 1 index))
@@ -3417,51 +3417,35 @@ cursor position in buffer."
                                (last-error nil)
                                (prompt-errors (list))
                                sexp-value)
-                          (push
-                           (let* ((sexp-invalid (while
-                                                    (condition-case eval-err
-                                                        (and (setq sexp-value (eval-expression sexp))
-                                                             nil)
-                                                      (error (progn
-                                                               (setq
-                                                                last-error (format "error evaluating expression %s: %s"
-                                                                                   prop-sexp
-                                                                                   (propertize-error-string eval-err))
-                                                                prompt-errors (append (cons eval-err sexp)))
-                                                               eval-err)))
-                                                  (setq prompt (string-join (list last-error
-                                                                                  initial-prompt)
-                                                                            "\n"))
-                                                  (setq sexp (read--expression prompt))
-                                                  (setq prop-sexp (auto-propertize-string (format "%S" sexp)))
-                                                  ) ;;while
-                                                );;let* sexp-invalid
+                          (while (condition-case sexp-error
+                                     (and (setq sexp-value (eval-expression sexp))
+                                          (null (format-string-signal-error spec sexp-value)))
 
-                                  (value-invalid-for-spec (while
-                               (condition-case format-err
-                                   (and (funcall #'format (list spec sexp-value ))
-                                        nil)
-                                 (error (progn
-                                          (setq
-                                           last-error format-err
-                                           prompt-errors (append (cons format-err sexp)))
-                                          format-err)))
-                             (setq prompt (string-join (list (format "value %s is invalid for %s format arg `%s': %s"
-                                                                     sexp-value
-                                                                     nth-arg
-                                                                     prop-spec
-                                                                     last-error)
-                                                             initial-prompt)
-                                                       "\n"))
-                             (setq sexp (read--expression prompt)) ;;setq sexp
-                             );;while
-                                                          );; let* value-invalid-for-spec
-                                  );;let*
+                                   (eval-sexp-string-error (progn
+                                                             (setq
+                                                              last-error (format "error evaluating expression %s: %s"
+                                                                                 prop-sexp
+                                                                                 (propertize-error-string eval-err))
+                                                              prompt-errors (append (cons eval-err sexp)))
+                                                             sexp-error))
 
-                         );;push sexp-value to args
-                         expected-fmt-specs));; seq-do-indexed
+                                   (format-string-error (progn
+                                                          (setq
+                                                           last-error (format "value %s is invalid for %s format arg `%s': %s"
+                                                                              sexp-value
+                                                                              nth-arg
+                                                                              prop-spec
+                                                                              sexp-error)
+                                                           prompt-errors (append (cons format-err sexp)))
+                                                          format-err))));; end while
 
-  )))))
+                          (push sexp-value args)
+                          );; end let*
+                        );; end lambda
+                    expected-fmt-specs));; seq-do-indexed
+  )
+
+
 
 (defun c-message (fmt &rest args)
   "drop-in replacement for `message' that output colorized messages to a buffer named \"*C-Messages*\""
@@ -3489,7 +3473,7 @@ cursor position in buffer."
 (defun c-message-force-minibuffer (fmt &rest args)
   (interactive (interactive-read-fmt-and-args))
   (setq c-message-write-to-minibuffer t)
-  (funcall #'c-message (append (list fmt) args)))
+  (funcall #'c-message fmt args))
 
 
 (defun c-message-eval-expression (expression)
@@ -4966,12 +4950,12 @@ element to string like `princ' would.
 "
   (declare (pure t) (side-effect-free t) (important-return-value t))
   (let* ((padding (make-indent width))
-        (items (seq-map-indexed
-                #'(lambda (index item)
-                    (unless (or (stringp item) noerror)
-                      (error "`strings' element %s is not a string cons: %S" index item))
-                    (format "%s%s" padding item))
-                strings)))))
+         (items (seq-map-indexed
+                 #'(lambda (index item)
+                     (unless (or (stringp item) noerror)
+                       (error "`strings' element %s is not a string cons: %S" index item))
+                     (format "%s%s" padding item))
+                 strings)))))
 
 (defun create-debug-tag-pair (name &optional attributes)
   "returns a pair of strings that look like the open and close of an xml element.
@@ -5039,7 +5023,7 @@ element to string like `princ' would.
            indentation-line (line-number-at-pos (point))
            indentation-pos (point));;setq
           (let* ((delta (- indentation-pos initial-pos))
-                (plural (or (and (= delta 1) "") "s")))
+                 (plural (or (and (= delta 1) "") "s")))
             (c-message "forwarded %d char%s" delta plural)
             (c-message-debug-symbols (list 'indentation-column 'indentation-line 'indentation-pos)))
           )
@@ -5054,18 +5038,18 @@ element to string like `princ' would.
            indentation-pos (point)
            )
           (let* ((delta (- indentation-pos initial-pos))
-                (plural (or (and (= delta 1) "") "s")))
+                 (plural (or (and (= delta 1) "") "s")))
             (c-message "forwarded %d char%s" delta plural)
             (c-message-debug-symbols (list 'indentation-column 'indentation-line 'indentation-pos)))
 
           );; while
         (unless (> indentation-pos initial-pos)
-        (list
-         :column (current-column)
-         :line-number (line-number-at-pos (point))
-         :pos (point)));list ; return value
+          (list
+           :column (current-column)
+           :line-number (line-number-at-pos (point))
+           :pos (point)));list ; return value
         );;let*
-    );;save-mark-and-excursion
+      );;save-mark-and-excursion
     );;save-match-data
   );; defun current-indentation-data
 
@@ -5074,14 +5058,14 @@ element to string like `princ' would.
 
 (defun shell-script-insert-argv-skel(&optional local arg-prefix)
   (let* ((declare-stmt (cond ((or (equal t local)
-                                 (equal local 'local)
-                                 (equal local :local))
-                             "local")
-                       ((or (null local)
-                                (equal local 'declare)
-                                (equal local :declare))
-                        "declare")
-                       ("declare")))
+                                  (equal local 'local)
+                                  (equal local :local))
+                              "local")
+                             ((or (null local)
+                                  (equal local 'declare)
+                                  (equal local :declare))
+                              "declare")
+                             ("declare")))
          (arg-prefix (cond
                       ((stringp arg-prefix)
                        (format "%s_" (string-trim-right arg-prefix "_+")))
@@ -5092,38 +5076,38 @@ element to string like `princ' would.
          (replacements (list (cons "%declare%" declare-stmt) (cons "%arg_prefix%" arg-prefix ) ))
          (col (current-indentation))
          (statements (mapcar #'(lambda (stmt)
-                                (seq-reduce #'(lambda (string kv)
-                                                (let ((from (car kv))
-                                                      (to (cdr kv)))
-                                                  (replace-regexp-in-string from to string t)))
-                                            replacements stmt))
-                            '(
-                              "%declare% -a %arg_prefix%argv=($@)"
-                              "%declare% -i %arg_prefix%argc=${!%arg_prefix%argv[@]}"
-                              "%declare% -i index=0"
-                              "%declare% -i current=0"
-                              "%declare% -- arg=\"\""
-                              ""
-                              "for index in ${!%arg_prefix%argv[@]}; do"
-                              "    current=$(($index + 1))"
-                              "    arg=\"${%arg_prefix%argv[$index]}\""
-                              "    case \"${arg}\" in"
-                              "        -h|--help)"
-                              "            1>&2 echo -e \"HELP\""
-                              "            ;;"
-                              "        *)"
-                              "            ;;"
-                              "    esac"
-                              "done"
-                              ""
-                              )))
-        )
+                                 (seq-reduce #'(lambda (string kv)
+                                                 (let ((from (car kv))
+                                                       (to (cdr kv)))
+                                                   (replace-regexp-in-string from to string t)))
+                                             replacements stmt))
+                             '(
+                               "%declare% -a %arg_prefix%argv=($@)"
+                               "%declare% -i %arg_prefix%argc=${!%arg_prefix%argv[@]}"
+                               "%declare% -i index=0"
+                               "%declare% -i current=0"
+                               "%declare% -- arg=\"\""
+                               ""
+                               "for index in ${!%arg_prefix%argv[@]}; do"
+                               "    current=$(($index + 1))"
+                               "    arg=\"${%arg_prefix%argv[$index]}\""
+                               "    case \"${arg}\" in"
+                               "        -h|--help)"
+                               "            1>&2 echo -e \"HELP\""
+                               "            ;;"
+                               "        *)"
+                               "            ;;"
+                               "    esac"
+                               "done"
+                               ""
+                               )))
+         )
 
     (save-mark-and-excursion
       (seq-do #'(lambda (stmt)
-                    (beginning-of-line)
-                    (forward-char col)
-                    (insert stmt "\n" (string-join (make-list col " ")))
+                  (beginning-of-line)
+                  (forward-char col)
+                  (insert stmt "\n" (string-join (make-list col " ")))
                   );;end lambda
               statements))
     ))
@@ -5140,7 +5124,7 @@ element to string like `princ' would.
   (let* (
          (initial-input (car shell-script-local-argv-read-input-history))
          (arg-prefix (string-trim (read-string (format "%s: " prompt) initial-input
-                              'shell-script-local-argv-read-input-history)))
+                                               'shell-script-local-argv-read-input-history)))
          )
     (add-to-history 'shell-script-local-argv-read-input-history arg-prefix)
     (list arg-prefix)
@@ -5167,37 +5151,76 @@ element to string like `princ' would.
   ;;   (interactive (interactive-read-region-enabling-prompt))
   (interactive "*r")
   (let* ((new-end (copy-marker end))
-         last-column last-line last-pos)
-;;   (save-mark-excursion-and-match-data
-   ;; (replace-regexp-in-region "\\s-+" " " beg end)
-    (while (or (re-search-forward
-                "\\(;\\s-+\b\\(then\\|else\\|fi\\|done\\)\b\\)" end t)
-               (message
-     (when (y-or-n-p (format "indent delete line %s columns %s to %s?" (line-number-at-pos) last-column (current-column)))
-       (indent-region (point) new-end))
-     (replace-match ";\n\\2")
-     (setq new-end (point)
-           last-column (current-column)
-           )
-     (beginning-of-line)
-     (set-mark (point))
-     (end-of-line)
-     (when (y-or-n-p (format "indent delete line %s columns %s to %s?" (line-number-at-pos) last-column (current-column)))
-       (indent-region (point) new-end))
-     );while
-;;     (unless (= new-end end)
-;;       (goto-char beg)
-;;       (while (re-search-forward
-;;               "^\\s-*;\\s-*$" new-end t)
-;;         (goto-char (match-beginning))
-;;         (when (y-or-n-p (format "delete line %s column %s?" (line-number-at-pos) (current-column)))
-;;           (kill-line)
-;;           (kill-line)
-;; )
-;;         );while
+         start-column end-column
+         start-line end-line
+         start-pos end-pos
+         last-match-string
+
+         )
+    ;;   (save-mark-excursion-and-match-data
+    ;; (replace-regexp-in-region "\\s-+" " " beg end)
+    (while (or (re-search-backward
+                "\\(;\\s-+\b\\(then\\|else\\|fi\\|done\\)\b\\)" new-end t)
+               (progn (user-error "could not match regexp against %s" (buffer-substring-no-properties beg new-end))
+                      nil))
+      (setq last-match-string (match-string)
+            start-pos (match-beginning)
+            end-pos (match-end))
+      (setq
+       start-line (line-number-at-pos start-pos)
+       end-line (line-number-at-pos end-pos)
+       start-column (column-at-pos start-pos)
+       end-column (column-at-pos end-pos)
+       )
+
+      (when (y-or-n-p (format "indent line %s columns %s to %s\nmatching %S?"
+                              start-line
+                              start-column
+                              end-column))
+        (indent-region (point) new-end))
+      (when (y-or-n-p (format "expand line %s columns %s to %s\nmatching %S?"
+                              start-line
+                              start-column
+                              end-column))
+        (replace-match ";\n\\2"))
+
+      (setq new-end (point))
+
+      (beginning-of-line)
+      (set-mark (point))
+      (end-of-line)
+      (when (y-or-n-p (format "indent delete line %s columns %s to %s?" (line-number-at-pos) last-column (current-column)))
+        (indent-region (point) new-end))
+      );while
+    ;;     (unless (= new-end end)
+    ;;       (goto-char beg)
+    ;;       (while (re-search-forward
+    ;;               "^\\s-*;\\s-*$" new-end t)
+    ;;         (goto-char (match-beginning))
+    ;;         (when (y-or-n-p (format "delete line %s column %s?" (line-number-at-pos) (current-column)))
+    ;;           (kill-line)
+    ;;           (kill-line)
+    ;; )
+    ;;         );while
 
 
-;;      );unless
-;;    ) ;; save-mark-excursion-and-match-data
-  );; let*
+    ;;      );unless
+    ;;    ) ;; save-mark-excursion-and-match-data
+    );; let*
   );defun
+
+(define-error 'format-string-error "Format Error" 'c-functions-internal-error)
+(define-error 'eval-sexp-string-error "Eval Expression Error" 'c-functions-internal-error)
+
+(defun format-string-signal-error(spec value)
+  (condition-case format-err
+      (and (funcall #'format (list spec sexp-value ))
+           nil)
+    (error (signal 'format-string-error format-err))))
+
+
+(defun eval-sexp-signal-error(sexp)
+  (condition-case eval-err
+      (and                (eval-expression sexp)
+                          nil)
+    (error (signal 'eval-sexp-string-error eval-err))))
