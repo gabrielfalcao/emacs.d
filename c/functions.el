@@ -5159,68 +5159,32 @@ element to string like `princ' would.
   (unless (string= (mode-name-as-string) "shell-script")
     (user-error "only works in shell-script-mode, not %s-mode" (mode-name-as-string)))
   (let* ((new-end (copy-marker end))
-         start-column end-column
-         start-line end-line
-         start-pos end-pos
-         last-match-string
-
-         )
-
-    (replace-regexp-in-region "\\(do\\|;\\)\\s-+\\b\\(if\\|then\\|else\\|fi\\|done\\)\\b"
-                              "\\1\n\\2" beg end)
-    (setq last-pos (point)
-          new-end (point)
+         (last-pos (copy-marker end))
           )
-    ;;   (save-mark-excursion-and-match-data
-    ;; (replace-regexp-in-region "\\s-+" " " beg end)
-    (while (or (re-search-forward
-                "\\(\\(;\\s-+\\b\\)\\(then\\|else\\|fi\\|done\\)\\b\\)"
-                new-end t)
-               (progn (user-error "could not match regexp against %s" (buffer-substring-no-properties beg new-end))
-                      nil))
-      (setq last-match-string (match-string)
-            start-pos (match-beginning)
-            end-pos (match-end))
-      (setq
-       start-line (line-number-at-pos start-pos)
-       end-line (line-number-at-pos end-pos)
-       start-column (column-at-pos start-pos)
-       end-column (column-at-pos end-pos)
-       )
+    (save-mark-excursion-and-match-data
+      (widen)
+    (replace-regexp-in-region "\\(do\\|;\\)\\s-+\\b\\(if\\|then\\|else\\|fi\\|done\\)\\b"
+                              "\\1\n\\2\n" beg end)
+        (setq last-pos (point)
+          new-end (point))
+        )
 
-      (when (y-or-n-p (format "indent line %s columns %s to %s\nmatching %S?"
-                              start-line
-                              start-column
-                              end-column))
-        (indent-region (point) new-end))
-      (when (y-or-n-p (format "expand line %s columns %s to %s\nmatching %S?"
-                              start-line
-                              start-column
-                              end-column))
-        (replace-match ";\n\\2"))
-
-      (setq new-end (point))
-
-      (beginning-of-line)
-      (set-mark (point))
-      (end-of-line)
-      (when (y-or-n-p (format "indent delete line %s columns %s to %s?" (line-number-at-pos) last-column (current-column)))
-        (indent-region (point) new-end))
-      );while
-    ;;     (unless (= new-end end)
-    ;;       (goto-char beg)
-    ;;       (while (re-search-forward
-    ;;               "^\\s-*;\\s-*$" new-end t)
-    ;;         (goto-char (match-beginning))
-    ;;         (when (y-or-n-p (format "delete line %s column %s?" (line-number-at-pos) (current-column)))
-    ;;           (kill-line)
-    ;;           (kill-line)
-    ;; )
-    ;;         );while
-
-
-    ;;      );unless
-    ;;    ) ;; save-mark-excursion-and-match-data
+    (save-mark-excursion-and-match-data
+      (replace-regexp-in-region "\\(if\\|then\\)[\n[:space:]]+"
+                                "\\1 " beg new-end)
+      (replace-regexp-in-region "\\(;\\)\\(\\s-*\\)\n\\(\\s-*\\)\\(then\\)\\s-+"
+                              "\\1 \\2 \\3\\4\n\\2\\3"
+                              beg new-end)
+    ) ;; save-mark-excursion-and-match-data
+    (save-mark-and-excursion
+      (widen)
+      (goto-char beg)
+      (indent-region beg new-end)
+      )
+    (save-mark-and-excursion
+      (widen)
+      (flush-lines "^\\s-*$" beg new-end)
+      )
     );; let*
   );defun
 
