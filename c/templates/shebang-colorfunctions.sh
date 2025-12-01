@@ -1,37 +1,37 @@
-declare -- error_prefix_color_rgb="255;0;66"
-declare -- error_color_rgb="255;62;92"
-declare -- warn_prefix_color_rgb="255;106;50"
-declare -- warn_color_rgb="255;161;50"
-declare -- info_prefix_color_rgb="55;180;231"
-declare -- info_color_rgb="25;150;201"
+declare -- error_prefix_color_rgb="255;0;66" # red=255 green=0 blue=66
+declare -- error_color_rgb="255;62;92" # red=255 green=62 blue=92
+declare -- warn_prefix_color_rgb="255;106;50" # red=255 green=106 blue=50
+declare -- warn_color_rgb="255;161;50" # red=255 green=161 blue=50
+declare -- info_prefix_color_rgb="55;180;231" # red=55 green=180 blue=231
+declare -- info_color_rgb="25;150;201" # red=25 green=150 blue=201
 
 
-declare -- modified_prefix_color_rgb="151;215;255"
-declare -- modified_color_rgb="121;185;255"
+declare -- modified_prefix_color_rgb="151;215;255" # red=151 green=215 blue=255
+declare -- modified_color_rgb="121;185;255" # red=121 green=185 blue=255
 
-declare -- debug_prefix_color_rgb="39;206;121"  #27CE79
-declare -- debug_color_rgb="60;193;76"   #3cc14c
-declare -- added_prefix_color_rgb="39;206;121"  #27CE79
-declare -- added_color_rgb="60;193;76"   #3cc14c
-declare -- danger_prefix_color_rgb="249;110;99"
-declare -- danger_color_rgb="219;80;69"
-declare -- question_color_rgb="244;145;1"
-declare -- question_prefix_color_rgb="254;155;11"
+declare -- debug_prefix_color_rgb="39;206;121" # red=39 green=206 blue=121  #27CE79
+declare -- debug_color_rgb="60;193;76" # red=60 green=193 blue=76   #3cc14c
+declare -- added_prefix_color_rgb="39;206;121" # red=39 green=206 blue=121  #27CE79
+declare -- added_color_rgb="60;193;76" # red=60 green=193 blue=76   #3cc14c
+declare -- danger_prefix_color_rgb="249;110;99" # red=249 green=110 blue=99
+declare -- danger_color_rgb="219;80;69" # red=219 green=80 blue=69
+declare -- question_color_rgb="244;145;1" # red=244 green=145 blue=1
+declare -- question_prefix_color_rgb="254;155;11" # red=254 green=155 blue=11
 
-declare -- error_prefix_color_rgb="255;0;66"
-declare -- error_color_rgb="255;62;92"
-declare -- warn_prefix_color_rgb="255;106;50"
-declare -- warn_color_rgb="255;161;50"  255;161;50
+declare -- error_prefix_color_rgb="255;0;66" # red=255 green=0 blue=66
+declare -- error_color_rgb="255;62;92" # red=255 green=62 blue=92
+declare -- warn_prefix_color_rgb="255;106;50" # red=255 green=106 blue=50
+declare -- warn_color_rgb="255;161;50" # red=255 green=161 blue=50  # 255;161;50
 declare -- info_prefix_color_rgb="55;180;231;"
 declare -- info_color_rgb="25;150;201;"
-declare -- debug_prefix_color_rgb="50;255;106"
-declare -- debug_color_rgb="50;255;161"
+declare -- debug_prefix_color_rgb="50;255;106" # red=50 green=255 blue=106
+declare -- debug_color_rgb="50;255;161" # red=50 green=255 blue=161
 declare -- danger_prefix_color_rgb="2;249;110;99m"
-declare -- danger_color_rgb="219;80;69"
-declare -- question_prefix_color_rgb="255;201;18"
-declare -- question_color_rgb="245;191;08"
-declare -- keyword_prefix_color_rgb="238;91;143"
-declare -- keyword_color_rgb="198;51;103"
+declare -- danger_color_rgb="219;80;69" # red=219 green=80 blue=69
+declare -- question_prefix_color_rgb="255;201;18" # red=255 green=201 blue=18
+declare -- question_color_rgb="245;191;08" # red=245 green=191 blue=08
+declare -- keyword_prefix_color_rgb="238;91;143" # red=238 green=91 blue=143
+declare -- keyword_color_rgb="198;51;103" # red=198 green=51 blue=103
 
 
 # sel                     #C6DCFC
