@@ -2941,44 +2941,48 @@ which returns the exit-status and the string output.
 (defun hex-to-decimal-region (beg end)
   "BEG END."
   (interactive "*r")
-  (save-excursion
+  (save-mark-excursion-and-match-data
     (goto-char beg)
-    (while (re-search-forward "[a-fA-F0-9]+" end t)
-      (replace-match
-       (format "%s" (string-to-number (match-string 0) 16))))))
+    (while (re-search-forward "\\(^\\|\\b\\)[a-fA-F0-9]+\\(\\b\\|$\\)" end t)
+      (let* ((val (format "%s" (string-to-number (match-string 0) 16)))
+             (hexa (or (and (length= val 1) (format "0%s" val))
+                         val)))
+      (replace-match hexa)))))
 
 (defun decimal-to-hex-region (beg end)
   "BEG END."
   (interactive "*r")
-  (save-excursion
+  (save-mark-excursion-and-match-data
     (goto-char beg)
-    (while (re-search-forward "[0-9]+" end t)
+    (while (re-search-forward "\\(^\\|\\b\\)[0-9]+\\(\\b\\|$\\)" end t)
       (replace-match
-       (format "%x" (string-to-number (match-string 0)))))))
-
-(defun hex-rgb-to-ansi-region (beg end)
-  "BEG END."
-  (interactive "*r")
-  (let ((regexp-6
-         "\\([A-F0-9]\\{2\\}\\|[A-F0-9]\\{4\\}\\|[A-F0-9]\\{6\\}\\)")
-        (regexp-2 "[A-F0-9]\\{2\\}"))
-    (save-mark-and-excursion
-      (goto-char beg)
-      (if (re-search-forward regexp-6 end t)
-          (progn
-            (goto-char (match-beginning 0))
-            (while (re-search-forward regexp-2 end t)
-	      (goto-char (match-beginning 0))
-	      (replace-match
-	       (format
-		"$(( 0x%x ));"
-                (string-to-number (match-string 0) 16)))
-	      (setq end (point))
-	      (backward-word 0))
-            )
-	(user-error "no match for regex %S in %S" regexp-6
-                    (buffer-substring-no-properties beg end)))
+       (format "%x" (string-to-number (match-string 0))))
       )))
+
+;; WIP/TODO: replace with rgb-parser.el
+;; (defun hex-rgb-to-ansi-region (beg end)
+;;   "BEG END."
+;;   (interactive "*r")
+;;   (let ((regexp-6
+;;          "\\([A-F0-9]\\{2\\}\\|[A-F0-9]\\{4\\}\\|[A-F0-9]\\{6\\}\\)")
+;;         (regexp-2 "[A-F0-9]\\{2\\}"))
+;;     (save-mark-and-excursion
+;;       (goto-char beg)
+;;       (if (re-search-forward regexp-6 end t)
+;;           (progn
+;;             (goto-char (match-beginning 0))
+;;             (while (re-search-forward regexp-2 end t)
+;; 	      (goto-char (match-beginning 0))
+;; 	      (replace-match
+;; 	       (format
+;; 		"$(( 0x%x ));"
+;;                 (string-to-number (match-string 0) 16)))
+;; 	      (setq end (point))
+;; 	      (backward-word 0))
+;;             )
+;; 	(user-error "no match for regex %S in %S" regexp-6
+;;                     (buffer-substring-no-properties beg end)))
+;;       )))
 
 (defun heck-string-to-case-buffer (case beg end)
   "depends on cargo crate heck-string-cli: `cargo install heck-string-cli'
@@ -3446,8 +3450,9 @@ cursor position in buffer."
   "drop-in replacement for `message' that output colorized messages to a buffer named \"*C-Messages*\""
   (interactive (interactive-read-fmt-and-args))
 
-  (let (
+  (let* (
         (output (format "%s\n" (apply #'format fmt args)))
+        (trimmed-output (string-trim output))
         ;; (output (concat (apply #'format (append (list fmt) args)) "\n"))
         (buffer (get-buffer-create c-message-buffer))
         )
@@ -3461,13 +3466,18 @@ cursor position in buffer."
       )
 
     (unless (null c-message-write-to-minibuffer)
-      (write-to-minibuffer (string-trim output)))
-
+      (write-to-minibuffer trimmed-output))
+    trimmed-output
     ))
 
 (defun c-message-force-minibuffer (fmt &rest args)
   (interactive (interactive-read-fmt-and-args))
   (setq c-message-write-to-minibuffer t)
+  (funcall #'c-message fmt args))
+
+(defun c-message-no-minibuffer (fmt &rest args)
+  (interactive (interactive-read-fmt-and-args))
+  (setq c-message-write-to-minibuffer nil)
   (funcall #'c-message fmt args))
 
 
@@ -3487,7 +3497,7 @@ cursor position in buffer."
   (interactive "*s")
   (delete-other-windows (frame-first-window))
   ;;(erase-c-messages)
-  (apply #'c-message (append (list fmt) args))
+  (let ((output (funcall #'c-message fmt args)))
   (or (when ;; c-message-buffer is open and is the first active buffer in current frame...
           (and (not (null (get-buffer-window c-message-buffer)))
 	       (eq (frame-first-window) (get-buffer-window c-message-buffer)))
@@ -3507,6 +3517,7 @@ cursor position in buffer."
           (message "(set-window-buffer %S %S)" right-side cmbuffer)
           (set-window-buffer right-side cmbuffer)))
       );; `end' `or' clause
+  output))
   )
 
 (defun display-symbol (sym &optional fallback)
@@ -4661,7 +4672,7 @@ examples:
   (interactive)
   ;;(enable-debug-on-error)
   (erase-c-messages)
-  (c-message-open "(Ox33b4O/$/mark-indicator/active)\n%s" (Ox33b4O/$/mark-indicator/active)))
+  (Ox33b4O/$/mark-indicator/active))
 
 
 (defun debug-completing-read-function (prompt collection &optional predicate
@@ -5085,8 +5096,8 @@ element to string like `princ' would.
                                "%declare% -i current=0"
                                "%declare% -- arg=\"\""
                                ""
-                               "if [ ${%arg_prefix%_argc} -eq 0 ]; then"
-                               "    1>&2 echo -e \"[${BASH_SOURCE[0]}:${BASH_LINENO[0]}]\" \"missing argument <PROMPT>\""
+                               "if [ ${%arg_prefix%argc} -eq 0 ]; then"
+                               "    1>&2 echo -e \"[${BASH_SOURCE[0]}:${BASH_LINENO[0]}]\" \"missing arguments\""
                                "    exit 1"
                                "fi"
                                ""
@@ -5209,3 +5220,71 @@ element to string like `princ' would.
       (and                (eval-expression sexp)
                           nil)
     (error (signal 'eval-sexp-string-error eval-err))))
+
+(defun rgb-red-green-blue-assign-create-regex-propertized-symlist-for-each-band(band index)
+  (let* ((band-name (symbol-name band))
+         (subexp-val (* 2 (+ 1 index)))
+         (match (match-beginning subexp-val))
+         (val (string-to-number match))
+         (hexa (format "%02x" val))
+         (sym-name (format "%s#%s" band-name hexa))
+         (sym (intern sym-name))
+         ) ;; let* varlist
+    (put sym 'decimal-value val)
+    (put sym 'hexa hexa)
+    (put sym 'band band)
+    (put sym 'sym-name sym-name)
+    sym);; end (let*
+  );; end (lambda
+
+(defun rgb-triband-symlist()
+  (list 'red 'green 'blue))
+
+(defun rgb-red-green-blue-get-triband-list-from-match-data()
+  (seq-map-indexed #'rgb-red-green-blue-assign-create-regex-propertized-symlist-for-each-band
+                   (rgb-triband-symlist)))
+
+(defun rgb-red-green-blue-band-sym-to-hex(sym)
+  (or (get sym 'hexa)
+      (error "expected symbol %s to have property `'hexa'" sym)))
+
+
+(defun rgb-red-green-blue-matched-triband-to-rgb-hex(bands)
+  (format "#%s" (string-join (mapcar #'rgb-red-green-blue-band-sym-to-hex
+                                     bands))))
+
+(defconst rgb-red-green-blue-assign-regex
+  ;;"\\(\\bred\\b\\s-*=\\s-*\\([0-9]+\\)\\s-*\\)\\(\\bgreen\\b\\s-*=\\s-*\\([0-9]+\\)\\s-*\\)\\(\\bblue\\b\\s-*=\\s-*\\([0-9]+\\)\\s-*\\)"
+  "\\(red\\s-*=\\s-*\\([0-9]+\\)\\s-*\\)\\(green\\s-*=\\s-*\\([0-9]+\\)\\s-*\\)\\(blue\\s-*=\\s-*\\([0-9]+\\)\\s-*\\)"
+  )
+
+(defun rgb-red-green-blue-re-search-forward(beg end)
+  (re-search-forward rgb-red-green-blue-assign-regex end t))
+
+(defun rgb-red-green-blue-assign-to-rgb-hex-region(beg end)
+  (interactive "*r")
+  ;;red=255 green=0 blue=66
+  ;;     (save-mark-excursion-and-match-data
+  (save-match-data
+    (let* ((new-end end)
+           (re-match-index (rgb-red-green-blue-re-search-forward beg new-end))
+           (matched-indexes (list re-match-index))
+           );end let* varlist
+      (unless (not (null matched-indexes))
+        (user-error "%s" (c-message "could not match regexp %S againt text: %S"
+                               rgb-red-green-blue-assign-regex
+                               (buffer-substring-no-properties beg new-end))))
+      (while re-match-index
+        (setq bands (rgb-red-green-blue-get-triband-list-from-match-data))
+        (setq rgb-hex (rgb-red-green-blue-matched-triband-to-rgb-hex bands))
+        (setq new-end (match-end))
+        (goto-char (match-beginning))
+        (replace-match rgb-hex)
+        (goto-char (match-end))
+        (setq re-match-index (rgb-red-green-blue-re-search-forward beg end))
+        (push re-match-index matched-indexes)
+        );; end while
+      );; end let*
+    );; save-match-data
+  ;;       );; save-mark-excursion-and-match-data
+  );;end defun
