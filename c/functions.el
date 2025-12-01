@@ -2696,11 +2696,6 @@ The `:background' property is computed in contrast with its
       (message "elc cleanup error:\n'%s'" stderr ))
      )))
 
-;; (defun shell-script-expand-oneliner (beg end)
-;;   (interactive "r")
-;;   (replace-regexp-in-region
-;;    "\\b\\(do\\|done\\|then\\|else\\|fi\\)\\b" "\n\\1\n" beg end))
-(undefun #'shell-script-expand-oneliner)
 
 (defun get-logwip-string ()
   "."
@@ -4860,7 +4855,7 @@ examples:
 (defun isearch-forward-input-regexp(regexp)
   "updates isearch ring with `regexp' and subsequently calls isearch-forward-regexp"
   (interactive (isearch-input-regexp-read-function-from-minibuffer "isearch-forward-regexp"))
-  (c-message-debug-symbols 'regexp)
+;;   (c-message-debug-symbols 'regexp)
   (isearch-update-ring regexp t)
   (isearch-forward-regexp)
   (isearch-update)
@@ -5025,7 +5020,8 @@ element to string like `princ' would.
           (let* ((delta (- indentation-pos initial-pos))
                  (plural (or (and (= delta 1) "") "s")))
             (c-message "forwarded %d char%s" delta plural)
-            (c-message-debug-symbols (list 'indentation-column 'indentation-line 'indentation-pos)))
+            ;;(c-message-debug-symbols (list 'indentation-column 'indentation-line 'indentation-pos))
+            )
           )
 
 
@@ -5040,7 +5036,8 @@ element to string like `princ' would.
           (let* ((delta (- indentation-pos initial-pos))
                  (plural (or (and (= delta 1) "") "s")))
             (c-message "forwarded %d char%s" delta plural)
-            (c-message-debug-symbols (list 'indentation-column 'indentation-line 'indentation-pos)))
+            ;;(c-message-debug-symbols (list 'indentation-column 'indentation-line 'indentation-pos))
+            )
 
           );; while
         (unless (> indentation-pos initial-pos)
@@ -5141,15 +5138,26 @@ element to string like `princ' would.
      (save-mark-and-excursion
        ,@body)))
 
-;; (defun interactive-read-region-enabling-prompt ()
-;;   (unless (region-active-p)
-;;     (user-error "no region active is not active"))
-;;   (list region-beginning region-end))
+(defun interactive-read-region-enabling-prompt ()
+  (unless (region-active-p)
+    (user-error "no region active is not active"))
+  (list (region-beginning) (region-end)))
 
+(defun mode-name-as-string()
+  (let ((result
+  (or (and (stringp mode-name)
+           mode-name)
+      (and (listp mode-name)
+           (car mode-name))
+      (error (signal 'type-error (format "mode-name has unexpected type %s: %S" (type-of mode-name) mode-name)))
+      )))
+    (downcase result)))
 
 (defun shell-script-expand-oneliner-region (beg end)
-  ;;   (interactive (interactive-read-region-enabling-prompt))
-  (interactive "*r")
+  ;; OzsgOzsgKGRlZnVuIHNoZWxsLXNjcmlwdC1leHBhbmQtb25lbGluZXIgKGJlZyBlbmQpCjs7IDs7ICAgKGludGVyYWN0aXZlICJyIikKOzsgOzsgICAocmVwbGFjZS1yZWdleHAtaW4tcmVnaW9uCjs7IDs7ICAgICJcXGJcXChkb1xcfGRvbmVcXHx0aGVuXFx8ZWxzZVxcfGZpXFwpXFxiIiAiXG5cXDFcbiIgYmVnIGVuZCkpCjs7ICh1bmRlZnVuICMnc2hlbGwtc2NyaXB0LWV4cGFuZC1vbmVsaW5lcikK
+  (interactive (interactive-read-region-enabling-prompt))
+  (unless (string= (mode-name-as-string) "shell-script")
+    (user-error "only works in shell-script-mode, not %s-mode" (mode-name-as-string)))
   (let* ((new-end (copy-marker end))
          start-column end-column
          start-line end-line
@@ -5157,10 +5165,17 @@ element to string like `princ' would.
          last-match-string
 
          )
+
+    (replace-regexp-in-region "\\(do\\|;\\)\\s-+\\b\\(if\\|then\\|else\\|fi\\|done\\)\\b"
+                              "\\1\n\\2" beg end)
+    (setq last-pos (point)
+          new-end (point)
+          )
     ;;   (save-mark-excursion-and-match-data
     ;; (replace-regexp-in-region "\\s-+" " " beg end)
-    (while (or (re-search-backward
-                "\\(;\\s-+\b\\(then\\|else\\|fi\\|done\\)\b\\)" new-end t)
+    (while (or (re-search-forward
+                "\\(\\(;\\s-+\\b\\)\\(then\\|else\\|fi\\|done\\)\\b\\)"
+                new-end t)
                (progn (user-error "could not match regexp against %s" (buffer-substring-no-properties beg new-end))
                       nil))
       (setq last-match-string (match-string)
@@ -5210,6 +5225,7 @@ element to string like `princ' would.
   );defun
 
 (define-error 'format-string-error "Format Error" 'c-functions-internal-error)
+(define-error 'type-error "Format Error" 'error)
 (define-error 'eval-sexp-string-error "Eval Expression Error" 'c-functions-internal-error)
 
 (defun format-string-signal-error(spec value)
