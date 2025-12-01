@@ -5183,7 +5183,7 @@ element to string like `princ' would.
       )
     (save-mark-and-excursion
       (widen)
-      (flush-lines "^\\s-*$" beg new-end)
+      (flush-lines "^\\s-*[;]\\s-*$" beg new-end)
       )
     );; let*
   );defun
