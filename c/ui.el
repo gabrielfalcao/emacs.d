@@ -35,7 +35,7 @@
          ($keywords$                "#F13976")
          ($current-line$            "#151515")
          ($operators$               "#F479C4")
-         ($operators$               "#79B9Ff")
+         ($operators$               "#79B9FF")
          ($operators$               "#EF5AAA")
          ($constant$                "#FF79C6")
          ($comments$                "#A79C83")

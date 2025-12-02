@@ -2944,10 +2944,11 @@ which returns the exit-status and the string output.
   (save-mark-excursion-and-match-data
     (goto-char beg)
     (while (re-search-forward "\\(^\\|\\b\\)[a-fA-F0-9]+\\(\\b\\|$\\)" end t)
-      (let* ((val (format "%s" (string-to-number (match-string 0) 16)))
-             (hexa (or (and (length= val 1) (format "0%s" val))
-                         val)))
-      (replace-match hexa)))))
+      (let* ((val (format "%s" (string-to-number (match-string) 16)))
+             ;; (hexa (or (and (length= val 1) (format "0%s" val))
+             ;;           val))
+             )
+        (replace-match val)))))
 
 (defun decimal-to-hex-region (beg end)
   "BEG END."
@@ -2956,7 +2957,7 @@ which returns the exit-status and the string output.
     (goto-char beg)
     (while (re-search-forward "\\(^\\|\\b\\)[0-9]+\\(\\b\\|$\\)" end t)
       (replace-match
-       (format "%x" (string-to-number (match-string 0))))
+       (format "%02x" (string-to-number (match-string 0))))
       )))
 
 ;; WIP/TODO: replace with rgb-parser.el
@@ -3518,7 +3519,7 @@ cursor position in buffer."
           (set-window-buffer right-side cmbuffer)))
       );; `end' `or' clause
   output))
-  )
+
 
 (defun display-symbol (sym &optional fallback)
   "returns a string with the symbol's value"
@@ -5270,7 +5271,7 @@ element to string like `princ' would.
            (re-match-index (rgb-red-green-blue-re-search-forward beg new-end))
            (matched-indexes (list re-match-index))
            );end let* varlist
-      (unless (not (null matched-indexes))
+      (unless (not (null re-match-index))
         (user-error "%s" (c-message "could not match regexp %S againt text: %S"
                                rgb-red-green-blue-assign-regex
                                (buffer-substring-no-properties beg new-end))))

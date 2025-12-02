@@ -3,6 +3,18 @@
 (require 'seq)
 (require 'subr-x)
 
+(defun eval-buffer-goto-failure()
+  (interactive)
+  (condition-case err
+      (eval-buffer)
+    (error (if (string-match "\\([Ii]nvalid.*syntax\\|syntax.*error\\).*\\s-*,\\s-*\\([0-9]+\\)\\s-*,\\s-*\\([0-9]+\\)"  (format "%s" err)
+                             nil t)
+               (let* ((position (string-to-number (match-string 2)))
+                      (wat (string-to-number (match-string 3))))
+                 (message "going to position %d"  position)
+                 (goto-char position))
+             (c-message "ERROR: %s" err)))))
+
 (line-number-mode t)
 (setq global-package-online nil) ;; set to non-nil to enable
 (setq global-flycheck-mode t)

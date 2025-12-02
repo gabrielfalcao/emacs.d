@@ -43,7 +43,7 @@
                           (point))))
                     (format "[%s line%s]"
                             line-count
-                            (if (= line-count 1) "" "s")))
+                            (or (and (= line-count 1) "") "s")))
                   'face
                   (list :background
                         (Ox33b4O/$/mark-indicator-color)
@@ -55,10 +55,11 @@
                   (list :background
                         (Ox33b4O/$/mode-line-background)
                         :foreground "#F5BF08")
-                  ))
+                  )
+                 )
 
          )
-       " ")))))
+       "")))))
 
 (defun Ox33b4O/$/paint-mode-line-colorize (c contents)
   (let* ((foreground

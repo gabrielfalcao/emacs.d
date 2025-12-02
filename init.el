@@ -41,15 +41,28 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(expand-region-guess-python-mode nil)
  '(package-selected-packages
    '(ansi autothemer blacken cargo-mode company csharp-mode
           dockerfile-mode elixir-mode exec-path-from-shell
           expand-region flycheck-rust flymake-shellcheck go-mode
           haml-mode highlight-indentation jinja2-mode jsonnet-mode
-          lua-mode markdown-mode nginx-mode pcre2el peg php-mode
-          protobuf-mode python-mode restclient rust-mode
-          solidity-flycheck swift-mode terraform-mode toml toml-mode
-          typescript-mode web-mode yaml-mode)))
+          kotlin-mode lua-mode markdown-mode nginx-mode pcre2el peg
+          php-mode protobuf-mode python-mode pythonic restclient
+          rust-mode solidity-flycheck swift-mode terraform-mode toml
+          toml-mode typescript-mode web-mode yaml-mode))
+ '(py-python-command "~/.shell.d/.venv/bin/python")
+ '(py-python3-command "~/.shell.d/.venv/bin/python3")
+ '(py-pythonpath "~/.shell.d/.venv/lib/python3.12/site-packages")
+ '(python-indent-guess-indent-offset nil)
+ '(python-indent-guess-indent-offset-verbose nil)
+ '(python-indent-offset 4 t)
+ '(python-interpreter "~/.shell.d/.venv/bin/python3")
+ '(python-mode-hook
+   '(#[nil
+       ((define-key python-mode-map (kbd "C-c C-f")
+                    #'g/format/prettify))
+       nil nil nil nil])))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

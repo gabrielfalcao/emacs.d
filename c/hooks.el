@@ -16,7 +16,16 @@
 (add-hook 'python-mode-hook
           #'(lambda ()
               (interactive)
-              (define-key python-mode-map (kbd "C-c C-f") #'g/format/prettify)))
+              (define-key python-mode-map (kbd "C-c C-f") #'g/format/prettify)
+              (define-key python-mode-map (kbd "TAB") #'indent-for-tab-command)
+
+              ))
+(add-hook 'py-shell-mode
+          #'(lambda ()
+              (interactive)
+              (define-key py-shell-mode-map (kbd "C-c C-f") #'g/format/prettify)
+              (define-key py-shell-mode-map (kbd "Tab") #'indent-for-tab-command)
+              ))
 (add-hook 'rust-mode-hook
           #'(lambda ()
               (interactive)

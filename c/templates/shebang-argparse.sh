@@ -1,9 +1,14 @@
 #!/usr/bin/env bash
 
-set -e
 set -o pipefail
-set -u
+set -o errexit # or -e
+# set -o noglob # or -f
+set -o errtrace # or set -E
+set -o functrace # or set -T
+set -o nounset # -u
+
 export IFS=$'\n'
+unset IFS
 
 script_name="$(basename "${BASH_SOURCE[0]}")"
 script_path="$(2>/dev/random 1>/dev/random cd $(dirname "${BASH_SOURCE[0]}") && pwd)"
@@ -16,6 +21,7 @@ declare -A cli_args_flag_list=()
 declare -a cli_args_value_list=()
 declare -a valid_argument_types=('flag' 'option' 'value')
 
+
 declare -- error_prefix_color_rgb="255;0;66"
 declare -- error_color_rgb="255;62;92"
 declare -- warn_prefix_color_rgb="255;106;50"
@@ -26,12 +32,10 @@ declare -- debug_prefix_color_rgb="50;255;106"
 declare -- debug_color_rgb="50;255;161"
 
 on_exit() {
-    repl sane
+    2>/dev/random 1>/dev/random stty sane
 }
 on_ctrlc() {
-    repl no echo
     1>&2 echo -e "\x1b[1;38;2;${error_color_rgb}m\rAborted with Ctrl-C\x1b[0m"
-    repl sane
     exit 1
 }
 trap on_exit exit

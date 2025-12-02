@@ -1,0 +1,210 @@
+#!/usr/bin/env bash
+. ~/.shell.d/x.d/workbench.sh
+
+set -o pipefail
+set -o errexit # or -e
+# set -o noglob # or -f
+set -o errtrace # or set -E
+set -o functrace # or set -T
+set -o nounset # -u
+# set -o errtrace # or set -E # If set, the ERR trap is inherited by shell functions.
+# set -o functrace # or set -T # f set, the DEBUG and RETURN traps are inherited by shell functions.
+set -u
+export IFS=$'\n'
+
+script_name="$(basename "${BASH_SOURCE[0]}")"
+script_path="$(2>/dev/random 1>/dev/random cd $(dirname "${BASH_SOURCE[0]}") && pwd)"
+this_script_path="${script_path}/${script_name}"
+export PS4='${BASH_SOURCE}:${BASH_LINENO[0]} '
+declare -- stdin_is_terminal=$([ -t 0 ] && echo "yes" || echo "no")
+declare -a argv=($@)
+declare -i argc=${#argv[@]}
+declare -i script_pid=$$
+declare -- iso_timestamp=$(date --iso-8601=seconds)
+declare -a exit_messages=()
+declare -a urls_to_download=()
+declare -A urls_added=()
+logs_path=$(workbench logs)/yt-dlp
+mkdir -p "${logs_path}"
+state_path=${logs_path}/${script_name}-${script_pid}
+# echo -e "
+# ${stdin_is_terminal[@]@A}
+# ${script_name[@]@A}
+# ${script_pid[@]@A}
+# ${iso_timestamp[@]@A}
+# ${argv[@]@A}
+# ${argc[@]@A}
+
+# # ENV
+
+# $(env)
+# " > ${state_path}
+# exit_messages+=("state saved to ${state_path}")
+declare -- error_prefix_color_rgb="255;0;66"
+declare -- error_color_rgb="255;62;92"
+declare -- warn_prefix_color_rgb="255;106;50"
+declare -- warn_color_rgb="255;161;50"
+declare -- info_prefix_color_rgb="0;66;255"
+declare -- info_color_rgb="62;92;255"
+declare -- debug_prefix_color_rgb="50;255;106"
+declare -- debug_color_rgb="50;255;161"
+
+on_exit() {
+    for msg in ${exit_messages[@]}; do
+        1>&2 echo -e "${msg}"
+    done
+}
+on_ctrlc() {
+    1>&2 echo -e "\x1b[1;38;2;${error_color_rgb}m\rAborted with Ctrl-C\x1b[0m"
+    exit 1
+}
+trap on_exit exit
+trap on_ctrlc hup
+trap on_ctrlc int
+trap on_ctrlc bus
+trap on_ctrlc segv
+trap on_ctrlc sys
+
+usage() {
+    1>&2 echo -e "$(basename $0) <ARGUMENT>"
+}
+exit_error() {
+    error "${@}"
+    exit 1
+}
+warn_prefixed() {
+    local -- prefix="$1"
+    shift
+    local -- message="$@"
+    1>&2 echo -e "\x1b[1;38;2;${warn_prefix_color_rgb}m${prefix}\x1b[1;38;2;${warn_color_rgb}m ${message}\x1b[0m"
+}
+warn() {
+    local -- linenum="${BASH_LINENO[1]}"
+    warn_prefixed "[${script_name} warn at ${linenum}]" "${@}"
+}
+
+error() {
+    local -- linenum="${BASH_LINENO[1]}"
+    error_prefixed "[${script_name} error at ${linenum}]" "${@}"
+}
+error_prefixed() {
+    local -- prefix="$1"
+    shift
+    local -- message="$@"
+    1>&2 echo -e "\x1b[1;38;2;${error_prefix_color_rgb}m${prefix}\x1b[1;38;2;${error_color_rgb}m ${message}\x1b[0m"
+}
+info() {
+    local -- linenum="${BASH_LINENO[0]}"
+    info_prefixed "[info]  [${script_name}:${linenum}]" "${@}"
+}
+info_prefixed() {
+    local -- prefix="$1"
+    shift
+    local -- message="$@"
+    1>&2 echo -e "\x1b[1;38;2;${info_prefix_color_rgb}m${prefix}\x1b[1;38;2;${info_color_rgb}m ${message}\x1b[0m"
+}
+debug_prefixed() {
+    local -- prefix="$1"
+    shift
+    local -- message="$@"
+    1>&2 echo -e "\x1b[1;38;2;${debug_prefix_color_rgb}m${prefix}\x1b[1;38;2;${debug_color_rgb}m ${message}\x1b[0m"
+}
+debug() {
+    local -- linenum="${BASH_LINENO[0]}"
+    debug_prefixed "[debug] [${script_name}:${linenum}]" "${@}"
+}
+trace() {
+    if [ -z "${BASH_TRACE}" ] && [ "${BASH_LOGLEVEL}" != "trace" ]; then
+        return 0
+    fi
+
+    local -- linenum="${BASH_LINENO[0]}"
+    local -- funcname="${FUNCNAME[1]}"
+    debug_prefixed "[${FUNCNAME[0]} ${script_name}::${funcname}:${linenum}]" "${@}"
+}
+
+extract_urls() {
+    local -- input="$@"
+    if [ -z "${input}" ]; then
+        return 1
+    fi
+    local -- url_regex='(https?:\/\/)?(([a-z0-9_.-]+)+([.][a-z]+)(\/[^\/]*)*([#?].*)*)'
+    local -a lines=($(sed -E 's/\s+/\n/g' <<< "${input}" | sed -E '/(^\s*$)/d'))
+    local -i matches=0
+    for line in ${lines[@]}; do
+        if 1>/dev/random grep -E "^${url_regex}$" <<< "${line}"; then
+            sed -E "s,${url_regex},https://\2,g" <<< "${line}"
+            matches=$(( $matches + 1 ))
+        fi
+    done
+    if [ ${matches} -eq 0 ]; then
+        return 1
+    fi
+}
+
+add_url() {
+    local -i exit_code=0
+    local -a urls=()
+    local -- url=""
+    if ! urls=( $(extract_urls "$@") ); then
+        return ${exit_code}
+    fi
+    for url in ${urls[@]}; do
+        if [[ ! -v urls_added[$url] ]]; then
+            urls_to_download+=("${url}")
+            urls_added+=(["${url}"]="${url}")
+        fi
+    done
+# ICAgICMgZm9yIHVybCBpbiAkeyF1cmxzX3RvX2Rvd25sb2FkW0BdfTsgZG8KICAgICMgICAgIHVybHNfdG9fZG93bmxvYWQrPShbIiR7dXJsfSJdPSIke3VybH0iKQogICAgIyBkb25l
+}
+
+process_argv() {
+    local -i lineno=0
+    if [ ! -t 0 ]; then
+        export IFS=$'\n'
+        while read line; do
+            if ! add_url "${line}"; then
+                continue
+            fi
+        done < /dev/stdin
+    elif [ ${argc} -eq 0 ]; then
+        exit_error "missing arguments: <URL> [URL...]"
+        exit 1
+    fi
+    for index in ${!argv[@]}; do
+        arg=${argv[$index]}
+        if ! add_url "${arg}"; then
+            continue
+        fi
+    done
+
+}
+
+main() {
+    for url in ${urls_to_download[@]}; do
+        local -- slug=$(slugify-string "$(sed -E 's,https?://,,g' <<< "${url}")")
+        local -- logs_base="${logs_path}/${slug}"
+        local -- stderr="${logs_base}.stderr"
+        local -- stdout="${logs_base}.stdout"
+        local -- pidfile="${logs_base}.pid"
+        local -i yt_dlp_pid=0
+        1>${stdout} 2>${stderr} yt-dlp "${url}" < /dev/stdin &
+        yt_dlp_pid=$!
+        echo "${yt_dlp_pid}" > ${pidfile}
+        disown ${yt_dlp_pid}
+        1>&2 echo -e "
+\x1b[1;38;5;249menqueued url\x1b[1;38;5;231m ${url}      \x1b[0m
+\x1b[1;38;5;249m         pid\x1b[1;38;5;201m ${yt_dlp_pid} \x1b[0m
+\x1b[1;38;5;249m    pid file\x1b[1;38;5;153m ~${pidfile##${HOME}}  \x1b[0m
+\x1b[1;38;5;249m stdout logs\x1b[1;38;5;154m ~${stdout##${HOME}}   \x1b[0m
+\x1b[1;38;5;249m stderr logs\x1b[1;38;5;196m ~${stderr##${HOME}}   \x1b[0m
+"
+    done
+}
+
+if [ "${0}" == "${BASH_SOURCE[0]}" ]; then
+    process_argv ${argv[@]}
+    main
+else
+    1>&2 echo -e "${BASH_SOURCE[0]} appears to being used as a library by ${0@Q}"
+fi
