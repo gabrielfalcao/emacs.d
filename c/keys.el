@@ -108,7 +108,6 @@
 (Ox33b4O/$/set-key "C-x C-e C-t" #'today)
 (Ox33b4O/$/set-key "C-x C-e C-n" #'now)
 (Ox33b4O/$/set-key "C-x C-e C-r" #'insert-regexp-negate-string)
-(Ox33b4O/$/set-key "M-s" 'save-buffer)
 (Ox33b4O/$/set-key "C-c C-p" #'(lambda () (interactive) (message "cur %d" (point))))
 (Ox33b4O/$/set-key '("M-f") 'forward-word)
 (Ox33b4O/$/set-key '("M-b") 'backward-word)
@@ -142,6 +141,9 @@
 (Ox33b4O/$/set-key   '("M-a") 'ignore                )
 (Ox33b4O/$/set-key   '("M-c") 'ignore                )
 (Ox33b4O/$/set-key   '("C-g" "C-q") 'keyboard-quit   )
+
+(Ox33b4O/$/set-key "M-s" 'isearch-forward-input-regexp)
+(Ox33b4O/$/set-key "M-r" 'isearch-backward-regexp)
 
 (Ox33b4O/$/set-key   "C-s"   'isearch-forward-regexp )
 (Ox33b4O/$/set-key   "C-S-s" 'isearch-backward-regexp)

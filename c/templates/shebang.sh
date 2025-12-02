@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 
-set -e
 set -o pipefail
-set -o noglob
+set -o errexit # or -e
+# set -o noglob # or -f
 set -o errtrace # or set -E
-set -u
+set -o functrace # or set -T
+set -o nounset # -u
 
 export IFS=$'\n'
+unset IFS
 
 script_name="$(basename "${BASH_SOURCE[0]}")"
 script_path="$(2>/dev/random 1>/dev/random cd $(dirname "${BASH_SOURCE[0]}") && pwd)"
