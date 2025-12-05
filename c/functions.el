@@ -1,5 +1,31 @@
 (defun string-shift-right (g) "." (format "\t%s" g))
 
+(defun debug-symbol-props-format (sym &optional indent)
+  (setq-local indent (or indent 0))
+  (when (stringp sym)
+    (setq-local sym (symbol-value sym)))
+
+  (format "%sprops of %S: %s"
+          (make-indent indent)
+          (let ((indent (+ 4 indent)))
+            (string-join
+             (mapcar #'(lambda (sym-prop)
+                         (cond ((stringp sym-prop) (format "%S" sym-prop))
+                               ((sequencep sym-prop)
+                                (mapcar #'(lambda (item)
+                                            (debug-symbol-props-format item (+ indent 4))))
+                                sym-prop)))
+                     (symbol-plist sym))
+             "\n"
+             ) ;end string-join
+            );; end let
+          );; end format
+  );; end defun
+
+
+;; (defun debug-symbol-props-format (sym)
+;;   (progn (c-message-open "props of %S: %s" (progn (erase-c-messages) (erase-messages) (string-join (mapcar #'(lambda (p) (when (listp p) (format "%S" p)) (symbol-plist #'string-shift-right)) "\n")))
+
 (progn ;; runtime/platform dependent defun
   (unless (functionp 'scratch-buffer)
     (defun scratch-buffer ()
@@ -3172,6 +3198,11 @@ BEG END."
 		       nil
 		       (if (not (null utc)) 0 nil))))
 
+(defun now-sexp()
+  "returns a `cons' whose `car' is a `numberp' with the current time in seconds and `cdr' is the current time"
+  (let* ((now (format-time-string "%s.%N"))
+         (mapcar #'string-to-number (string-split now "." t t)))))
+
 (defun delete-prefix-and-timestamp-from-bash-history-region (beg end)
   (interactive "*r")
   (let ((regexp "^\\s-+[0-9]+\\s-+[[][^]]+[]]\\s-+")
@@ -4057,107 +4088,8 @@ and minor modes. To be precise, no `auto-mode' changes happen.
 "
 
   )
-;; (defconst slugify-string-default-separator
-;;   "-"
-;;   "the separator that replaces non-slug-compatible characters of target string")
-;;
-;; (defun slugify-string-get-nonstandard-sep-assoc(sep)
-;;   (if (not (stringp sep))
-;;       (error "`sep' is not a string: %s" sep))
-;;   (save-match-data
-;;     (when (string-match "^\\(\\([a-zA-Z0-9@+/\\~!*_-]+\\)\\|\\([^a-zA-Z0-9[:space:]\n_-]+\\)\\)+$" sep)
-;;       (list :all (match-string 0 sep) ;;body
-;;             :outer (match-string 1 sep)
-;;             :ascii (match-string 2 sep)
-;;             :non-space (match-string 3 sep)) ;;end when body
-;;             )
-;;     ))
-;;
-;; (defun slugify-string-regexp-middle(sep)
-;;   "returns the regexp to slugify string based on a given separator"
-;;   (if (not (stringp sep))
-;;       (error "`sep' is not a string: %s" sep))
-;;
-;;   (let ((nonstandard-sep
-;;          (slugify-string-get-nonstandard-sep-assoc sep))
-;;         );; end let varlist
-;;     (or (when (or (string= sep "_")
-;;                   (string= sep slugify-string-default-separator)
-;;                   (not (listp nonstandard-sep)))
-;;           ;; body
-;;           "[^a-zA-Z0-9_-]+") ;;end when body
-;;         (when (listp nonstandard-sep)
-;;           (let ((nons-all (flat-list-get-assoc-key-value nonstandard-sep :all))
-;;                 (nons-outer (flat-list-get-assoc-key-value nonstandard-sep :outer))
-;;                 (nons-ascii (flat-list-get-assoc-key-value nonstandard-sep :ascii))
-;;                 (nons-nspc (flat-list-get-assoc-key-value nonstandard-sep :non-space)))
-;;            KGMtbWVzc2FnZS1kZWJ1Zy1zeW1ib2xzIChsaXN0ICdub25zdGFuZGFyZC1zZXAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICdub25zLWFsbCAgJ25vbnMtb3V0ZXIgICdub25zLWFzY2lpICAnbm9ucy1uc3BjICdzZXApCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAnc2VwICdub25zLWFsbCAgJ25vbnMtb3V0ZXIgICdub25zLWFzY2lpICAnbm9ucy1uc3BjKQ==
-;;
-;;             (format "[^a-zA-Z0-9_%s-]+" slugify-string-default-separator)))
-;;         slugify-string-default-separator))
-;;   )
-;;
-;;
-;;
-;; (defun slugify-string-regexp-ends(sep)
-;;   "returns the regexp to fix the ends of the string post slugifying it"
-;;   (if (not (stringp sep))
-;;       (error "`sep' is not a string: %s" sep))
-;;   (let ((nonstandard-sep
-;;          (slugify-string-get-nonstandard-sep-assoc sep))
-;;         );; end let varlist
-;;     (or (when (or (string= sep "_")
-;;                   (string= sep slugify-string-default-separator)
-;;                   (not (listp nonstandard-sep)))
-;;           (format "\\(^[%s]+\\|[%s]+$\\)" sep sep))
-;;         (when (listp nonstandard-sep)
-;;           (let ((nons-all (flat-list-get-assoc-key-value nonstandard-sep :all))
-;;                 (nons-outer (flat-list-get-assoc-key-value nonstandard-sep :outer))
-;;                 (nons-ascii (flat-list-get-assoc-key-value nonstandard-sep :ascii))
-;;                 (nons-nspc (flat-list-get-assoc-key-value nonstandard-sep :non-space))
-;;                 (actual-sep slugify-string-default-separator))
-;;           ;; KGMtbWVzc2FnZS1kZWJ1Zy1zeW1ib2xzIChsaXN0ICdub25zdGFuZGFyZC1zZXAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICdub25zLWFsbCAgJ25vbnMtb3V0ZXIgICdub25zLWFzY2lpICAnbm9ucy1uc3BjICdzZXApCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAnc2VwICdub25zLWFsbCAgJ25vbnMtb3V0ZXIgICdub25zLWFzY2lpICAnbm9ucy1uc3BjKQ==
-;;
-;;             (format "\\(^[%s]+\\|[%s]+$\\)" actual-sep actual-sep)))
-;;         slugify-string-default-separator)
-;;     )
-;;   )
-;;
-;;
-;; (defun slugify-string (string &optional separator)
-;;   "returns a slugified version of `string'"
-;;   (let* ((raw-sep  (string-trim (cond ((stringp separator)
-;; 				       separator)
-;; 				      ((characterp separator)
-;; 				       (format "%s" separator))
-;; 				      ((null separator) slugify-string-default-separator)
-;; 				      (t (progn
-;;                                            (warn "ignoring slugify-string argument `separator' because it unexpected type: %S"
-;;                                                  separator)
-;;                                            slugify-string-default-separator)))))
-;;          (n-sep (replace-regexp-in-string "[[:space:]]+" "" raw-sep))
-;;          (n-len (length n-sep))
-;;          (sep (or (when (= n-len 0) slugify-string-default-separator)
-;;                   n-sep)))
-;;
-;;     (replace-regexp-in-string slugify-string-regexp-middle  ))
-;;
-;;
-
-
-;; (let* ((result (call-process-get-status-and-info "uname" nil "-a"))
-;;        (keys (flat-list-get-assoc-keys result))
-;;        (values (flat-list-get-assoc-values result))
-;;        (exit-code (flat-list-get-assoc-key-value result :exit-code))
-;;        (stdout (flat-list-get-assoc-key-value result :stdout))
-;;        (stderr (flat-list-get-assoc-key-value result :stderr))
-;;        (call-process-args (flat-list-get-assoc-key-value result :call-process-args))
-;;        (shell-command (flat-list-get-assoc-key-value result :shell-command)))
-
-;;   (erase-c-messages)
-;;   KGMtbWVzc2FnZS1kZWJ1Zy1zeW1ib2xzIChsaXN0ICdyZXN1bHQgJ2tleXMgJ3ZhbHVlcyAnZXhpdC1jb2RlICdzdGRvdXQgJ3N0ZGVyciAnY2FsbC1wcm9jZXNzLWFyZ3MpICdzaGVsbC1jb21tYW5kKQ==
-;;   )
-;;                                         ;
+;; slugify-string (WIP) OzsgKGRlZmNvbnN0IHNsdWdpZnktc3RyaW5nLWRlZmF1bHQtc2VwYXJhdG9yCjs7ICAgIi0iCjs7ICAgInRoZSBzZXBhcmF0b3IgdGhhdCByZXBsYWNlcyBub24tc2x1Zy1jb21wYXRpYmxlIGNoYXJhY3RlcnMgb2YgdGFyZ2V0IHN0cmluZyIpCjs7Cjs7IChkZWZ1biBzbHVnaWZ5LXN0cmluZy1nZXQtbm9uc3RhbmRhcmQtc2VwLWFzc29jKHNlcCkKOzsgICAoaWYgKG5vdCAoc3RyaW5ncCBzZXApKQo7OyAgICAgICAoZXJyb3IgImBzZXAnIGlzIG5vdCBhIHN0cmluZzogJXMiIHNlcCkpCjs7ICAgKHNhdmUtbWF0Y2gtZGF0YQo7OyAgICAgKHdoZW4gKHN0cmluZy1tYXRjaCAiXlxcKFxcKFthLXpBLVowLTlAKy9cXH4hKl8tXStcXClcXHxcXChbXmEtekEtWjAtOVs6c3BhY2U6XVxuXy1dK1xcKVxcKSskIiBzZXApCjs7ICAgICAgIChsaXN0IDphbGwgKG1hdGNoLXN0cmluZyAwIHNlcCkgOztib2R5Cjs7ICAgICAgICAgICAgIDpvdXRlciAobWF0Y2gtc3RyaW5nIDEgc2VwKQo7OyAgICAgICAgICAgICA6YXNjaWkgKG1hdGNoLXN0cmluZyAyIHNlcCkKOzsgICAgICAgICAgICAgOm5vbi1zcGFjZSAobWF0Y2gtc3RyaW5nIDMgc2VwKSkgOztlbmQgd2hlbiBib2R5Cjs7ICAgICAgICAgICAgICkKOzsgICAgICkpCjs7Cjs7IChkZWZ1biBzbHVnaWZ5LXN0cmluZy1yZWdleHAtbWlkZGxlKHNlcCkKOzsgICAicmV0dXJucyB0aGUgcmVnZXhwIHRvIHNsdWdpZnkgc3RyaW5nIGJhc2VkIG9uIGEgZ2l2ZW4gc2VwYXJhdG9yIgo7OyAgIChpZiAobm90IChzdHJpbmdwIHNlcCkpCjs7ICAgICAgIChlcnJvciAiYHNlcCcgaXMgbm90IGEgc3RyaW5nOiAlcyIgc2VwKSkKOzsKOzsgICAobGV0ICgobm9uc3RhbmRhcmQtc2VwCjs7ICAgICAgICAgIChzbHVnaWZ5LXN0cmluZy1nZXQtbm9uc3RhbmRhcmQtc2VwLWFzc29jIHNlcCkpCjs7ICAgICAgICAgKTs7IGVuZCBsZXQgdmFybGlzdAo7OyAgICAgKG9yICh3aGVuIChvciAoc3RyaW5nPSBzZXAgIl8iKQo7OyAgICAgICAgICAgICAgICAgICAoc3RyaW5nPSBzZXAgc2x1Z2lmeS1zdHJpbmctZGVmYXVsdC1zZXBhcmF0b3IpCjs7ICAgICAgICAgICAgICAgICAgIChub3QgKGxpc3RwIG5vbnN0YW5kYXJkLXNlcCkpKQo7OyAgICAgICAgICAgOzsgYm9keQo7OyAgICAgICAgICAgIlteYS16QS1aMC05Xy1dKyIpIDs7ZW5kIHdoZW4gYm9keQo7OyAgICAgICAgICh3aGVuIChsaXN0cCBub25zdGFuZGFyZC1zZXApCjs7ICAgICAgICAgICAobGV0ICgobm9ucy1hbGwgKGZsYXQtbGlzdC1nZXQtYXNzb2Mta2V5LXZhbHVlIG5vbnN0YW5kYXJkLXNlcCA6YWxsKSkKOzsgICAgICAgICAgICAgICAgIChub25zLW91dGVyIChmbGF0LWxpc3QtZ2V0LWFzc29jLWtleS12YWx1ZSBub25zdGFuZGFyZC1zZXAgOm91dGVyKSkKOzsgICAgICAgICAgICAgICAgIChub25zLWFzY2lpIChmbGF0LWxpc3QtZ2V0LWFzc29jLWtleS12YWx1ZSBub25zdGFuZGFyZC1zZXAgOmFzY2lpKSkKOzsgICAgICAgICAgICAgICAgIChub25zLW5zcGMgKGZsYXQtbGlzdC1nZXQtYXNzb2Mta2V5LXZhbHVlIG5vbnN0YW5kYXJkLXNlcCA6bm9uLXNwYWNlKSkpCjs7ICAgICAgICAgICAgS0dNdGJXVnpjMkZuWlMxa1pXSjFaeTF6ZVcxaWIyeHpJQ2hzYVhOMElDZHViMjV6ZEdGdVpHRnlaQzF6WlhBS0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNkdWIyNXpMV0ZzYkNBZ0oyNXZibk10YjNWMFpYSWdJQ2R1YjI1ekxXRnpZMmxwSUNBbmJtOXVjeTF1YzNCaklDZHpaWEFwQ2lBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBbmMyVndJQ2R1YjI1ekxXRnNiQ0FnSjI1dmJuTXRiM1YwWlhJZ0lDZHViMjV6TFdGelkybHBJQ0FuYm05dWN5MXVjM0JqS1E9PQo7Owo7OyAgICAgICAgICAgICAoZm9ybWF0ICJbXmEtekEtWjAtOV8lcy1dKyIgc2x1Z2lmeS1zdHJpbmctZGVmYXVsdC1zZXBhcmF0b3IpKSkKOzsgICAgICAgICBzbHVnaWZ5LXN0cmluZy1kZWZhdWx0LXNlcGFyYXRvcikpCjs7ICAgKQo7Owo7Owo7Owo7OyAoZGVmdW4gc2x1Z2lmeS1zdHJpbmctcmVnZXhwLWVuZHMoc2VwKQo7OyAgICJyZXR1cm5zIHRoZSByZWdleHAgdG8gZml4IHRoZSBlbmRzIG9mIHRoZSBzdHJpbmcgcG9zdCBzbHVnaWZ5aW5nIGl0Igo7OyAgIChpZiAobm90IChzdHJpbmdwIHNlcCkpCjs7ICAgICAgIChlcnJvciAiYHNlcCcgaXMgbm90IGEgc3RyaW5nOiAlcyIgc2VwKSkKOzsgICAobGV0ICgobm9uc3RhbmRhcmQtc2VwCjs7ICAgICAgICAgIChzbHVnaWZ5LXN0cmluZy1nZXQtbm9uc3RhbmRhcmQtc2VwLWFzc29jIHNlcCkpCjs7ICAgICAgICAgKTs7IGVuZCBsZXQgdmFybGlzdAo7OyAgICAgKG9yICh3aGVuIChvciAoc3RyaW5nPSBzZXAgIl8iKQo7OyAgICAgICAgICAgICAgICAgICAoc3RyaW5nPSBzZXAgc2x1Z2lmeS1zdHJpbmctZGVmYXVsdC1zZXBhcmF0b3IpCjs7ICAgICAgICAgICAgICAgICAgIChub3QgKGxpc3RwIG5vbnN0YW5kYXJkLXNlcCkpKQo7OyAgICAgICAgICAgKGZvcm1hdCAiXFwoXlslc10rXFx8WyVzXSskXFwpIiBzZXAgc2VwKSkKOzsgICAgICAgICAod2hlbiAobGlzdHAgbm9uc3RhbmRhcmQtc2VwKQo7OyAgICAgICAgICAgKGxldCAoKG5vbnMtYWxsIChmbGF0LWxpc3QtZ2V0LWFzc29jLWtleS12YWx1ZSBub25zdGFuZGFyZC1zZXAgOmFsbCkpCjs7ICAgICAgICAgICAgICAgICAobm9ucy1vdXRlciAoZmxhdC1saXN0LWdldC1hc3NvYy1rZXktdmFsdWUgbm9uc3RhbmRhcmQtc2VwIDpvdXRlcikpCjs7ICAgICAgICAgICAgICAgICAobm9ucy1hc2NpaSAoZmxhdC1saXN0LWdldC1hc3NvYy1rZXktdmFsdWUgbm9uc3RhbmRhcmQtc2VwIDphc2NpaSkpCjs7ICAgICAgICAgICAgICAgICAobm9ucy1uc3BjIChmbGF0LWxpc3QtZ2V0LWFzc29jLWtleS12YWx1ZSBub25zdGFuZGFyZC1zZXAgOm5vbi1zcGFjZSkpCjs7ICAgICAgICAgICAgICAgICAoYWN0dWFsLXNlcCBzbHVnaWZ5LXN0cmluZy1kZWZhdWx0LXNlcGFyYXRvcikpCjs7ICAgICAgICAgICA7OyBLR010YldWemMyRm5aUzFrWldKMVp5MXplVzFpYjJ4eklDaHNhWE4wSUNkdWIyNXpkR0Z1WkdGeVpDMXpaWEFLSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ2R1YjI1ekxXRnNiQ0FnSjI1dmJuTXRiM1YwWlhJZ0lDZHViMjV6TFdGelkybHBJQ0FuYm05dWN5MXVjM0JqSUNkelpYQXBDaUFnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FuYzJWd0lDZHViMjV6TFdGc2JDQWdKMjV2Ym5NdGIzVjBaWElnSUNkdWIyNXpMV0Z6WTJscElDQW5ibTl1Y3kxdWMzQmpLUT09Cjs7Cjs7ICAgICAgICAgICAgIChmb3JtYXQgIlxcKF5bJXNdK1xcfFslc10rJFxcKSIgYWN0dWFsLXNlcCBhY3R1YWwtc2VwKSkpCjs7ICAgICAgICAgc2x1Z2lmeS1zdHJpbmctZGVmYXVsdC1zZXBhcmF0b3IpCjs7ICAgICApCjs7ICAgKQo7Owo7Owo7OyAoZGVmdW4gc2x1Z2lmeS1zdHJpbmcgKHN0cmluZyAmb3B0aW9uYWwgc2VwYXJhdG9yKQo7OyAgICJyZXR1cm5zIGEgc2x1Z2lmaWVkIHZlcnNpb24gb2YgYHN0cmluZyciCjs7ICAgKGxldCogKChyYXctc2VwICAoc3RyaW5nLXRyaW0gKGNvbmQgKChzdHJpbmdwIHNlcGFyYXRvcikKOzsgCQkJCSAgICAgICBzZXBhcmF0b3IpCjs7IAkJCQkgICAgICAoKGNoYXJhY3RlcnAgc2VwYXJhdG9yKQo7OyAJCQkJICAgICAgIChmb3JtYXQgIiVzIiBzZXBhcmF0b3IpKQo7OyAJCQkJICAgICAgKChudWxsIHNlcGFyYXRvcikgc2x1Z2lmeS1zdHJpbmctZGVmYXVsdC1zZXBhcmF0b3IpCjs7IAkJCQkgICAgICAodCAocHJvZ24KOzsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICh3YXJuICJpZ25vcmluZyBzbHVnaWZ5LXN0cmluZyBhcmd1bWVudCBgc2VwYXJhdG9yJyBiZWNhdXNlIGl0IHVuZXhwZWN0ZWQgdHlwZTogJVMiCjs7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzZXBhcmF0b3IpCjs7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzbHVnaWZ5LXN0cmluZy1kZWZhdWx0LXNlcGFyYXRvcikpKSkpCjs7ICAgICAgICAgIChuLXNlcCAocmVwbGFjZS1yZWdleHAtaW4tc3RyaW5nICJbWzpzcGFjZTpdXSsiICIiIHJhdy1zZXApKQo7OyAgICAgICAgICAobi1sZW4gKGxlbmd0aCBuLXNlcCkpCjs7ICAgICAgICAgIChzZXAgKG9yICh3aGVuICg9IG4tbGVuIDApIHNsdWdpZnktc3RyaW5nLWRlZmF1bHQtc2VwYXJhdG9yKQo7OyAgICAgICAgICAgICAgICAgICBuLXNlcCkpKQo7Owo7OyAgICAgKHJlcGxhY2UtcmVnZXhwLWluLXN0cmluZyBzbHVnaWZ5LXN0cmluZy1yZWdleHAtbWlkZGxlICApKQo7Owo7Owo=
+;; uname          (WIP) OzsgKGxldCogKChyZXN1bHQgKGNhbGwtcHJvY2Vzcy1nZXQtc3RhdHVzLWFuZC1pbmZvICJ1bmFtZSIgbmlsICItYSIpKQo7OyAgICAgICAgKGtleXMgKGZsYXQtbGlzdC1nZXQtYXNzb2Mta2V5cyByZXN1bHQpKQo7OyAgICAgICAgKHZhbHVlcyAoZmxhdC1saXN0LWdldC1hc3NvYy12YWx1ZXMgcmVzdWx0KSkKOzsgICAgICAgIChleGl0LWNvZGUgKGZsYXQtbGlzdC1nZXQtYXNzb2Mta2V5LXZhbHVlIHJlc3VsdCA6ZXhpdC1jb2RlKSkKOzsgICAgICAgIChzdGRvdXQgKGZsYXQtbGlzdC1nZXQtYXNzb2Mta2V5LXZhbHVlIHJlc3VsdCA6c3Rkb3V0KSkKOzsgICAgICAgIChzdGRlcnIgKGZsYXQtbGlzdC1nZXQtYXNzb2Mta2V5LXZhbHVlIHJlc3VsdCA6c3RkZXJyKSkKOzsgICAgICAgIChjYWxsLXByb2Nlc3MtYXJncyAoZmxhdC1saXN0LWdldC1hc3NvYy1rZXktdmFsdWUgcmVzdWx0IDpjYWxsLXByb2Nlc3MtYXJncykpCjs7ICAgICAgICAoc2hlbGwtY29tbWFuZCAoZmxhdC1saXN0LWdldC1hc3NvYy1rZXktdmFsdWUgcmVzdWx0IDpzaGVsbC1jb21tYW5kKSkpCgo7OyAgIChlcmFzZS1jLW1lc3NhZ2VzKQo7OyAgIEtHTXRiV1Z6YzJGblpTMWtaV0oxWnkxemVXMWliMnh6SUNoc2FYTjBJQ2R5WlhOMWJIUWdKMnRsZVhNZ0ozWmhiSFZsY3lBblpYaHBkQzFqYjJSbElDZHpkR1J2ZFhRZ0ozTjBaR1Z5Y2lBblkyRnNiQzF3Y205alpYTnpMV0Z5WjNNcElDZHphR1ZzYkMxamIyMXRZVzVrS1E9PQo7OyAgICkKOzsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDsK
 
 (defun shell-script-insert-ansi-clear()
   (interactive)
@@ -5289,3 +5221,92 @@ element to string like `princ' would.
     );; save-match-data
   ;;       );; save-mark-excursion-and-match-data
   );;end defun
+
+(defun ensure-type-of (obj &rest types)
+  (unless (length> types 0)
+    (error "ensure-type-of missing list of acceptable types or predicates to ensure type of `obj': %S" obj))
+  (set (make-local-variable 'obj-t-name) (type-of obj))
+  (mapc #'(lambda (err) )
+        (signal 'type-error err)
+
+        (seq-map-indexed #'(lambda (pred index)
+                             (or
+                              (when (stringp pred)
+                                (unless (string= obj-t-name pred)
+                                  (cons :string  (format ""))
+                                  (unless (bufferp buffer)
+                                    (error "`buffer' is not a `bufferp' but rather `%s': %S" (type-of buffer) buffer))
+                                  )
+                                ); end when stringp
+                              ); end or
+                             types)
+                         ); end seq-map-indexed
+        );; end mapc
+  );; end defun ensure-type-of
+
+
+
+(defun save-session-info-get-buffer-contents-timed (buffer)
+  (unless (bufferp buffer)
+    (error "`buffer' is not a `bufferp' but rather `%s': %S" (type-of buffer) buffer))
+
+  (let* ((start-cons (now-sexp))
+         (contents
+          (save-mark-and-excursion
+            (widen)
+            (buffer-substring-no-properties (point-min) (point-max))))
+         (end-cons (now-sexp))
+         (start (car start-cons))
+         (end (car end-cons))
+         (elapsed-seconds (- end start))
+         );;let
+
+    );; let* (after body)
+); defun save-session-info-get-buffer-contents-timed
+(defun save-session-info-each-buffer (buffer)
+  (let ((t-contents (with-temp-buffer buffer
+                                      (let ((start (now-sexp))
+                                            (contents
+                                             (save-mark-and-excursion
+                                               (widen)
+                                               (buffer-substring-no-properties (point-min) (point-max))))
+                                            (end (now-sexp))
+                                            )
+                                        );; let
+                                      );; with-temp-buffer
+                    ); let t-contents
+        ); let varlist
+    (list
+     :buffer buffer
+     :name (buffer-name buffer)
+     :slug (shell-script-gen-safe-variable-name-from-string (buffer-name buffer))
+     :filename (buffer-file-name buffer)
+     :contents (with-temp-buffer buffer
+                                 (let ((start (now-sexp))
+                                       (contents
+                                        (save-mark-and-excursion
+                                          (widen)
+                                          (buffer-substring-no-properties (point-min) (point-max))))
+                                       (end (now-sexp))
+                                       )
+                                 ); end let
+     )
+     )
+
+(defun save-session-info(&optional dir-path)
+  (interactive)
+  (and (unless (or (null dir-path)
+                   (stringp dir-path))
+         (user-error "dir-path is not a string but rather %s: %S" (type-of dir-path) dir-path))
+       (unless (file-exists-p dir-path)
+         (make-directory dir-path t) t)
+       (unless (file-directory-p dir-path)
+         (user-error "dir-path is not a directory: %S" dir-path)))
+
+  (let ((buffers (mapcar #'                                (buffer-list))
+                                        ;mapcar
+                               );let* buffers
+                             ); end let* varlist
+
+                         ); end let of defun
+                 );defun
