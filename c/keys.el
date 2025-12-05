@@ -140,6 +140,9 @@
 (Ox33b4O/$/set-key   '("C-c M-s") #'replace-string    )
 (Ox33b4O/$/set-key   '("M-a") 'ignore                )
 (Ox33b4O/$/set-key   '("M-c") 'ignore                )
+(Ox33b4O/$/set-key   '("C-M-c" "M-c") 'clipboard-kill-ring-save)
+(Ox33b4O/$/set-key   '("C-M-x" "M-X" ) 'clipboard-kill-region)
+
 (Ox33b4O/$/set-key   '("C-g" "C-q") 'keyboard-quit   )
 
 (Ox33b4O/$/set-key "M-s" 'isearch-forward-input-regexp)
