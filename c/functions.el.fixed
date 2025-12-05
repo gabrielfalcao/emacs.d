@@ -2983,23 +2983,23 @@ which returns the exit-status and the string output.
   "BEG END."
   (interactive "*r")
   (save-mark-excursion-and-match-data
-    (goto-char beg)
-    (while (re-search-forward "\\(^\\|\\b\\)[a-fA-F0-9]+\\(\\b\\|$\\)" end t)
-      (let* ((val (format "%s" (string-to-number (match-string) 16)))
-             ;; (hexa (or (and (length= val 1) (format "0%s" val))
-             ;;           val))
-             )
-        (replace-match val)))))
+   (goto-char beg)
+   (while (re-search-forward "\\(^\\|\\b\\)[a-fA-F0-9]+\\(\\b\\|$\\)" end t)
+     (let* ((val (format "%s" (string-to-number (match-string) 16)))
+            ;; (hexa (or (and (length= val 1) (format "0%s" val))
+            ;;           val))
+            )
+       (replace-match val)))))
 
 (defun decimal-to-hex-region (beg end)
   "BEG END."
   (interactive "*r")
   (save-mark-excursion-and-match-data
-    (goto-char beg)
-    (while (re-search-forward "\\(^\\|\\b\\)[0-9]+\\(\\b\\|$\\)" end t)
-      (replace-match
-       (format "%02x" (string-to-number (match-string 0))))
-      )))
+   (goto-char beg)
+   (while (re-search-forward "\\(^\\|\\b\\)[0-9]+\\(\\b\\|$\\)" end t)
+     (replace-match
+      (format "%02x" (string-to-number (match-string 0))))
+     )))
 
 ;; WIP/TODO: replace with rgb-parser.el
 ;; (defun hex-rgb-to-ansi-region (beg end)
@@ -3026,30 +3026,6 @@ which returns the exit-status and the string output.
 ;;                     (buffer-substring-no-properties beg end)))
 ;;       )))
 
-(defun slugify-string (string)
-  "depends on cargo crate heck-string-cli: `cargo install heck-string-cli'
-BEG END."
-  (unless (stringp string)
-    (signal 'type-error (format "`string' should be a string not %s: %s" (type-of string) string)))
-
-  (let* ((tmp-buffer-name "*slugify-string*" )
-         (tmp-buffer (get-buffer-create tmp-buffer-name))
-         (exit-code
-          (call-process "slugify-string" nil tmp-buffer nil
-                        string)))
-    (unless (eq 0 exit-code)
-      (kill-buffer tmp-buffer)
-      (error
-       (format "command failed with status %d: slugify-string '%s'"  case input-string)))
-
-    (let ((output
-	   (with-current-buffer tmp-buffer
-	     (widen)
-	     (string-trim (buffer-string)))))
-      (kill-buffer tmp-buffer)
-      output)))
-
-
 (defun heck-string-to-case-buffer (case beg end)
   "depends on cargo crate heck-string-cli: `cargo install heck-string-cli'
 BEG END."
@@ -3072,7 +3048,7 @@ BEG END."
 
       (kill-buffer tmp-buffer)
       (user-error
-       (format "command failed with status %d: heck-string --to=%s '%s'"  case input-string)))))
+       (format "command failed with status %d: string --to=%s '%s'"  case input-string)))))
 
 (defun string-to-train-region (beg end)
   "BEG END."
@@ -3225,57 +3201,77 @@ BEG END."
   (interactive)
   (electric-indent-mode 1))
 
+(defconst now-string-default-format
+  "%Y-%m-%d %H:%M:%S%z")
 
-(defvar now-string-format "%Y-%m-%d %H:%M:%S%z"
+(defcustom now-string-format
+  now-string-default-format
   "string passed to `format-time-string' in `now-string-format'"
-;;   :type '(string)
-  )
+  :type 'string
+  :group 'now
+  ;;  :options (list "of" "choices")
+  :set #'(lambda (sym new-value)
+           (unless (or (stringp new-value)
+                       (null new-value))
+             (user-error "invalid value for `now-string-format', must be either a `string' or `nil'"))
+           (when (null new-value)
+             (setq new-value now-string-default-format))
+           (condition-case err
+               (format-time-string new-value)
+             (error (user-error "invalid time format %S: %s" new-value err)))
+           ))
+(defconst today-string-default-format
+  "%Y-%m-%d")
 
-(defvar today-string-format "%Y-%m-%d"
+(defcustom today-string-format
+  today-string-default-format
   "string passed to `format-time-string' in `today-string-format'"
-;;   :type '(string)
-  )
+  :type 'string
+  :group 'today
+  ;;  :options (list "of" "choices")
+  :set #'(lambda (sym new-value)
+           (unless (or (stringp new-value)
+                       (null new-value))
+             (user-error "invalid value for `today-string-format', must be either a `string' or `nil'"))
+           (when (null new-value)
+             (setq new-value today-string-default-format))
+           (condition-case err
+               (format-time-string new-value)
+             (error (user-error "invalid time format %S: %s" new-value err)))
+           ))
 
 
 (defun today-string (&optional zone slugify)
-  (unless (or (stringp zone)
-              (null zone))
-    (signal 'type-error (format  "[today-string] argument `zone' must be either nil or string but instead received `%s': %s"
-                                 (type-of zone) zone)))
   (unless (or (functionp slugify)
               (null slugify))
-    (signal 'type-error (format  "[today-string] argument `slugify' must be either nil or function but instead received `%s': %s"
-                                 (type-of slugify) slugify)))
-  (setq slugify (or slugify #'slugify-string))
+    (user-error  "argument `slugify' must be either nil or a function but instead received `%s': %s"
+                 (type-of slugify) slugify))  
   
-
-  (funcall slugify (format-time-string today-string-format nil zone)))
+  (funcall (or slugify #'identity) (format-time-string today-string-format nil zone)))
 
 (defun today (&optional zone)
   (interactive)
   (insert (today-string zone)))
 
-(defun now-string (&optional zone slugify)
+(defun now-string (&optional slugify)
   "argument `slugify' must be either nil or a function which takes a single
 string argument (current time formated like RFC-3339 except timezone
 name appears instead instead of timezone's \"%H:%M\") and returns a
 string. "
+  (setq-local funcall (or slugify #'identity))
   (unless (or (functionp slugify)
               (null slugify))
-    (signal 'type-error (format  "[now-string] argument `slugify' must be either nil or a function but instead received `%s': %s"
-                 (type-of slugify) slugify)))
-  (unless (or (stringp zone)
-              (null zone))
-    (signal 'type-error (format  "[today-string] argument `zone' must be either nil or string but instead received `%s': %s"
-                                 (type-of zone) zone)))
-  (setq-local funcall (or slugify #'slugify-string))
-  (funcall (or slugify #'identity) (format-time-string (symbol-value 'now-string-format) nil zone)))
+    (user-error  "argument `slugify' must be either nil or a function but instead received `%s': %s"
+                 (type-of slugify) slugify))
+  (funcall (or slugify #'identity) (format-time-string now-string-format nil zone)))
 
 
-(defun now (&optional zone)
+(defun now (&optional utc)
   (interactive)
   (insert
-   (now-string zone)))
+   (format-time-string "%Y-%m-%d %H:%M:%S%z"
+		       nil
+		       (if (not (null utc)) 0 nil))))
 
 (defun now-sexp()
   "returns a `cons' whose `car' is a `numberp' with the current time in seconds and `cdr' is the current time"
@@ -5190,20 +5186,20 @@ element to string like `princ' would.
          (last-pos (copy-marker end))
          )
     (save-mark-excursion-and-match-data
-      (widen)
-      (replace-regexp-in-region "\\(do\\|;\\)\\s-+\\b\\(if\\|then\\|else\\|fi\\|done\\)\\b"
-                                "\\1\n\\2\n" beg end)
-      (setq last-pos (point)
-            new-end (point))
-      )
+     (widen)
+     (replace-regexp-in-region "\\(do\\|;\\)\\s-+\\b\\(if\\|then\\|else\\|fi\\|done\\)\\b"
+                               "\\1\n\\2\n" beg end)
+     (setq last-pos (point)
+           new-end (point))
+     )
 
     (save-mark-excursion-and-match-data
-      (replace-regexp-in-region "\\(if\\|then\\)[\n[:space:]]+"
-                                "\\1 " beg new-end)
-      (replace-regexp-in-region "\\(;\\)\\(\\s-*\\)\n\\(\\s-*\\)\\(then\\)\\s-+"
-                                "\\1 \\2 \\3\\4\n\\2\\3"
-                                beg new-end)
-      ) ;; save-mark-excursion-and-match-data
+     (replace-regexp-in-region "\\(if\\|then\\)[\n[:space:]]+"
+                               "\\1 " beg new-end)
+     (replace-regexp-in-region "\\(;\\)\\(\\s-*\\)\n\\(\\s-*\\)\\(then\\)\\s-+"
+                               "\\1 \\2 \\3\\4\n\\2\\3"
+                               beg new-end)
+     ) ;; save-mark-excursion-and-match-data
     (save-mark-and-excursion
       (widen)
       (goto-char beg)
@@ -5375,13 +5371,11 @@ element to string like `princ' would.
 (defun get-all-buffers-info()
   "returns list with information of each open buffer"
   (and (unless (or (null dir-path) (stringp dir-path))
-         (signal 'type-error (format "dir-path is not a string but rather %s: %S" (type-of dir-path) dir-path))
-         );; end unless
-       (unless (file-directory-p dir-path)
-         (signal 'type-error (format "dir-path is not a directory: %S" dir-path))
-         );; end unless
+         (user-error "dir-path is not a string but rather %s: %S" (type-of dir-path) dir-path));; end unless
        (unless (file-exists-p dir-path)
          (make-directory dir-path t) t);; end unless
+       (unless (file-directory-p dir-path)
+         (user-error "dir-path is not a directory: %S" dir-path));; end unless
        );; end and
   (mapcar #'save-session-info-get-each-buffer-info-callback (buffer-list))) ;; end defun get-all-buffers-info
 
@@ -5389,22 +5383,17 @@ element to string like `princ' would.
 (defun mkdir-p (path)
   "returns full `path'"
   (unless (stringp path)
-    (error "path should be a string but is a `%s': %s" (type-of path) path))
-  (let ((full-path (expand-file-name path)))
+    (user-error "path should be a string but is a `%s': %s" (type-of path) path))
+  (let ((full-path (expand-file-name patH)))
     (make-directory full-path t)
     full-path))
 
-(defun workbench-root ()
-  (mkdir-p (file-name-concat (expand-file-name "~") "workbench")))
 
-(defun workbench-logs-safe-path ()
-  (mkdir-p (file-name-concat (workbench-root) "logs" (today-string))))
+(defun workbench-root ()
+  (mkdir-p "~/workbench"))
 
 (defun workbench-path ()
-  (mkdir-p (file-name-concat (workbench-root) (today-string))))
-
-(defun workbench-logs ()
-  (workbench-logs-safe-path))
+  (mkdir-p (file-name-concat (workbench-root) (today-string nil t ))))
 
 (defun save-session-info(&optional dir-path)
   (interactive)
@@ -5413,15 +5402,14 @@ element to string like `princ' would.
 
 ;;;TODO 2025-12-05 19:37:48+0000 ;;;  (and (unless (or (null dir-path)
 ;;;TODO 2025-12-05 19:37:48+0000 ;;;                   (stringp dir-path))
-;;;TODO 2025-12-05 19:37:48+0000 ;;;         (error "dir-path is not a string but rather %s: %S" (type-of dir-path) dir-path))
+;;;TODO 2025-12-05 19:37:48+0000 ;;;         (user-error "dir-path is not a string but rather %s: %S" (type-of dir-path) dir-path))
 ;;;TODO 2025-12-05 19:37:48+0000 ;;;       (unless (file-exists-p dir-path)
 ;;;TODO 2025-12-05 19:37:48+0000 ;;;         (make-directory dir-path t) t)
 ;;;TODO 2025-12-05 19:37:48+0000 ;;;       (unless (file-directory-p dir-path)
-;;;TODO 2025-12-05 19:37:48+0000 ;;;         (error "dir-path is not a directory: %S" dir-path)))
+;;;TODO 2025-12-05 19:37:48+0000 ;;;         (user-error "dir-path is not a directory: %S" dir-path)))
 ;;;TODO 2025-12-05 19:37:48+0000 ;;;
 
-  (let* (
-         (date-fs (format-time-string "%Y-%m-%d-%z"))
+  (let* ((date-fs (format-time-string "%Y-%m-%d-%z"))
          (timestamp-fs (slugify-string (now)))
          (target-dir (file-name-concat  (format "emacs-%s" date-fs)))
          (target-file-buffers-content-backup-dir (file-name-concat target-dir (format "open-files-%s" timestamp-fs)))
@@ -5453,7 +5441,6 @@ element to string like `princ' would.
                   (with-temp-buffer
                     (insert .contents)
                     (widen)
-                    (beginning-of-buffer)
                     (write-region (point-min) (point-max) .filename nil nil lock-filename))
                   (with-temp-buffer
                     (insert (json-encode-plist info))
@@ -5464,11 +5451,10 @@ element to string like `princ' would.
     (with-temp-buffer
       (insert (json-encode buffers))
       (widen)
-      (beginning-of-buffer)
       (write-region
        (point-min)
        (point-max)
-       (file-name-concat target-dir (format "all-buffers-%s.json" timestamp-fs) nil nil lock-filename)))
+       (file-name-concat target-dir (format "all-buffers-%s" timestamp-fs) nil nil lock-filename)))
     ); end let of defun
   );defun save-session-info
 
@@ -5528,7 +5514,7 @@ element to string like `princ' would.
 ;;;TODO @ 2025-12-05 18:54:48+0000;;;            ); end let* varlist
 ;;;TODO @ 2025-12-05 18:54:48+0000;;;       ;; @within let* body
 ;;;TODO @ 2025-12-05 18:54:48+0000;;;       (unless match
-;;;TODO @ 2025-12-05 18:54:48+0000;;;         (error "no match for regexp %S within %s and %s"
+;;;TODO @ 2025-12-05 18:54:48+0000;;;         (user-error "no match for regexp %S within %s and %s"
 ;;;TODO @ 2025-12-05 18:54:48+0000;;;                     (location-at-pos beg) (location-at-pos end)));; end unless
 ;;;TODO @ 2025-12-05 18:54:48+0000;;;       ;; @within let* body
 ;;;TODO @ 2025-12-05 18:54:48+0000;;;       (while (re-search-forward regex-open initial-end t 1)
@@ -5575,4 +5561,3 @@ element to string like `princ' would.
 ;;;TODO @ 2025-12-05 18:54:48+0000;;;       )
 ;;;TODO @ 2025-12-05 18:54:48+0000;;;   )
 ;;;TODO @ 2025-12-05 18:54:48+0000;;;
-

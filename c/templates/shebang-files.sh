@@ -1,12 +1,9 @@
 #!/usr/bin/env bash
 
-set -o pipefail
-set -o errexit # or -e
-# set -o noglob # or -f
-set -o errtrace # or set -E
-set -o functrace # or set -T
-set -o nounset # -u
 export IFS=$'\n'
+set -ueTE
+set +f
+set -o pipefail
 unset IFS
 
 script_name="$(basename "${BASH_SOURCE[0]}")"

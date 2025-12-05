@@ -43,14 +43,16 @@
  ;; If there is more than one, they won't work right.
  '(expand-region-guess-python-mode nil)
  '(package-selected-packages
-   '(ansi autothemer blacken cargo-mode company csharp-mode
-          dockerfile-mode elixir-mode exec-path-from-shell
+   '(ansi autothemer blacken brightscript-mode cargo-mode company
+          csharp-mode dockerfile-mode elixir-mode exec-path-from-shell
           expand-region flycheck-rust flymake-shellcheck go-mode
           haml-mode highlight-indentation jinja2-mode jsonnet-mode
           kotlin-mode lua-mode markdown-mode nginx-mode pcre2el peg
           php-mode protobuf-mode python-mode pythonic restclient
-          rust-mode solidity-flycheck swift-mode terraform-mode toml
-          toml-mode typescript-mode web-mode yaml-mode))
+          rust-mode sed-mode solidity-flycheck swift-mode
+          terraform-mode toml toml-mode typescript-mode web-mode
+          yaml-mode))
+ '(py-max-specpdl-size 1)
  '(py-python-command "~/.shell.d/.venv/bin/python")
  '(py-python3-command "~/.shell.d/.venv/bin/python3")
  '(py-pythonpath "~/.shell.d/.venv/lib/python3.12/site-packages")
@@ -62,7 +64,11 @@
    '(#[nil
        ((define-key python-mode-map (kbd "C-c C-f")
                     #'g/format/prettify))
-       nil nil nil nil])))
+       nil nil nil nil]))
+ '(ruby-deep-indent-paren '(40 91 93 t 58))
+ '(ruby-indent-level 0)
+ '(ruby-method-call-indent nil)
+ '(ruby-method-params-indent 4))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

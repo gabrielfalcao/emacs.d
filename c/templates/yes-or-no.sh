@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-
-set -e
-set -o pipefail
-set -u
 export IFS=$'\n'
+set -ueTE
+set +f
+set -o pipefail
+unset IFS
 
 exec 1>&2
 declare -- script_name="$(basename "${BASH_SOURCE[0]}")"

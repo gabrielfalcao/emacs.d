@@ -21,6 +21,7 @@
 (setq debug-on-error nil)
 (setq initial-scratch-message nil)
 (setq auto-save-interval 137)
+(setq save-interprogram-paste-before-kill t)
 ;; (setq case-fold-search t)
 (defalias 'yes-or-no-p #'y-or-n-p)
 (defalias 'describe #'describe-symbol)
@@ -135,3 +136,4 @@
 ;; (set-window-buffer (split-window-right) "*Messages*")
 ;; (erase-messages)
 ;; (enable-debug-on-error)
+(erase-c-messages)

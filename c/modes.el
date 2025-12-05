@@ -99,6 +99,10 @@
 (add-to-list 'auto-mode-alist '("\\.tf$" . terraform-mode))
 (add-to-list 'auto-mode-alist '("\\.toml$" . toml-mode))
 (add-to-list 'auto-mode-alist '("\\.ts$" . typescript-mode))
+(add-to-list 'auto-mode-alist '("\\.brs$" . brightscript-mode))
+(add-to-list 'auto-mode-alist '("\\.sed$" . sed-mode))
+(add-to-list 'auto-mode-alist '("\\.awk$" . awk-mode))
+
 (add-to-list 'auto-mode-alist '("\\.tsx$" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.typ?$" . typst-mode))
 (add-to-list 'auto-mode-alist '("\\.el\(\\.gz\)?$" . emacs-lisp-mode))
