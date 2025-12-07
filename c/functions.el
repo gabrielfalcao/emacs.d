@@ -1278,8 +1278,12 @@
     (apply-partially #'string-match-p "[*]\s-\\(\\)")
     (string-lines (shell-command-to-string "git branch")))))
 
+(defun git-save () "
+shortcut to calling \\[git-add] and \\[git-commit]
+." (interactive) (git-add) (git-commit))
+
 (defun git-commit ()
-  "."
+  "commits the current buffer if file has been staged (.e.g.: with \\[git-add])"
   (interactive)
   (let* ((git-commit-output-buf (get-buffer-create "*git-commit*"))
          (filename (buffer-file-name-relative))
@@ -1335,7 +1339,6 @@
 		    (buffer-string)))
           (kill-buffer git-commit-output-buf)))))))
 
-(defun git-save () "." (interactive) (git-add) (git-commit))
 
 (defun get-regexp-github-remote-url ()
   "."
@@ -3247,7 +3250,7 @@ BEG END."
     (signal 'type-error (format  "[today-string] argument `slugify' must be either nil or function but instead received `%s': %s"
                                  (type-of slugify) slugify)))
   (setq slugify (or slugify #'slugify-string))
-  
+
 
   (funcall slugify (format-time-string today-string-format nil zone)))
 
@@ -5075,8 +5078,8 @@ element to string like `princ' would.
 
 (defun current-indentation()
   (or (plist-get (current-indentation-data) :column) 0))
-
-(defun shell-script-insert-argv-skel(&optional local arg-prefix)
+;;${BASH_SOURCE[0]}:${BASH_LINENO[0]}
+(defun shell-script-insert-argv-skel(&optional local arg-prefix log-prefix)
   (let* ((declare-stmt (cond ((or (equal t local)
                                   (equal local 'local)
                                   (equal local :local))
@@ -5086,12 +5089,23 @@ element to string like `princ' would.
                                   (equal local :declare))
                               "declare")
                              ("declare")))
+         (default-log-prefix (cond ((string= "declare" declare-stmt)
+                                    "[${BASH_SOURCE[0]}:${LINENO[0]}]"
+
+
+         (log-prefix (cond
+                      ((stringp log-prefix)
+                       (format "%s_" (string-trim-right log-prefix "_+")))
+                      ((null log-prefix) "")
+                      (t
+                       (signal 'type-error (format "shell-script-insert-argv-skel argument log-prefix should be string or nil, got %s %S" (type-of log-prefix) log-prefix)))
+                      ))
          (arg-prefix (cond
                       ((stringp arg-prefix)
                        (format "%s_" (string-trim-right arg-prefix "_+")))
                       ((null arg-prefix) "")
                       (t
-                       (error "shell-script-insert-argv-skel argument arg-prefix should be string or nil, got %S" arg-prefix))
+                       (signal 'type-error (format "shell-script-insert-argv-skel argument arg-prefix should be string or nil, got %s %S" (type-of arg-prefix) arg-prefix)))
                       ))
          (replacements (list (cons "%declare%" declare-stmt) (cons "%arg_prefix%" arg-prefix ) ))
          (col (current-indentation))
@@ -5109,7 +5123,7 @@ element to string like `princ' would.
                                "%declare% -- arg=\"\""
                                ""
                                "if [ ${%arg_prefix%argc} -eq 0 ]; then"
-                               "    1>&2 echo -e \"[${BASH_SOURCE[0]}:${BASH_LINENO[0]}]\" \"missing arguments\""
+                               "    1>&2 echo -e \"[%log_prefix%]\" \"missing arguments\""
                                "    exit 1"
                                "fi"
                                ""
@@ -5215,6 +5229,21 @@ element to string like `princ' would.
       )
     );; let*
   );defun
+
+(defun shell-script-transform-manpage-into-case-esac-arg-matchers-region(beg end)
+  (interactive "*r")
+  (let* (
+         (main-regexp  "\\(\\s-+\\)\\([-]\\([a-zA-Z]+\\|[[]\\|[]]\\)+\\)\\(,\\s-+\\([-][-]\\([^=*\n]*\\|[a-z0-9-]\\)\\)\\(=.*\\)?\\)+")
+         (second-regexp  "^\\(\\s-+\\)\\([--][a-z0-9-]+\\)\\(=.*\\|[^a-z0-9)\n]\\)?$")
+         (pre-algo-regex "^\\(?:\\s-+\\|[|]\\)\\(?:[-]\\)\\([a-z0-9-]+\\)\\(?:[[]\\([a-z0-9]+\\)[]]\\)")
+         )
+    (replace-regexp-in-region main-regexp
+    (save-mark-excursion-and-match-data
+      (goto-char beg)
+      (while (re-search-forward main-regexp end t)
+        (replace-match
+    )
+  )
 
 (define-error 'format-string-error "Format Error" 'c-functions-internal-error)
 (define-error 'type-error "Format Error" 'error)
@@ -5575,4 +5604,3 @@ element to string like `princ' would.
 ;;;TODO @ 2025-12-05 18:54:48+0000;;;       )
 ;;;TODO @ 2025-12-05 18:54:48+0000;;;   )
 ;;;TODO @ 2025-12-05 18:54:48+0000;;;
-
