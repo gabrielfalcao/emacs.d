@@ -2986,23 +2986,23 @@ which returns the exit-status and the string output.
   "BEG END."
   (interactive "*r")
   (save-mark-excursion-and-match-data
-    (goto-char beg)
-    (while (re-search-forward "\\(^\\|\\b\\)[a-fA-F0-9]+\\(\\b\\|$\\)" end t)
-      (let* ((val (format "%s" (string-to-number (match-string) 16)))
-             ;; (hexa (or (and (length= val 1) (format "0%s" val))
-             ;;           val))
-             )
-        (replace-match val)))))
+   (goto-char beg)
+   (while (re-search-forward "\\(^\\|\\b\\)[a-fA-F0-9]+\\(\\b\\|$\\)" end t)
+     (let* ((val (format "%s" (string-to-number (match-string) 16)))
+            ;; (hexa (or (and (length= val 1) (format "0%s" val))
+            ;;           val))
+            )
+       (replace-match val)))))
 
 (defun decimal-to-hex-region (beg end)
   "BEG END."
   (interactive "*r")
   (save-mark-excursion-and-match-data
-    (goto-char beg)
-    (while (re-search-forward "\\(^\\|\\b\\)[0-9]+\\(\\b\\|$\\)" end t)
-      (replace-match
-       (format "%02x" (string-to-number (match-string 0))))
-      )))
+   (goto-char beg)
+   (while (re-search-forward "\\(^\\|\\b\\)[0-9]+\\(\\b\\|$\\)" end t)
+     (replace-match
+      (format "%02x" (string-to-number (match-string 0))))
+     )))
 
 ;; WIP/TODO: replace with rgb-parser.el
 ;; (defun hex-rgb-to-ansi-region (beg end)
@@ -3231,12 +3231,12 @@ BEG END."
 
 (defvar now-string-format "%Y-%m-%d %H:%M:%S%z"
   "string passed to `format-time-string' in `now-string-format'"
-;;   :type '(string)
+  ;;   :type '(string)
   )
 
 (defvar today-string-format "%Y-%m-%d"
   "string passed to `format-time-string' in `today-string-format'"
-;;   :type '(string)
+  ;;   :type '(string)
   )
 
 
@@ -3266,7 +3266,7 @@ string. "
   (unless (or (functionp slugify)
               (null slugify))
     (signal 'type-error (format  "[now-string] argument `slugify' must be either nil or a function but instead received `%s': %s"
-                 (type-of slugify) slugify)))
+                                 (type-of slugify) slugify)))
   (unless (or (stringp zone)
               (null zone))
     (signal 'type-error (format  "[today-string] argument `zone' must be either nil or string but instead received `%s': %s"
@@ -5080,6 +5080,10 @@ element to string like `princ' would.
   (or (plist-get (current-indentation-data) :column) 0))
 ;;${BASH_SOURCE[0]}:${BASH_LINENO[0]}
 (defun shell-script-insert-argv-skel(&optional local arg-prefix log-prefix)
+  (unless (or (stringp log-prefix)
+              (null log-prefix))
+    (signal 'type-error (format "shell-script-insert-argv-skel argument log-prefix should be string or nil, got %s %S" (type-of log-prefix) log-prefix)))
+  
   (let* ((declare-stmt (cond ((or (equal t local)
                                   (equal local 'local)
                                   (equal local :local))
@@ -5090,16 +5094,11 @@ element to string like `princ' would.
                               "declare")
                              ("declare")))
          (default-log-prefix (cond ((string= "declare" declare-stmt)
-                                    "[${BASH_SOURCE[0]}:${LINENO[0]}]"
+                                    "[${BASH_SOURCE[0]}:${LINENO[0]}]")
+                                    ((string= "local" declare-stmt)
+                                    "[${FUNCNAME[0]}:${LINENO[0]}]")))
 
-
-         (log-prefix (cond
-                      ((stringp log-prefix)
-                       (format "%s_" (string-trim-right log-prefix "_+")))
-                      ((null log-prefix) "")
-                      (t
-                       (signal 'type-error (format "shell-script-insert-argv-skel argument log-prefix should be string or nil, got %s %S" (type-of log-prefix) log-prefix)))
-                      ))
+         (log-prefix (or (log-prefix default-log-prefix)))
          (arg-prefix (cond
                       ((stringp arg-prefix)
                        (format "%s_" (string-trim-right arg-prefix "_+")))
@@ -5204,20 +5203,20 @@ element to string like `princ' would.
          (last-pos (copy-marker end))
          )
     (save-mark-excursion-and-match-data
-      (widen)
-      (replace-regexp-in-region "\\(do\\|;\\)\\s-+\\b\\(if\\|then\\|else\\|fi\\|done\\)\\b"
-                                "\\1\n\\2\n" beg end)
-      (setq last-pos (point)
-            new-end (point))
-      )
+     (widen)
+     (replace-regexp-in-region "\\(do\\|;\\)\\s-+\\b\\(if\\|then\\|else\\|fi\\|done\\)\\b"
+                               "\\1\n\\2\n" beg end)
+     (setq last-pos (point)
+           new-end (point))
+     )
 
     (save-mark-excursion-and-match-data
-      (replace-regexp-in-region "\\(if\\|then\\)[\n[:space:]]+"
-                                "\\1 " beg new-end)
-      (replace-regexp-in-region "\\(;\\)\\(\\s-*\\)\n\\(\\s-*\\)\\(then\\)\\s-+"
-                                "\\1 \\2 \\3\\4\n\\2\\3"
-                                beg new-end)
-      ) ;; save-mark-excursion-and-match-data
+     (replace-regexp-in-region "\\(if\\|then\\)[\n[:space:]]+"
+                               "\\1 " beg new-end)
+     (replace-regexp-in-region "\\(;\\)\\(\\s-*\\)\n\\(\\s-*\\)\\(then\\)\\s-+"
+                               "\\1 \\2 \\3\\4\n\\2\\3"
+                               beg new-end)
+     ) ;; save-mark-excursion-and-match-data
     (save-mark-and-excursion
       (widen)
       (goto-char beg)
@@ -5230,20 +5229,24 @@ element to string like `princ' would.
     );; let*
   );defun
 
-(defun shell-script-transform-manpage-into-case-esac-arg-matchers-region(beg end)
-  (interactive "*r")
-  (let* (
-         (main-regexp  "\\(\\s-+\\)\\([-]\\([a-zA-Z]+\\|[[]\\|[]]\\)+\\)\\(,\\s-+\\([-][-]\\([^=*\n]*\\|[a-z0-9-]\\)\\)\\(=.*\\)?\\)+")
-         (second-regexp  "^\\(\\s-+\\)\\([--][a-z0-9-]+\\)\\(=.*\\|[^a-z0-9)\n]\\)?$")
-         (pre-algo-regex "^\\(?:\\s-+\\|[|]\\)\\(?:[-]\\)\\([a-z0-9-]+\\)\\(?:[[]\\([a-z0-9]+\\)[]]\\)")
-         )
-    (replace-regexp-in-region main-regexp
-    (save-mark-excursion-and-match-data
-      (goto-char beg)
-      (while (re-search-forward main-regexp end t)
-        (replace-match
-    )
-  )
+;; (defun shell-script-transform-manpage-into-case-esac-arg-matchers-region(beg end)
+;;   (interactive "*r")
+;;   (let* (
+;;          (main-regexp  "\\(\\s-+\\)\\([-]\\([a-zA-Z]+\\|[[]\\|[]]\\)+\\)\\(,\\s-+\\([-][-]\\([^=*\n]*\\|[a-z0-9-]\\)\\)\\(=.*\\)?\\)+")
+;;          (second-regexp  "^\\(\\s-+\\)\\([--][a-z0-9-]+\\)\\(=.*\\|[^a-z0-9)\n]\\)?$")
+;;          (pre-algo-regex "^\\(?:\\s-+\\|[|]\\)\\(?:[-]\\)\\([a-z0-9-]+\\)\\(?:[[]\\([a-z0-9]+\\)[]]\\)")
+;;          )
+;;     (replace-regexp-in-region main-regexp
+;;                               (save-mark-excursion-and-match-data
+;;                                (goto-char beg)
+;;                                (while (re-search-forward main-regexp end t)
+;;                                  (replace-match
+;;                                   )
+;;                                  )
+;;                                )
+;;                               )
+;;     )
+;;   )
 
 (define-error 'format-string-error "Format Error" 'c-functions-internal-error)
 (define-error 'type-error "Format Error" 'error)
