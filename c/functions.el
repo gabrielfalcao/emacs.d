@@ -5076,14 +5076,14 @@ element to string like `princ' would.
     );;save-match-data
   );; defun current-indentation-data
 
-(defun current-indentation()
+(defun current-indentation-in-columns()
   (or (plist-get (current-indentation-data) :column) 0))
 ;;${BASH_SOURCE[0]}:${BASH_LINENO[0]}
 (defun shell-script-insert-argv-skel(&optional local arg-prefix log-prefix)
   (unless (or (stringp log-prefix)
               (null log-prefix))
     (signal 'type-error (format "shell-script-insert-argv-skel argument log-prefix should be string or nil, got %s %S" (type-of log-prefix) log-prefix)))
-  
+
   (let* ((declare-stmt (cond ((or (equal t local)
                                   (equal local 'local)
                                   (equal local :local))
@@ -5107,7 +5107,7 @@ element to string like `princ' would.
                        (signal 'type-error (format "shell-script-insert-argv-skel argument arg-prefix should be string or nil, got %s %S" (type-of arg-prefix) arg-prefix)))
                       ))
          (replacements (list (cons "%declare%" declare-stmt) (cons "%arg_prefix%" arg-prefix ) ))
-         (col (current-indentation))
+         (col (current-indentation-in-columns))
          (statements (mapcar #'(lambda (stmt)
                                  (seq-reduce #'(lambda (string kv)
                                                  (let ((from (car kv))
