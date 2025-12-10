@@ -5084,6 +5084,10 @@ element to string like `princ' would.
               (null log-prefix))
     (signal 'type-error (format "shell-script-insert-argv-skel argument log-prefix should be string or nil, got %s %S" (type-of log-prefix) log-prefix)))
 
+  (unless (or (stringp arg-prefix)
+              (null arg-prefix))
+    (signal 'type-error (format "shell-script-insert-argv-skel argument arg-prefix should be string or nil, got %s %S" (type-of arg-prefix) arg-prefix)))
+
   (let* ((declare-stmt (cond ((or (equal t local)
                                   (equal local 'local)
                                   (equal local :local))
@@ -5098,14 +5102,8 @@ element to string like `princ' would.
                                     ((string= "local" declare-stmt)
                                     "[${FUNCNAME[0]}:${LINENO[0]}]")))
 
-         (log-prefix (or (log-prefix default-log-prefix)))
-         (arg-prefix (cond
-                      ((stringp arg-prefix)
-                       (format "%s_" (string-trim-right arg-prefix "_+")))
-                      ((null arg-prefix) "")
-                      (t
-                       (signal 'type-error (format "shell-script-insert-argv-skel argument arg-prefix should be string or nil, got %s %S" (type-of arg-prefix) arg-prefix)))
-                      ))
+         (log-prefix (or log-prefix default-log-prefix))
+         (arg-prefix (format "%s_" (string-trim-right (or arg-prefix "") "_+")))
          (replacements (list (cons "%declare%" declare-stmt) (cons "%arg_prefix%" arg-prefix ) ))
          (col (current-indentation-in-columns))
          (statements (mapcar #'(lambda (stmt)
