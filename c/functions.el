@@ -2367,6 +2367,39 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
     (save-mark-and-excursion
       (replace-regexp-within-bounds regexp replacement beg end))))
 
+
+(defun shell-script-set-umetefo ()
+  "."
+  (interactive)
+  (let ((shebang-regexp "^[#][!]\\(\\([^[:space:]\n]+\\)\\(\\s-*\\)?\\)+$")
+        shebang-match
+        first-line-end shebang first-line)
+    (save-mark-and-excursion
+      (widen)
+      (beginning-of-buffer)
+      (end-of-line)
+      (setq first-line-end (point))
+      (setq first-line (buffer-substring-no-properties (point-min) first-line-end))
+      (beginning-of-buffer)
+      (when (re-search-forward shebang-regexp first-line-end t 1)
+        (setq shebang-match (match-string-no-properties 0))))
+
+    (unless (stringp shebang-match)
+      (save-mark-and-excursion
+        (beginning-of-buffer)
+        (insert "#!/usr/bin/env bash")))
+    (save-mark-and-excursion
+      (beginning-of-buffer)
+      (end-of-line)
+      (insert (string-join
+               (list
+                ""
+                "set -umeTE"
+                "set +f"
+                "set -o pipefail")
+               "\n")))))
+
+
 (defun shell-script-curly-wrap-variables-buffer ()
   (interactive)
   (save-mark-and-excursion
@@ -5087,7 +5120,8 @@ element to string like `princ' would.
   (unless (or (stringp arg-prefix)
               (null arg-prefix))
     (signal 'type-error (format "shell-script-insert-argv-skel argument arg-prefix should be string or nil, got %s %S" (type-of arg-prefix) arg-prefix)))
-
+  ;; (erase-c-messages)
+  ;; (c-message-open "shell-script-insert-argv-skel")
   (let* ((declare-stmt (cond ((or (equal t local)
                                   (equal local 'local)
                                   (equal local :local))
@@ -5103,25 +5137,38 @@ element to string like `princ' would.
                                     "[${FUNCNAME[0]}:${LINENO[0]}]")))
 
          (log-prefix (or log-prefix default-log-prefix))
-         (arg-prefix (format "%s_" (string-trim-right (or arg-prefix "") "_+")))
-         (replacements (list (cons "%declare%" declare-stmt) (cons "%arg_prefix%" arg-prefix ) ))
+         (arg-prefix (string-trim (format "%s_" (string-trim-right (or arg-prefix "") "_+")) "_+"))
+         (exit-stmt (cond ((string= "declare" declare-stmt)
+                                    "exit")
+                                    ((string= "local" declare-stmt)
+                                    "return")))
+
+         (replacements (list
+                        (cons "%declare%" declare-stmt)
+                        (cons "%arg_prefix%" arg-prefix )
+                        (cons "%log_prefix%" log-prefix )
+                        (cons "%exit_stmt%" exit-stmt )
+                        ))
          (col (current-indentation-in-columns))
          (statements (mapcar #'(lambda (stmt)
                                  (seq-reduce #'(lambda (string kv)
                                                  (let ((from (car kv))
-                                                       (to (cdr kv)))
+                                                       (to (cdr kv))
+                                                       ;;(dbgs (auto-propertize-string "replace"))
+                                                       )
+                                                   ;; (c-message "<%s>\nfrom: %s\nto: %s\nstring: %s\n</%s>" dbgs (auto-propertize-string from) (auto-propertize-string to) (auto-propertize-string string) dbgs)
                                                    (replace-regexp-in-string from to string t)))
                                              replacements stmt))
                              '(
                                "%declare% -a %arg_prefix%argv=($@)"
-                               "%declare% -i %arg_prefix%argc=${!%arg_prefix%argv[@]}"
+                               "%declare% -i %arg_prefix%argc=${#%arg_prefix%argv[@]}"
                                "%declare% -i index=0"
                                "%declare% -i current=0"
                                "%declare% -- arg=\"\""
                                ""
                                "if [ ${%arg_prefix%argc} -eq 0 ]; then"
                                "    1>&2 echo -e \"[%log_prefix%]\" \"missing arguments\""
-                               "    exit 1"
+                               "    %exit% 1"
                                "fi"
                                ""
                                "for index in ${!%arg_prefix%argv[@]}; do"
