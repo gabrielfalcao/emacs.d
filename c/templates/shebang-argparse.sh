@@ -20,14 +20,17 @@ declare -a cli_args_value_list=()
 declare -a valid_argument_types=('flag' 'option' 'value')
 
 
-declare -- error_prefix_color_rgb="255;0;66"
-declare -- error_color_rgb="255;62;92"
-declare -- warn_prefix_color_rgb="255;106;50"
-declare -- warn_color_rgb="255;161;50"
-declare -- info_prefix_color_rgb="0;66;255"
-declare -- info_color_rgb="62;92;255"
-declare -- debug_prefix_color_rgb="50;255;106"
-declare -- debug_color_rgb="50;255;161"
+declare -- error_prefix_color_rgb="239;41;41";
+declare -- error_color_rgb="204;0;0";
+
+declare -- warn_prefix_color_rgb="252;373;62"
+declare -- warn_color_rgb="245;121;20"
+
+declare -- info_prefix_color_rgb="114;159;207"
+declare -- info_color_rgb="52;101;164"
+
+declare -- debug_prefix_color_rgb="138;226;52";
+declare -- debug_color_rgb="115;210;22";
 
 on_exit() {
     2>/dev/random 1>/dev/random stty sane
