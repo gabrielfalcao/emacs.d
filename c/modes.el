@@ -129,8 +129,6 @@
 ;; (flycheck-define-checker sh-shellcheck :command ("shellcheck" "-x" "-f" "checkstyle" "-s" (eval (symbol-name sh-shell)) source) :modes shell-script-mode :error-parser flycheck-parse-checkstyle)
 
 
-
-
 (add-to-list 'auto-mode-alist '("\\.c?js\\.tera$" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.erl\\.tera$" . erlang-mode))
 (add-to-list 'auto-mode-alist '("\\.j2\\.tera$" . jinja2-mode))
