@@ -2653,6 +2653,11 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
   ;; "#FF79C6"
 
   (open-note (file-name-concat (current-notes-location) "todo.rst"))
+  (let (
+        (match-count 0)
+        (bg-color-name "#1996C9")
+        (fg-color-name "#211F17")
+        )
   (save-mark-and-excursion
     (widen)
     (beginning-of-buffer)
@@ -2662,24 +2667,20 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
               nil t)
         (let* ((start (match-beginning 2))
                (end (match-end 2))
-               (bg-color-name "#1996C9")
-               (fg-color-name "#211F17")
                (ov (make-overlay start end))
                )
-          (overlay-put ov 'face `(:foreground ,fg-color-name :background ,bg-color-name))
-          (setq
-           bg-color-name "#312F27"
-           fg-color-name "#1996C9"
-           start (match-beginning 6)
-           end (match-end 6))
-          (setq ov (make-overlay start end))
-          (overlay-put ov 'face `(:foreground ,fg-color-name :background ,bg-color-name))
+          (when (> match-count 0)
+            (setq
+             bg-color-name "#312F27"
+             fg-color-name "#F6CA51"))
 
+          (setq match-count (+ 1 match-count))
+          (overlay-put ov 'face `(:foreground ,fg-color-name :background ,bg-color-name))
 
           ); end let*
-
         ); end while
       ); end save-match-data
+    ); end let
     ); end save-mark-and-excursion
   );; end defun toto
 
