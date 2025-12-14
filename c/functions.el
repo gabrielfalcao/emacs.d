@@ -1278,37 +1278,67 @@
     (apply-partially #'string-match-p "[*]\s-\\(\\)")
     (string-lines (shell-command-to-string "git branch")))))
 
-(defun git-save () "
+(defun git-save ()
+  "
 shortcut to calling \\[git-add] and \\[git-commit]
 ." (interactive) (git-add) (git-commit))
 
+(defun ensure-filename-child-of-directory (filename directory)
+  (let* (
+         (filename-absolute (file-name-canonicalize (or filename (buffer-file-name))))
+         (directory-absolute (file-name-canonicalize (or directory (file-name-directory filename-absolute))))
+         (directory-as-regexp (regexp-quote directory-absolute))
+         (regexp (format "^%s" directory-as-regexp))
+         ); end let* varlist
+    (c-message "ensure-filename-child-of-directory/regexp: %s" regexp)
+    (save-match-data
+      (or (when (string-match regexp filename-absolute)
+            (let ((message (format "file %S is not a child of %S" filename directory)))
+              (signal 'filesystem-error (format "file %S is not a child of %S" filename directory))))
+          filename-absolute
+          );end or
+      );; end save-match-data
+    );; end let*
+  );; end defun ensure-filename-child-of-directory
+
 (defun git-commit ()
   "commits the current buffer if file has been staged (.e.g.: with \\[git-add])"
-  (interactive)
-  (let* ((git-commit-output-buf (get-buffer-create "*git-commit*"))
+  (let* (
          (filename (buffer-file-name-relative))
          (commit-message
-          (read-string "Commit Message: " (format "saves %s" filename))))
-    (or
-     (when (zerop (length commit-message))
-       (user-error "aborted due to empty commit message"))
-     (if (eq 0
-             (let* ((exitcode
-                     (call-process "git" nil git-commit-output-buf nil "commit"
-                                   (buffer-file-name-relative)
-                                   "-m"
-                                   (format "%s" commit-message))))
-	       exitcode))
-	 (progn
-           (message "commited '%s'" commit-message)
-           (kill-buffer git-commit-output-buf))
-       (progn
-         (user-error
-          (format "failed to commit '%s': %s" commit-message
-                  (with-current-buffer git-commit-output-buf
-		    (widen)
-		    (buffer-string)))
-          (kill-buffer git-commit-output-buf)))))))
+          (read-string "Commit Message: " (format "saves %s" filename)))
+         (git-repo-path (shell-command-to-string "git rev-parse --show-toplevel"))
+         (git-commit-output-buf (get-buffer-create "*git-commit*"))
+         (filename-absolute (ensure-filename-child-of-directory filename git-repo-path))
+         commit-buffer-string
+         error-msg
+         exit-code
+         internal-error-msg
+         );; let* varlist
+    (when (zerop (length commit-message))
+      (user-error "aborted due to empty commit message"))
+    (setq exit-code (call-process "git" nil git-commit-output-buf nil "commit" "-m" (format "%s" commit-message))
+          commit-buffer-string (with-current-buffer git-commit-output-buf
+	                         (widen)
+	                         (buffer-string))
+          error-msg (format
+                     "failed to commit '%s': %s" commit-message)
+
+          );end setq
+    (condition-case err
+        (kill-buffer git-commit-output-buf)
+      (error (setq internal-error-msg (format "failed to kill buffer: %s" err))))
+
+    (if (= 0 exit-code)
+        ;; then
+        (message "%s commited '%s'" filename commit-message)
+      ;; else
+      (unless (not internal-error-msg)
+        (user-error internal-error-msg))
+      (user-error error-msg)); end (if (= 0
+    );; end (defun (let*
+  );;end defun
+
 
 
 (defun git-commit-staged ()
@@ -5442,6 +5472,8 @@ element to string like `princ' would.
 (define-error 'format-string-error "Format Error" 'c-functions-internal-error)
 (define-error 'type-error "Format Error" 'error)
 (define-error 'eval-sexp-string-error "Eval Expression Error" 'c-functions-internal-error)
+(define-error 'filesystem-error "File-System Error" 'c-functions-internal-error)
+(define-error 'io-error "I/O Error" 'c-functions-internal-error)
 
 (defun format-string-signal-error(spec value)
   (condition-case format-err
