@@ -2049,9 +2049,63 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 	      (abbreviate-file-name current-filename)
 	      exit-code)))))
 
-(defun g/format/prettify ()
+(defun human-time-format (&option epoch)
+  (format-time-string "%Y/%m/%d %H:%M:%S %Z" (or epoch (format-time-string "%s"))))
+
+(defun g/format/commit-and-prettify-and-commit ()
   (interactive "*")
-  (ignore-errors (erase-messages))
+  (let* (
+         (started-at-epoch (string-to-number (format-time-string "%s")))
+         (started-at (human-time-format started-at-epoch))
+         (git-head-before (shell-command-to-string "git rev-parse HEAD"))
+         git-head-after-first-commit
+         git-head-after-last-commit
+         first-commit-at
+         last-commit-at
+         ended-at-epoch
+         ended-at
+         )
+
+    (when (and (git-add)
+               (git-commit-m (format "saving %s before prettifying"))))
+    )
+  ) ;;  g/format/commit-and-prettify-and-commit
+
+(defun g/get/format/prettify/funcsymbol ()
+  (let ((name-of-current-mode (Ox33b4O/$/mode-name)))
+    (cond
+     ((string= "rust-mode" name-of-current-mode)
+      #'rustfmt)
+     ((string= "lua-mode" name-of-current-mode)
+      #'stylua)
+     ((string= "typescript-mode" name-of-current-mode)
+      #'prettierjs)
+     ((string= "javacript-mode" name-of-current-mode)
+      #'prettierjs)
+     ((string= "json-mode" name-of-current-mode)
+      #'prettierjs)
+     ((string= "web-mode" name-of-current-mode)
+      #'prettierjs)
+     ((string= "shell-script-mode" name-of-current-mode)
+      #'shfmt)
+     ((string= "sh-mode" name-of-current-mode)
+      #'shfmt)
+     ((string= "elisp-mode" name-of-current-mode)
+      #'elfmt)
+     ((string= "py-mode" name-of-current-mode)
+      #'blackpy)
+     ((string= "python-mode" name-of-current-mode)
+      #'blackpy)
+     (t nil)))
+
+  (defun g/format/prettify ()
+    (interactive "*")
+    (let* ((format-function (g/get/format/prettify/funcsymbol)))
+      (when (null format-function)
+        (user-error "can't prettify `%s' yet" (Ox33b4O/$/mode-name)))
+
+      (ignore-errors (erase-messages))
+      (funcall format-function)))
   (cond
    ((string= "rust-mode" (Ox33b4O/$/mode-name))
     (rustfmt))
@@ -2075,9 +2129,9 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
     (blackpy))
    ((string= "python-mode" (Ox33b4O/$/mode-name))
     (blackpy))
-   (t (progn
-        (message "can't prettify `%s' yet" (Ox33b4O/$/mode-name))
-        ))))
+   )
+  )
+
 
 (defun eval-elisp-buffer ()
   (interactive)
@@ -2566,8 +2620,16 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 (defun todo-today (&optional utc)
   "inserts a new <h2> entry in the `todo' document with the format 'TODO %Y-%m-%d'"
   (interactive)
-  (insert
-   (format-time-string "%Y-%m-%d" nil (if (not (null utc)) 0 nil))))
+  (let* (
+         (ts (format-time-string "%Y-%m-%d" nil (if (not (null utc)) 0 nil)))
+         (title (format "TODO %s" ts))
+         (width (length title))
+         (under-title (string-join (make-list width "=")))
+         (entry (string-join '(title under-title) "\n"))
+         )
+    (beginning-of-line)
+    (insert "\n" entry)))
+
 
 
 (defun backlog ()
@@ -3291,6 +3353,16 @@ BEG END."
   (interactive)
   (insert (today-string zone)))
 
+(defun now (&optional zone)
+  (interactive)
+  (insert
+   (now-string zone)))
+
+(defun now-sexp(&optional zone)
+  "returns a `cons' whose `car' is a `numberp' with the current time in seconds and `cdr' is the current time"
+  (let* ((now (format-time-string "%s.%N" nil zone))
+         (mapcar #'string-to-number (string-split now "." t t)))))
+
 (defun now-string (&optional zone slugify)
   "argument `slugify' must be either nil or a function which takes a single
 string argument (current time formated like RFC-3339 except timezone
@@ -3307,16 +3379,31 @@ string. "
   (setq-local funcall (or slugify #'slugify-string))
   (funcall (or slugify #'identity) (format-time-string (symbol-value 'now-string-format) nil zone)))
 
+(defconst validate-argument-is-of-expected-type-or-nil-type-error-fmt
+  (string-join
+   '(
+     "[%(function-name)s] argument `%(arg-name)s' must be either nil or"
+     "%(expected-type-name)s but instead received a `%(type-of)s': %(arg-value)s"
+     )
+   " "
+   )
+  "used by validate-argument-is-of-expected-type-or-nil")
 
-(defun now (&optional zone)
-  (interactive)
-  (insert
-   (now-string zone)))
+(defun validate-argument-is-of-expected-type-or-nil (function-name arg-name arg-value expected-type-name predicate &optional fallback-value)
+  "validates argument of `FUNCTION-NAME' signaling `TYPE-ERROR' in case the
+predicate fails and arg-value is not nil.
+Returns `ARG-VALUE' if predicate succeeds or `FALLBACK-VALUE' if `ARG-VALUE' is nil and predicate succeeds.
+"
+  (unless (or (predicate arg-value)
+              (null arg-value))
+    (signal 'type-error (format validate-argument-is-of-expected-type-or-nil-type-error-fmt
+                                function-name
+                                arg-name
+                                expected-type-name
+                                (type-of arg-value)
+                                arg-value)))
+  (or arg-value fallback-value))
 
-(defun now-sexp()
-  "returns a `cons' whose `car' is a `numberp' with the current time in seconds and `cdr' is the current time"
-  (let* ((now (format-time-string "%s.%N"))
-         (mapcar #'string-to-number (string-split now "." t t)))))
 
 (defun delete-prefix-and-timestamp-from-bash-history-region (beg end)
   (interactive "*r")
@@ -5133,15 +5220,15 @@ element to string like `princ' would.
                              ("declare")))
          (default-log-prefix (cond ((string= "declare" declare-stmt)
                                     "[${BASH_SOURCE[0]}:${LINENO[0]}]")
-                                    ((string= "local" declare-stmt)
+                                   ((string= "local" declare-stmt)
                                     "[${FUNCNAME[0]}:${LINENO[0]}]")))
 
          (log-prefix (or log-prefix default-log-prefix))
          (arg-prefix (string-trim (format "%s_" (string-trim-right (or arg-prefix "") "_+")) "_+"))
          (exit-stmt (cond ((string= "declare" declare-stmt)
-                                    "exit")
-                                    ((string= "local" declare-stmt)
-                                    "return")))
+                           "exit")
+                          ((string= "local" declare-stmt)
+                           "return")))
 
          (replacements (list
                         (cons "%declare%" declare-stmt)
