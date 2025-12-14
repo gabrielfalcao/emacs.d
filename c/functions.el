@@ -2615,7 +2615,47 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 (defun todo ()
   "opens the todo page."
   (interactive)
-  (open-note (file-name-concat (current-notes-location) "todo.rst")))
+  ;; "#151515" "#161A1F" "#1996C9" "#1C1C1C" "#211F17" "#312F27"
+  ;; "#36F6E9" "#79B9FF" "#919588" "#A66A00" "#A66A00" "#A6E22E"
+  ;; "#A79C83" "#C63367" "#C6DCFC" "#CFC6A6" "#DB5045" "#DCDC88"
+  ;; "#DEDEDE" "#EF5AAA" "#F13976" "#F479C4" "#F49101" "#F5BF08"
+  ;; "#F682FF" "#F6CA51" "#F80101" "#F80101" "#F937B9" "#FC580C"
+  ;; "#FF79C6"
+
+  (open-note (file-name-concat (current-notes-location) "todo.rst"))
+  (save-mark-and-excursion
+    (widen)
+    (beginning-of-buffer)
+    (save-match-data
+      (while (re-search-forward
+              "^\\(\\(TODO\\s-+\\(202[0-9][/-][0-9]\\{2\\}[/-][0-9]\\{2\\}\\)\\)\\)\\(\\s-*\n\\)\\(\\([=]\\{14,\\}\\)\\)"
+              nil t)
+        (let* ((start (match-beginning 2))
+               (end (match-end 2))
+               (bg-color-name "#1996C9")
+               (fg-color-name "#211F17")
+               (ov (make-overlay start end))
+               )
+          (overlay-put ov 'face `(:foreground ,fg-color-name :background ,bg-color-name))
+          (setq
+           bg-color-name "#312F27"
+           fg-color-name "#1996C9"
+           start (match-beginning 6)
+           end (match-end 6))
+          (setq ov (make-overlay start end))
+          (overlay-put ov 'face `(:foreground ,fg-color-name :background ,bg-color-name))
+
+
+          ); end let*
+
+        ); end while
+      ); end save-match-data
+    ); end save-mark-and-excursion
+  );; end defun toto
+
+
+
+
 
 (defun todo-today (&optional utc)
   "inserts a new <h2> entry in the `todo' document with the format 'TODO %Y-%m-%d'"
@@ -2640,10 +2680,8 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
     (or (when already-exists
           (goto-char already-exists-beg)
           (let ((exts-overlay (make-overlay already-exists-beg already-exists-end)))
-            (overlay-put exts-overlay
-                         :foreground "#3d3d3d")
-            (overlay-put exts-overlay
-                         :background "#F49101"))
+            (overlay-put exts-overlay 'face (cons :foreground "#3d3d3d"))
+            (overlay-put exts-overlay 'face (cons :background "#F49101")))
 
           )
         (progn
@@ -2651,6 +2689,44 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
           (insert "\n" entry)))
     )
   )
+
+
+(defun tmp-test-overlay-region-foreground-region (start end)
+  "Apply an overlay to the active region with a specific foreground color."
+  (interactive "*r")
+  (let* ((fg-color-name "#A6E22E")
+         (bg-color-name "#3D3D3D")
+         (ov (make-overlay start end)))
+    (overlay-put ov 'face `(:foreground ,fg-color-name :background ,bg-color-name))))
+
+
+(defun colorize-overlay-test(beg end)
+  ;; TODO: test this function
+  (interactive "*r")
+  (let* (
+        (ovls (overlays-in beg end))
+        (ov (unless (length> ovls 0)
+              (make-overlay beg end))))
+
+    (or (when (overlayp ov)
+          (overlay-put ov 'face (cons :foreground "#3d3d3d"))
+          (overlay-put ov 'face (cons :background "#F49101")))
+        (progn
+          (erase-c-messages)
+          (c-message-open "%s" (string-join
+                                (append
+                                 (list
+                                  (format "overlays in region: %S" ovls))
+                                 (seq-map-indexed #'(lambda (ov idx)
+                                                      (format "%s overlay in region: %S" (number-to-ordinal (+ 1 idx)) ov))
+                                                  ovls)
+                                 )
+                                "\n");string-join
+                          );c-message-open
+          );;progn
+        );; or
+    );; let
+  );; defun
 
 
 
