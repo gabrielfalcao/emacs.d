@@ -2625,10 +2625,34 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
          (title (format "TODO %s" ts))
          (width (length title))
          (under-title (string-join (make-list width "=")))
-         (entry (string-join '(title under-title) "\n"))
-         )
-    (beginning-of-line)
-    (insert "\n" entry)))
+         (entry (string-join (list title under-title) "\n"))
+         (pos (point))
+         (already-exists
+          (save-mark-and-excursion
+            (widen)
+            (beginning-of-buffer)
+            (save-match-data
+              (when (re-search-forward (format "^%s" title) nil t)
+                (cons (match-beginning 0) (match-end 0))))))
+         (already-exists-beg (and (consp already-exists) (car already-exists)))
+         (already-exists-end (and (consp already-exists) (cdr already-exists)))
+         );;end let* varlist
+    (or (when already-exists
+          (goto-char already-exists-beg)
+          (let ((exts-overlay (make-overlay already-exists-beg already-exists-end)))
+            (overlay-put exts-overlay
+                         :foreground "#3d3d3d")
+            (overlay-put exts-overlay
+                         :background "#F49101"))
+
+          )
+        (progn
+          (beginning-of-line)
+          (insert "\n" entry)))
+    )
+  )
+
+
 
 
 
@@ -5635,7 +5659,35 @@ element to string like `princ' would.
        (file-name-concat target-dir (format "all-buffers-%s.json" timestamp-fs) nil nil lock-filename)))
     ); end let of defun
   );defun save-session-info
+(defun set-prop-right-margin-region (beg end)
+  "These text properties affect the behavior of the fill commands.  They
+are used for representing formatted text.  *Note Filling::, and *Note
+Margins::.
 
+`hard'
+     If a newline character has this property, it is a "hard" newline.
+     The fill commands do not alter hard newlines and do not move words
+     across them.  However, this property takes effect only if the
+     `use-hard-newlines' minor mode is enabled.  *Note Hard and Soft
+     Newlines: (emacs)Hard and Soft Newlines.
+
+`right-margin'
+     This property specifies an extra right margin for filling this
+     part of the text.
+
+`left-margin'
+     This property specifies an extra left margin for filling this part
+     of the text.
+
+`justification'
+     This property specifies the style of justification for filling
+     this part of the text.
+
+
+"
+  (interactive "*r")
+  (let ((string (buffer-substring beg end)))
+    (propertize string 'right-margin 10)))
 ;;;TODO @ 2025-12-05 18:54:48+0000;;;
 ;;;TODO @ 2025-12-05 18:54:48+0000;;; (defcustom indentation-level-indent-commented-bracket-braces-parenthesis
 ;;;TODO @ 2025-12-05 18:54:48+0000;;;   4
