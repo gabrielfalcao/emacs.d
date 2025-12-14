@@ -1322,7 +1322,7 @@ shortcut to calling \\[git-add] and \\[git-commit]
 	                         (widen)
 	                         (buffer-string))
           error-msg (format
-                     "failed to commit '%s': %s" commit-message)
+                     "failed to commit '%s': %s" filename commit-message)
 
           );end setq
     (condition-case err
