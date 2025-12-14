@@ -2655,8 +2655,8 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
   (open-note (file-name-concat (current-notes-location) "todo.rst"))
   (let (
         (match-count 0)
-        (bg-color-name "#1996C9")
-        (fg-color-name "#211F17")
+        (fg-color-name "#312F27")
+        (bg-color-name "#F6CA51")
         )
   (save-mark-and-excursion
     (widen)
@@ -2665,17 +2665,18 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
       (while (re-search-forward
               "^\\(\\(TODO\\s-+\\(202[0-9][/-][0-9]\\{2\\}[/-][0-9]\\{2\\}\\)\\)\\)\\(\\s-*\n\\)\\(\\([=]\\{14,\\}\\)\\)"
               nil t)
-        (let* ((start (match-beginning 2))
-               (end (match-end 2))
-               (ov (make-overlay start end))
+        (let* ((text-ov (make-overlay (match-beginning 2) (match-end 2)))
+               (undl-ov (make-overlay (match-beginning 6) (match-end 6)))
                )
           (when (> match-count 0)
             (setq
-             bg-color-name "#312F27"
-             fg-color-name "#F6CA51"))
+             fg-color-name "#312F27"
+             bg-color-name "#1996C9"
+             ))
 
           (setq match-count (+ 1 match-count))
-          (overlay-put ov 'face `(:foreground ,fg-color-name :background ,bg-color-name))
+          (overlay-put text-ov 'face `(:foreground ,fg-color-name :background ,bg-color-name))
+          (overlay-put undl-ov 'face `(:foreground ,bg-color-name :background ,fg-color-name))
 
           ); end let*
         ); end while
