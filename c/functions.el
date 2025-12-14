@@ -5685,9 +5685,8 @@ Margins::.
 
 
 "
-  (interactive "*r")
-  (let ((string (buffer-substring beg end)))
-    (propertize string 'right-margin 10)))
+     (interactive "*r")
+     (add-text-properties beg end (list 'right-margin 10)))
 ;;;TODO @ 2025-12-05 18:54:48+0000;;;
 ;;;TODO @ 2025-12-05 18:54:48+0000;;; (defcustom indentation-level-indent-commented-bracket-braces-parenthesis
 ;;;TODO @ 2025-12-05 18:54:48+0000;;;   4
