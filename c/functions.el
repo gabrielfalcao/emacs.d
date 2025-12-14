@@ -2691,47 +2691,6 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
   )
 
 
-(defun tmp-test-overlay-region-foreground-region (start end)
-  "Apply an overlay to the active region with a specific foreground color."
-  (interactive "*r")
-  (let* ((fg-color-name "#A6E22E")
-         (bg-color-name "#3D3D3D")
-         (ov (make-overlay start end)))
-    (overlay-put ov 'face `(:foreground ,fg-color-name :background ,bg-color-name))))
-
-
-(defun colorize-overlay-test(beg end)
-  ;; TODO: test this function
-  (interactive "*r")
-  (let* (
-        (ovls (overlays-in beg end))
-        (ov (unless (length> ovls 0)
-              (make-overlay beg end))))
-
-    (or (when (overlayp ov)
-          (overlay-put ov 'face (cons :foreground "#3d3d3d"))
-          (overlay-put ov 'face (cons :background "#F49101")))
-        (progn
-          (erase-c-messages)
-          (c-message-open "%s" (string-join
-                                (append
-                                 (list
-                                  (format "overlays in region: %S" ovls))
-                                 (seq-map-indexed #'(lambda (ov idx)
-                                                      (format "%s overlay in region: %S" (number-to-ordinal (+ 1 idx)) ov))
-                                                  ovls)
-                                 )
-                                "\n");string-join
-                          );c-message-open
-          );;progn
-        );; or
-    );; let
-  );; defun
-
-
-
-
-
 (defun backlog ()
   "."
   (interactive)
