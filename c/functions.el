@@ -2126,41 +2126,16 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
       #'blackpy)
      ((string= "python-mode" name-of-current-mode)
       #'blackpy)
-     (t nil)))
+     (t nil))))
 
-  (defun g/format/prettify ()
-    (interactive "*")
-    (let* ((format-function (g/get/format/prettify/funcsymbol)))
-      (when (null format-function)
-        (user-error "can't prettify `%s' yet" (Ox33b4O/$/mode-name)))
+(defun g/format/prettify ()
+  (interactive "*")
+  (let* ((format-function (g/get/format/prettify/funcsymbol)))
+    (when (null format-function)
+      (user-error "can't prettify `%s' yet" (Ox33b4O/$/mode-name)))
 
-      (ignore-errors (erase-messages))
-      (funcall format-function)))
-  (cond
-   ((string= "rust-mode" (Ox33b4O/$/mode-name))
-    (rustfmt))
-   ((string= "lua-mode" (Ox33b4O/$/mode-name))
-    (stylua))
-   ((string= "typescript-mode" (Ox33b4O/$/mode-name))
-    (prettierjs))
-   ((string= "javacript-mode" (Ox33b4O/$/mode-name))
-    (prettierjs))
-   ((string= "json-mode" (Ox33b4O/$/mode-name))
-    (prettierjs))
-   ((string= "web-mode" (Ox33b4O/$/mode-name))
-    (prettierjs))
-   ((string= "shell-script-mode" (Ox33b4O/$/mode-name))
-    (shfmt))
-   ((string= "sh-mode" (Ox33b4O/$/mode-name))
-    (shfmt))
-   ((string= "elisp-mode" (Ox33b4O/$/mode-name))
-    (elfmt))
-   ((string= "py-mode" (Ox33b4O/$/mode-name))
-    (blackpy))
-   ((string= "python-mode" (Ox33b4O/$/mode-name))
-    (blackpy))
-   )
-  )
+    (ignore-errors (erase-messages))
+    (funcall format-function)))
 
 
 (defun eval-elisp-buffer ()
@@ -2658,30 +2633,30 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
         (fg-color-name "#312F27")
         (bg-color-name "#F6CA51")
         )
-  (save-mark-and-excursion
-    (widen)
-    (beginning-of-buffer)
-    (save-match-data
-      (while (re-search-forward
-              "^\\(\\(TODO\\s-+\\(202[0-9][/-][0-9]\\{2\\}[/-][0-9]\\{2\\}\\)\\)\\)\\(\\s-*\n\\)\\(\\([=]\\{14,\\}\\)\\)"
-              nil t)
-        (let* ((text-ov (make-overlay (match-beginning 2) (match-end 2)))
-               (undl-ov (make-overlay (match-beginning 6) (match-end 6)))
-               )
-          (when (> match-count 0)
-            (setq
-             fg-color-name "#312F27"
-             bg-color-name "#1996C9"
-             ))
+    (save-mark-and-excursion
+      (widen)
+      (beginning-of-buffer)
+      (save-match-data
+        (while (re-search-forward
+                "^\\(\\(TODO\\s-+\\(202[0-9][/-][0-9]\\{2\\}[/-][0-9]\\{2\\}\\)\\)\\)\\(\\s-*\n\\)\\(\\([=]\\{14,\\}\\)\\)"
+                nil t)
+          (let* ((text-ov (make-overlay (match-beginning 2) (match-end 2)))
+                 (undl-ov (make-overlay (match-beginning 6) (match-end 6)))
+                 )
+            (when (> match-count 0)
+              (setq
+               fg-color-name "#312F27"
+               bg-color-name "#1996C9"
+               ))
 
-          (setq match-count (+ 1 match-count))
-          (overlay-put text-ov 'face `(:foreground ,fg-color-name :background ,bg-color-name))
-          (overlay-put undl-ov 'face `(:foreground ,bg-color-name :background ,fg-color-name))
+            (setq match-count (+ 1 match-count))
+            (overlay-put text-ov 'face `(:foreground ,fg-color-name :background ,bg-color-name))
+            (overlay-put undl-ov 'face `(:foreground ,bg-color-name :background ,fg-color-name))
 
-          ); end let*
-        ); end while
-      ); end save-match-data
-    ); end let
+            ); end let*
+          ); end while
+        ); end save-match-data
+      ); end let
     ); end save-mark-and-excursion
   );; end defun toto
 
@@ -2771,8 +2746,10 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
   (interactive)
   (insert-shebang "shebang-argparse.sh"))
 
-(defalias 'shebang-full
-  #'shebang-argparse)
+(defun shebang-full ()
+  "."
+  (interactive)
+  (insert-shebang "shebang-full.sh"))
 
 (defun shebang-root ()
   "."
@@ -5754,8 +5731,8 @@ Margins::.
 
 
 "
-     (interactive "*r")
-     (add-text-properties beg end (list 'right-margin 10)))
+  (interactive "*r")
+  (add-text-properties beg end (list 'right-margin 10)))
 ;;;TODO @ 2025-12-05 18:54:48+0000;;;
 ;;;TODO @ 2025-12-05 18:54:48+0000;;; (defcustom indentation-level-indent-commented-bracket-braces-parenthesis
 ;;;TODO @ 2025-12-05 18:54:48+0000;;;   4
