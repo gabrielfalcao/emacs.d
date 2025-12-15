@@ -187,6 +187,11 @@ get_arg_meta() {
     printf "%s\n" "${result[@]}"
 }
 process_argv() {
+    if ! git_repo_path=$(git rev-parse --show-toplevel); then
+        error_prefixed "[${script_name} error]" "not a git repo"
+        exit 1
+    fi
+
     repl no echo
     local -i current=0
     local -i index=0
