@@ -53,12 +53,20 @@
           rust-mode sed-mode solidity-flycheck swift-mode
           terraform-mode toml toml-mode typescript-mode web-mode
           yaml-mode))
- '(py-max-specpdl-size 1)
+ '(py-electric-colon-greedy-p t)
+ '(py-electric-colon-newline-and-indent-p t)
+ '(py-indent-honors-inline-comment t)
+ '(py-indent-no-completion-p t)
+ '(py-ipython-command "~/.shell.d/.venv/bin/ipython3")
+ '(py-known-shells '("~/.shell.d/.venv/bin/python3"))
+ '(py-known-shells-extended-commands '("~/.shell.d/.venv/bin/python3"))
+ '(py-max-specpdl-size 1337)
  '(py-python-command "~/.shell.d/.venv/bin/python")
  '(py-python3-command "~/.shell.d/.venv/bin/python3")
  '(py-pythonpath "~/.shell.d/.venv/lib/python3.12/site-packages")
- '(python-indent-guess-indent-offset nil)
- '(python-indent-guess-indent-offset-verbose nil)
+ '(py-tab-indent nil)
+ '(py-tab-indents-region-p t)
+ '(py-tab-shifts-region-p t)
  '(python-indent-offset 4 t)
  '(python-interpreter "~/.shell.d/.venv/bin/python3")
  '(python-mode-hook
