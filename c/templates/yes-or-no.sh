@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 export IFS=$'\n'
-set -ueTE
+set -umeTE
 set +f
 set -o pipefail
 unset IFS
