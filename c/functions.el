@@ -5797,11 +5797,12 @@ Margins::.
 
 (defun find-file-open-minibuffer-at-directory-interactive(initial-directory)
   (let* ((~/opt/libexec/path (expand-file-name initial-directory))
-         (result (list (read-file-name "Find file: " ~/opt/libexec/path "confirm-after-completion" nil nil ) t)))
+         (result (list (read-file-name "Find file: " ~/opt/libexec/path "confirm-after-completion" nil nil ))))
     (with-minibuffer-selected-window
       (minibuffer-complete)
       (minibuffer-complete)
       )
+    result
     ));; end defun closure
 
 (defun find-file-open-minibuffer-at-directory-body (filename)
@@ -5824,6 +5825,11 @@ Margins::.
 (defun Ox33b4O/find-file/~/.shell.d(filename)
   "bound to `C-x' 'M-s'"
   (interactive (find-file-open-minibuffer-at-directory-interactive "~/.shell.d/"))
+  (find-file-open-minibuffer-at-directory-body filename))
+
+(defun Ox33b4O/find-file/~/.emacs.d(filename)
+  "bound to `C-x' 'M-s'"
+  (interactive (find-file-open-minibuffer-at-directory-interactive "~/.emacs.d/"))
   (find-file-open-minibuffer-at-directory-body filename))
 
 (defun describe (symbol-s)

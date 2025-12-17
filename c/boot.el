@@ -35,6 +35,9 @@
 (defalias '~shell.d #'Ox33b4O/find-file/~/.shell.d)
 (defalias '~/shell.d #'Ox33b4O/find-file/~/.shell.d)
 
+(defalias '~emacs.d #'Ox33b4O/find-file/~/.emacs.d)
+(defalias '~/emacs.d #'Ox33b4O/find-file/~/.emacs.d)
+
 
 (defalias 'file-name-canonicalize #'expand-file-name)
 (defalias 'file-name-full-path #'expand-file-name)

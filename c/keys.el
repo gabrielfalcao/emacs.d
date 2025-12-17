@@ -57,7 +57,6 @@
 (Ox33b4O/$/set-key '("C-x C-M-e") #'Ox33b4O/$/reload-init)
 ;; (Ox33b4O/$/set-key '("C-x C-M-g a") 'git-add)
 ;; (Ox33b4O/$/set-key '("C-x C-M-g s") 'git-save)
-(Ox33b4O/$/set-key '("C-x M-f") #'Ox33b4O/open-functions-el)
 
 
 ;; (Ox33b4O/$/set-key '("C-x M-t") #')
@@ -119,8 +118,12 @@
   (Ox33b4O/$/set-key '("C-x s") #'describe-symbol-minibuffer-completion-table)
   (Ox33b4O/$/set-key '("C-x <backtab>") #'describe-key-tab)
 
-  (Ox33b4O/$/set-key '("C-x M-f") #'Ox33b4O/find-file/~/opt/libexec)
-  (Ox33b4O/$/set-key '("C-x M-s") #'Ox33b4O/find-file/~/.shell.d)) ;; end progn 2025-12-17
+  (Ox33b4O/$/set-key '("C-x M-s") #'Ox33b4O/find-file/~/.shell.d)
+  (Ox33b4O/$/set-key '("C-x M-e") #'Ox33b4O/find-file/~/opt/libexec)
+  (Ox33b4O/$/set-key '("C-x M-l") #'Ox33b4O/find-file/~/opt/libexec)
+  (Ox33b4O/$/set-key '("C-x M-f") #'Ox33b4O/open-functions-el)
+  (Ox33b4O/$/set-key '("C-x M-x") #'Ox33b4O/find-file/~/.emacs.d)
+  ) ;; end progn 2025-12-17
 
 (Ox33b4O/$/set-key '("C-x C-SPC" "C-c C-SPC") 'rectangle-mark-mode)
 (Ox33b4O/$/set-key "C-x C-e e" 'g/ep)
