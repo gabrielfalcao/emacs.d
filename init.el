@@ -42,6 +42,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(expand-region-guess-python-mode nil)
+ '(ignored-local-variable-values '((sh-indent-comment . t)))
  '(package-selected-packages
    '(ansi autothemer blacken brightscript-mode cargo-mode company
           csharp-mode dockerfile-mode elixir-mode exec-path-from-shell

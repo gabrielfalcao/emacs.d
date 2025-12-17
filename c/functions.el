@@ -520,6 +520,8 @@
 (defun Ox33b4O/$/flush-kill-ring ()
   "."
   (interactive)
+  (erase-c-messages)
+  (erase-messages)
   (setq kill-ring nil file-name-history nil))
 (defun Ox33b4O/$/kill-all-buffers-and-flush-kill-ring ()
   "."
@@ -1290,7 +1292,7 @@ shortcut to calling \\[git-add] and \\[git-commit]
          (directory-as-regexp (regexp-quote directory-absolute))
          (regexp (format "^%s" directory-as-regexp))
          ); end let* varlist
-    (c-message "ensure-filename-child-of-directory/regexp: %s" regexp)
+    ;; (c-message "ensure-filename-child-of-directory/regexp: %s" regexp)
     (save-match-data
       (or (when (string-match regexp filename-absolute)
             (let ((message (format "file %S is not a child of %S" filename directory)))

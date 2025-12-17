@@ -33,7 +33,7 @@
 (Ox33b4O/$/set-key (meta-comma "8") #'(lambda () (interactive) (find-file "~/.emacs.d/t/8O1.el")))
 (Ox33b4O/$/set-key (meta-comma "5") #'(lambda () (interactive) (find-file "~/.emacs.d/t/5O1.el")))
 (Ox33b4O/$/set-key (meta-comma "o") #'(lambda () (interactive) (find-file "~/.emacs.d/t/ori.el")))
-(Ox33b4O/$/set-key '("M-k") 'Ox33b4O/$/flush-kill-ring)
+;; (Ox33b4O/$/set-key '("M-k") 'Ox33b4O/$/flush-kill-ring)
 (Ox33b4O/$/set-key '("C-M-k") 'Ox33b4O/$/kill-all-buffers-and-flush-kill-ring)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 (add-hook 'after-save-hook '$$$$$)
