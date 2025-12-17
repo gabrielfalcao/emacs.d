@@ -2,6 +2,7 @@
 (require 'flycheck)
 (require 'seq)
 (require 'subr-x)
+(require 'help-fns)
 
 (defun eval-buffer-goto-failure()
   (interactive)
@@ -24,30 +25,16 @@
 (setq save-interprogram-paste-before-kill t)
 ;; (setq case-fold-search t)
 (defalias 'yes-or-no-p #'y-or-n-p)
-(defun describe (symbol-s)
-  "makes a \"popup\" frame and calls `describe-symbol' in that popup window's buffer."
-  (interactive
-   (let* ((v-or-f (symbol-at-point))
-          (found (if v-or-f (cl-some (lambda (x) (funcall (nth 1 x) v-or-f))
-                                     describe-symbol-backends)))
-          (v-or-f (if found v-or-f (function-called-at-point)))
-          (found (or found v-or-f))
-          (enable-recursive-minibuffers t)
-          (val (completing-read (format-prompt "Describe symbol"
-                                               (and found v-or-f))
-				#'help--symbol-completion-table
-				(lambda (vv)
-                                  (cl-some (lambda (x) (funcall (nth 1 x) vv))
-                                           describe-symbol-backends))
-				t nil nil
-				(if found (symbol-name v-or-f)))))
-     (list (if (equal val "")
-	       (or v-or-f "") (intern val)))))
-  (let* ((frm (make-frame))
-         (wnd (frame-first-window frm))
-         (buf (window-buffer wnd)))
-    (select-frame frm)
-    (describe-symbol symbol-s buf frm)))
+(defalias '~libexec #'Ox33b4O/find-file/~/opt/libexec)
+(defalias '~opt/libexec #'Ox33b4O/find-file/~/opt/libexec)
+(defalias '~/opt/libexec #'Ox33b4O/find-file/~/opt/libexec)
+(defalias '~/opt #'Ox33b4O/find-file/~/opt/libexec)
+(defalias '~opt #'Ox33b4O/find-file/~/opt/libexec)
+(defalias 'opt #'Ox33b4O/find-file/~/opt/libexec)
+
+(defalias '~shell.d #'Ox33b4O/find-file/~/.shell.d)
+(defalias '~/shell.d #'Ox33b4O/find-file/~/.shell.d)
+
 
 (defalias 'file-name-canonicalize #'expand-file-name)
 (defalias 'file-name-full-path #'expand-file-name)
