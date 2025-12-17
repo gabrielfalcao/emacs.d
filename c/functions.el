@@ -5794,3 +5794,40 @@ Margins::.
 (defun Ox33b4O/open-macros-el()
     (interactive)
     (find-file-existing "~/.emacs.d/c/macros.el"))
+
+(defun find-file-open-minibuffer-at-directory-interactive(initial-directory)
+  (let* ((~/opt/libexec/path (expand-file-name initial-directory))
+         (result (list (read-file-name "Find file: " ~/opt/libexec/path "confirm-after-completion" nil nil ) t)))
+    (with-minibuffer-selected-window
+      (minibuffer-complete)
+      (minibuffer-complete)
+      )
+    ));; end defun closure
+
+(defun find-file-open-minibuffer-at-directory-body (filename)
+  (let* ((value (find-file-noselect filename nil nil t))
+         (result (if (listp value)
+	(mapcar 'pop-to-buffer-same-window (nreverse value))
+        (pop-to-buffer-same-window value))))
+    (with-minibuffer-selected-window
+      (minibuffer-complete)
+      (minibuffer-complete)
+      )
+    result))
+
+(defun Ox33b4O/find-file/~/opt/libexec(filename)
+  "bound to `C-x' 'M-f'"
+  (interactive (find-file-open-minibuffer-at-directory-interactive "~/opt/libexec/"))
+  (find-file-open-minibuffer-at-directory-body filename))
+(defalias '~libexec #'Ox33b4O/find-file/~/opt/libexec)
+(defalias '~opt/libexec #'Ox33b4O/find-file/~/opt/libexec)
+(defalias '~/opt/libexec #'Ox33b4O/find-file/~/opt/libexec)
+
+
+(defun Ox33b4O/find-file/~/.shell.d(filename)
+  "bound to `C-x' 'M-s'"
+  (interactive (find-file-open-minibuffer-at-directory-interactive "~/.shell.d/"))
+  (find-file-open-minibuffer-at-directory-body filename))
+
+(defalias '~shell.d #'Ox33b4O/find-file/~/.shell.d)
+(defalias '~/shell.d #'Ox33b4O/find-file/~/.shell.d)

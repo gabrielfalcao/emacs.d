@@ -58,6 +58,9 @@
 ;; (Ox33b4O/$/set-key '("C-x C-M-g a") 'git-add)
 ;; (Ox33b4O/$/set-key '("C-x C-M-g s") 'git-save)
 (Ox33b4O/$/set-key '("C-x M-f") #'Ox33b4O/open-functions-el)
+
+
+;; (Ox33b4O/$/set-key '("C-x M-t") #')
 (Ox33b4O/$/set-key '("C-x C-g C-a") #'git-add)
 (Ox33b4O/$/set-key '("C-x C-g C-s") #'git-save)
 (Ox33b4O/$/set-key '("C-x C-g C-d") #'git-diff)
@@ -103,6 +106,21 @@
 (Ox33b4O/$/set-key '("<backtab>") #'(lambda () (interactive) (other-frame 1)))
 (Ox33b4O/$/set-key '("C-c C-d C-c") 'colorize-hexadecimal-text)
 
+(progn
+  ;;2025-12-17
+  (defun describe-key-tab ()
+    (interactive)
+    (describe-key (key-parse "TAB")))
+
+  (defun describe-symbol-minibuffer-completion-table ()
+    (interactive)
+    (describe 'minibuffer-completion-table))
+
+  (Ox33b4O/$/set-key '("C-x s") #'describe-symbol-minibuffer-completion-table)
+  (Ox33b4O/$/set-key '("C-x <backtab>") #'describe-key-tab)
+
+  (Ox33b4O/$/set-key '("C-x M-f") #'Ox33b4O/find-file/~/opt/libexec)
+  (Ox33b4O/$/set-key '("C-x M-s") #'Ox33b4O/find-file/~/.shell.d)) ;; end progn 2025-12-17
 
 (Ox33b4O/$/set-key '("C-x C-SPC" "C-c C-SPC") 'rectangle-mark-mode)
 (Ox33b4O/$/set-key "C-x C-e e" 'g/ep)
