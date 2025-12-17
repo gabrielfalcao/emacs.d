@@ -57,6 +57,7 @@
 (Ox33b4O/$/set-key '("C-x C-M-e") #'Ox33b4O/$/reload-init)
 ;; (Ox33b4O/$/set-key '("C-x C-M-g a") 'git-add)
 ;; (Ox33b4O/$/set-key '("C-x C-M-g s") 'git-save)
+(Ox33b4O/$/set-key '("C-x M-f") #'Ox33b4O/open-functions-el)
 (Ox33b4O/$/set-key '("C-x C-g C-a") #'git-add)
 (Ox33b4O/$/set-key '("C-x C-g C-s") #'git-save)
 (Ox33b4O/$/set-key '("C-x C-g C-d") #'git-diff)
