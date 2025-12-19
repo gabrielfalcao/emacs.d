@@ -1,0 +1,8 @@
+* TODO
+
+- [ ] create emacs widget [[https://www.gnu.org/software/emacs/manual/html_node/widget/Introduction.html][docs]]
+- [ ] learn orgmode [[https://orgmode.org/quickstart.html][docs]]
+  - [ ] blocks [[https://orgmode.org/quickstart.html#blocks][docs]]
+  - [ ] links [[https://orgmode.org/quickstart.html#links][docs]]
+    - [ ] external links [[https://orgmode.org/manual/External-Links.html][docs]]
+      - [ ] attachment [[https://orgmode.org/manual/External-Links.html#:~:text=or%20%E2%80%98/%E2%80%99.-,%E2%80%98attachment%E2%80%99,-Same%20as%20file][docs]]
