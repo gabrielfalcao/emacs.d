@@ -5732,68 +5732,68 @@ Margins::.
 
 
 (defun Ox33b4O/open-boot-el()
-    (interactive)
-    (find-file-existing "~/.emacs.d/c/boot.el"))
+  (interactive)
+  (find-file-existing "~/.emacs.d/c/boot.el"))
 
 (defun Ox33b4O/open-ui-el()
-    (interactive)
-    (find-file-existing "~/.emacs.d/c/ui.el"))
+  (interactive)
+  (find-file-existing "~/.emacs.d/c/ui.el"))
 
 (defun Ox33b4O/open-e02491d9-el()
-    (interactive)
-    (find-file-existing "~/.emacs.d/c/e02491d9.el"))
+  (interactive)
+  (find-file-existing "~/.emacs.d/c/e02491d9.el"))
 
 (defun Ox33b4O/open-modes-el()
-    (interactive)
-    (find-file-existing "~/.emacs.d/c/modes.el"))
+  (interactive)
+  (find-file-existing "~/.emacs.d/c/modes.el"))
 
 (defun Ox33b4O/open-debug-et-diagnostics-el()
-    (interactive)
-    (find-file-existing "~/.emacs.d/c/debug-et-diagnostics.el"))
+  (interactive)
+  (find-file-existing "~/.emacs.d/c/debug-et-diagnostics.el"))
 
 (defun Ox33b4O/open-keys-el()
-    (interactive)
-    (find-file-existing "~/.emacs.d/c/keys.el"))
+  (interactive)
+  (find-file-existing "~/.emacs.d/c/keys.el"))
 
 (defun Ox33b4O/open-hooks-el()
-    (interactive)
-    (find-file-existing "~/.emacs.d/c/hooks.el"))
+  (interactive)
+  (find-file-existing "~/.emacs.d/c/hooks.el"))
 
 (defun Ox33b4O/open-advices-el()
-    (interactive)
-    (find-file-existing "~/.emacs.d/c/advices.el"))
+  (interactive)
+  (find-file-existing "~/.emacs.d/c/advices.el"))
 
 (defun Ox33b4O/open-functions-el()
-    (interactive)
-    (find-file-existing "~/.emacs.d/c/functions.el"))
+  (interactive)
+  (find-file-existing "~/.emacs.d/c/functions.el"))
 
 (defun Ox33b4O/open-flatten-el()
-    (interactive)
-    (find-file-existing "~/.emacs.d/c/flatten.el"))
+  (interactive)
+  (find-file-existing "~/.emacs.d/c/flatten.el"))
 
 (defun Ox33b4O/open-g-modeline-el()
-    (interactive)
-    (find-file-existing "~/.emacs.d/c/g-modeline.el"))
+  (interactive)
+  (find-file-existing "~/.emacs.d/c/g-modeline.el"))
 
 (defun Ox33b4O/open-other-functions-el()
-    (interactive)
-    (find-file-existing "~/.emacs.d/c/other-functions.el"))
+  (interactive)
+  (find-file-existing "~/.emacs.d/c/other-functions.el"))
 
 (defun Ox33b4O/open-elpamelpa-el()
-    (interactive)
-    (find-file-existing "~/.emacs.d/c/elpamelpa.el"))
+  (interactive)
+  (find-file-existing "~/.emacs.d/c/elpamelpa.el"))
 
 (defun Ox33b4O/open-rgb-parser-el()
-    (interactive)
-    (find-file-existing "~/.emacs.d/c/rgb-parser.el"))
+  (interactive)
+  (find-file-existing "~/.emacs.d/c/rgb-parser.el"))
 
 (defun Ox33b4O/open-write-refactor-tool-instead-el()
-    (interactive)
-    (find-file-existing "~/.emacs.d/c/write-refactor-tool-instead.el"))
+  (interactive)
+  (find-file-existing "~/.emacs.d/c/write-refactor-tool-instead.el"))
 
 (defun Ox33b4O/open-macros-el()
-    (interactive)
-    (find-file-existing "~/.emacs.d/c/macros.el"))
+  (interactive)
+  (find-file-existing "~/.emacs.d/c/macros.el"))
 
 (defun find-file-open-minibuffer-at-directory-interactive(initial-directory)
   (let* ((~/opt/libexec/path (expand-file-name initial-directory))
@@ -5808,8 +5808,8 @@ Margins::.
 (defun find-file-open-minibuffer-at-directory-body (filename)
   (let* ((value (find-file-noselect filename nil nil t))
          (result (if (listp value)
-	(mapcar 'pop-to-buffer-same-window (nreverse value))
-        (pop-to-buffer-same-window value))))
+		     (mapcar 'pop-to-buffer-same-window (nreverse value))
+		   (pop-to-buffer-same-window value))))
     (with-minibuffer-selected-window
       (minibuffer-complete)
       (minibuffer-complete)
@@ -5868,35 +5868,35 @@ Margins::.
 ;; MMMMMMMMMMM
 
 (defclass search-info ()
-  (
-   (beginning :initarg :beginning
-              :type (or integer marker)
-              :documentation "the `point' within the searched `buffer' (integer or marker) to the beginning of a successful search result"
-              :writer search-info-set-beginning
-              :reader search-info-get-beginning)
-   (end :initarg :end
-              :type (or integer marker)
-        :documentation "the `point' within the searched `buffer' (integer or marker) to the end of a successful search result"
-        :writer search-info-set-end
-        :reader search-info-get-end)
-   (direction :initarg :direction
-              :type (member :forward :backward)
-              :documentation "the direction of a successful search (either :forward or :backward)"
-              :writer search-info-set-direction
-              :reader search-info-get-direction)
-   (query :initarg :query
-          :type string
-          :documentation "the \"string\" used in the search. if `:type' is `'regexp' then `:query' is a regular-expression written in the \"string\" syntax since that's the format used in `isearch-regexp-forward' and `isearch-regexp-forward'"
-          :writer search-info-set-query
-          :reader search-info-get-query)
-   (type :initarg :type
-         :type (member :regexp :string
-                       'regexp 'string)
-         :documentation "the type of a search-info (either `'regexp' or `'string'"
-         :writer search-info-set-type
-         :reader search-info-get-type)
-   )
-   )
+	  (
+	   (beginning :initarg :beginning
+		      :type (or integer marker)
+		      :documentation "the `point' within the searched `buffer' (integer or marker) to the beginning of a successful search result"
+		      :writer search-info-set-beginning
+		      :reader search-info-get-beginning)
+	   (end :initarg :end
+		:type (or integer marker)
+		:documentation "the `point' within the searched `buffer' (integer or marker) to the end of a successful search result"
+		:writer search-info-set-end
+		:reader search-info-get-end)
+	   (direction :initarg :direction
+		      :type (member :forward :backward)
+		      :documentation "the direction of a successful search (either :forward or :backward)"
+		      :writer search-info-set-direction
+		      :reader search-info-get-direction)
+	   (query :initarg :query
+		  :type string
+		  :documentation "the \"string\" used in the search. if `:type' is `'regexp' then `:query' is a regular-expression written in the \"string\" syntax since that's the format used in `isearch-regexp-forward' and `isearch-regexp-forward'"
+		  :writer search-info-set-query
+		  :reader search-info-get-query)
+	   (type :initarg :type
+		 :type (member :regexp :string
+			       'regexp 'string)
+		 :documentation "the type of a search-info (either `'regexp' or `'string'"
+		 :writer search-info-set-type
+		 :reader search-info-get-type)
+	   )
+	  )
 
 
 (defun make-search-info (beg end direction query type)

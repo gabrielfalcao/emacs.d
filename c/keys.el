@@ -60,9 +60,6 @@
 
 
 ;; (Ox33b4O/$/set-key '("C-x M-t") #')
-(Ox33b4O/$/set-key '("C-x C-g C-a") #'git-add)
-(Ox33b4O/$/set-key '("C-x C-g C-s") #'git-save)
-(Ox33b4O/$/set-key '("C-x C-g C-d") #'git-diff)
 (Ox33b4O/$/set-key '("C-x C-a") #'eval-elisp-buffer)
 (Ox33b4O/$/set-key '("C-x C-x") #'eval-elisp-buffer)
 
@@ -162,6 +159,11 @@
 (Ox33b4O/$/set-key   '("C-c M-s") #'replace-string    )
 (Ox33b4O/$/set-key   '("M-a") 'ignore                )
 (Ox33b4O/$/set-key   '("M-c") 'ignore                )
+(Ox33b4O/$/set-key   '("C-M-S" "C-x C-g C-a") #'git-add)
+(Ox33b4O/$/set-key   '("C-x C-g C-s") #'git-save)
+(Ox33b4O/$/set-key   '("C-x C-g C-d") #'git-diff)
+
+(Ox33b4O/$/set-key   '("C-M-v" "M-V") 'clipboard-yank)
 (Ox33b4O/$/set-key   '("C-M-c" "M-c") 'clipboard-kill-ring-save)
 (Ox33b4O/$/set-key   '("C-M-x" "M-X" ) 'clipboard-kill-region)
 
