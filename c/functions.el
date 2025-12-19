@@ -5857,3 +5857,137 @@ Margins::.
          (wnd (frame-root-window frm))
          (buf (window-buffer wnd)))
     (describe-symbol symbol-s buf frm)))
+
+
+;; MP""""""`MM                                     dP
+;; M  mmmmm..M                                     88
+;; M.      `YM .d8888b. .d8888b. 88d888b. .d8888b. 88d888b.
+;; MMMMMMM.  M 88ooood8 88'  `88 88'  `88 88'  `"" 88'  `88
+;; M. .MMM'  M 88.  ... 88.  .88 88       88.  ... 88    88
+;; Mb.     .dM `88888P' `88888P8 dP       `88888P' dP    dP
+;; MMMMMMMMMMM
+
+(defun --make-search-info--validate-args (beg end direction query type)
+  (unless (integer-or-marker-p beg)
+    (signal 'type-error (format "argument `beg' should be a marker but is a `%s' %S"
+                                (type-of beg)
+                                beg)))
+  (unless (integer-or-marker-p end)
+    (signal 'type-error (format "argument `end' should be a marker but is a `%s' %S"
+                                (type-of end)
+                                end)))
+  (unless (keywordp direction)
+    (signal 'type-error (format "argument `direction' should be a keyword but is a `%s' %S"
+                                (type-of direction)
+                                direction)))
+  (unless (or (eq direction :forward)
+              (eq direction :backward))
+    (signal 'type-error (format "argument `direction' should be either `:forward' or `:backward' but is %S"
+                                direction)))
+  (unless (stringp query)
+    (signal 'type-error (format "argument `query' should be a string but is a `%s' %S"
+                                (type-of query)
+                                query)))
+  (unless (symbolp type)
+    (signal 'type-error (format "argument `type' should be a symbol but is a `%s' %S"
+                                (type-of type)
+                                type)))
+  (unless (or (eq type 'regexp)
+              (eq type 'literal))
+    (signal 'type-error (format "argument `type' should be either `'regexp' or `'literal' but is %S"
+                                type)))
+  )
+
+(defun make-search-info (beg end direction query type)
+  (--make-search-info--validate-args beg end direction query type)
+  (list :beginning beg
+        :end end
+        :direction direction
+        :query query
+        :type type
+        ))
+(defun search-info-p (arg)
+  "returns `t' if `arg' is a `search-info' object"
+  (--make-search-info--validate-args beg end direction query type)
+  (list :beginning beg
+        :end end
+        :direction direction
+        :query query
+        :type type
+        ))
+
+(defun get-recent-regexp-search-string-if-results()
+  (let (beg end direction
+        (latest-regexp-search (car regexp-search-ring)))
+    (when (stringp latest-regexp-search)
+      (or
+       (save-mark-and-excursion
+            (and (setq end (re-search-forward latest-regexp-search nil t))
+                 (setq beg (match-beginning 0))
+                 (setq direction :forward)
+                 (list :beginning beg
+                       :end end
+                       :direction direction
+                       :query latest-regexp-search
+                       :type 'regexp
+                       )))
+       (save-mark-and-excursion
+            (and (setq end (re-search-backward latest-regexp-search nil t))
+                 (setq beg (match-beginning 0))
+                 (setq direction :backward)
+                 (list :beginning beg
+                       :end end
+                       :direction direction
+                       :query latest-regexp-search
+                       :type 'regexp
+                       )))))))
+
+(defun get-recent-literal-search-string-if-results()
+  (let (beg end direction
+        (latest-literal-search (car search-ring)))
+    (when (stringp latest-literal-search)
+      (or
+       (save-mark-and-excursion
+            (and (setq end (search-forward latest-literal-search nil t))
+                 (setq beg (match-beginning 0))
+                 (setq direction :forward)
+                 (list :beginning beg
+                       :end end
+                       :direction direction
+                       :query latest-literal-search
+                       :type 'literal
+                       )))
+       (save-mark-and-excursion
+            (and (setq end (search-backward latest-literal-search nil t))
+                 (setq beg (match-beginning 0))
+                 (setq direction :backward)
+                 (list :beginning beg
+                       :end end
+                       :direction direction
+                       :query latest-literal-search
+                       :type 'literal
+                       )))))))
+
+
+
+
+;; (defun g/search()
+;;   "searches the current buffer like a G.
+;;   if region is active, places string within region in `regexp-search-ring' otherwise invokes `isearch-edit-string';
+;;   then performs search with `isearch-forward-regexp', if nothing is found then performs `isearch-backward-regexp'.
+;;   if neither search yields result then tries to search using `isearch-forward' and `isearch-backward' instead.
+;; "
+;;   (interactive)
+;;   (let* ((latest-regexp-search (car regexp-search-ring))
+;;          (latest-literal-search (car search-ring))
+;;          (search-input (or
+;;                         (when (region-active-p)
+;;                           (save-mark-and-excursion
+;;                             (buffer-substring-no-properties (region-beginning) (region-end)))
+;;                           ; end when region-active-p
+;;                           )
+;;                         (save-mark-and-excursion
+;;                           (if (and (stringp latest-regexp-search)
+;;                                    (re-search-forward latest-regexp-search))
+
+;;                           (isearch-edit
