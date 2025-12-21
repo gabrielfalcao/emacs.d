@@ -9,9 +9,20 @@ unset IFS
 script_name="$(basename "${BASH_SOURCE[0]}")"
 script_path="$(2>/dev/random 1>/dev/random cd $(dirname "${BASH_SOURCE[0]}") && pwd)"
 this_script_path="${script_path}/${script_name}"
+usefulness="does stuff"
+declare -a description_lines=(
+    "these lines are supposed to describe the usefulness of ${script_name}"
+    "beyond \"${usefulness}\" such that the output of ${script_name}\x27"
+    "help looks not unlike a nice unix manpage"
+)
 
 declare -a argv=($@)
 declare -i argc=${#argv[@]}
+declare -a stdin_lines=($@)
+declare -i stdin_line_count=${#stdin_lines[@]}
+declare -a inputs=()
+declare -A sources_by_input=()
+declare -i input_count=0
 declare -- git_repo_path=""
 declare -i exit_code=0
 declare -- curdir=$(pwd)
@@ -146,20 +157,79 @@ trace() {
     debug_prefixed "[${FUNCNAME[0]} ${script_name}::${funcname}:${linenum}]" "${@}"
 }
 
-process_argv() {
+process_inputs() {
     if ! git_repo_path=$(git rev-parse --show-toplevel); then
         error_prefixed "[${script_name} error]" "${curdir@Q} is not a git repo"
         exit 1
     fi
+    repl sane
 
+    if [ -t 0 ] && ! process_argv; then
+
+}
+
+process_stdin() {
+    repl sane
+    local -i lineno=0
+    local -- line=""
+    if [ ! -t 0 ]; then
+        export IFS=$'\n'
+        while read line; do
+            if ! stdin_lines+=("${line}"); then
+                continue
+            fi
+        done < /dev/stdin
+    elif [ ${argc} -eq 0 ]; then
+        error_prefixed "[input error]"
+        diplay_help
+        exit 1
+    fi
+    stdin_line_count=${#stdin_lines[@]}
+}
+
+display_usage() {
+    echo -e "${script_name} [-v|--verbose] [-q|--quiet|--silent] [-h|-help|--help]"
+}
+process_argv() {
+    if [ ${argc} -eq 0 ]; then
+        return 1
+    fi
     repl no echo
+
     local -i current=0
     local -i index=0
     local -- arg=""
-
     for index in ${!argv[@]}; do
         current=$(($index + 1))
         arg="${argv[$index]}"
+        case "${arg}" in
+            -h|--help|-help)
+                colored_manual "NAME
+    ${script_name} - ${usefulness}
+
+SYNOPSIS
+$(printf '%-*s' 4 "$(display_usage)")
+
+DESCRIPTION
+
+$(printf '%-*s\n' 4 "${description_lines[@]}")
+
+    Options:
+
+      -v, --verbose
+          prints debug information
+
+      -q, --quiet, --silent
+          omits debug information
+
+      -h, -help, --help
+          prints this help
+"
+
+            ;;
+            *)
+            ;;
+        esac
     done
     repl sane
 }
@@ -169,7 +239,7 @@ main() {
 }
 
 if [ "${0}" == "${BASH_SOURCE[0]}" ]; then
-    if process_argv ${argv[@]}; then
+    if process_inputs ${argv[@]}; then
         main
     fi
 else
