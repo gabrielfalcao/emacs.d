@@ -8,8 +8,10 @@ unset IFS
 
 script_name="$(basename "${BASH_SOURCE[0]}")"
 script_path="$(2>/dev/random 1>/dev/random cd $(dirname "${BASH_SOURCE[0]}") && pwd)"
+
 this_script_path="${script_path}/${script_name}"
 usefulness="does stuff"
+
 declare -a description_lines=(
     "these lines are supposed to describe the usefulness of ${script_name}"
     "beyond \"${usefulness}\" such that the output of ${script_name}\x27"
@@ -25,6 +27,8 @@ declare -A sources_by_input=()
 declare -i input_count=0
 declare -- git_repo_path=""
 declare -i exit_code=0
+declare -i argv_return_code=0
+declare -i stdin_return_code=0
 declare -- curdir=$(pwd)
 
 declare -- error_prefix_color_rgb="239;41;41"
@@ -158,14 +162,38 @@ trace() {
 }
 
 process_inputs() {
+    local -i current=0
+    local -i index=0
+    local -- item=""
+
     if ! git_repo_path=$(git rev-parse --show-toplevel); then
         error_prefixed "[${script_name} error]" "${curdir@Q} is not a git repo"
         exit 1
     fi
     repl sane
+    if ! process_argv; then
+        argv_return_code=$?
+    fi
+    if [ ${argc} -gt 0 ]; then
+        for index in ${!argv[@]}; do
+            current=$(( index + 1 ))
+            item="${argv[${index}]}"
+            sources_by_input+=(["argv:${index}"]="${item}")
+        done
+    fi
 
-    if [ -t 0 ] && ! process_argv; then
-
+    if [ ! -t 0 ]; then
+        if ! process_stdin; then
+            stdin_return_code=$?
+        fi
+    fi
+    if [ ${stdin_line_count} -gt 0 ]; then
+        for index in ${!stdin_lines[@]}; do
+            current=$(( index + 1 ))
+            item="${stdin_lines[${index}]}"
+            sources_by_input+=(["stdin:${index}"]="${item}")
+        done
+    fi
 }
 
 process_stdin() {
@@ -178,7 +206,7 @@ process_stdin() {
             if ! stdin_lines+=("${line}"); then
                 continue
             fi
-        done < /dev/stdin
+        done </dev/stdin
     elif [ ${argc} -eq 0 ]; then
         error_prefixed "[input error]"
         diplay_help
@@ -199,11 +227,11 @@ process_argv() {
     local -i current=0
     local -i index=0
     local -- arg=""
-    for index in ${!argv[@]}; do
-        current=$(($index + 1))
+    for index in "${!argv[@]}"; do
+        current=$(( index + 1 ))
         arg="${argv[$index]}"
         case "${arg}" in
-            -h|--help|-help)
+            -h | --help | -help)
                 colored_manual "NAME
     ${script_name} - ${usefulness}
 
@@ -226,9 +254,8 @@ $(printf '%-*s\n' 4 "${description_lines[@]}")
           prints this help
 "
 
-            ;;
-            *)
-            ;;
+                ;;
+            *) ;;
         esac
     done
     repl sane
