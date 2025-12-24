@@ -6187,3 +6187,44 @@ Margins::.
 ;;  (let ((trailing-char (wrap-lines-in-quotes-guess-trailing-char-from-mode-name)))
 ;;    (wrap-lines-in-quotes-buffer beg end :single trailing-char)))
 ;;
+
+
+(defun python-path-to-current-file-mod ()
+  (let* ((current-file-name (expand-file-name (buffer-file-name)))
+         (no-extension
+          (file-name-sans-extension (file-name-base current-file-name))))
+     (when (string= no-extension "__init__")
+       (file-name-parent-directory current-file-name))
+     current-file-name))
+
+(defun python-insert-members-from-file ()
+  "BEG END."
+  (interactive)
+  (let ((python-file-name
+         (expand-file-name
+          (read-file-name
+           "insert members of python file: "
+           (python-path-to-current-file-mod)
+           nil 'confirm-after-completion))))
+
+    (let* ((tmp-buffer-name
+            (format "*python-autocomplete:%s*" python-file-name))
+           (tmp-buffer (get-buffer-create tmp-buffer-name))
+           (exit-code
+            (call-process "extract-members-py -i" nil tmp-buffer nil "list" python-file-name)))
+      (if (eq 0 exit-code)
+          (let ((items
+                 (with-current-buffer tmp-buffer
+                   (widen)
+                   (buffer-substring-no-properties
+                    (point-min)
+                    (point-max)))))
+            (kill-buffer tmp-buffer)
+            (insert (format "\n%s\n" items))
+            (python-format-buffer))
+	(progn
+          (switch-to-buffer tmp-buffer)
+          (user-error
+           (format "failed to list items of file %s"
+                   (abbreviate-file-name (python-file-name))))))
+      )))
