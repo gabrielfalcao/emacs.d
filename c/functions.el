@@ -6014,3 +6014,154 @@ Margins::.
 (defun escape-newlines-in-string(value)
   (replace-regexp-in-string "
 "  "\\n" (if (stringp value) (format "%S" (substring-no-properties (format "%s" value))))))
+
+(defun wrap-lines-in-quotes (string &optional quote-type trailing-char)
+  (unless (stringp string)
+    (signal 'type-error (format "`string' should be a string not %s: %s" (type-of string) string)))
+
+  (let ((trailing-char (if (stringp trailing-char) trailing-char ""))
+        (quote-char (cond ((or (equal quote-type 'single)
+                               (equal quote-type :single))
+                           "'")
+                          ((or (equal quote-type 'double)
+                               (equal quote-type :double))
+                           "\"")
+                          (t "\"")))
+
+        (sol quote-char)
+        (eol (format "%s%s" quote-char trailing-char))
+        (result string))
+    (setq result (replace-regexp-in-string "^" sol result))
+    (setq result (replace-regexp-in-string "$" eol result))
+    result
+    ))
+
+
+;;WIP/broken
+;;(defun get-region-plist()
+;;  (let (
+;;         (region-is-active (region-active-p))
+;;         (point-min-restricted (point-min))
+;;         (point-max-restricted (point-min))
+;;         (region-beg-restricted (region-beginning))
+;;         (region-end-restricted (region-end))
+;;         restriction-is-set
+;;          point-min-widen
+;;          point-max-widen
+;;          region-beg-widen
+;;          region-end-widen
+;;          result (list)
+;;         )
+;;
+;;  (save-mark-and-excursion
+;;    (widen)
+;;         (setq region-is-active (region-active-p))
+;;         (setq point-min-widen (point-min))
+;;         (setq point-max-widen (point-min))
+;;         (setq region-beg-widen (region-beginning))
+;;         (setq region-end-widen (region-end)))
+;;
+;;  (when region-is-active
+;;    (setq result (append result (list :region (list ;; widen or restricted?
+;;                                               :beg region-beg-widen
+;;                                               :end region-end-widen)))))
+;;
+;;  (setq result (append result (list
+;;                               :restricted (list
+;;                                            :beg region-beg-restricted
+;;                                            :end region-end-restricted))))
+;;
+;;  (setq result (append result (list
+;;                               :widen (list
+;;                                            :beg region-beg-widen
+;;                                            :end region-end-widen))))
+;;
+;;  (setq restriction-is-set
+;;        (or (not (= region-beg-restricted region-beg-widen))
+;;            (not (= region-end-restricted region-end-widen))))
+;;
+;;  (unless restriction-is-set
+;;      (setq result (append result (list
+;;                                   :beg region-beg-widen
+;;                                   :end region-end-widen))))
+;;
+;;  (when restriction-is-set
+;;      (setq result (append result (list
+;;                                   :beg region-beg-restricted
+;;                                   :end region-end-restricted))))
+;;  result
+;;  )
+;;  )
+;;
+;;
+;;
+;;(defun wrap-lines-in-quotes-buffer (&optional beg end quote-type trailing-char count)
+;;  "wrap each line in quotes of `quote-type' within within whole buffer or region - provided that region is active.
+;;
+;;
+;;`quote-type' is `symbol', `keyword' or `string', otherwise defaults to `double'.
+;;`trailing-char' can be a `string' to be added after the quote at the end of each line.
+;;
+;;the last argument, `count' is passed to the form `re-search-forward'
+;;
+;;when `quote-type' is a string, use that string literally at the
+;;beginning and end of each line.  when it is a symbol, the only two valid
+;;values are `'single' and `'double', or `:single' and `:double' if it is
+;;a keyword.
+;;
+;;
+;;"
+;;  ;; (declare)
+;;  (let* ((region-data (when (and  (number-or-marker-p beg)
+;;                                  (number-or-marker-p end) )
+;;                        (get-region-plist)))
+;;         (beg (if (plistp region-data)
+;;                  (plist-get region-data :beg)
+;;                beg))
+;;         (end (if (plistp region-data)
+;;                  (plist-get region-data :end)
+;;                end))
+;;
+;;         (trailing-char (if (stringp trailing-char) trailing-char ""))
+;;         (quote-char (cond ((and (stringp quote-type) (length> quote-type 0))
+;;                            (format "%s" quote-type))
+;;
+;;                           ((or (equal quote-type 'single)
+;;                               (equal quote-type :single))
+;;                           "'")
+;;                           ((or (equal quote-type 'double)
+;;                                (equal quote-type :double))
+;;                            "\"")
+;;                           (t "\"")))
+;;
+;;         (sol quote-char)
+;;         (eol (format "%s%s" quote-char trailing-char))
+;;         )
+;;
+;;    (save-match-data
+;;      (save-mark-and-excursion
+;;        (while (re-search-forward "^\\(\\s-*\\)\\(.*\\)$" end t count)
+;;          (replace-match (format "%s%s%s%s"  (match-string 1) sol (match-string 2) eol)))))
+;;    )
+;;
+;;  )
+;;
+;;
+;;(defun wrap-lines-in-quotes-guess-trailing-char-from-mode-name ()
+;;  (cond ((seq-contains-p (list "py-mode" "python-mode"  "typescript-mode" "javascript-mode")
+;;                         (Ox33b4O/$/mode-name))
+;;         ",")
+;;        (t "")))
+;;
+;;
+;;
+;;(defun wrap-lines-in-double-quotes-region (beg end)
+;;  (interactive "*r")
+;;  (let ((trailing-char (wrap-lines-in-quotes-guess-trailing-char-from-mode-name)))
+;;    (wrap-lines-in-quotes-buffer beg end :double trailing-char)))
+;;
+;;(defun wrap-lines-in-single-quotes-region (beg end)
+;;  (interactive "*r")
+;;  (let ((trailing-char (wrap-lines-in-quotes-guess-trailing-char-from-mode-name)))
+;;    (wrap-lines-in-quotes-buffer beg end :single trailing-char)))
+;;
