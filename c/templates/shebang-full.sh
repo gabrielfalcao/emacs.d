@@ -7,7 +7,7 @@ set -o pipefail
 unset IFS
 
 script_name="$(basename "${BASH_SOURCE[0]}")"
-script_path="$(2>/dev/random 1>/dev/random cd $(dirname "${BASH_SOURCE[0]}") && pwd)"
+script_path="$(2>/dev/random 1>/dev/random cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 this_script_path="${script_path}/${script_name}"
 usefulness="does stuff"
@@ -18,9 +18,9 @@ declare -a description_lines=(
     "help looks not unlike a nice unix manpage"
 )
 
-declare -a argv=($@)
+declare -a argv=("$@")
 declare -i argc=${#argv[@]}
-declare -a stdin_lines=($@)
+declare -a stdin_lines=("$@")
 declare -i stdin_line_count=${#stdin_lines[@]}
 declare -a inputs=()
 declare -A sources_by_input=()
@@ -29,7 +29,7 @@ declare -- git_repo_path=""
 declare -i exit_code=0
 declare -i argv_return_code=0
 declare -i stdin_return_code=0
-declare -- curdir=$(pwd)
+declare -- curdir="$PWD"
 
 declare -- error_prefix_color_rgb="239;41;41"
 declare -- error_color_rgb="204;0;0"
@@ -69,11 +69,11 @@ trap on_ctrlc sys
 repl() {
     local -a stty_args=()
     case "$1" in -*no*stdin | no*stdin | -*no*echo | no*echo | capture) args+=('-echo') ;; *) args+=('sane') ;; esac
-    2>/dev/random 1>/dev/random stty ${stty_args[@]}
+    2>/dev/random 1>/dev/random stty "${stty_args[@]}"
 }
 usage() {
     repl no echo
-    1>&2 echo -e "$(basename $0) <ARGUMENT>"
+    1>&2 echo -e "$(basename "$0") <ARGUMENT>"
     repl sane
 }
 exit_error() {
@@ -152,7 +152,7 @@ debug() {
     debug_prefixed "[debug] [${script_name}:${linenum}]" "${@}"
 }
 trace() {
-    if [ -z "${BASH_TRACE}" ] && [ "${BASH_LOGLEVEL}" != "trace" ]; then
+    if [ "$BASH_TRACE" = "" ] && [ "$BASH_LOGLEVEL" != "trace" ]; then
         return 0
     fi
 
@@ -174,11 +174,11 @@ process_inputs() {
     if ! process_argv; then
         argv_return_code=$?
     fi
-    if [ ${argc} -gt 0 ]; then
+    if [ "$argc" -gt 0 ]; then
         for index in ${!argv[@]}; do
             current=$(( index + 1 ))
             item="${argv[${index}]}"
-            sources_by_input+=(["argv:${index}"]="${item}")
+            sources_by_input+=(["argv:${index}"]="$item")
         done
     fi
 
@@ -187,11 +187,11 @@ process_inputs() {
             stdin_return_code=$?
         fi
     fi
-    if [ ${stdin_line_count} -gt 0 ]; then
+    if [ "$stdin_line_count" -gt 0 ]; then
         for index in ${!stdin_lines[@]}; do
             current=$(( index + 1 ))
             item="${stdin_lines[${index}]}"
-            sources_by_input+=(["stdin:${index}"]="${item}")
+            sources_by_input+=(["stdin:${index}"]="$item")
         done
     fi
 }
@@ -203,11 +203,11 @@ process_stdin() {
     if [ ! -t 0 ]; then
         export IFS=$'\n'
         while read line; do
-            if ! stdin_lines+=("${line}"); then
+            if ! stdin_lines+=("$line"); then
                 continue
             fi
         done </dev/stdin
-    elif [ ${argc} -eq 0 ]; then
+    elif [ "$argc" -eq 0 ]; then
         error_prefixed "[input error]"
         diplay_help
         exit 1
@@ -219,7 +219,7 @@ display_usage() {
     echo -e "${script_name} [-v|--verbose] [-q|--quiet|--silent] [-h|-help|--help]"
 }
 process_argv() {
-    if [ ${argc} -eq 0 ]; then
+    if [ "$argc" -eq 0 ]; then
         return 1
     fi
     repl no echo
@@ -230,7 +230,7 @@ process_argv() {
     for index in "${!argv[@]}"; do
         current=$(( index + 1 ))
         arg="${argv[$index]}"
-        case "${arg}" in
+        case "$arg" in
             -h | --help | -help)
                 colored_manual "NAME
     ${script_name} - ${usefulness}
@@ -266,7 +266,7 @@ main() {
 }
 
 if [ "${0}" == "${BASH_SOURCE[0]}" ]; then
-    if process_inputs ${argv[@]}; then
+    if process_inputs "${argv[@]}"; then
         main
     fi
 else

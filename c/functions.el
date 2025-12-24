@@ -6037,6 +6037,28 @@ Margins::.
     ))
 
 
+(defun wrap-lines-in-quotes-region (beg end &optional quote-type trailing-char)
+  (interactive "*r")
+  (let* ((trailing-char (if (stringp trailing-char) trailing-char ""))
+        (quote-char (cond ((or (equal quote-type 'single)
+                               (equal quote-type :single))
+                           "'")
+                          ((or (equal quote-type 'double)
+                               (equal quote-type :double))
+                           "\"")
+                          (t "\"")))
+
+        (sol quote-char)
+        (eol (format "%s%s" quote-char trailing-char)))
+   (save-match-data
+     (save-mark-and-excursion
+       (while (re-search-forward "^\\(\\s-*\\)\\(.*\\)$" end t count)
+         (let ((replacement (format "%s%s%s%s"  (match-string 1) sol (match-string 2) eol)))
+           ;; (c-message-open "%s" replacement)
+           (replace-match replacement nil t)))))
+   ))
+
+
 ;;WIP/broken
 ;;(defun get-region-plist()
 ;;  (let (

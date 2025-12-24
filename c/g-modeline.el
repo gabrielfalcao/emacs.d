@@ -178,7 +178,7 @@
              ((listp mode-name)
               (car mode-name))
              ((stringp mode-name)
-              mode-name)
+              (substring-no-properties mode-name))
              ((t (format "%S" mode-name))))))))
 
 
