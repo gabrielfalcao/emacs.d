@@ -6006,3 +6006,11 @@ Margins::.
                  (search-info-get-direction info)
                  search-input))); end (let*
   ); end defun g/search
+
+(defun escape-newlines-region(beg end)
+  (interactive "*r")
+  (replace-regexp-in-region "\n"  "\\n" beg end))
+
+(defun escape-newlines-in-string(value)
+  (replace-regexp-in-string "
+"  "\\n" (if (stringp value) (format "%S" (substring-no-properties (format "%s" value))))))
