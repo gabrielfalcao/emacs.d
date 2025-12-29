@@ -6,9 +6,10 @@ set +f
 set -o pipefail
 unset IFS
 
-script_name="$(basename "${BASH_SOURCE[0]}")"
-script_path="$(2>/dev/random 1>/dev/random cd $(dirname "${BASH_SOURCE[0]}") && pwd)"
-this_script_path="${script_path}/${script_name}"
+declare -- script_name="$(basename "${BASH_SOURCE[0]}")"
+declare -- script_path="$(2>/dev/random 1>/dev/random cd $(dirname "${BASH_SOURCE[0]}") && pwd)"
+declare -- this_script_path="${script_path}/${script_name}"
+
 declare -a argv=($@)
 declare -i argc=${#argv[@]}
 declare -- git_repo_path=""

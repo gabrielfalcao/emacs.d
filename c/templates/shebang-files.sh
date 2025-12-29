@@ -6,9 +6,9 @@ set +f
 set -o pipefail
 unset IFS
 
-script_name="$(basename "${BASH_SOURCE[0]}")"
-script_path="$(2>/dev/random 1>/dev/random cd $(dirname "${BASH_SOURCE[0]}") && pwd)"
-this_script_path="${script_path}/${script_name}"
+declare -- script_name="$(basename "${BASH_SOURCE[0]}")"
+declare -- script_path="$(2>/dev/random 1>/dev/random cd $(dirname "${BASH_SOURCE[0]}") && pwd)"
+declare -- this_script_path="${script_path}/${script_name}"
 
 declare -a argv=($@)
 declare argc=${#argv[@]}
@@ -23,11 +23,11 @@ declare -i directory_argv_count=0
 declare -i non_path_params_count=0
 declare -i other_file_types_argv_count=0
 
-error_prefix_color_rgb="255;0;66"
-error_color_rgb="255;50;50"
-error_color_rgb="255;62;92"
-warn_prefix_color_rgb="255;106;50"
-warn_color_rgb="255;161;50"
+declare -- error_prefix_color_rgb="255;0;66"
+declare -- error_color_rgb="255;50;50"
+declare -- error_color_rgb="255;62;92"
+declare -- warn_prefix_color_rgb="255;106;50"
+declare -- warn_color_rgb="255;161;50"
 
 on_exit() {
     repl sane

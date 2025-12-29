@@ -6,11 +6,11 @@ set +f
 set -o pipefail
 unset IFS
 
-script_name="$(basename "${BASH_SOURCE[0]}")"
-script_path="$(2>/dev/random 1>/dev/random cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+declare -- script_name="$(basename "${BASH_SOURCE[0]}")"
+declare -- script_path="$(2>/dev/random 1>/dev/random cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-this_script_path="${script_path}/${script_name}"
-usefulness="does stuff"
+declare -- this_script_path="${script_path}/${script_name}"
+declare -- usefulness="does stuff"
 
 declare -a description_lines=(
     "these lines are supposed to describe the usefulness of ${script_name}"

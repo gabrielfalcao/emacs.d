@@ -12,9 +12,9 @@ set -o nounset # -u
 set -u
 export IFS=$'\n'
 
-script_name="$(basename "${BASH_SOURCE[0]}")"
-script_path="$(2>/dev/random 1>/dev/random cd $(dirname "${BASH_SOURCE[0]}") && pwd)"
-this_script_path="${script_path}/${script_name}"
+declare -- script_name="$(basename "${BASH_SOURCE[0]}")"
+declare -- script_path="$(2>/dev/random 1>/dev/random cd $(dirname "${BASH_SOURCE[0]}") && pwd)"
+declare -- this_script_path="${script_path}/${script_name}"
 export PS4='${BASH_SOURCE}:${BASH_LINENO[0]} '
 declare -- stdin_is_terminal=$([ -t 0 ] && echo "yes" || echo "no")
 declare -a argv=($@)
@@ -24,9 +24,9 @@ declare -- iso_timestamp=$(date --iso-8601=seconds)
 declare -a exit_messages=()
 declare -a urls_to_download=()
 declare -A urls_added=()
-logs_path=$(workbench logs)/yt-dlp
+declare -- logs_path=$(workbench logs)/yt-dlp
 mkdir -p "${logs_path}"
-state_path=${logs_path}/${script_name}-${script_pid}
+declare -- state_path=${logs_path}/${script_name}-${script_pid}
 # echo -e "
 # ${stdin_is_terminal[@]@A}
 # ${script_name[@]@A}

@@ -6,9 +6,9 @@ set +f
 set -o pipefail
 unset IFS
 
-script_name="$(basename "${BASH_SOURCE[0]}")"
-script_path="$(2>/dev/random 1>/dev/random cd $(dirname "${BASH_SOURCE[0]}") && pwd)"
-this_script_path="${script_path}/${script_name}"
+declare -- script_name="$(basename "${BASH_SOURCE[0]}")"
+declare -- script_path="$(2>/dev/random 1>/dev/random cd $(dirname "${BASH_SOURCE[0]}") && pwd)"
+declare -- this_script_path="${script_path}/${script_name}"
 
 if [ "$(whoami)" != "root" ]; then sudo bash $0; echo exit $?; fi
 
@@ -25,11 +25,11 @@ declare -i directory_argv_count=0
 declare -i non_path_params_count=0
 declare -i other_file_types_argv_count=0
 
-error_prefix_color_rgb="$((0xFF));$((0x00));$((0x42))"
-error_color_rgb="$((0xFF));$((0x32));$((0x32))"
-error_color_rgb="$((0xFF));$((0x3E));$((0x5C))"
-warn_prefix_color_rgb="$((0xFF));$((0x6A));$((0x32))"
-warn_color_rgb="$((0xFF));$((0xA1));$((0x32))"
+declare -- error_prefix_color_rgb="$((0xFF));$((0x00));$((0x42))"
+declare -- error_color_rgb="$((0xFF));$((0x32));$((0x32))"
+declare -- error_color_rgb="$((0xFF));$((0x3E));$((0x5C))"
+declare -- warn_prefix_color_rgb="$((0xFF));$((0x6A));$((0x32))"
+declare -- warn_color_rgb="$((0xFF));$((0xA1));$((0x32))"
 
 on_exit() {
     repl sane
