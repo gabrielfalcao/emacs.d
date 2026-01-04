@@ -13,13 +13,22 @@
           #'(lambda () (prettify-symbols-mode)))
 ;; (add-hook 'web-mode-hook 'prettier-js-mode)
 ;; (add-hook 'web-mode-hook 'prettier-js-mode)
-(add-hook 'python-mode-hook
-          #'(lambda ()
-              (interactive)
-              (define-key python-mode-map (kbd "C-c C-f") #'g/format/prettify)
-              ;; (define-key python-mode-map (kbd "TAB") #'indent-for-tab-command)
 
-              ))
+(defun python-mode-hook-bind-custom-keys()
+  (interactive)
+  (define-key python-mode-map (kbd "C-c C-f") #'g/format/prettify)
+  (define-key python-mode-map (kbd "TAB") #'indent-for-tab-command)
+  (define-key python-mode-map
+              (kbd "C-x C-e i")
+              'python-insert-members-from-file)
+  (define-key python-mode-map
+              (kbd "C-x C-e C-i")
+              'python-insert-members-from-file)
+
+  )
+(add-hook 'python-mode-hook
+          #'python-mode-hook-bind-custom-keys)
+
 (add-hook 'py-shell-mode
           #'(lambda ()
               (interactive)
