@@ -65,6 +65,8 @@
         ("html"  . "html'")
         ("jsx"  . "\\.[tj]sx\\'"))
       )
+; (add-to-list 'magic-mode-alist '("^#!/usr/bin/\\(env\\s-+.*\\)?\\(python\\)" . python-mode))
+; (add-to-list 'magic-mode-alist '("^#!/usr/bin/\\(env\\s-+.*\\)?\\(ba\\)?sh\\)" . shell-script-mode))
 (add-to-list 'auto-mode-alist '("/shell[.]d/" . shell-script-mode))
 (add-to-list 'auto-mode-alist '("/bash_completion\\([.]d\\)?/" . shell-script-mode))
 (add-to-list 'auto-mode-alist '("/opt[\/]libexec/" . shell-script-mode))
