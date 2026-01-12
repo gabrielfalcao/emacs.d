@@ -2,31 +2,32 @@
 
 (defun debug-symbol-props-format (sym &optional indent)
   (setq-local indent (or indent 0))
-  (setq-local do-indent #'(lambda (item) (format "%s%s" (make-indent (+ 4 indent)) item )))
-  (when (stringp sym)
-    (setq-local sym (symbol-value sym)))
+  (setq-local do-indent
+              #'(lambda (item)
+                  (format "%s%s" (make-indent (+ 4 indent)) item )))
+  (when (stringp sym) (setq-local sym (symbol-value sym)))
 
   (format "%sprops of %S: %s"
           (make-indent indent)
           (string-join
            (mapcar #'do-indent
-                   (mapcar #'(lambda (sym-prop)
-                               (cond ((stringp sym-prop) (format "%S" sym-prop))
-                                     ((sequencep sym-prop)
-                                      (mapcar #'(lambda (item)
-                                                  (do-indent (debug-symbol-props-format item (+ indent 4)))
-                                                  ); end lambda
-                                              sym-prop
-                                              ); end mapcar
-                                      )
-                                     (t
-                                      (format "%s" sym-prop))
-                                     ); end cond
-                               ); end lambda
-                           (symbol-plist sym)
-                           ); end mapcar
-                   "\n"
-                   ) ;;  end mapcar
+                   (mapcar
+                    #'(lambda (sym-prop)
+                        (cond
+                         ((stringp sym-prop)
+                          (format "%S" sym-prop))
+                         ((sequencep sym-prop)
+                          (mapcar
+                           #'(lambda (item)
+                               (do-indent
+                                (debug-symbol-props-format item
+                                                           (+ indent 4)))); end lambda
+                           sym-prop); end mapcar
+                          )
+                         (t (format "%s" sym-prop))); end cond
+                        ); end lambda
+                    (symbol-plist sym)); end mapcar
+                   "\n") ;;  end mapcar
            ) ;end string-join
           );; end format
   );; end defun
@@ -172,8 +173,7 @@
   (let* ((values (x-color-values c))
          (fp (or (car values) 1))
          (sp (or (elt values 1) 1))
-         (tp (or (elt values 2) 1))
-         )
+         (tp (or (elt values 2) 1)))
     (if (> #x0f
            (floor
             (+
@@ -262,8 +262,7 @@
       (message "cannot evaluate buffer %s because it is not in %s, trying to run pretty formatter instead"
                (Ox33b4O/$/paint-mode-line-color (buffer-name))
 	       (Ox33b4O/$/paint-mode-line-color "elisp-mode"))
-      (g/format/prettify))
-    ))
+      (g/format/prettify))))
 
 (defun Ox33b4O/$/reload-all-c ()
   "."
@@ -352,11 +351,10 @@
 (defun getcwd ()
   "."
   (interactive)
-  (cond ((file-exists-p (buffer-file-name))
-         (file-name-directory (buffer-file-name)))
-        (t
-         (expand-file-name "~/.emacs.d"))
-        ); end cond
+  (cond
+   ((file-exists-p (buffer-file-name))
+    (file-name-directory (buffer-file-name)))
+   (t (expand-file-name "~/.emacs.d"))); end cond
   )
 
 
@@ -504,15 +502,15 @@
        ;;           (format "WAT: %S" (car acls))))
        ((= 2 aclsl)
         (format "%s%s"
-                (Ox33b4O/$/acl-owner (nth 0 acls)
-                                     (Ox33b4O/$/acl-group
-                                      (nth 1 acls)))))
+                (Ox33b4O/$/acl-owner
+                 (nth 0 acls)
+                 (Ox33b4O/$/acl-group (nth 1 acls)))))
        ((= 3 aclsl)
         (format "%s%s%s"
-                (Ox33b4O/$/acl-owner (nth 0 acls)
-        			     (Ox33b4O/$/acl-group
-                                      (nth 1 acls))
-        			     (Ox33b4O/$/acl-other (nth 1 acls)))))
+                (Ox33b4O/$/acl-owner
+                 (nth 0 acls)
+        	 (Ox33b4O/$/acl-group (nth 1 acls))
+        	 (Ox33b4O/$/acl-other (nth 1 acls)))))
        (t (format "fallback ffb: %S" ffb)))
       ;; ;; (message  "ffb:%S acls: %S\naclsl:%S" ffb acls aclsl)
       )))
@@ -992,7 +990,9 @@
                      "^\\s-*\\(\\s-+\\|}\\|impl\\|extern\\s-*crate\\|\\(pub\\(\s-*\\(in\s-*\\)?[a-z0-9:]+\\)?\\)?\\s-*mod\\|[#][[]\\|)\\).*"
                      ""
                      region))))))))
-      (if called-interactively-p (erase-messages) (message "%s" region))
+      (if called-interactively-p
+          (erase-messages)
+        (message "%s" region))
       region)
     (flush-lines "^$" beg end nil)))
 
@@ -1043,8 +1043,7 @@
           (switch-to-buffer tmp-buffer)
           (user-error
            (format "failed to list items of file %s"
-                   (abbreviate-file-name (rust-file-name))))))
-      )))
+                   (abbreviate-file-name (rust-file-name)))))))))
 
 (defun rust-insert-members-from-file-with-docs ()
   "BEG END."
@@ -1075,8 +1074,7 @@
           (switch-to-buffer tmp-buffer)
           (user-error
            (format "failed to list items of file %s"
-                   (abbreviate-file-name (rust-file-name))))))
-      )))
+                   (abbreviate-file-name (rust-file-name)))))))))
 
 (defun rust-delete-comments ()
   "."
@@ -1193,18 +1191,21 @@
             region))))))
 
 (defmacro
-    when-buffer-filename-meets (cond &rest body)
+    when-buffer-filename-meets
+    (cond &rest body)
   "REGEXP FN."
   `(let ((filename (expand-file-name (buffer-file-name))))
      (if ,cond (progn ,@body))))
 
 (defmacro
-    when-buffer-meets (cond &rest body)
+    when-buffer-meets
+    (cond &rest body)
   "REGEXP FN."
   `(if ,cond (progn ,@body)))
 
 (defmacro
-    when-buffer-filename-matches (regexp &rest body)
+    when-buffer-filename-matches
+    (regexp &rest body)
   "REGEXP FN."
   `(let ((filename (expand-file-name (buffer-file-name))))
      (if (string-match-p ,regexp filename)
@@ -1283,53 +1284,65 @@
 (defun git-save ()
   "
 shortcut to calling \\[git-add] and \\[git-commit]
-." (interactive) (git-add) (git-commit))
+."
+  (interactive)
+  (git-add)
+  (git-commit))
 
 (defun ensure-filename-child-of-directory (filename directory)
-  (let* (
-         (filename-absolute (file-name-canonicalize (or filename (buffer-file-name))))
-         (directory-absolute (file-name-canonicalize (or directory (file-name-directory filename-absolute))))
+  (let* ((filename-absolute
+          (file-name-canonicalize (or filename (buffer-file-name))))
+         (directory-absolute
+          (file-name-canonicalize
+           (or directory (file-name-directory filename-absolute))))
          (directory-as-regexp (regexp-quote directory-absolute))
-         (regexp (format "^%s" directory-as-regexp))
-         ); end let* varlist
+         (regexp (format "^%s" directory-as-regexp))); end let* varlist
     ;; (c-message "ensure-filename-child-of-directory/regexp: %s" regexp)
     (save-match-data
-      (or (when (string-match regexp filename-absolute)
-            (let ((message (format "file %S is not a child of %S" filename directory)))
-              (signal 'filesystem-error (format "file %S is not a child of %S" filename directory))))
-          filename-absolute
-          );end or
+      (or
+       (when (string-match regexp filename-absolute)
+         (let ((message
+                (format "file %S is not a child of %S" filename directory)))
+           (signal 'filesystem-error
+                   (format "file %S is not a child of %S" filename directory))))
+       filename-absolute);end or
       );; end save-match-data
     );; end let*
   );; end defun ensure-filename-child-of-directory
 
 (defun git-commit ()
   "commits the current buffer if file has been staged (.e.g.: with \\[git-add])"
-  (let* (
-         (filename (buffer-file-name-relative))
+  (let* ((filename (buffer-file-name-relative))
          (commit-message
           (read-string "Commit Message: " (format "saves %s" filename)))
-         (git-repo-path (shell-command-to-string "git rev-parse --show-toplevel"))
+         (git-repo-path
+          (shell-command-to-string "git rev-parse --show-toplevel"))
          (git-commit-output-buf (get-buffer-create "*git-commit*"))
-         (filename-absolute (ensure-filename-child-of-directory filename git-repo-path))
+         (filename-absolute
+          (ensure-filename-child-of-directory filename git-repo-path))
          commit-buffer-string
          error-msg
          exit-code
-         internal-error-msg
-         );; let* varlist
+         internal-error-msg);; let* varlist
     (when (zerop (length commit-message))
       (user-error "aborted due to empty commit message"))
-    (setq exit-code (call-process "git" nil git-commit-output-buf nil "commit" "-m" (format "%s" commit-message))
-          commit-buffer-string (with-current-buffer git-commit-output-buf
-	                         (widen)
-	                         (buffer-string))
-          error-msg (format
-                     "failed to commit '%s': %s" filename commit-message)
+    (setq exit-code
+          (call-process "git" nil git-commit-output-buf nil "commit" "-m"
+                        (format "%s" commit-message))
+          commit-buffer-string
+          (with-current-buffer git-commit-output-buf
+	    (widen)
+	    (buffer-string))
+          error-msg
+          (format
+           "failed to commit '%s': %s" filename commit-message)
 
           );end setq
     (condition-case err
         (kill-buffer git-commit-output-buf)
-      (error (setq internal-error-msg (format "failed to kill buffer: %s" err))))
+      (error
+       (setq internal-error-msg
+             (format "failed to kill buffer: %s" err))))
 
     (if (= 0 exit-code)
         ;; then
@@ -1347,10 +1360,11 @@ shortcut to calling \\[git-add] and \\[git-commit]
   "."
   (interactive)
   (let* ((git-commit-output-buf (get-buffer-create "*git-commit*"))
-         (current-working-dir (file-name-directory (expand-file-name (buffer-file-name))))
+         (current-working-dir
+          (file-name-directory (expand-file-name (buffer-file-name))))
          (commit-message
-          (read-string "Commit Message: " (format "saves %s" current-working-dir)))
-         ) ;; let
+          (read-string "Commit Message: "
+                       (format "saves %s" current-working-dir)))) ;; let
     (or
      (when (zerop (length commit-message))
        (user-error "aborted due to empty commit message"))
@@ -1510,7 +1524,8 @@ shortcut to calling \\[git-add] and \\[git-commit]
    (message "auto-commited emacs file %s" filename)))
 
 (defmacro
-    set-region-contents-with-fn (beg end fn)
+    set-region-contents-with-fn
+    (beg end fn)
   "BEG END FN."
   `(save-excursion
      (let ((region (buffer-substring-no-properties beg end))
@@ -1554,9 +1569,7 @@ shortcut to calling \\[git-add] and \\[git-commit]
      t)
     (re-search-forward "\\([0-9]+\\)" nil t)
     (if (eq pos (match-beginning 1))
-        (progn
-          (forward-line)
-          (message "forward-line %s" pos))
+        (progn (forward-line) (message "forward-line %s" pos))
       (progn
         (goto-char (match-beginning 1))
         (message "goto-char %s" (match-beginning 1))))))
@@ -1573,9 +1586,7 @@ shortcut to calling \\[git-add] and \\[git-commit]
      t)
     (re-search-forward "\\([0-9]+\\)" nil t)
     (if (eq pos (match-beginning 1))
-        (progn
-          (forward-line)
-          (message "forward-line %s" pos))
+        (progn (forward-line) (message "forward-line %s" pos))
       (progn
         (goto-char (match-beginning 1))
         (message "goto-char %s" (match-beginning 1))))))
@@ -1804,14 +1815,14 @@ shortcut to calling \\[git-add] and \\[git-commit]
   (let ((buffer-to-erase (get-buffer  buffer-name)))
     (if (bufferp buffer-to-erase)
         (with-current-buffer buffer-to-erase
-          (let ((buffer-was-read-only (when (and (numberp buffer-read-only)
-                                                 (< buffer-read-only 0)))))
+          (let ((buffer-was-read-only
+                 (when (and
+                        (numberp buffer-read-only)
+                        (< buffer-read-only 0)))))
             (read-only-mode -1)
             (widen)
             (erase-buffer)
-            (if buffer-was-read-only
-		(read-only-mode 1)))
-          ) ;; end inner let
+            (if buffer-was-read-only (read-only-mode 1)))) ;; end inner let
       ) ;;end if
     ) ;; end outer let
   )
@@ -1842,7 +1853,8 @@ shortcut to calling \\[git-add] and \\[git-commit]
   "."
   (interactive)
   (shell-command-to-string
-   (format "git rm --cached %s" (expand-file-name (buffer-file-name)))))
+   (format "git rm --cached %s"
+           (expand-file-name (buffer-file-name)))))
 
 (defun git-restore-staged ()
   "."
@@ -1856,8 +1868,7 @@ shortcut to calling \\[git-add] and \\[git-commit]
 
 (defun create-fresh-buffer (new-buffer-name &optional inhibit-buffer-hooks)
   (let ((existing-buffer (get-buffer new-buffer-name)))
-    (when (not (null existing-buffer))
-      (kill-buffer existing-buffer)))
+    (when (not (null existing-buffer)) (kill-buffer existing-buffer)))
   (get-buffer-create new-buffer-name inhibit-buffer-hooks))
 
 (defun prettierjs ()
@@ -1869,7 +1880,8 @@ shortcut to calling \\[git-add] and \\[git-commit]
          (tmp-buffer (create-fresh-buffer tmp-buffer-name))
          (prettierjs-args (list tmp-buffer nil "-w" current-filename ))
          (exit-code
-          (apply #'call-process (append (list "prettier" nil) prettierjs-args))))
+          (apply #'call-process
+                 (append (list "prettier" nil) prettierjs-args))))
     ;; (if (string-match "[.][a-z][a-z0-9-]+rc$" current-filename)
     ;;     ;; explicitly specify parser to prettier when filename ends with `.*rc'
     ;;     (append (list "--parser" "json") prettierjs-args)
@@ -1886,13 +1898,12 @@ shortcut to calling \\[git-add] and \\[git-commit]
          (message
           (format "%s formatted"
                   (abbreviate-file-name current-filename)))
-         (revert-buffer t t t)
-         ))
-     (let* ((error-string (with-current-buffer tmp-buffer
-			    (widen)
-			    (goto-char (point-min))
-			    (buffer-substring-no-properties (point-min) (point-max))
-			    ))
+         (revert-buffer t t t)))
+     (let* ((error-string
+             (with-current-buffer tmp-buffer
+	       (widen)
+	       (goto-char (point-min))
+	       (buffer-substring-no-properties (point-min) (point-max))))
 	    (error-details
 	     (with-current-buffer tmp-buffer
 	       (widen)
@@ -1923,40 +1934,39 @@ shortcut to calling \\[git-add] and \\[git-commit]
                         error-type
                         error-message
                         error-lineno
-                        error-column
-                        )
-		       )
-		   )
-                 )
-	       )
+                        error-column)
+		       ))
+                 ))
 	     ))
-       (if (and (listp error-details)
-                (not (null (nth 4 error-details))))
-	   (let* (
-                  (message-type (nth 0 error-details))
+       (if (and
+            (listp error-details)
+            (not (null (nth 4 error-details))))
+	   (let* ((message-type (nth 0 error-details))
                   (error-filename (nth 1 error-details))
                   (error-type (nth 2 error-details))
                   (error-message (nth 3 error-details))
                   (error-lineno (nth 4 error-details))
-                  (error-column (nth 5 error-details))
-                  )
+                  (error-column (nth 5 error-details)))
 	     (goto-line error-lineno)
 	     (goto-char (+ (point) error-column))
 	     (message
 	      "%s in %s line %d column %d => %s: %s"
-	      (propertize (format "%s" message-type) 'face
-                          (list :background "#3d3d3d"
-                                :foreground "#FF3232"))
+	      (propertize
+               (format "%s" message-type)
+               'face
+               (list :background "#3d3d3d" :foreground "#FF3232"))
 
 	      error-filename
 	      error-lineno
 	      error-column
-	      (propertize (format "%s" error-type) 'face
-                          (list :background "#3d3d3d"
-                                :foreground "#FF3232"))
-	      (propertize (format "%s" error-message) 'face
-                          (list :background "#FF3232"
-                                :foreground "#3d3d3d"))
+	      (propertize
+               (format "%s" error-type)
+               'face
+               (list :background "#3d3d3d" :foreground "#FF3232"))
+	      (propertize
+               (format "%s" error-message)
+               'face
+               (list :background "#FF3232" :foreground "#3d3d3d"))
 
 	      ))
          ;; else
@@ -1964,10 +1974,8 @@ shortcut to calling \\[git-add] and \\[git-commit]
          (user-error
           (format "prettier -w %s failed with code: %s"
                   (abbreviate-file-name current-filename)
-                  exit-code)))
-       ))
-    (ignore-errors (kill-buffer tmp-buffer))
-    ))
+                  exit-code)))))
+    (ignore-errors (kill-buffer tmp-buffer))))
 
 (defun shfmt-break-onliner-region (beg end)
   "."
@@ -2082,25 +2090,26 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 	      exit-code)))))
 
 (defun human-time-format (&option epoch)
-  (format-time-string "%Y/%m/%d %H:%M:%S %Z" (or epoch (format-time-string "%s"))))
+  (format-time-string "%Y/%m/%d %H:%M:%S %Z"
+                      (or epoch (format-time-string "%s"))))
 
 (defun g/format/commit-and-prettify-and-commit ()
   (interactive "*")
-  (let* (
-         (started-at-epoch (string-to-number (format-time-string "%s")))
+  (let* ((started-at-epoch
+          (string-to-number (format-time-string "%s")))
          (started-at (human-time-format started-at-epoch))
-         (git-head-before (shell-command-to-string "git rev-parse HEAD"))
+         (git-head-before
+          (shell-command-to-string "git rev-parse HEAD"))
          git-head-after-first-commit
          git-head-after-last-commit
          first-commit-at
          last-commit-at
          ended-at-epoch
-         ended-at
-         )
+         ended-at)
 
-    (when (and (git-add)
-               (git-commit-m (format "saving %s before prettifying"))))
-    )
+    (when (and
+           (git-add)
+           (git-commit-m (format "saving %s before prettifying")))))
   ) ;;  g/format/commit-and-prettify-and-commit
 
 (defun g/get/format/prettify/funcsymbol ()
@@ -2152,8 +2161,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
       (message "cannot evaluate buffer %s because it is not in %s, trying to run pretty formatter instead"
 	       (Ox33b4O/$/paint-mode-line-color (buffer-name))
 	       (Ox33b4O/$/paint-mode-line-color "elisp-mode"))
-      (g/format/prettify))
-    ))
+      (g/format/prettify))))
 
 (defun git-restore ()
   "."
@@ -2432,7 +2440,8 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 (defun shell-script-set-umetefo ()
   "."
   (interactive)
-  (let ((shebang-regexp "^[#][!]\\(\\([^[:space:]\n]+\\)\\(\\s-*\\)?\\)+$")
+  (let ((shebang-regexp
+         "^[#][!]\\(\\([^[:space:]\n]+\\)\\(\\s-*\\)?\\)+$")
         shebang-match
         first-line-end shebang first-line)
     (save-mark-and-excursion
@@ -2440,7 +2449,10 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
       (beginning-of-buffer)
       (end-of-line)
       (setq first-line-end (point))
-      (setq first-line (buffer-substring-no-properties (point-min) first-line-end))
+      (setq first-line
+            (buffer-substring-no-properties
+             (point-min)
+             first-line-end))
       (beginning-of-buffer)
       (when (re-search-forward shebang-regexp first-line-end t 1)
         (setq shebang-match (match-string-no-properties 0))))
@@ -2452,13 +2464,10 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
     (save-mark-and-excursion
       (beginning-of-buffer)
       (end-of-line)
-      (insert (string-join
-               (list
-                ""
-                "set -umeTE"
-                "set +f"
-                "set -o pipefail")
-               "\n")))))
+      (insert
+       (string-join
+        (list "" "set -umeTE" "set +f" "set -o pipefail")
+        "\n")))))
 
 
 (defun shell-script-curly-wrap-variables-buffer ()
@@ -2503,15 +2512,17 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 
 (defun current-notes-location ()
   "."
-  (or (when (runtime-is-linux)
-        (get-directory-path-mkdir "~/notes/linux/"))
-      (get-directory-path-mkdir "~/projects/notes/osx")))
+  (or
+   (when (runtime-is-linux)
+     (get-directory-path-mkdir "~/notes/linux/"))
+   (get-directory-path-mkdir "~/projects/notes/osx")))
 
 (defun current-wip-location ()
   "."
-  (or (when (runtime-is-linux)
-        (get-directory-path-mkdir "~/notes/linux/wip/emacs"))
-      (get-directory-path-mkdir "~/projects/notes/osx/wip/emacs")))
+  (or
+   (when (runtime-is-linux)
+     (get-directory-path-mkdir "~/notes/linux/wip/emacs"))
+   (get-directory-path-mkdir "~/projects/notes/osx/wip/emacs")))
 
 
 (defun open-note (note-name)
@@ -2619,9 +2630,8 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
     (git-add)
     (insert-timestamp)))
 
-(defun todo ()
-  "opens the todo page."
-  (interactive)
+(defun colorize-todo-with-overlays()
+  (interactive "*")
   ;; "#151515" "#161A1F" "#1996C9" "#1C1C1C" "#211F17" "#312F27"
   ;; "#36F6E9" "#79B9FF" "#919588" "#A66A00" "#A66A00" "#A6E22E"
   ;; "#A79C83" "#C63367" "#C6DCFC" "#CFC6A6" "#DB5045" "#DCDC88"
@@ -2629,12 +2639,9 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
   ;; "#F682FF" "#F6CA51" "#F80101" "#F80101" "#F937B9" "#FC580C"
   ;; "#FF79C6"
 
-  (open-note (file-name-concat (current-notes-location) "todo.rst"))
-  (let (
-        (match-count 0)
+  (let ((match-count 0)
         (fg-color-name "#312F27")
-        (bg-color-name "#F6CA51")
-        )
+        (bg-color-name "#F6CA51"))
     (save-mark-and-excursion
       (widen)
       (beginning-of-buffer)
@@ -2642,35 +2649,40 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
         (while (re-search-forward
                 "^\\(\\(TODO\\s-+\\(202[0-9][/-][0-9]\\{2\\}[/-][0-9]\\{2\\}\\)\\)\\)\\(\\s-*\n\\)\\(\\([=]\\{14,\\}\\)\\)"
                 nil t)
-          (let* ((text-ov (make-overlay (match-beginning 2) (match-end 2)))
-                 (undl-ov (make-overlay (match-beginning 6) (match-end 6)))
-                 )
+          (let* ((text-ov
+                  (make-overlay (match-beginning 2) (match-end 2)))
+                 (undl-ov
+                  (make-overlay (match-beginning 6) (match-end 6))))
             (when (> match-count 0)
-              (setq
-               fg-color-name "#312F27"
-               bg-color-name "#1996C9"
-               ))
+              (setq fg-color-name "#312F27" bg-color-name "#1996C9"))
 
             (setq match-count (+ 1 match-count))
-            (overlay-put text-ov 'face `(:foreground ,fg-color-name :background ,bg-color-name))
-            (overlay-put undl-ov 'face `(:foreground ,bg-color-name :background ,fg-color-name))
+            (overlay-put text-ov 'face
+                         `(:foreground ,fg-color-name :background ,bg-color-name))
+            (overlay-put undl-ov 'face
+                         `(:foreground ,bg-color-name :background ,fg-color-name))
 
             ); end let*
           ); end while
         ); end save-match-data
       ); end let
     ); end save-mark-and-excursion
-  );; end defun toto
+  );; end defun colorize-todo-with-overlays
 
 
-
+(defun todo ()
+  "opens the todo page."
+  (interactive)
+  (open-note (file-name-concat (current-notes-location) "todo.rst"))
+  (colorize-todo-with-overlays))
 
 
 (defun todo-today (&optional utc)
   "inserts a new <h2> entry in the `todo' document with the format 'TODO %Y-%m-%d'"
   (interactive)
-  (let* (
-         (ts (format-time-string "%Y-%m-%d" nil (if (not (null utc)) 0 nil)))
+  (let* ((ts
+          (format-time-string "%Y-%m-%d" nil
+                              (if (not (null utc)) 0 nil)))
          (title (format "TODO %s" ts))
          (width (length title))
          (under-title (string-join (make-list width "=")))
@@ -2683,27 +2695,30 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
             (save-match-data
               (when (re-search-forward (format "^%s" title) nil t)
                 (cons (match-beginning 0) (match-end 0))))))
-         (already-exists-beg (and (consp already-exists) (car already-exists)))
-         (already-exists-end (and (consp already-exists) (cdr already-exists)))
-         );;end let* varlist
-    (or (when already-exists
-          (goto-char already-exists-beg)
-          (let ((exts-overlay (make-overlay already-exists-beg already-exists-end)))
-            (overlay-put exts-overlay 'face (cons :foreground "#3d3d3d"))
-            (overlay-put exts-overlay 'face (cons :background "#F49101")))
+         (already-exists-beg
+          (and (consp already-exists) (car already-exists)))
+         (already-exists-end
+          (and (consp already-exists) (cdr already-exists))));;end let* varlist
+    (or
+     (when already-exists
+       (goto-char already-exists-beg)
+       (let ((exts-overlay
+              (make-overlay already-exists-beg already-exists-end)))
+         (overlay-put exts-overlay 'face
+                      (cons :foreground "#3d3d3d"))
+         (overlay-put exts-overlay 'face
+                      (cons :background "#F49101")))
 
-          )
-        (progn
-          (beginning-of-line)
-          (insert "\n" entry)))
-    )
+       )
+     (progn (beginning-of-line) (insert "\n" entry))))
   )
 
 
 (defun backlog ()
   "."
   (interactive)
-  (open-note (file-name-concat (current-notes-location) "backlog.rst")))
+  (open-note
+   (file-name-concat (current-notes-location) "backlog.rst")))
 
 (defun now-file-safe ()
   "."
@@ -2783,8 +2798,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 
 	(save-buffer 0)
 	(chmod buf-filename (string-to-number "755" 8))
-	(shfmt)))
-    ))
+	(shfmt)))))
 
 (defun read-file-to-string (filename)
   "inserts template file at beginning of current buffer."
@@ -2828,8 +2842,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
         (user-error
          (format "insert-template: file not readable: %s" template-path)))
     (let ((template-contents (read-file-to-string template-path)))
-      template-contents)
-    ))
+      template-contents)))
 
 (defun make-script ()
   "."
@@ -2874,8 +2887,7 @@ The `:background' property is computed in contrast with its
           (format "#%s"
                   (if (not (null hash-algorithm))
 		      (Ox33b4O/$/hash-take-first-n-chars hash-algorithm 6 string)
-                    (Ox33b4O/$/hash-take-first-n-chars 'sha256 6 string)
-                    )))
+                    (Ox33b4O/$/hash-take-first-n-chars 'sha256 6 string))))
          (background (contrast-color foreground)))
     (list :foreground foreground :background background)))
 
@@ -2886,8 +2898,8 @@ The `:background' property is computed in contrast with its
   (propertize
    (format "%s" string)
    'face
-   (get-auto-propertize-face-fg-and-bg-list string (or algorithm
-						       'sha256))))
+   (get-auto-propertize-face-fg-and-bg-list string
+                                            (or algorithm 'sha256))))
 
 (defun cleanup-elc ()
   "."
@@ -2902,8 +2914,7 @@ The `:background' property is computed in contrast with its
      ((eq 0 exit-code)
       (message  "elc cleanup ok" )
       (length> stderr 0)
-      (message "elc cleanup error:\n'%s'" stderr ))
-     )))
+      (message "elc cleanup error:\n'%s'" stderr )))))
 
 
 (defun get-logwip-string ()
@@ -2968,8 +2979,7 @@ The `:background' property is computed in contrast with its
 (defun git-delete ()
   "runs \"git rm -rf \" against `buffer-file-name'."
   (interactive)
-  (let* ((git-status-output-buf
-          (get-buffer-create "*git-delete*"))
+  (let* ((git-status-output-buf (get-buffer-create "*git-delete*"))
          (exitcode
           (call-process
            "git" nil git-status-output-buf nil "rm" "-rf"
@@ -3007,8 +3017,7 @@ which returns the exit-status and the string output.
 	    (if (listp args)
                 args
 	      (user-error
-	       (format "call-process-with-list-args: args `%S' is not a list" args)))
-	    ))
+	       (format "call-process-with-list-args: args `%S' is not a list" args)))))
          (program-to-call-output-buf
           (get-buffer-create (format "*%s*" program)))
          (call-process-args
@@ -3019,7 +3028,7 @@ which returns the exit-status and the string output.
          (output
           (with-current-buffer program-to-call-output-buf
 	    (widen)
-	    (buffer-string))) )
+	    (buffer-string))))
     (ignore-errors (kill-buffer program-to-call-output-buf))
     (cons exitcode
           (if (not (null trim-output)) (string-trim output) output))))
@@ -3082,14 +3091,13 @@ which returns the exit-status and the string output.
            (widen)
            (goto-char (point-min))
            ;; skip (pub )?(use|mod)
-           (while (re-search-forward "^\\(pub\\s-+\\((crate\\|self\\|in\\s-+[a-z0-9:]+)\\)?\\)?\s-*\\(use\\|mod\\)\\s-+\\(.*\\)$" nil t)
+           (while (re-search-forward
+                   "^\\(pub\\s-+\\((crate\\|self\\|in\\s-+[a-z0-9:]+)\\)?\\)?\s-*\\(use\\|mod\\)\\s-+\\(.*\\)$" nil t)
              (goto-char (match-end 1))
-             (end-of-line)
-             )
+             (end-of-line))
            (while (re-search-forward "}\n\\([a-zA-Z0-9#]+\\)" nil t)
              (replace-match "}\n\n\\1")
-             (goto-char (match-end 1)))
-           ));;progn
+             (goto-char (match-end 1)))));;progn
        );; when success
 
      (progn ;; (or)  error
@@ -3151,23 +3159,23 @@ which returns the exit-status and the string output.
   "BEG END."
   (interactive "*r")
   (save-mark-excursion-and-match-data
-   (goto-char beg)
-   (while (re-search-forward "\\(^\\|\\b\\)[a-fA-F0-9]+\\(\\b\\|$\\)" end t)
-     (let* ((val (format "%s" (string-to-number (match-string) 16)))
-            ;; (hexa (or (and (length= val 1) (format "0%s" val))
-            ;;           val))
-            )
-       (replace-match val)))))
+    (goto-char beg)
+    (while (re-search-forward
+            "\\(^\\|\\b\\)[a-fA-F0-9]+\\(\\b\\|$\\)" end t)
+      (let* ((val (format "%s" (string-to-number (match-string) 16)))
+             ;; (hexa (or (and (length= val 1) (format "0%s" val))
+             ;;           val))
+             )
+        (replace-match val)))))
 
 (defun decimal-to-hex-region (beg end)
   "BEG END."
   (interactive "*r")
   (save-mark-excursion-and-match-data
-   (goto-char beg)
-   (while (re-search-forward "\\(^\\|\\b\\)[0-9]+\\(\\b\\|$\\)" end t)
-     (replace-match
-      (format "%02x" (string-to-number (match-string 0))))
-     )))
+    (goto-char beg)
+    (while (re-search-forward "\\(^\\|\\b\\)[0-9]+\\(\\b\\|$\\)" end t)
+      (replace-match
+       (format "%02x" (string-to-number (match-string 0)))))))
 
 ;; WIP/TODO: replace with rgb-parser.el
 ;; (defun hex-rgb-to-ansi-region (beg end)
@@ -3198,13 +3206,15 @@ which returns the exit-status and the string output.
   "depends on cargo crate heck-string-cli: `cargo install heck-string-cli'
 BEG END."
   (unless (stringp string)
-    (signal 'type-error (format "`string' should be a string not %s: %s" (type-of string) string)))
+    (signal 'type-error
+            (format "`string' should be a string not %s: %s"
+                    (type-of string)
+                    string)))
 
   (let* ((tmp-buffer-name "*slugify-string*" )
          (tmp-buffer (get-buffer-create tmp-buffer-name))
          (exit-code
-          (call-process "slugify-string" nil tmp-buffer nil
-                        string)))
+          (call-process "slugify-string" nil tmp-buffer nil string)))
     (unless (eq 0 exit-code)
       (kill-buffer tmp-buffer)
       (error
@@ -3308,8 +3318,7 @@ BEG END."
             (save-buffer 0)
             (shfmt))
 
-	(user-error "no regexp match for: %S" regexp))
-      ))
+	(user-error "no regexp match for: %S" regexp))))
   ;; OzsgOzsgKGRlZnVuIGNhcmdvLWNyYWZ0LWJyZWFrLW9uZWxpbmVyLWNhbGwoKQo7OyA7OyAgICIuIgo7OyA7OyAgIChpbnRlcmFjdGl2ZSkKOzsgOzsgICA7OyBjYXJnbyBjcmFmdCAtY3NtIC1DIGJvb2xlYW4gLUMgbnVtYmVyIC1DIGRhdGV0aW1lIC1DIGpzb24gLUMgeWFtbCAtQyB0b21sIC1DIGluaSAtQyBkYXRlIC1DIHRpbWUgLWQgJ2Nocm9ubyAtRiBjbG9jaycgaXMKOzsKOzsgOzsgICAobGV0ICgocmVnZXhwICJeXFwoY2FyZ29cXChccy0rXHxbLV1cXCljcmFmdFxcKVxcKFxccy0rWy1dW2Etel0rXFx8XFxzLStbLV1bQ11ccy0rW2Etel1bYS16MC05Xy1dK1xcfFxccy0rWy1dW2RdXFxzLStcXCgnW14nXSsnXFx8W2EtekEtWl1bYS16QS1aMC05Xy1dK1xcKVxccy0rXFwoW2EtekEtWl1bYS16QS1aMC05Xy1dK1xcKVxcKSIpKQo7OyA7OyAgICAgKHNhdmUtZXhjdXJzaW9uCjs7IDs7ICAgICAgICh3aWRlbikKOzsgOzsgICAgICAgKGdvdG8tY2hhciAocG9pbnQtbWluKSkKOzsgOzsgICAgICAgKGlmIChyZS1zZWFyY2gtZm9yd2FyZCByZWdleHAgbmlsIHQgMSkKOzsgOzsgICAgICAgICAgIChyZXBsYWNlLW1hdGNoICJcXDEgXFxcblxcMyIpCjs7Cjs7Cjs7IDs7IAkodXNlci1lcnJvciAibm8gcmVnZXhwIG1hdGNoIGZvcjogJVMiIHJlZ2V4cCkKOzsgOzsgCSkKOzsgOzsgICAgICAgKSkKOzsgOzsgICApCjs7ICh1bmRlZnVuICdjYXJnby1jcmFmdC1icmVhay1vbmVsaW5lci1jYWxsKQo=
   )
 
@@ -3324,8 +3333,7 @@ BEG END."
         (replace-match "`\\1`,\n`[\\2\\3'\\4']`,\n`[\\2\\3\"\\4\"]`") ;; works
         ;; (replace-match "\\1,\n\"[\\2\\3'\\4']\",\n\"[\\2\\3\\\"\\4\\\"]\"")
         ;; (replace-match "\\1,\n\"[\\2\\3'\\4']\"") ;; works
-        ))
-    ))
+        ))))
 
 (defun regexp-adoc-to-markdown ()
   "."
@@ -3406,14 +3414,16 @@ BEG END."
 
 
 (defun today-string (&optional zone slugify)
-  (unless (or (stringp zone)
-              (null zone))
-    (signal 'type-error (format  "[today-string] argument `zone' must be either nil or string but instead received `%s': %s"
-                                 (type-of zone) zone)))
-  (unless (or (functionp slugify)
-              (null slugify))
-    (signal 'type-error (format  "[today-string] argument `slugify' must be either nil or function but instead received `%s': %s"
-                                 (type-of slugify) slugify)))
+  (unless (or (stringp zone) (null zone))
+    (signal 'type-error
+            (format  "[today-string] argument `zone' must be either nil or string but instead received `%s': %s"
+                     (type-of zone)
+                     zone)))
+  (unless (or (functionp slugify) (null slugify))
+    (signal 'type-error
+            (format  "[today-string] argument `slugify' must be either nil or function but instead received `%s': %s"
+                     (type-of slugify)
+                     slugify)))
   (setq slugify (or slugify #'slugify-string))
 
 
@@ -3425,8 +3435,7 @@ BEG END."
 
 (defun now (&optional zone)
   (interactive)
-  (insert
-   (now-string zone)))
+  (insert (now-string zone)))
 
 (defun now-sexp(&optional zone)
   "returns a `cons' whose `car' is a `numberp' with the current time in seconds and `cdr' is the current time"
@@ -3438,25 +3447,26 @@ BEG END."
 string argument (current time formated like RFC-3339 except timezone
 name appears instead instead of timezone's \"%H:%M\") and returns a
 string. "
-  (unless (or (functionp slugify)
-              (null slugify))
-    (signal 'type-error (format  "[now-string] argument `slugify' must be either nil or a function but instead received `%s': %s"
-                                 (type-of slugify) slugify)))
-  (unless (or (stringp zone)
-              (null zone))
-    (signal 'type-error (format  "[today-string] argument `zone' must be either nil or string but instead received `%s': %s"
-                                 (type-of zone) zone)))
+  (unless (or (functionp slugify) (null slugify))
+    (signal 'type-error
+            (format  "[now-string] argument `slugify' must be either nil or a function but instead received `%s': %s"
+                     (type-of slugify)
+                     slugify)))
+  (unless (or (stringp zone) (null zone))
+    (signal 'type-error
+            (format  "[today-string] argument `zone' must be either nil or string but instead received `%s': %s"
+                     (type-of zone)
+                     zone)))
   (setq-local funcall (or slugify #'slugify-string))
-  (funcall (or slugify #'identity) (format-time-string (symbol-value 'now-string-format) nil zone)))
+  (funcall
+   (or slugify #'identity)
+   (format-time-string (symbol-value 'now-string-format) nil zone)))
 
 (defconst validate-argument-is-of-expected-type-or-nil-type-error-fmt
   (string-join
-   '(
-     "[%(function-name)s] argument `%(arg-name)s' must be either nil or"
-     "%(expected-type-name)s but instead received a `%(type-of)s': %(arg-value)s"
-     )
-   " "
-   )
+   '("[%(function-name)s] argument `%(arg-name)s' must be either nil or"
+     "%(expected-type-name)s but instead received a `%(type-of)s': %(arg-value)s")
+   " ")
   "used by validate-argument-is-of-expected-type-or-nil")
 
 (defun validate-argument-is-of-expected-type-or-nil (function-name arg-name arg-value expected-type-name predicate &optional fallback-value)
@@ -3464,14 +3474,14 @@ string. "
 predicate fails and arg-value is not nil.
 Returns `ARG-VALUE' if predicate succeeds or `FALLBACK-VALUE' if `ARG-VALUE' is nil and predicate succeeds.
 "
-  (unless (or (predicate arg-value)
-              (null arg-value))
-    (signal 'type-error (format validate-argument-is-of-expected-type-or-nil-type-error-fmt
-                                function-name
-                                arg-name
-                                expected-type-name
-                                (type-of arg-value)
-                                arg-value)))
+  (unless (or (predicate arg-value) (null arg-value))
+    (signal 'type-error
+            (format validate-argument-is-of-expected-type-or-nil-type-error-fmt
+                    function-name
+                    arg-name
+                    expected-type-name
+                    (type-of arg-value)
+                    arg-value)))
   (or arg-value fallback-value))
 
 
@@ -3525,8 +3535,7 @@ Returns `ARG-VALUE' if predicate succeeds or `FALLBACK-VALUE' if `ARG-VALUE' is 
      (point-min)
      (point-max))))
 
-(defvar replace-regexp-all-buffer-replacement-history
-  (list))
+(defvar replace-regexp-all-buffer-replacement-history (list))
 
 (defun replace-regexp-all-buffer()
   "like `replace-regexp' but replaces all ocurrences of regex in
@@ -3534,15 +3543,15 @@ the entire buffer without unmarking active regions or losing
 cursor position in buffer."
   (interactive)
   (let* ((regexp (read-regexp "replace all regexp in all buffer: "))
-         (replacement (read-string "replacement: " nil replace-regexp-all-buffer-replacement-history replace-regexp-all-buffer-replacement-history)))
+         (replacement
+          (read-string "replacement: " nil replace-regexp-all-buffer-replacement-history replace-regexp-all-buffer-replacement-history)))
 
     (save-mark-and-excursion
       (widen)
       (beginning-of-buffer);;(goto-char (point-min))
       (while (re-search-forward regexp nil t)
         (replace-match replacement)
-        (goto-char (match-end 0))
-        ) ;;while
+        (goto-char (match-end 0))) ;;while
       ) ;;save-mark-and-excursion
     ) ;;let
   );;defun
@@ -3551,27 +3560,26 @@ cursor position in buffer."
   "creates a new tmp buffer with the same mode as the current buffer, then creates a new emacs `frame' (which in terms of OS usually actually means `window') with that tmp buffer.
 "
   (interactive)
-  (let* ((frame-params '((minibuffer . t)
-                         (ns-appearance . dark)
-                         (ns-transparent-titlebar . t)
-			 (border-color . "#FFFFFF")
-                         (cursor-color . "#44FF88")
-			 (foreground-color . "#FFFFFF")
-                         (background-color . "#000000")
-			 (vertical-scroll-bars)))
+  (let* ((frame-params
+          '((minibuffer . t)
+            (ns-appearance . dark)
+            (ns-transparent-titlebar . t)
+	    (border-color . "#FFFFFF")
+            (cursor-color . "#44FF88")
+	    (foreground-color . "#FFFFFF")
+            (background-color . "#000000")
+	    (vertical-scroll-bars)))
          (current-mode-name (format "%s" mode-name))
          (current-mode-symbol (intern-soft current-mode-name))
          (tmp-buffer-name (format "tmp-buffer-%s" current-mode-name))
          (tmp-buffer (create-fresh-buffer tmp-buffer-name))
          (tmp-frame (make-frame-on-current-monitor frame-params)) ;; (tmp-frame (make-frame-command)))
          (tmp-frame-type (framep tmp-frame))
-         (tmp-frame-is-live (frame-live-p tmp-frame))
-         )
+         (tmp-frame-is-live (frame-live-p tmp-frame)))
     (setq major-mode current-mode-symbol)
     (set-buffer-major-mode tmp-buffer)
     (select-frame-set-input-focus tmp-frame nil)
-    (pop-to-buffer-same-window tmp-buffer nil)
-    ))
+    (pop-to-buffer-same-window tmp-buffer nil)))
 
 ;; 1. set mode in tmp-buffer to current-mode-name
 ;; 2. open new frame and window with tmp-buffer
@@ -3600,11 +3608,14 @@ cursor position in buffer."
 (defun string-to-secure-hash-region (algorithm beg end)
   "replaces string in given region with `secure-hash' of region contents."
   (if (not (symbolp algorithm))
-      (user-error "(string-to-secure-hash-region) argument ALGORITHM is not a symbol: %S" algorithm))
+      (user-error
+       "(string-to-secure-hash-region) argument ALGORITHM is not a symbol: %S" algorithm))
   (if (not (numberp beg))
-      (user-error "(string-to-secure-hash-region) argument BEG is not a number: %S" beg))
+      (user-error
+       "(string-to-secure-hash-region) argument BEG is not a number: %S" beg))
   (if (not (numberp end))
-      (user-error "(string-to-secure-hash-region) argument END is not a number: %S" end))
+      (user-error
+       "(string-to-secure-hash-region) argument END is not a number: %S" end))
 
   (save-mark-and-excursion
     (let* ((contents (buffer-substring-no-properties beg end))
@@ -3643,9 +3654,8 @@ cursor position in buffer."
 
 (defun write-to-minibuffer (text)
   "writes to minibuffer"
-  (let ((output (or (when (stringp text)
-		      text)
-		    (format "%S" text))))
+  (let ((output
+         (or (when (stringp text) text) (format "%S" text))))
     (ignore-errors
       (with-current-buffer (window-buffer (minibuffer-window))
 	(read-only-mode -1)
@@ -3673,8 +3683,7 @@ cursor position in buffer."
   t
   "`c-message' will always write to minibuffer unless this var is set to `nil'")
 
-(defvar interactive-read-fmt-and-args-history
-  nil)
+(defvar interactive-read-fmt-and-args-history nil)
 
 (defun number-to-ordinal (n)
   "Converts an integer N into its ordinal string representation (e.g., \"1st\", \"2nd\")."
@@ -3684,68 +3693,83 @@ cursor position in buffer."
          (suffix
           (cond
            ;; Exception for numbers ending in 11, 12, or 13
-           ((memq last-two-digits '(11 12 13)) "th")
+           ((memq last-two-digits '(11 12 13))
+            "th")
            ;; Suffixes based on the last digit
-           ((eq last-digit 1) "st")
-           ((eq last-digit 2) "nd")
-           ((eq last-digit 3) "rd")
+           ((eq last-digit 1)
+            "st")
+           ((eq last-digit 2)
+            "nd")
+           ((eq last-digit 3)
+            "rd")
            ;; Default suffix for all others
            (t "th"))))
     (format "%d%s" n suffix)))
 
 (defun interactive-read-fmt-and-args ()
   (let* ((args (list))
-         (fmt (read-string "format string: " nil interactive-read-fmt-and-args-history))
-         (expected-fmt-specs (save-match-data
-                               (let ((specs (list))
-                                     (start nil))
+         (fmt
+          (read-string "format string: " nil interactive-read-fmt-and-args-history))
+         (expected-fmt-specs
+          (save-match-data
+            (let ((specs (list))
+                  (start nil))
 
-                                 (while (string-match "\b\\(%[^%][^[:space:]\n]*[a-zA-F]+\\)\b\\s-*" fmt start t)
-                                   (setq start (match-end))
-                                   (push (match-string 1 fmt) specs)
-                                   );; while
-                                 );;let
-                               );;save-match-data
-                             )
-         );; let* varlist
-    (seq-do-indexed #'(lambda (spec index)
-                        (let* ((arg-number (+ 1 index))
-                               (nth-arg (number-to-ordinal arg-number))
-                               (initial-prompt (format "%s format arg `%s': " nth-arg (auto-propertize-string spec)))
-                               (prompt initial-prompt)
-                               (sexp (read--expression prompt))
-                               (prop-sexp (auto-propertize-string (format "%S" sexp)))
-                               (prop-spec (auto-propertize-string spec))
+              (while (string-match
+                      "\b\\(%[^%][^[:space:]\n]*[a-zA-F]+\\)\b\\s-*" fmt start t)
+                (setq start (match-end))
+                (push (match-string 1 fmt) specs));; while
+              );;let
+            );;save-match-data
+          ));; let* varlist
+    (seq-do-indexed
+     #'(lambda (spec index)
+         (let* ((arg-number (+ 1 index))
+                (nth-arg (number-to-ordinal arg-number))
+                (initial-prompt
+                 (format "%s format arg `%s': " nth-arg
+                         (auto-propertize-string spec)))
+                (prompt initial-prompt)
+                (sexp (read--expression prompt))
+                (prop-sexp (auto-propertize-string (format "%S" sexp)))
+                (prop-spec (auto-propertize-string spec))
 
-                               (last-error nil)
-                               (prompt-errors (list))
-                               sexp-value)
-                          (while (condition-case sexp-error
-                                     (and (setq sexp-value (eval-expression sexp))
-                                          (null (format-string-signal-error spec sexp-value)))
+                (last-error nil)
+                (prompt-errors (list))
+                sexp-value)
+           (while (condition-case sexp-error
+                      (and
+                       (setq sexp-value (eval-expression sexp))
+                       (null
+                        (format-string-signal-error spec sexp-value)))
 
-                                   (eval-sexp-string-error (progn
-                                                             (setq
-                                                              last-error (format "error evaluating expression %s: %s"
-                                                                                 prop-sexp
-                                                                                 (propertize-error-string eval-err))
-                                                              prompt-errors (append (cons eval-err sexp)))
-                                                             sexp-error))
+                    (eval-sexp-string-error
+                     (progn
+                       (setq
+                        last-error
+                        (format "error evaluating expression %s: %s"
+                                prop-sexp
+                                (propertize-error-string eval-err))
+                        prompt-errors
+                        (append (cons eval-err sexp)))
+                       sexp-error))
 
-                                   (format-string-error (progn
-                                                          (setq
-                                                           last-error (format "value %s is invalid for %s format arg `%s': %s"
-                                                                              sexp-value
-                                                                              nth-arg
-                                                                              prop-spec
-                                                                              sexp-error)
-                                                           prompt-errors (append (cons format-err sexp)))
-                                                          format-err))));; end while
+                    (format-string-error
+                     (progn
+                       (setq
+                        last-error
+                        (format "value %s is invalid for %s format arg `%s': %s"
+                                sexp-value
+                                nth-arg
+                                prop-spec
+                                sexp-error)
+                        prompt-errors
+                        (append (cons format-err sexp)))
+                       format-err))));; end while
 
-                          (push sexp-value args)
-                          );; end let*
-                        );; end lambda
-                    expected-fmt-specs));; seq-do-indexed
+           (push sexp-value args));; end let*
+         );; end lambda
+     expected-fmt-specs));; seq-do-indexed
   )
 
 
@@ -3754,25 +3778,21 @@ cursor position in buffer."
   "drop-in replacement for `message' that output colorized messages to a buffer named \"*C-Messages*\""
   (interactive (interactive-read-fmt-and-args))
 
-  (let* (
-         (output (format "%s\n" (apply #'format fmt args)))
+  (let* ((output (format "%s\n" (apply #'format fmt args)))
          (trimmed-output (string-trim output))
          ;; (output (concat (apply #'format (append (list fmt) args)) "\n"))
-         (buffer (get-buffer-create c-message-buffer))
-         )
+         (buffer (get-buffer-create c-message-buffer)))
     (with-current-buffer buffer
       (read-only-mode -1)
       (widen)
       (end-of-buffer)
       (insert output)
       (end-of-buffer)
-      (goto-char (point-max))
-      )
+      (goto-char (point-max)))
 
     (unless (null c-message-write-to-minibuffer)
       (write-to-minibuffer trimmed-output))
-    trimmed-output
-    ))
+    trimmed-output))
 
 (defun c-message-force-minibuffer (fmt &rest args)
   (interactive (interactive-read-fmt-and-args))
@@ -3793,8 +3813,7 @@ cursor position in buffer."
   "."
   (interactive)
   (erase-buffer-by-name  "*C-Messages*")
-  (unless (not (null dont-erase-minibuffer))
-    (erase-minibuffer)))
+  (unless (not (null dont-erase-minibuffer)) (erase-minibuffer)))
 
 (defun c-message-open (fmt &rest args)
   "drop-in replacement for `c-message' opens the `*C-Messages*' buffer after outputing the message"
@@ -3802,116 +3821,132 @@ cursor position in buffer."
   (delete-other-windows (frame-first-window))
   ;;(erase-c-messages)
   (let ((output (funcall #'c-message fmt args)))
-    (or (when ;; c-message-buffer is open and is the first active buffer in current frame...
-            (and (not (null (get-buffer-window c-message-buffer)))
-	         (eq (frame-first-window) (get-buffer-window c-message-buffer)))
-          (message "... then split frame horizontally with the c-message-buffer at the right side")
-          ;; ... then split frame horizontally with the c-message-buffer at the right side
-          (set-window-buffer (split-window-right) (get-buffer c-message-buffer))
-          ;; ... and set the previously active buffer (if any) to the left
-          (debug-active-buffers
-           ;; TODO: first lets figure out the most recent buffer before c-message-buffer
-           )
-          ) ;; `end' `when' c-message-buffer is open and is the first active buffer in current frame
-        (progn ;; currently active buffer is not c-message-buffer
-          ;; so let's split right and set c-message-buffer to the right
-          (let* ((right-side (split-window-right))
-	         (cmbuffer (get-buffer-create c-message-buffer)))
+    (or
+     (when ;; c-message-buffer is open and is the first active buffer in current frame...
+         (and
+          (not (null (get-buffer-window c-message-buffer)))
+	  (eq
+           (frame-first-window)
+           (get-buffer-window c-message-buffer)))
+       (message "... then split frame horizontally with the c-message-buffer at the right side")
+       ;; ... then split frame horizontally with the c-message-buffer at the right side
+       (set-window-buffer
+        (split-window-right)
+        (get-buffer c-message-buffer))
+       ;; ... and set the previously active buffer (if any) to the left
+       (debug-active-buffers
+        ;; TODO: first lets figure out the most recent buffer before c-message-buffer
+        )) ;; `end' `when' c-message-buffer is open and is the first active buffer in current frame
+     (progn ;; currently active buffer is not c-message-buffer
+       ;; so let's split right and set c-message-buffer to the right
+       (let* ((right-side (split-window-right))
+	      (cmbuffer (get-buffer-create c-message-buffer)))
 
-            (message "(set-window-buffer %S %S)" right-side cmbuffer)
-            (set-window-buffer right-side cmbuffer)))
-        );; `end' `or' clause
+         (message "(set-window-buffer %S %S)" right-side cmbuffer)
+         (set-window-buffer right-side cmbuffer))));; `end' `or' clause
     output))
 
 
 (defun display-symbol (sym &optional fallback)
   "returns a string with the symbol's value"
-  (format "%s" (condition-case err
-                   (or (when (stringp sym)
-                         (message "symbol %S is stringp" sym)
-                         (intern-soft sym))
-                       (when (symbolp sym)
-                         (message "symbol %S is symbolp" sym)
-                         (symbol-value sym))
-                       (when (listp sym)
-                         (message "symbol %S is listp" sym)
-                         (format "'(%s)" (string-join (mapcar #'display-symbol sym)
-                                                      " ")))
-                       (when (sequencep sym)
-                         (message "symbol %S is listp" sym)
-                         (format ";; sequencep\n(%s)" (string-join (mapcar #'display-symbol sym)
-                                                                   " ")))
-                       (when (not (null fallback))
-                         (message "displaying fallback %S because symbol is %S" sym)
-                         fallback)
-                       (progn
-                         (message "displaying symbol %S because there is no fallback" sym)
-                         sym
-                         )
-                       ) ;; end (or
+  (format "%s"
+          (condition-case err
+              (or
+               (when (stringp sym)
+                 (message "symbol %S is stringp" sym)
+                 (intern-soft sym))
+               (when (symbolp sym)
+                 (message "symbol %S is symbolp" sym)
+                 (symbol-value sym))
+               (when (listp sym)
+                 (message "symbol %S is listp" sym)
+                 (format
+                  "'(%s)"
+                  (string-join (mapcar #'display-symbol sym) " ")))
+               (when (sequencep sym)
+                 (message "symbol %S is listp" sym)
+                 (format ";; sequencep\n(%s)"
+                         (string-join
+                          (mapcar #'display-symbol sym)
+                          " ")))
+               (when (not (null fallback))
+                 (message "displaying fallback %S because symbol is %S" sym)
+                 fallback)
+               (progn
+                 (message "displaying symbol %S because there is no fallback" sym)
+                 sym)
+               ) ;; end (or
 
-                 (error (let (
-                              (error-message (format "error in `display-symbol': %s" (error-message-string err)))
-                              ) ;;end let varlist
-                          (message "%s" error-message)
-                          error-message) ;; end let
-                        )) ;; end condition-case
-          )
-  );;end defun display-symbol
+            (error
+             (let ((error-message
+                    (format "error in `display-symbol': %s"
+                            (error-message-string err)))) ;;end let varlist
+               (message "%s" error-message)
+               error-message) ;; end let
+             )) ;; end condition-case
+          ));;end defun display-symbol
 (defalias 'symbol-display #'display-symbol)
 
 (defun c-message-debug-symbols (symbol-list &rest context-symbol-list)
-  (if (and (not (listp symbol-list))
-           (not (symbolp symbol-list)))
+  (if (and
+       (not (listp symbol-list))
+       (not (symbolp symbol-list)))
       (error "c-message-debug-symbols `symbol-list' is neither a list or a symbol: `%S'" symbol-list))
 
-  (let* ((symbol-list (if (symbolp symbol-list) (list symbol-list)
-                        symbol-list))
+  (let* ((symbol-list
+          (if (symbolp symbol-list) (list symbol-list) symbol-list))
          (tag-attributes
-          (mapcar #'(lambda (sym)
-                      (format "%s=%s" sym (display-symbol sym))
-                      ) ;;end lambda
-                  context-symbol-list) ;; end mapcar
+          (mapcar
+           #'(lambda (sym) (format "%s=%s" sym (display-symbol sym))) ;;end lambda
+           context-symbol-list) ;; end mapcar
           ) ;;end var tag-attributes
-         (inner-tags  (mapcar #'(lambda (sym) (auto-propertize-string
-                                               ;;string
-                                               (format
-                                                "    <%s>\n    %s\n    </%s>"
-                                                sym
-                                                (string-join
-                                                 (mapcar #'(lambda (line) (format "    %s" line))
-                                                         (string-lines (display-symbol sym)) ;;end string-lines
-                                                         );;end mapcar
-                                                 "\n")
-                                                sym))) ;; end mapcar lambda
-                              symbol-list) ;; end mapcar
-		      ) ;;end var inner-tags
-         (debug-tag (auto-propertize-string (format "<debug %s>" (string-join tag-attributes " ")))
-                    ) ;;end var debug-tag
+         (inner-tags
+          (mapcar
+           #'(lambda (sym)
+               (auto-propertize-string
+                ;;string
+                (format
+                 "    <%s>\n    %s\n    </%s>"
+                 sym
+                 (string-join
+                  (mapcar
+                   #'(lambda (line) (format "    %s" line))
+                   (string-lines (display-symbol sym)) ;;end string-lines
+                   );;end mapcar
+                  "\n")
+                 sym))) ;; end mapcar lambda
+           symbol-list) ;; end mapcar
+	  ) ;;end var inner-tags
+         (debug-tag
+          (auto-propertize-string
+           (format "<debug %s>" (string-join tag-attributes " ")))) ;;end var debug-tag
          )
 
-    (c-message  "%s\n%s\n%s" debug-tag (string-join inner-tags "\n") debug-tag))
-  )
+    (c-message  "%s\n%s\n%s" debug-tag
+                (string-join inner-tags "\n")
+                debug-tag)))
 
 (defun debug-active-buffers()
   (interactive)
   (erase-messages)
   (message "<debug-active-buffers>")
-  (let* (
-         (active-buffers (buffer-list))
+  (let* ((active-buffers (buffer-list))
          (active-buffer-count (length active-buffers))
          (iter-active-buffer-index 0))
     (message "active-buffers:\n%s"
-             (string-join (mapcar #'(lambda (buf)
-				      (let ((bufstring (format "    %s[%d]" (buffer-name buf) iter-active-buffer-index)
-						       ))
-                                        (setq iter-active-buffer-index (+ iter-active-buffer-index 1))
-                                        bufstring))
-                                  active-buffers)
-                          "\n"))
-    )
-  (message "</debug-active-buffers>")
-  )
+             (string-join
+              (mapcar
+               #'(lambda (buf)
+		   (let ((bufstring
+                          (format "    %s[%d]"
+                                  (buffer-name buf)
+                                  iter-active-buffer-index)))
+                     (setq iter-active-buffer-index
+                           (+ iter-active-buffer-index 1))
+                     bufstring))
+               active-buffers)
+              "\n")))
+  (message "</debug-active-buffers>"))
 
 (defun re-builder-debug-state()
   (interactive)
@@ -3929,28 +3964,30 @@ cursor position in buffer."
                 (list
                  (format "reb-regexp [buffer-local] =`%s'" reb-regexp)
                  (format "reb-regexp-src [buffer-local] =`%S'" reb-regexp-src)
-                 (format "reb-overlays [buffer-local] =`%S'" reb-overlays)
-                 )
+                 (format "reb-overlays [buffer-local] =`%S'" reb-overlays))
                 )
-            (list (format "no buffer-local vars in %s buffer: %S" reb-buffer re-builder-buffer))
-            )
-          )
-         ) ;;end let* declarations
+            (list
+             (format "no buffer-local vars in %s buffer: %S" reb-buffer re-builder-buffer)))
+          )) ;;end let* declarations
     (c-message-open "re-builder vars:\n%s\n\nre-builder buffer-local vars:\n%s"
-                    (string-join (mapcar #'(lambda (string) (format "    %s" string))
-                                         (list
-					  (format "reb-mode =`%S'" reb-mode)
-					  (format "reb-target-buffer =`%S'" reb-target-buffer)
-					  (format "reb-target-window =`%S'" reb-target-window)
-					  (format "reb-window-config =`%S'" reb-window-config)
-					  (format "reb-subexp-mode =`%S'" reb-subexp-mode)
-					  (format "reb-subexp-displayed =`%S'" reb-subexp-displayed)
-					  (format "reb-mode-string =`%S'" reb-mode-string)
-					  (format "reb-valid-string =`%S'" reb-valid-string)
-					  ))
-				 "\n")
-		    (string-join (mapcar #'(lambda (string) (format "    %s" string)) reb-debug-local-vars) "\n"))
-    )
+                    (string-join
+                     (mapcar
+                      #'(lambda (string) (format "    %s" string))
+                      (list
+		       (format "reb-mode =`%S'" reb-mode)
+		       (format "reb-target-buffer =`%S'" reb-target-buffer)
+		       (format "reb-target-window =`%S'" reb-target-window)
+		       (format "reb-window-config =`%S'" reb-window-config)
+		       (format "reb-subexp-mode =`%S'" reb-subexp-mode)
+		       (format "reb-subexp-displayed =`%S'" reb-subexp-displayed)
+		       (format "reb-mode-string =`%S'" reb-mode-string)
+		       (format "reb-valid-string =`%S'" reb-valid-string)))
+		     "\n")
+		    (string-join
+                     (mapcar
+                      #'(lambda (string) (format "    %s" string))
+                      reb-debug-local-vars)
+                     "\n")))
   )
 
 (defun re-builder-clean-and-reset()
@@ -3959,14 +3996,10 @@ cursor position in buffer."
       (user-error "reb-buffer does not match name: `%s'" reb-buffer))
 
   (with-current-buffer reb-target-buffer
-    (setq-local  reb-regexp nil
-                 reb-regexp-src nil
-                 reb-overlays nil)
-    )
+    (setq-local  reb-regexp nil reb-regexp-src nil reb-overlays nil))
 
   (let ((re-builder-buffer (get-buffer reb-buffer)))
-    (if (bufferp reb-target-buffer)
-        (kill-buffer re-builder-buffer)))
+    (if (bufferp reb-target-buffer) (kill-buffer re-builder-buffer)))
 
   (setq reb-mode nil
         reb-target-buffer nil
@@ -3975,8 +4008,7 @@ cursor position in buffer."
         reb-subexp-mode nil
         reb-subexp-displayed nil
         reb-mode-string ""
-        reb-valid-string ""
-        )
+        reb-valid-string "")
   )
 
 (defun string-to-list-of-strings (string)
@@ -3984,12 +4016,13 @@ cursor position in buffer."
 signals error if the `string' argument is not a string"
   (if (not (stringp string))
       (error "string-to-list-of-strings %S" string))
-  (mapcar #'(lambda (chr) (format "%c" chr)) (string-to-list string)))
+  (mapcar
+   #'(lambda (chr) (format "%c" chr))
+   (string-to-list string)))
 
 (defvar insert-regexp-negate-string-history
   (list)
-  "history of strings input in previous calls to `insert-regexp-negate-string'"
-  )
+  "history of strings input in previous calls to `insert-regexp-negate-string'")
 
 ;;(enable-debug-on-error)
 (defun get-regexp-string-negation (string)
@@ -4002,27 +4035,29 @@ signals error if the `string' argument is not a string"
          (current "")
          (result (list)))
     (while (and (< index (+ member-count 1)) (stringp current))
-      (let* ((previous (string-join (mapcar #'(lambda (item) (format "[%s]" item))
-					    (seq-subseq string-members 0 index)))
-		       );;previous
+      (let* ((previous
+              (string-join
+               (mapcar
+                #'(lambda (item) (format "[%s]" item))
+	        (seq-subseq string-members 0 index))));;previous
              )
 
         ;; KGMtbWVzc2FnZS1kZWJ1Zy1zeW1ib2xzIChsaXN0ICdwcmV2aW91cyAncmVzdWx0KSAnaW5kZXggJ21lbWJlci1jb3VudCAnY3VycmVudCk=
         (setq
-         result (append result (list (format "%s[^%s]" previous current)))
-         index (+ index 1)
-         current (nth index string-members)
-         )
-        )
-      )
+         result
+         (append result (list (format "%s[^%s]" previous current)))
+         index
+         (+ index 1)
+         current
+         (nth index string-members))
+        ))
     ;; KGMtbWVzc2FnZS1kZWJ1Zy1zeW1ib2xzICdyZWItbW9kZS1zdHJpbmcp
-    (if (and (eq (get-buffer reb-buffer) (current-buffer))
-             (string= reb-re-syntax "read"))
+    (if (and
+         (eq (get-buffer reb-buffer) (current-buffer))
+         (string= reb-re-syntax "read"))
         (format "\\\\(%s\\\\)" (string-join result "\\\\|"))
-      (format "\\(%s\\)" (string-join result "\\|"))
-      )
-    )
-  )
+      (format "\\(%s\\)" (string-join result "\\|")))
+    ))
 
 (defun insert-regexp-negate-string (string)
   (interactive
@@ -4033,8 +4068,7 @@ signals error if the `string' argument is not a string"
   (let* ((regexp (get-regexp-string-negation string)))
 
     ;; KGMtbWVzc2FnZS1vcGVuICIlcyIgcmVnZXhwKQogICAgKGMtbWVzc2FnZS1kZWJ1Zy1zeW1ib2xzIChsaXN0ICdyZWItcmUtc3ludGF4ICdyZWdleHApKQ==
-    (insert regexp)
-    )
+    (insert regexp))
   )
 
 (defun call-process-get-status-and-info-default-conversion-function (element)
@@ -4042,16 +4076,13 @@ signals error if the `string' argument is not a string"
    ((stringp element)
     element) ;; stringp
 
-   ((or (numberp element)
-        (characterp element))
+   ((or (numberp element) (characterp element))
     (format "%s" element))
 
-   ((or (numberp element)
-        (characterp element))
+   ((or (numberp element) (characterp element))
     (format "%s" element))
 
-   ((or (listp element)
-        (vectorp element))
+   ((or (listp element) (vectorp element))
     (mapcar #'call-process-get-status-and-info-default-conversion-function
             element))
 
@@ -4064,8 +4095,7 @@ signals error if the `string' argument is not a string"
    ((eq t element)
     "true")
 
-   (t (format "%s" element))
-   ) ;;cond
+   (t (format "%s" element))) ;;cond
   );; defun
 
 
@@ -4094,8 +4124,7 @@ signals error if the `string' argument is not a string"
   ;; "^\\(.\\)\\(.\\)\\s-+\\(.+\\)$"
   "^\\([[:space:]!?ACDMRTU]\\)\\([[:space:]!?ACDMRTU]\\)[[:space:]]+\\(.*\\)$"
 
-  "regular expression used within `git-status-get-filenames' in call to `string-match'."
-  )
+  "regular expression used within `git-status-get-filenames' in call to `string-match'.")
 
 (defun git-status-porcelain-class-char-to-symbol(char)
   "`maps the given `char' to semantic symbols according to table below:
@@ -4111,13 +4140,14 @@ signals error if the `string' argument is not a string"
 `T' = file type changed (regular file, symbolic link or submodule)
 `U' = updated but unmerged
 ."
-  (let ((input (cond ((or (stringp char) (characterp char))
-		      (format "%s" char))
-		     ((and (listp char)
-                           (length= char 1))
-		      (car char))
-		     (t
-		      (error "invalid value (neither string nor character) for argument `char': %S" char))))
+  (let ((input
+         (cond
+          ((or (stringp char) (characterp char))
+	   (format "%s" char))
+	  ((and (listp char) (length= char 1))
+	   (car char))
+	  (t
+	   (error "invalid value (neither string nor character) for argument `char': %S" char))))
         (len (length input)))
     (if (> len 1)
         (error "`char' argument must be a string of length 1, instead got `%S' (normalized to `%s' of length `%d')"
@@ -4125,34 +4155,22 @@ signals error if the `string' argument is not a string"
     (cond
 
      ((string= " " input)
-      (list :sym 'unmodified
-	    :desc ""
-	    :long_desc "unmodified"
-	    )
+      (list :sym 'unmodified :desc "" :long_desc "unmodified")
       ;; end list
       );; end clause
 
      ((string= "!" input)
-      (list :sym 'ignored
-	    :desc ""
-	    :long_desc "ignored"
-	    )
+      (list :sym 'ignored :desc "" :long_desc "ignored")
       ;; end list
       );; end clause
 
      ((string= "?" input)
-      (list :sym 'untracked
-	    :desc ""
-	    :long_desc "untracked"
-	    )
+      (list :sym 'untracked :desc "" :long_desc "untracked")
       ;; end list
       );; end clause
 
      ((string= "A" input)
-      (list :sym 'added
-	    :desc ""
-	    :long_desc "added"
-	    )
+      (list :sym 'added :desc "" :long_desc "added")
       ;; end list
       );; end clause
 
@@ -4166,26 +4184,17 @@ signals error if the `string' argument is not a string"
       );; end clause
 
      ((string= "D" input)
-      (list :sym 'deleted
-	    :desc ""
-	    :long_desc "deleted"
-	    )
+      (list :sym 'deleted :desc "" :long_desc "deleted")
       ;; end list
       );; end clause
 
      ((string= "M" input)
-      (list :sym 'modified
-	    :desc ""
-	    :long_desc "modified"
-	    )
+      (list :sym 'modified :desc "" :long_desc "modified")
       ;; end list
       );; end clause
 
      ((string= "R" input)
-      (list :sym 'renamed
-	    :desc ""
-	    :long_desc "renamed"
-	    )
+      (list :sym 'renamed :desc "" :long_desc "renamed")
       ;; end list
       );; end clause
 
@@ -4201,8 +4210,7 @@ signals error if the `string' argument is not a string"
      ((string= "U" input)
       (list :sym 'updated
 	    :desc " but unmerged"
-	    :long_desc "updated but unmerged"
-	    )
+	    :long_desc "updated but unmerged")
       ;; end list
       );; end clause
 
@@ -4233,55 +4241,54 @@ signals error if the `string' argument is not a string"
          (status (car status-code-and-output))
          (output (car (cdr status-code-and-output)))
          (output-lines (save-match-data (string-lines output t)))
-	 ;; (seq-filter #'numberp '(a b 3 4 f 6))
-	 ;;   ⇒ (3 4 6)
-	 ;;
-	 ;; (seq-remove #'numberp '(1 2 c d 5))
-	 ;;   ⇒ (c d)
+         ;; (seq-filter #'numberp '(a b 3 4 f 6))
+         ;;   ⇒ (3 4 6)
+         ;;
+         ;; (seq-remove #'numberp '(1 2 c d 5))
+         ;;   ⇒ (c d)
 
          (classified-paths
 	  ;;(seq-remove #'null
-          (mapcar #'(lambda (line)
-		      (save-match-data
-                        (setq case-fold-search nil) ;; case sensitive
-			(if (string-match git-status-porcelain-regexp line)
-			    (let ((staged (match-string 1 line))   ;; then
-				  (unstaged (match-string 2 line)) ;; then
-				  (path (match-string 3 line)))    ;; then
-			      (list 'staged staged             ;; then
-				    'unstaged unstaged         ;; then
-				    'path path))               ;; end inner let varlist
+          (mapcar
+           #'(lambda (line)
+	       (save-match-data
+                 (setq case-fold-search nil) ;; case sensitive
+	         (if (string-match git-status-porcelain-regexp line)
+		     (let ((staged (match-string 1 line))   ;; then
+			   (unstaged (match-string 2 line)) ;; then
+			   (path (match-string 3 line)))    ;; then
+		       (list 'staged staged             ;; then
+			     'unstaged unstaged         ;; then
+			     'path path))               ;; end inner let varlist
 
-                          ;; else
-                          nil ;; else ;; KGxpc3QgJ3N0YWdlZCBuaWwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICd1bnN0YWdlZCBuaWwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICdwYXRoIG5pbCkpKQ==
-                          ) ;;end if
-                        ) ;; end save-match-data
-		      ) ;;end lambda
-                  ;; sequence
-                  output-lines ;; sequence
-                  ) ;; mapcar
+                   ;; else
+                   nil ;; else ;; KGxpc3QgJ3N0YWdlZCBuaWwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICd1bnN0YWdlZCBuaWwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICdwYXRoIG5pbCkpKQ==
+                   ) ;;end if
+                 ) ;; end save-match-data
+	       ) ;;end lambda
+           ;; sequence
+           output-lines ;; sequence
+           ) ;; mapcar
 	  ;; ) ;;seq-remove
-          )
-         )  ;; end let* varlist
+          ))  ;; end let* varlist
     ;; let* [body]
     (let ;; [debug]
-        ((result (format "
+        ((result
+          (format "
 status=%S
 output=%S
 output-lines=%S
 classified-paths=%S
 "
-                         status
-                         output
-                         output-lines
-                         classified-paths
-                         ))
+                  status
+                  output
+                  output-lines
+                  classified-paths))
          ) ;; end varlist let[debug]
       ;; let[debug] body
       (erase-messages)
       (message "%s" result)
-      (c-message-open "%s" result)
-      );; end let[debug]
+      (c-message-open "%s" result));; end let[debug]
     ) ;;end let*
   );; end defun git-status-get-filenames
 
@@ -4291,20 +4298,23 @@ classified-paths=%S
   "returns `t' if `seq' is valid flat-assoc-list or else `nil', unless
 `signal-error' is not nil, in which case signals an `error' instead.
 "
-  (let* ((error-or-nil #'(lambda (&rest error-args)
-			   (if (not (null signal-error))
-			       (apply #'error error-args)
-			     nil)))
-         (len (or (when (listp seq) (length seq))
-                  -1)) ;; set len
+  (let* ((error-or-nil
+          #'(lambda (&rest error-args)
+	      (if (not (null signal-error))
+		  (apply #'error error-args)
+	        nil)))
+         (len
+          (or (when (listp seq) (length seq)) -1)) ;; set len
          ;; end varlist
          )
-    (cond ((= len -1)
-           (error-or-nil "`seq' must be a list, instead got %S" seq))
-          ((or (< len 2)
-	       (not (= (% len 2) 0)))
-           (error-or-nil "length `seq' should be even but actually is %d" len))
-          (t t))))
+    (cond
+     ((= len -1)
+      (error-or-nil "`seq' must be a list, instead got %S" seq))
+     ((or
+       (< len 2)
+       (not (= (% len 2) 0)))
+      (error-or-nil "length `seq' should be even but actually is %d" len))
+     (t t))))
 
 (defun flat-list-get-assoc-key-value (seq key &optional signal-error)
   "Retrieves value under `key' within sequence `seq' as long as the sequence
@@ -4322,11 +4332,10 @@ Signals error if
   (if (flat-assoc-list-p seq signal-error)
       (let* ((pairs (seq-partition seq 2))
              (kv (alist-get key pairs)))
-        (cond ((and (not (null kv))
-                    (listp kv))
-	       (car kv))
-	      (t nil)))
-    ))
+        (cond
+         ((and (not (null kv)) (listp kv))
+	  (car kv))
+	 (t nil)))))
 
 
 (defun flat-list-get-assoc-keys (seq)
@@ -4344,7 +4353,9 @@ Signals error if
   (if (flat-assoc-list-p seq)
       (let* ((pairs (seq-partition seq 2))
              (values
-	      (mapcar #'(lambda (pair) (car (cdr pair))) pairs)))
+	      (mapcar
+               #'(lambda (pair) (car (cdr pair)))
+               pairs)))
         values)))
 
 (defun rename-current-file(new-file)
@@ -4369,34 +4380,36 @@ and minor modes. To be precise, no `auto-mode' changes happen.
 
 (defun shell-script-single-quote-string(string)
   "returns single-quoted `string' unless already single-quoted or double-quoted"
-  (or (when (string-match "^\\s-*\".*\"\\s-*$" string)
-        (string-trim string))
-      (when (string-match "^\\s-*'.*'\\s-*$" string)
-        (string-trim string))
-      (format "'%s'" string)
-      );; end of
+  (or
+   (when (string-match "^\\s-*\".*\"\\s-*$" string)
+     (string-trim string))
+   (when (string-match "^\\s-*'.*'\\s-*$" string)
+     (string-trim string))
+   (format "'%s'" string));; end of
   );; end defun shell-script-single-quote-string
 
 (defun shell-script-string-list-to-bash-indexed-array (string-list &optional item-separator-string noerror)
   (let* ((default-separator "\n")
-         (separator (or (when (and (stringp item-separator-string)
-                                   (length> item-separator-string 0))
-                          item-separator-string)
-                        (when (stringp item-separator-string)
-                          (warn "item-separator-string is empty, falling back to \"%S\"" default-separator)
-                          default-separator)
-                        (error "item-separator-string is not a string but rather: %S" item-separator-string))
-                    );; end (let* (separator ...
-         (safe-string-only-list (if (listp string-list)
-                                    (seq-filter #'stringp string-list)
-                                  (error "string-list is not a list but rather: %S" string-list)
-                                  )
-                                );; end (let* safe-string-only-list
-         (safe-string-coerced-list (mapcar #'(lambda (value)
-                                               (if (stringp value)
-                                                   value
-                                                 (format "%S" value)))
-                                           string-list));; end (let* (safe-string-coerced-list
+         (separator
+          (or
+           (when (and
+                  (stringp item-separator-string)
+                  (length> item-separator-string 0))
+             item-separator-string)
+           (when (stringp item-separator-string)
+             (warn "item-separator-string is empty, falling back to \"%S\"" default-separator)
+             default-separator)
+           (error "item-separator-string is not a string but rather: %S" item-separator-string)));; end (let* (separator ...
+         (safe-string-only-list
+          (if (listp string-list)
+              (seq-filter #'stringp string-list)
+            (error "string-list is not a list but rather: %S" string-list))
+          );; end (let* safe-string-only-list
+         (safe-string-coerced-list
+          (mapcar
+           #'(lambda (value)
+               (if (stringp value) value (format "%S" value)))
+           string-list));; end (let* (safe-string-coerced-list
          (string-values-list (list))
          (total-items (length string-list))
          (total-valid-strings (length safe-string-only-list))
@@ -4405,25 +4418,26 @@ and minor modes. To be precise, no `auto-mode' changes happen.
          );; end (let* (...varlist...))
     (if (not (= total-invalid-items 0))
         (if (null noerror)
-            (let ((invalid-items (seq-filter #'(lambda (item) (not (stringp item))) string-list)))
+            (let ((invalid-items
+                   (seq-filter
+                    #'(lambda (item) (not (stringp item)))
+                    string-list)))
               (error "%d invalid items - nonstring - items in `string-list' (%d total items)\n\ninvalid: %S\n\nall: %S"
                      total-invalid-items
                      total-items
                      invalid-items
                      safe-string-coerced-list));; end if (not (null noerror)) / then => (let ((invalid-items ...
           ;; else
-          (setq string-values-list safe-string-coerced-list)
-          ))
+          (setq string-values-list safe-string-coerced-list)))
 
-    (if (and (not (stringp item-separator-string))
-             (not (null item-separator-string))
-             (not noerror)
-             )
+    (if (and
+         (not (stringp item-separator-string))
+         (not (null item-separator-string))
+         (not noerror))
         (error "item-separator-string is not a string but rather: %S" item-separator-string) ;; end if/then
 
       (progn ;; else
-        (if (and (not (null item-separator-string))
-                 (not noerror)) ;; end if/then -> and
+        (if (and (not (null item-separator-string)) (not noerror)) ;; end if/then -> and
             (error "ignoring nonnull and nonstring `item-separator-string' `%S'" item-separator-string) ;; end if/then
           ) ;; end if not null item-separator-string
         (setq item-separator-string default-separator));;end (progn ...)
@@ -4431,10 +4445,11 @@ and minor modes. To be precise, no `auto-mode' changes happen.
 
     ;; end input validation
 
-    (format "( %s )"
-            (string-join (mapcar #'shell-script-single-quote-string
-                                 string-values-list)
-                         "\n" )) ;; result
+    (format
+     "( %s )"
+     (string-join
+      (mapcar #'shell-script-single-quote-string string-values-list)
+      "\n" )) ;; result
     ) ;; end (let*
   ) ;;end (defun shell-script-string-list-to-bash-indexed-array ...)
 
@@ -4474,175 +4489,183 @@ the slugify-string
 "
   (let* ((raw-pipeline
           (list
-           (or (when (executable-find "slugify-string")
-                 #'(lambda (string)
-                     (let* (
-                            (result (call-program-with-list-args "slugify-string" nil t nil string))
-                            (exit-code (flat-list-get-assoc-key-value result :exit-code))
-                            (output (string-trim (flat-list-get-assoc-key-value result :output)))
-                            )
-                       (or (when (and (= exit-code 0)
-                                      (length> output 0)
-                                      ) ;; end (when (and ...
-                             output) ;end (when ...)
-                           (progn
-                             (when (length= output 0)
-                               (warn "slugify-string `%S' returned empty string" string))
-                             (when (not (length= output 0))
-                               (warn "slugify-string `%S' exited with code %s" string exit-code))
-                             ;; return string as is
-                             string) ;; end progn
-                           ) ;; end or
-                       )  ;; end let*
-                     );; end lambda
-                 ) ;; end (when (executable-find "slugify-string" ...
-               (when (executable-find "heck-string")
-                 #'(lambda (string)
-                     (let* (
-                            (result (call-program-with-list-args "heck-string" nil t nil "--to=snake" string))
-                            (exit-code (flat-list-get-assoc-key-value result :exit-code))
-                            (output (string-trim (flat-list-get-assoc-key-value result :output)))
-                            )
-                       (or (when (and (= exit-code 0)
-                                      (length> output 0)
-                                      ) ;; end (when (and ...
-                             output) ;end (when ...)
-                           (progn
-                             (when (length= output 0)
-                               (warn "heck-string --to=snake `%S' returned empty string" string))
-                             (when (not (length= output 0))
-                               (warn "heck-string --to=snake `%S' exited with code %s" string exit-code))
-                             ;; return string as is
-                             string) ;; end progn
-                           ) ;; end or
-                       )  ;; end let*
-                     );; end lambda
-                 ) ;; end (when (executable-find "heck-string --to=snake" ...
-               (list) ;; fallback to empty list
-               );; end (or ...
+           (or
+            (when (executable-find "slugify-string")
+              #'(lambda (string)
+                  (let* ((result
+                          (call-program-with-list-args "slugify-string" nil t nil string))
+                         (exit-code
+                          (flat-list-get-assoc-key-value result :exit-code))
+                         (output
+                          (string-trim
+                           (flat-list-get-assoc-key-value result :output))))
+                    (or
+                     (when (and (= exit-code 0) (length> output 0)) ;; end (when (and ...
+                       output) ;end (when ...)
+                     (progn
+                       (when (length= output 0)
+                         (warn "slugify-string `%S' returned empty string" string))
+                       (when (not (length= output 0))
+                         (warn "slugify-string `%S' exited with code %s" string exit-code))
+                       ;; return string as is
+                       string) ;; end progn
+                     ) ;; end or
+                    )  ;; end let*
+                  );; end lambda
+              ) ;; end (when (executable-find "slugify-string" ...
+            (when (executable-find "heck-string")
+              #'(lambda (string)
+                  (let* ((result
+                          (call-program-with-list-args "heck-string" nil t nil "--to=snake" string))
+                         (exit-code
+                          (flat-list-get-assoc-key-value result :exit-code))
+                         (output
+                          (string-trim
+                           (flat-list-get-assoc-key-value result :output))))
+                    (or
+                     (when (and (= exit-code 0) (length> output 0)) ;; end (when (and ...
+                       output) ;end (when ...)
+                     (progn
+                       (when (length= output 0)
+                         (warn "heck-string --to=snake `%S' returned empty string" string))
+                       (when (not (length= output 0))
+                         (warn "heck-string --to=snake `%S' exited with code %s" string exit-code))
+                       ;; return string as is
+                       string) ;; end progn
+                     ) ;; end or
+                    )  ;; end let*
+                  );; end lambda
+              ) ;; end (when (executable-find "heck-string --to=snake" ...
+            (list) ;; fallback to empty list
+            );; end (or ...
            #'(lambda (string)
                (replace-regexp-in-string "[^a-z0-9_]+" "_" string)) ;; replaces INVALID SEQUENCES with underscore
            #'(lambda (string)
-               (replace-regexp-in-string "\\(^[_]+\\|[_]+$\\)" "" string)) ;; removes sequences of underscores from beginning and end of string
-           #'(lambda (string)
-               (downcase string)) ;; lowercases string
+               (replace-regexp-in-string
+                "\\(^[_]+\\|[_]+$\\)" "" string)) ;; removes sequences of underscores from beginning and end of string
+           #'(lambda (string) (downcase string)) ;; lowercases string
            ) ;; end (list ...
           ) ;; end (let* ...(raw-pipeline (list ...functions...)))
 
-         (pipeline (seq-filter #'functionp raw-pipeline)
-                   );; end (let* ...(pipeline seq-filter #'functionp)...)
+         (pipeline (seq-filter #'functionp raw-pipeline));; end (let* ...(pipeline seq-filter #'functionp)...)
          )
-    (seq-reduce #'(lambda (value process)
-                    (apply #'process (list value)));; end #'(lambda ... )
-                pipeline ;; SEQUENCE
-                variable-name ;; INITIAL-VALUE
-                )
-    ) ;; end (let* ...)
+    (seq-reduce
+     #'(lambda (value process) (apply #'process (list value)));; end #'(lambda ... )
+     pipeline ;; SEQUENCE
+     variable-name ;; INITIAL-VALUE
+     )) ;; end (let* ...)
   ) ;; end (defun shell-script-gen-safe-variable-name-from-string ...)
 
 (defun shell-script-meta-gen-variable-declaration (variable-name
                                                    variable-value
                                                    &optional variable-is-local
-                                                   noerror
-                                                   )
+                                                   noerror)
   "returns `flat-assoc-list-p' with context for declaration of one variable
 with elisp-to-bash value conversion and (optionally) an additional
 variable with the count (`length') of items if and when the main
 variable is an array and `with-count-variable' is not null."
-  (let ((declaration-keyword (if (not (null variable-is-local))
-                                 "local"
-                               "declare"))
+  (let ((declaration-keyword
+         (if (not (null variable-is-local)) "local" "declare"))
         (declaration-flag "--")
         (post-declaration-comment nil)
-        (safe-variable-name (shell-script-gen-safe-variable-name-from-string variable-name))
+        (safe-variable-name
+         (shell-script-gen-safe-variable-name-from-string variable-name))
         (safe-variable-value (format "%S" variable-value))
         (string-values-list (list))
 
         (is-array nil)
         (array-length-declaration-flag "-i")
         (array-length-variable-name "-i")
-        (array-length-variable-value 0)
-        ); end (let ...varlist...)
-    (cond (
-           ((or (stringp variable-value)
-                (and (numberp variable-value)
-                     (not (integerp variable-value)))
-                )
-            (setq
-             safe-variable-value (shell-script-single-quote-string variable-value)
-             declaration-flag "--"
-             ))
+        (array-length-variable-value 0)); end (let ...varlist...)
+    (cond
+     (((or
+        (stringp variable-value)
+        (and
+         (numberp variable-value)
+         (not (integerp variable-value))))
+       (setq
+        safe-variable-value
+        (shell-script-single-quote-string variable-value)
+        declaration-flag "--"))
 
-           ((integerp variable-value)
-            (setq
-             safe-variable-value (format "%d" variable-value)
-             declaration-flag "-i"
-             ))
+      ((integerp variable-value)
+       (setq
+        safe-variable-value
+        (format "%d" variable-value)
+        declaration-flag "-i"))
 
 
-           ((and (not flat-assoc-list-p variable-value)
-                 (listp variable-value))
-            (setq
-             safe-variable-value (shell-script-string-list-to-bash-indexed-array string-values-list "\n" noerror )
-             declaration-flag "-a"
-             safe-variable-name (format "%s_items" safe-variable-name)
+      ((and
+        (not flat-assoc-list-p variable-value)
+        (listp variable-value))
+       (setq
+        safe-variable-value
+        (shell-script-string-list-to-bash-indexed-array string-values-list "\n" noerror )
+        declaration-flag "-a"
+        safe-variable-name
+        (format "%s_items" safe-variable-name)
 
-             is-array t
-             array-length-variable-name (format "%s_count" safe-variable-name)
-             array-length-variable-value (length safe-variable-value)
-             array-length-declaration-flag "-i"
-             ))
+        is-array t
+        array-length-variable-name
+        (format "%s_count" safe-variable-name)
+        array-length-variable-value
+        (length safe-variable-value)
+        array-length-declaration-flag "-i"))
 
-           ((flat-assoc-list-p variable-value)
-            (setq
-             safe-variable-value (shell-script-string-list-to-bash-associative-array string-values-list "\n" noerror )
-             declaration-flag "-A"
-             safe-variable-name (format "%s_items" safe-variable-name)
+      ((flat-assoc-list-p variable-value)
+       (setq
+        safe-variable-value
+        (shell-script-string-list-to-bash-associative-array string-values-list "\n" noerror )
+        declaration-flag "-A"
+        safe-variable-name
+        (format "%s_items" safe-variable-name)
 
-             is-array t
-             array-length-variable-name (format "%s_count" safe-variable-name)
-             array-length-variable-value (length safe-variable-value)
-             array-length-declaration-flag "-i"
-             ))
-           ((not (null noerror))
-            (let ((coerced-string (shell-script-single-quote-string (format "%S" variable-value))))
-              (setq
-               post-declaration-comment (format "coercing unsupported variable (type) `%S' to string: %s" variable-value coerced-string)
-               is-array nil
-               safe-variable-value coerced-string
-               declaration-flag "--")))
-           (t
-            (error "unsupported variable (type) %S" variable-value))
-           );; end...clauses...
-          );; end cond
-    (or (when is-array
-          (list
-           :declaration-keyword declaration-keyword                     ;; (if (not (null variable-is-local)) "local" "declare")
-           :declaration-flag declaration-flag                           ;; (cond (
-                                        ;                                                                       ;;    (listp             "-a")
-                                        ;                                                                       ;;    (flat-assoc-list-p "-A")
-                                        ;                                                                       ;; )
-           :is-array is-array                                           ;; nil
-           :post-declaration-comment post-declaration-comment           ;; string or nil
-           :safe-variable-name safe-variable-name                       ;; (shell-script-gen-safe-variable-name-from-string variable-name)
-           :safe-variable-value safe-variable-value                     ;; string, integer or list of strings
-           :array-length-declaration-flag array-length-declaration-flag ;; "-i"
-           :array-length-variable-name array-length-variable-name       ;; (format "%s_count" safe-variable-name)
-           :array-length-variable-value array-length-variable-value     ;; (length safe-variable-value)
-           ))
-        (list
-         :declaration-keyword declaration-keyword                     ;; (if (not (null variable-is-local)) "local" "declare")
-         :declaration-flag declaration-flag                           ;; (cond (
-                                        ;                                                                       ;;    (stringp           "--")
-                                        ;                                                                       ;;    (integerp          "-i")
-                                        ;                                                                       ;;    (t                 "--") ;; fallback is always string via `%S'
-                                        ;                                                                       ;; )
-         :is-array is-array                                           ;; nil
-         :post-declaration-comment post-declaration-comment           ;; string or nil
-         :safe-variable-name safe-variable-name                       ;; (shell-script-gen-safe-variable-name-from-string variable-name)
-         :safe-variable-value safe-variable-value                     ;; string or integer
-         )
-        );; end (or ...
+        is-array t
+        array-length-variable-name
+        (format "%s_count" safe-variable-name)
+        array-length-variable-value
+        (length safe-variable-value)
+        array-length-declaration-flag "-i"))
+      ((not (null noerror))
+       (let ((coerced-string
+              (shell-script-single-quote-string
+               (format "%S" variable-value))))
+         (setq
+          post-declaration-comment
+          (format "coercing unsupported variable (type) `%S' to string: %s" variable-value coerced-string)
+          is-array nil
+          safe-variable-value coerced-string
+          declaration-flag "--")))
+      (t (error "unsupported variable (type) %S" variable-value)));; end...clauses...
+     );; end cond
+    (or
+     (when is-array
+       (list
+        :declaration-keyword declaration-keyword                     ;; (if (not (null variable-is-local)) "local" "declare")
+        :declaration-flag declaration-flag                           ;; (cond (
+        ;;                                                                       ;;    (listp             "-a")
+        ;;                                                                       ;;    (flat-assoc-list-p "-A")
+        ;;                                                                       ;; )
+        :is-array is-array                                           ;; nil
+        :post-declaration-comment post-declaration-comment           ;; string or nil
+        :safe-variable-name safe-variable-name                       ;; (shell-script-gen-safe-variable-name-from-string variable-name)
+        :safe-variable-value safe-variable-value                     ;; string, integer or list of strings
+        :array-length-declaration-flag array-length-declaration-flag ;; "-i"
+        :array-length-variable-name array-length-variable-name       ;; (format "%s_count" safe-variable-name)
+        :array-length-variable-value array-length-variable-value     ;; (length safe-variable-value)
+        ))
+     (list
+      :declaration-keyword declaration-keyword                     ;; (if (not (null variable-is-local)) "local" "declare")
+      :declaration-flag declaration-flag                           ;; (cond (
+      ;;                                                                       ;;    (stringp           "--")
+      ;;                                                                       ;;    (integerp          "-i")
+      ;;                                                                       ;;    (t                 "--") ;; fallback is always string via `%S'
+      ;;                                                                       ;; )
+      :is-array is-array                                           ;; nil
+      :post-declaration-comment post-declaration-comment           ;; string or nil
+      :safe-variable-name safe-variable-name                       ;; (shell-script-gen-safe-variable-name-from-string variable-name)
+      :safe-variable-value safe-variable-value                     ;; string or integer
+      ));; end (or ...
     );; end (defun (let ...)))
   );; end defun shell-script-meta-gen-variable-declaration
 
@@ -4654,63 +4677,67 @@ variable is an array and `with-count-variable' is not null."
   (if (not (flat-assoc-list-p context))
       (error "`context' is not a 'flat-assoc-list-p': %S" context))
 
-  (let (
-        declaration-keyword           (flat-list-get-assoc-key-value context :declaration-keyword)
-        declaration-flag              (flat-list-get-assoc-key-value context :declaration-flag)
-        is-array                      (flat-list-get-assoc-key-value context :is-array)
-        post-declaration-comment      (flat-list-get-assoc-key-value context :post-declaration-comment)
-        safe-variable-name            (flat-list-get-assoc-key-value context :safe-variable-name)
-        safe-variable-value           (flat-list-get-assoc-key-value context :safe-variable-value)
-        array-length-declaration-flag (flat-list-get-assoc-key-value context :array-length-declaration-flag)
-        array-length-variable-name    (flat-list-get-assoc-key-value context :array-length-variable-name)
-        array-length-variable-value   (flat-list-get-assoc-key-value context :array-length-variable-value)
-        )
-    (let* (
-           (indent-length 4)
+  (let (declaration-keyword
+        (flat-list-get-assoc-key-value context :declaration-keyword)
+        declaration-flag
+        (flat-list-get-assoc-key-value context :declaration-flag)
+        is-array
+        (flat-list-get-assoc-key-value context :is-array)
+        post-declaration-comment
+        (flat-list-get-assoc-key-value context :post-declaration-comment)
+        safe-variable-name
+        (flat-list-get-assoc-key-value context :safe-variable-name)
+        safe-variable-value
+        (flat-list-get-assoc-key-value context :safe-variable-value)
+        array-length-declaration-flag
+        (flat-list-get-assoc-key-value context :array-length-declaration-flag)
+        array-length-variable-name
+        (flat-list-get-assoc-key-value context :array-length-variable-name)
+        array-length-variable-value
+        (flat-list-get-assoc-key-value context :array-length-variable-value))
+    (let* ((indent-length 4)
            (padding-left (string-join (-repeat indent-length " ")))
-           (declarations (append
-                          (list (format "%s %s=%s" declaration-keyword declaration-flag safe-variable-name safe-variable-value))
-                          (when is-array
-                            (list (format "%s %s=%s" declaration-keyword array-length-declaration-flag array-length-variable-name array-length-variable-value)
-                                  );; end (list
-                            )) ;; end (append
-                         );; end (let ((declarations ...))
-           (index-variable-name (if (and is-array is-flat-assoc-list)
-                                    "key"
-                                  "index"))
-           (index-variable-declaration-flag (if (and is-array is-flat-assoc-list)
-                                                "--"
-                                              "-i"))
+           (declarations
+            (append
+             (list
+              (format "%s %s=%s" declaration-keyword declaration-flag safe-variable-name safe-variable-value))
+             (when is-array
+               (list
+                (format "%s %s=%s" declaration-keyword array-length-declaration-flag array-length-variable-name array-length-variable-value));; end (list
+               )) ;; end (append
+            );; end (let ((declarations ...))
+           (index-variable-name
+            (if (and is-array is-flat-assoc-list) "key" "index"))
+           (index-variable-declaration-flag
+            (if (and is-array is-flat-assoc-list) "--" "-i"))
            (bash-snippet-for-each
             (when is-array
-              (string-join (list
-                            (format "if [ ${%s} -gt 0 ]; then" array-length-variable-name)
-                            (format "%s%s %s %s=0"
-                                    padding-left declaration-keyword
-                                    index-variable-declaration-flag
-                                    index-variable-name)
-                            (format "%s%s -- arg=\"\"" padding-left declaration-keyword)
-                            (format "%sfor %s in ${!%s[@]}; do"
-                                    padding-left
-                                    index-variable-name safe-variable-name)
-                            (format "%s%s%s %s %s current=$(( $%s + 1 ))"
-                                    padding-left padding-left
-                                    (if is-flat-assoc-list
-                                        "#" ;; comment this declaration when flat-list because index-variable most likely has non-numerical characters
-                                      "" ;;
-                                      )
-                                    declaration-keyword
-                                    index-variable-declaration-flag
-                                    index-variable-name)
-                            (format "%s%sarg=${%s[$%s]}"
-                                    padding-left padding-left
-                                    safe-variable-name
-                                    index-variable-name
-                                    )
-                            (format "%sdone" padding-left)
-                            (format "fi")
-                            );; end (string-join (list ...
-                           );; end (string-join (list ... "\n"))
+              (string-join
+               (list
+                (format "if [ ${%s} -gt 0 ]; then" array-length-variable-name)
+                (format "%s%s %s %s=0"
+                        padding-left declaration-keyword
+                        index-variable-declaration-flag
+                        index-variable-name)
+                (format "%s%s -- arg=\"\"" padding-left declaration-keyword)
+                (format "%sfor %s in ${!%s[@]}; do"
+                        padding-left
+                        index-variable-name safe-variable-name)
+                (format "%s%s%s %s %s current=$(( $%s + 1 ))"
+                        padding-left padding-left
+                        (if is-flat-assoc-list "#" ;; comment this declaration when flat-list because index-variable most likely has non-numerical characters
+                          "" ;;
+                          )
+                        declaration-keyword
+                        index-variable-declaration-flag
+                        index-variable-name)
+                (format "%s%sarg=${%s[$%s]}"
+                        padding-left padding-left
+                        safe-variable-name
+                        index-variable-name)
+                (format "%sdone" padding-left)
+                (format "fi"));; end (string-join (list ...
+               );; end (string-join (list ... "\n"))
               );; end (when is-array
             );; end (let* ...(bash-snippet-for-each ...))
            );; end (let* ...varlist...)
@@ -4728,91 +4755,94 @@ examples:
 (shell-script-gen-variable-declaration \"my_array\" (list \"item pos 0\" \"item-pos-1\" \"item3\" 1010 \"$HOME\") \"\n\" t t)
 => \"declare -a my_array=( \\\"item pos 0\\\" \\\"item-pos-1\\\" \\\"item3\\\" \\\"1010\\\"  \\\"$HOME\\\"  )\"
 "
-  (let ((declaration-keyword (if (not (null variable-is-local))
-                                 "local"
-                               "declare"))
+  (let ((declaration-keyword
+         (if (not (null variable-is-local)) "local" "declare"))
         (declaration-flag "--")
         (post-declaration-comment nil)
-        (safe-variable-name (shell-script-gen-safe-variable-name-from-string variable-name))
+        (safe-variable-name
+         (shell-script-gen-safe-variable-name-from-string variable-name))
         (safe-variable-value (format "%S" variable-value))
-        (string-values-list nil)
-        ); end let
-    (cond (
-           ((or (stringp variable-value)
-                (and (numberp variable-value)
-                     (not (integerp variable-value)))
-                )
-            (setq
-             safe-variable-value (shell-script-single-quote-string variable-value)
-             declaration-flag "--"
-             ))
+        (string-values-list nil)); end let
+    (cond
+     (((or
+        (stringp variable-value)
+        (and
+         (numberp variable-value)
+         (not (integerp variable-value))))
+       (setq
+        safe-variable-value
+        (shell-script-single-quote-string variable-value)
+        declaration-flag "--"))
 
-           ((integerp variable-value)
-            (setq
-             safe-variable-value (format "%d" variable-value)
-             declaration-flag "-i"
-             ))
+      ((integerp variable-value)
+       (setq
+        safe-variable-value
+        (format "%d" variable-value)
+        declaration-flag "-i"))
 
 
-           ((and (not flat-assoc-list-p variable-value)
-                 (listp variable-value))
-            (setq
-             safe-variable-value (shell-script-string-list-to-bash-indexed-array string-values-list "\n" noerror )
-             declaration-flag "-a"
-             ))
+      ((and
+        (not flat-assoc-list-p variable-value)
+        (listp variable-value))
+       (setq
+        safe-variable-value
+        (shell-script-string-list-to-bash-indexed-array string-values-list "\n" noerror )
+        declaration-flag "-a"))
 
-           ((flat-assoc-list-p variable-value)
-            (setq
-             safe-variable-value (shell-script-string-list-to-bash-associative-array string-values-list "\n" noerror )
-             declaration-flag "-A"
-             ))
-           ((not (null noerror))
-            (let ((coerced-string (shell-script-single-quote-string (format "%S" variable-value))))
-              (setq
-               post-declaration-comment (format "coercing unsupported variable (type) `%S' to string: %s" variable-value coerced-string)
-               safe-variable-value coerced-string
-               declaration-flag "--")))
-           (t
-            (error "unsupported variable (type) %S" variable-value))
-           );; end...clauses...
-          );; end cond
-    (format "%s %s=%s" declaration-keyword declaration-flag safe-variable-name safe-variable-value)
-    ) ;; end (let
+      ((flat-assoc-list-p variable-value)
+       (setq
+        safe-variable-value
+        (shell-script-string-list-to-bash-associative-array string-values-list "\n" noerror )
+        declaration-flag "-A"))
+      ((not (null noerror))
+       (let ((coerced-string
+              (shell-script-single-quote-string
+               (format "%S" variable-value))))
+         (setq
+          post-declaration-comment
+          (format "coercing unsupported variable (type) `%S' to string: %s" variable-value coerced-string)
+          safe-variable-value coerced-string
+          declaration-flag "--")))
+      (t (error "unsupported variable (type) %S" variable-value)));; end...clauses...
+     );; end cond
+    (format "%s %s=%s" declaration-keyword declaration-flag safe-variable-name safe-variable-value)) ;; end (let
   );; end (defun shell-script-gen-variable-declaration ...)
 
 
 ;; WIP defun shell-script... OzsgKGRlZnVuIHNoZWxsLXNjcmlwdC1pbnNlcnQtZm9yLWVhY2gtaW4taW5kZXhlZC1hcnJheShhcnJheS12YXJpYWJsZS1uYW1lCjs7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgYXJyYXktdmFyaWFibGUtdmFsdWUKOzsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAmb3B0aW9uYWwgdmFyaWFibGUtaXMtbG9jYWwKOzsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBub2Vycm9yCjs7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKQo7OyAgIChpbnRlcmFjdGl2ZSkKOzsgICAoaWYgKG5vdCAoc3RyaW5ncCBhcnJheS12YXJpYWJsZS1uYW1lKSkKOzsgICAgICAgKGVycm9yICJgYXJyYXktdmFyaWFibGUtbmFtZScgaXMgbm90IGEgc3RyaW5nOiAlUyIgYXJyYXktdmFyaWFibGUtbmFtZSkpCjs7ICAgKGlmIChub3QgKGxpc3RwIGFycmF5LXZhcmlhYmxlLXZhbHVlKSkKOzsgICAgICAgKGVycm9yICJgYXJyYXktdmFyaWFibGUtdmFsdWUnIGlzIG5vdCBhIGxpc3Q6ICVTIiBhcnJheS12YXJpYWJsZS12YWx1ZSkpCgo7OyAgIChsZXQqICgoY3VycmVudC1wb3MgKG1hcmtlci1wb3NpdGlvbiAobWFyay1tYXJrZXIpKSkKOzsgICAgICAgICAgKGN1cnJlbnQtbGluZS1udW1iZXIgKGxpbmUtbnVtYmVyLWF0LXBvcyBjdXJyZW50LXBvcykpCjs7ICAgICAgICAgIChjdXJyZW50LWNvbHVtbi1udW1iZXIgKGNvbHVtbi1hdC1wb3MgY3VycmVudC1wb3MpKQo7OyAgICAgICAgICAoZWRpdGluZy1mdW5jdGlvbiB2YXJpYWJsZS1pcy1sb2NhbCkKOzsgICAgICAgICAgKHJlc3VsdCAoc2hlbGwtc2NyaXB0LW1ldGEtZ2VuLXZhcmlhYmxlLWRlY2xhcmF0aW9uCjs7ICAgICAgICAgICAgICAgICAgIGFycmF5LXZhcmlhYmxlLW5hbWUKOzsgICAgICAgICAgICAgICAgICAgYXJyYXktdmFyaWFibGUtdmFsdWUKOzsgICAgICAgICAgICAgICAgICAgdmFyaWFibGUtaXMtbG9jYWwKOzsgICAgICAgICAgICAgICAgICAgbm9lcnJvcgo7OyAgICAgICAgICAgICAgICAgICB0Cjs7ICAgICAgICAgICAgICAgICAgICJcbiIpKQo7OyAgICAgICAgICAoZGVjbGFyYXRpb25zLXN0cmluZyAoc2hlbGwtc2NyaXB0LWdlbi12YXJpYWJsZS1kZWNsYXJhdGlvbi1mcm9tLWZsYXQtYXNzb2MtbGlzdCByZXN1bHQpKQo7OyAgICAgICAgICAoc2FmZS12YXJpYWJsZS1kZWNsYXJlLWtleXdvcmQgKGZsYXQtbGlzdC1nZXQtYXNzb2Mta2V5LXZhbHVlIHJlc3VsdCA6ZGVjbGFyYXRpb24ta2V5d29yZCkpCjs7ICAgICAgICAgIChzYWZlLXZhcmlhYmxlLWZsYWcgKGZsYXQtbGlzdC1nZXQtYXNzb2Mta2V5LXZhbHVlIHJlc3VsdCA6ZGVjbGFyYXRpb24tZmxhZykpCjs7ICAgICAgICAgIChzYWZlLXZhcmlhYmxlLW5hbWUgKGZsYXQtbGlzdC1nZXQtYXNzb2Mta2V5LXZhbHVlIHJlc3VsdCA6dmFyaWFibGUtbmFtZSkpCjs7ICAgICAgICAgIChzYWZlLXZhcmlhYmxlLXZhbHVlIChmbGF0LWxpc3QtZ2V0LWFzc29jLWtleS12YWx1ZSByZXN1bHQgOnZhcmlhYmxlLXZhbHVlKSkKOzsgICAgICAgICAgKQoKCjs7ICAgKGluc2VydCAiCjs7ICAgICAlcwo7OyAgICAgaWYgWyAkeyVzfSAtZ3QgMCBdOyB0aGVuCjs7ICAgICAgICAgJXMgLS0gYXJnPSIiCjs7ICAgICAgICAgZm9yIGluZGV4IGluICR7ISVzW0BdfTsgZG8KOzsgICAgICAgICAgICAgJXMgLWkgY3VycmVudD0kKCggJGluZGV4ICsgMSApKQo7OyAgICAgICAgICAgICBhcmc9JHslc1skaW5kZXhdfQo7OyAgICAgICAgIGRvbmUKOzsgICAgIGZpCjs7ICIgdmFyaWFibGUtZGVjbGFyYXRpb24ta2V5d29yZCApKQo7OyAgICkK
 
-(defvar debug-fun-history
-  (list)
-  "history of calls to `debug-fun'")
+(defvar debug-fun-history (list) "history of calls to `debug-fun'")
 
 (defun debug-fun-get-completing-read-collection (string pred action)
-  (let ((prefix-completions (mapcar #'intern (all-completions string definition-prefixes))))
+  (let ((prefix-completions
+         (mapcar #'intern
+                 (all-completions string definition-prefixes))))
     (complete-with-action action obarray string
-                          (if pred (lambda (sym)
-                                     (or (funcall pred sym)
-                                         (memq sym prefix-completions)))))
-    )
+                          (if pred
+                              (lambda (sym)
+                                (or
+                                 (funcall pred sym)
+                                 (memq sym prefix-completions))))))
   )
 (defun debug-fun-get-completing-read-predicate (f)
   (or (commandp f) (fboundp f) (get f 'function-documentation)))
 
 (defun debug-fun-read-function-from-minibuffer (&rest unused-args)
-  (let* (
-         ;; (completing-read-function #'debug-completing-read-function)
+  (let* (;; (completing-read-function #'debug-completing-read-function)
          (collection #'debug-fun-get-completing-read-collection)
          (predicate #'debug-fun-get-completing-read-predicate)
-         (function-name (completing-read  "function to call: " collection predicate t nil debug-fun-history))
-         (function-symbol (condition-case err
-                              (intern function-name)
-                            (error (let ((error-message "error in `debug-fun-read-function-from-minibuffer': %s"
-                                                        (error-message-string err)))
-                                     (c-message "%s" error-message)
-                                     error-message)
-                                   ) ;; end condition-case (error
-                            ) ;; end condition-case
-                          ) ;; end (let* ... function-symbol
+         (function-name
+          (completing-read  "function to call: " collection predicate t nil debug-fun-history))
+         (function-symbol
+          (condition-case err
+              (intern function-name)
+            (error
+             (let ((error-message "error in `debug-fun-read-function-from-minibuffer': %s"
+                                  (error-message-string err)))
+               (c-message "%s" error-message)
+               error-message)) ;; end condition-case (error
+            ) ;; end condition-case
+          ) ;; end (let* ... function-symbol
          (function-object (format "%S" function-symbol))
 
          ) ;;end varlist (let*
@@ -4821,49 +4851,51 @@ examples:
 
     ;; KGxldCAoKHRoaXMtZnVuY3Rpb24gImRlYnVnLWZ1bi1yZWFkLWZ1bmN0aW9uLWZyb20tbWluaWJ1ZmZlciIpKQogICAgICAoYy1tZXNzYWdlLWRlYnVnLXN5bWJvbHMKICAgICAgIChsaXN0ICdmdW5jdGlvbi1uYW1lICdmdW5jdGlvbi1zeW1ib2wgJ2Z1bmN0aW9uLW9iamVjdCAncmVzdWx0ICkKICAgICAgICd0aGlzLWZ1bmN0aW9uKSk=
 
-    (list function-symbol)
-    ))
+    (list function-symbol)))
 
 (defun debug-fun(function-name)
   (interactive (debug-fun-read-function-from-minibuffer));; end interactive
   ;; (c-message-open "%s\n%s" function-name (apply function-to-call args-to-function-to-call))
   (erase-c-messages)
-  (let* (
-         (function-symbol (condition-case err
-                              (or (when (or (functionp function-name)
-                                            (commandp function-name))
-                                    (c-message "function-name is function")
-                                    function-name)
-                                  (when (symbolp function-name)
-                                    (c-message "function-name is symbol")
-                                    (symbol-value function-name))
-                                  (when (stringp function-name)
-                                    (c-message "function-name is string")
-                                    (intern function-name))
-                                  (user-error "unexpected function-name argument: %S" function-name))
+  (let* ((function-symbol
+          (condition-case err
+              (or
+               (when (or
+                      (functionp function-name)
+                      (commandp function-name))
+                 (c-message "function-name is function")
+                 function-name)
+               (when (symbolp function-name)
+                 (c-message "function-name is symbol")
+                 (symbol-value function-name))
+               (when (stringp function-name)
+                 (c-message "function-name is string")
+                 (intern function-name))
+               (user-error "unexpected function-name argument: %S" function-name))
 
-                            (error (let ((error-message (format "error in `debug': %s" (error-message-string err))))
-                                     (c-message "%s" error-message)
-                                     error-message)
-                                   )))
-         (function-arity (car (func-arity function-symbol)))
-         ) ;; end let* varlist
+            (error
+             (let ((error-message
+                    (format "error in `debug': %s"
+                            (error-message-string err))))
+               (c-message "%s" error-message)
+               error-message))))
+         (function-arity (car (func-arity function-symbol)))) ;; end let* varlist
     (let ((this-function "debug-fun")
-          (function-symbol-is-list (if (listp function-symbol) "t" "nil"))
-          (function-name-is-list (if (listp function-name) "t" "nil"))
-          )
+          (function-symbol-is-list
+           (if (listp function-symbol) "t" "nil"))
+          (function-name-is-list (if (listp function-name) "t" "nil")))
       (c-message-debug-symbols
        (list 'function-name 'function-symbol 'function-arity 'function-name-is-list 'function-symbol-is-list)
-       'this-function 'function-symbol-is-list 'function-name-is-list 'function-arity
-       ) ;; end c-message-debug-symbols
+       'this-function 'function-symbol-is-list 'function-name-is-list 'function-arity) ;; end c-message-debug-symbols
       );; end let
 
     (if (= 0 function-arity)
-        (c-message "(%s)\n%S" function-name
-                   (condition-case err
-                       (funcall function-symbol)
-                     (error (format "failed to call function %S: %S" function-name err ))
-                     )) ;; end c-message
+        (c-message
+         "(%s)\n%S" function-name
+         (condition-case err
+             (funcall function-symbol)
+           (error
+            (format "failed to call function %S: %S" function-name err )))) ;; end c-message
       ;; else
       (user-error "cannot call function %S without args because it takes %s argument%s"
                   function-name
@@ -4892,31 +4924,39 @@ examples:
                 ;; `read-from-minibuffer' uses 1-based index.
                 (1+ (cdr initial-input)))))
 
-  (let* ((base-keymap (if require-match
-                          minibuffer-local-must-match-map
-                        minibuffer-local-completion-map))
-         (keymap (if (memq minibuffer-completing-file-name '(nil lambda))
-                     base-keymap
-                   ;; Layer minibuffer-local-filename-completion-map
-                   ;; on top of the base map.
-                   (make-composed-keymap
-                    minibuffer-local-filename-completion-map
-                    ;; Set base-keymap as the parent, so that nil bindings
-                    ;; in minibuffer-local-filename-completion-map can
-                    ;; override bindings in base-keymap.
-                    base-keymap)))
-         (keymap (if minibuffer-visible-completions
-                     (make-composed-keymap
-                      (list minibuffer-visible-completions-map
-                            keymap))
-                   keymap))
+  (let* ((base-keymap
+          (if require-match
+              minibuffer-local-must-match-map
+            minibuffer-local-completion-map))
+         (keymap
+          (if (memq minibuffer-completing-file-name '(nil lambda))
+              base-keymap
+            ;; Layer minibuffer-local-filename-completion-map
+            ;; on top of the base map.
+            (make-composed-keymap
+             minibuffer-local-filename-completion-map
+             ;; Set base-keymap as the parent, so that nil bindings
+             ;; in minibuffer-local-filename-completion-map can
+             ;; override bindings in base-keymap.
+             base-keymap)))
+         (keymap
+          (if minibuffer-visible-completions
+              (make-composed-keymap
+               (list minibuffer-visible-completions-map keymap))
+            keymap))
          (buffer (current-buffer))
          (c-i-c completion-ignore-case)
          (result
           (progn
-            (let ((minibuffer-completion-table collection) (minibuffer-completion-predicate predicate) (minibuffer-completion-confirm (unless (eq require-match t) require-match)) (minibuffer--require-match require-match) (minibuffer--original-buffer buffer) (completion-ignore-case c-i-c))
-              (c-message-debug-symbols (list 'minibuffer-completion-table 'minibuffer-completion-predicate 'minibuffer-completion-confirm 'minibuffer--require-match 'minibuffer--original-buffer 'completion-ignore-case))
-              )
+            (let ((minibuffer-completion-table collection)
+                  (minibuffer-completion-predicate predicate)
+                  (minibuffer-completion-confirm
+                   (unless (eq require-match t) require-match))
+                  (minibuffer--require-match require-match)
+                  (minibuffer--original-buffer buffer)
+                  (completion-ignore-case c-i-c))
+              (c-message-debug-symbols
+               (list 'minibuffer-completion-table 'minibuffer-completion-predicate 'minibuffer-completion-confirm 'minibuffer--require-match 'minibuffer--original-buffer 'completion-ignore-case)))
 
             (minibuffer-with-setup-hook
                 (lambda ()
@@ -4925,7 +4965,8 @@ examples:
                   (setq-local minibuffer-completion-predicate predicate)
                   ;; FIXME: Remove/rename this var, see the next one.
                   (setq-local minibuffer-completion-confirm
-                              (unless (eq require-match t) require-match))
+                              (unless (eq require-match t)
+                                require-match))
                   (setq-local minibuffer--require-match require-match)
                   (setq-local minibuffer--original-buffer buffer)
                   ;; Copy the value from original buffer to the minibuffer.
@@ -4938,8 +4979,7 @@ examples:
 (erase-c-messages)
 
 (defconst blackpy-regex-error-details
-  "^\\(error:\\s-*\\)?\\(cannot\\s-*format\\s-*\\(\\s-*\\([^:[:space:]]+\\)\\(:?\\)\\(\\s-*\\)\\)\\)\\(\\s-*\\([^:]+\\)\\(:\\)?\\(\\s-*\\)\\)\\(\\s-*\\([^:]+\\)\\(:\\)?\\(\\s-*\\)\\)\\(\\s-*\\([^:]+\\)\\(:\\)?\\(\\s-*\\)\\)\\(\\s-*\\(.+\\)\\(\\s-*\\)\\)$"
-  )
+  "^\\(error:\\s-*\\)?\\(cannot\\s-*format\\s-*\\(\\s-*\\([^:[:space:]]+\\)\\(:?\\)\\(\\s-*\\)\\)\\)\\(\\s-*\\([^:]+\\)\\(:\\)?\\(\\s-*\\)\\)\\(\\s-*\\([^:]+\\)\\(:\\)?\\(\\s-*\\)\\)\\(\\s-*\\([^:]+\\)\\(:\\)?\\(\\s-*\\)\\)\\(\\s-*\\(.+\\)\\(\\s-*\\)\\)$")
 
 (defun blackpy ()
   "TODO: use `call-process-get-status-and-info' instead of duplicating most of the code of `blackpy'."
@@ -4950,7 +4990,8 @@ examples:
          (tmp-buffer (create-fresh-buffer tmp-buffer-name))
          (blackpy-args (list tmp-buffer nil current-filename ))
          (exit-code
-          (apply #'call-process (append (list "black" nil) blackpy-args))))
+          (apply #'call-process
+                 (append (list "black" nil) blackpy-args))))
     (message
      (format "black %s exitted with code: %s" current-filename exit-code))
 
@@ -4960,13 +5001,12 @@ examples:
          (message
           (format "%s formatted"
                   (abbreviate-file-name current-filename)))
-         (revert-buffer t t t)
-         ))
-     (let* ((error-string (with-current-buffer tmp-buffer
-			    (widen)
-			    (goto-char (point-min))
-			    (buffer-substring-no-properties (point-min) (point-max))
-			    ))
+         (revert-buffer t t t)))
+     (let* ((error-string
+             (with-current-buffer tmp-buffer
+	       (widen)
+	       (goto-char (point-min))
+	       (buffer-substring-no-properties (point-min) (point-max))))
 	    (error-details
 	     (with-current-buffer tmp-buffer
 	       (widen)
@@ -5008,41 +5048,39 @@ examples:
                           error-type
                           error-message
                           error-lineno
-                          error-column
-                          )
-		         )
-		       )
-                   )
-                 )
-	       )
-	     ))
-       (if (and (listp error-details)
-                (not (null (nth 4 error-details))))
-	   (let* (
-                  (message-type (nth 0 error-details))
+                          error-column)
+		         ))
+                   ))
+	       )))
+       (if (and
+            (listp error-details)
+            (not (null (nth 4 error-details))))
+	   (let* ((message-type (nth 0 error-details))
                   (error-filename (nth 1 error-details))
                   (error-type (nth 2 error-details))
                   (error-message (nth 3 error-details))
                   (error-lineno (nth 4 error-details))
-                  (error-column (nth 5 error-details))
-                  )
+                  (error-column (nth 5 error-details)))
 	     (goto-line error-lineno)
 	     (goto-char (+ (point) error-column))
 	     (message
 	      "%s in %s line %d column %d => %s: %s"
-	      (propertize (format "%s" message-type) 'face
-                          (list :background "#3d3d3d"
-                                :foreground "#FF3232"))
+	      (propertize
+               (format "%s" message-type)
+               'face
+               (list :background "#3d3d3d" :foreground "#FF3232"))
 
 	      error-filename
 	      error-lineno
 	      error-column
-	      (propertize (format "%s" error-type) 'face
-                          (list :background "#3d3d3d"
-                                :foreground "#FF3232"))
-	      (propertize (format "%s" error-message) 'face
-                          (list :background "#FF3232"
-                                :foreground "#3d3d3d"))
+	      (propertize
+               (format "%s" error-type)
+               'face
+               (list :background "#3d3d3d" :foreground "#FF3232"))
+	      (propertize
+               (format "%s" error-message)
+               'face
+               (list :background "#FF3232" :foreground "#3d3d3d"))
 
 	      ))
          ;; else
@@ -5050,39 +5088,37 @@ examples:
          (user-error
           (format "black %s failed with code: %s"
                   (abbreviate-file-name current-filename)
-                  exit-code)))
-       ))
-    (ignore-errors (kill-buffer tmp-buffer))
-    ))
+                  exit-code)))))
+    (ignore-errors (kill-buffer tmp-buffer))))
 
 (defun isearch-input-regexp-read-function-from-minibuffer (prompt)
   (setq c-message-write-to-minibuffer nil)
   ;; (c-message-open "")
-  (let* (
-         (regexp-ring (symbol-value 'regexp-search-ring))
+  (let* ((regexp-ring (symbol-value 'regexp-search-ring))
          (initial-input (car regexp-ring))
-         (regexp (read-string (format "%s: " prompt) initial-input
-                              'regexp-search-ring))
-         )
+         (regexp
+          (read-string
+           (format "%s: " prompt)
+           initial-input
+           'regexp-search-ring)))
     (add-to-history 'regexp-search-ring regexp)
-    (list regexp)
-    ))
+    (list regexp)))
 
 (defun isearch-forward-input-regexp(regexp)
   "updates isearch ring with `regexp' and subsequently calls isearch-forward-regexp"
-  (interactive (isearch-input-regexp-read-function-from-minibuffer "isearch-forward-regexp"))
+  (interactive
+   (isearch-input-regexp-read-function-from-minibuffer "isearch-forward-regexp"))
   ;;   (c-message-debug-symbols 'regexp)
   (isearch-update-ring regexp t)
   (isearch-forward-regexp)
-  (isearch-update)
-  )
+  (isearch-update))
 (defun isearch-backward-input-regexp(regexp)
   "updates isearch ring with `regexp' and subsequently calls isearch-backward-regexp"
-  (interactive (isearch-input-regexp-read-function-from-minibuffer "isearch-backward-regexp"))
+  (interactive
+   (isearch-input-regexp-read-function-from-minibuffer "isearch-backward-regexp"))
   (isearch-update-ring regexp t)
   (isearch-backward-regexp)
-  (isearch-update)
-  )
+  (isearch-update))
 
 (defun format-error-string (message &optional short-desc label)
   "returns string propertized with font-lock face background and foreground colors
@@ -5092,60 +5128,61 @@ examples:
 `LABEL', if provided, should be a string.
 "
   (declare (pure t) (side-effect-free t) (important-return-value t))
-  (when (null short-desc)
-    (setq label ""))
-  (when (null label)
-    (setq label "error"))
-  (let* ((prefix-noproperties (string-join (mapcar #'(lambda (element) (format "%s" element)) (list label short-desc))))
-         (prefix (propertize prefix-noproperties
-                             'face
-                             (list :foreground "#F13976" ;; #FC580C ;;
-                                   ;; #DB5045 ;;
-                                   ;; #F80101 ;;
-                                   ;; #F5BF08 ;;
-                                   ;; #F6CA51 ;;
-                                   ;; #DCDC88 ;;
-                                   ;; #F49101 ;;
-                                   :background "#211F17" ;; #1C1C1C ;;
-                                   ;; #312F27 ;;
-                                   ;; #211F17
-                                   ))
-                 )
+  (when (null short-desc) (setq label ""))
+  (when (null label) (setq label "error"))
+  (let* ((prefix-noproperties
+          (string-join
+           (mapcar
+            #'(lambda (element) (format "%s" element))
+            (list label short-desc))))
+         (prefix
+          (propertize prefix-noproperties
+                      'face
+                      (list :foreground "#F13976" ;; #FC580C ;;
+                            ;; #DB5045 ;;
+                            ;; #F80101 ;;
+                            ;; #F5BF08 ;;
+                            ;; #F6CA51 ;;
+                            ;; #DCDC88 ;;
+                            ;; #F49101 ;;
+                            :background "#211F17" ;; #1C1C1C ;;
+                            ;; #312F27 ;;
+                            ;; #211F17
+                            )))
          (inner-message (format "%s" message))
-         (message (propertize inner-message
-                              'face
-                              (list :foreground "#F6A3D7" ;; #F937B9
-                                    ;; #C63367
-                                    ;; #F479C4
-                                    ;; #EF5AAA
-                                    ;; #FF79C6
-                                    :background "#3d3d3d" ;; #211F17
-                                    ;; #1C1C1C
-                                    ;; #312F27
-                                    ;; #211F17
-                                    )))
-         )
-    (format "%s %s" prefix message)
-    )
+         (message
+          (propertize inner-message
+                      'face
+                      (list :foreground "#F6A3D7" ;; #F937B9
+                            ;; #C63367
+                            ;; #F479C4
+                            ;; #EF5AAA
+                            ;; #FF79C6
+                            :background "#3d3d3d" ;; #211F17
+                            ;; #1C1C1C
+                            ;; #312F27
+                            ;; #211F17
+                            ))))
+    (format "%s %s" prefix message))
   )
 
 
 
-(defconst make-indent-default-width
-  4)
+(defconst make-indent-default-width 4)
 
 
 (defun make-indent (&optional width)
   (declare (pure t) (side-effect-free t) (important-return-value t))
 
-  (let ((width (cond ((null width)
-                      make-indent-default-width)
-                     ((and (numberp width)
-                           (> width 0))
-                      width)
-                     ((numberp width)
-                      (error "`width' is a negative number: %S" width))
-                     (error "`width' is not a positive number: %S" width))))
+  (let ((width
+         (cond
+          ((null width)
+           make-indent-default-width)
+          ((and (numberp width) (> width 0))
+           width)
+          ((numberp width)
+           (error "`width' is a negative number: %S" width))
+          (error "`width' is not a positive number: %S" width))))
     (string-join (make-list width ""))))
 
 ;; OzsgKGRlZnVuIGVuc3VyZS1saXN0LW9mLXN0cmluZ3MgKHN0cmluZ3MgJm9wdGlvbmFsIG5vZXJyb3IpCjs7ICAgInRha2VzIGEgbGlzdCBvZiBzdHJpbmdzIGFuZCByZXR1cm5zIGEgbGlzdCB3aGVyZSBldmVyeSBpdGVtIGlzIGEgc3RyaW5nCjs7IGBTVFJJTkdTJyBpcyBhIGxpc3Qgb2Ygc3RyaW5ncwoKOzsgVGhlIG9wdGlvbmFsIHRoaXJkIGFyZ3VtZW50IGBOT0VSUk9SJyBpbmRpY2F0ZXMgd2hhdCBzaG91bGQgaGFwcGVuIHdoZW4KOzsgYW55IGVsZW1lbnQgaW4gdGhlIGBTVFJJTkdTJyBsaXN0IGlzIG5vdCBhIHN0cmluZzogaWYgaXQgaXMgbmlsIG9yCjs7IG9taXR0ZWQsIGVtaXQgYW4gZXJyb3I7Cjs7IGZsYXR0ZW5zIG5lc3RlZCBsaXN0cyBpZiBgQVJHJyBpcyBgZmxhdCcuCjs7IG1vZGUgaWYgQVJHIGlzIG5pbCwgb21pdHRlZCwgb3IgaXMgYSBwb3NpdGl2ZSBudW1iZXIuICBEaXNhYmxlIHRoZSBtb2RlCjs7IGlmIEFSRyBpcyBhIG5lZ2F0aXZlIG51bWJlci4KCjs7IGlmIGl0IGlzIHQgb3IgYW55IG5vbi1uaWwgdmFsdWUsIGNvbnZlcnQgdGhlCjs7IGVsZW1lbnQgdG8gc3RyaW5nIGxpa2UgYHByaW5jJyB3b3VsZC4KOzsgIgo7OyAgIChsZXQgKChwYWRkaW5nIChtYWtlLWluZGVudCB3aWR0aCkpCjs7ICAgICAgICAgKGl0ZW1zIChzZXEtbWFwLWluZGV4ZWQKOzsgICAgICAgICAgICAgICAgICMnKGxhbWJkYSAoaW5kZXggaXRlbSkKOzsgICAgICAgICAgICAgICAgICAgICAodW5sZXNzIChhbmQgKHN0cmluZ3AgaXRlbSkgbm9lcnJvcikKOzsgICAgICAgICAgICAgICAgICAgICAgIChlcnJvciAiYHN0cmluZ3MnIGVsZW1lbnQgJXMgaXMgbm90IGEgc3RyaW5nIGNvbnM6ICVTIiBpbmRleCBpdGVtKSkKOzsgICAgICAgICAgICAgICAgICAgICAoZm9ybWF0ICIlcyVzIiBwYWRkaW5nIGl0ZW0pKSkpKSkpCg==
@@ -5161,40 +5198,41 @@ element to string like `princ' would.
 "
   (declare (pure t) (side-effect-free t) (important-return-value t))
   (let* ((padding (make-indent width))
-         (items (seq-map-indexed
-                 #'(lambda (index item)
-                     (unless (or (stringp item) noerror)
-                       (error "`strings' element %s is not a string cons: %S" index item))
-                     (format "%s%s" padding item))
-                 strings)))))
+         (items
+          (seq-map-indexed
+           #'(lambda (index item)
+               (unless (or (stringp item) noerror)
+                 (error "`strings' element %s is not a string cons: %S" index item))
+               (format "%s%s" padding item))
+           strings)))))
 
 (defun create-debug-tag-pair (name &optional attributes)
   "returns a pair of strings that look like the open and close of an xml element.
 `NAME' is the string with the tag name.
 `ATTRIBUTES' if provided, must be a list where each element is either a string or a cons corresponding to an attribute name and its value."
   (declare (pure t) (side-effect-free t) (important-return-value t))
-  (unless (stringp name)
-    (error "`name' is not a string: %S" name))
+  (unless (stringp name) (error "`name' is not a string: %S" name))
   (unless (listp attributes)
     (setq attributes (ensure-list attributes)))
 
-  (let ((items (seq-map-indexed
-                #'(lambda (index attr)
-                    (cond ((stringp name)
-                           name)
-                          ((consp attr)
-                           (let ((key (car attr))
-                                 (value (cdr attr)))
-                             (unless (or (stringp key)
-                                         (numberp key))
-                               (error "the car of `attributes' index %s is neither a string nor a number: %S" index key))
-                             (format "%s=%S" key value)))
-                          (t
-                           (error "`attributes' index %s is neither a string nor a cons: %S" index attr))
-                          ))
-                attributes)))
-    (cons (format "<%s>" (string-join (list name (string-join items))))
-          (format "</%s>" name))))
+  (let ((items
+         (seq-map-indexed
+          #'(lambda (index attr)
+              (cond
+               ((stringp name)
+                name)
+               ((consp attr)
+                (let ((key (car attr))
+                      (value (cdr attr)))
+                  (unless (or (stringp key) (numberp key))
+                    (error "the car of `attributes' index %s is neither a string nor a number: %S" index key))
+                  (format "%s=%S" key value)))
+               (t
+                (error "`attributes' index %s is neither a string nor a cons: %S" index attr))))
+          attributes)))
+    (cons
+     (format "<%s>" (string-join (list name (string-join items))))
+     (format "</%s>" name))))
 
 (defun make-debug-tag (name &optional attributes &rest debug-values)
   "returns a string to debug `debug-values'"
@@ -5202,53 +5240,60 @@ element to string like `princ' would.
 
   (let* ((values (indent-strings debug-values nil t))
          (closes (length> values 0))
-         (pair (create-debug-tag-pair name (append attributes (and closes '/))))
+         (pair
+          (create-debug-tag-pair name
+                                 (append attributes (and closes '/))))
          (open (car pair))
          (close (unless (not closes) (cdr pair))))
 
     (string-join
      (indent-strings (list open (string-join values "\n") close))
-     "\n")
-    ))
+     "\n")))
 
 (defun current-indentation-data()
   "returns a plist with the line-number, column and position of the current or next line's indentation"
   (save-match-data
     (save-mark-and-excursion
       (beginning-of-line)
-      (let* (
-             (initial-column (current-column))
+      (let* ((initial-column (current-column))
              (initial-line (line-number-at-pos (point)))
              (initial-pos (point))
              (indentation-col initial-column)
              (indentation-line initial-line)
              (indentation-pos initial-pos)
              (nline initial-line)
-             (ncol initial-column)
-             )
-        (while (and (not (eobp))
-                    (string-match "[[:space:]]" (format "%c" (char-after (point)))))
+             (ncol initial-column))
+        (while (and
+                (not (eobp))
+                (string-match "[[:space:]]"
+                              (format "%c" (char-after (point)))))
           (forward-char)
           (setq
-           indentation-column (current-column)
-           indentation-line (line-number-at-pos (point))
-           indentation-pos (point));;setq
+           indentation-column
+           (current-column)
+           indentation-line
+           (line-number-at-pos (point))
+           indentation-pos
+           (point));;setq
           (let* ((delta (- indentation-pos initial-pos))
                  (plural (or (and (= delta 1) "") "s")))
             (c-message "forwarded %d char%s" delta plural)
             ;;(c-message-debug-symbols (list 'indentation-column 'indentation-line 'indentation-pos))
-            )
-          )
+            ))
 
 
-        (while (and (not (eobp))
-                    (not (string-match "[[:space:]]" (format "%c" (char-after (point))))))
+        (while (and
+                (not (eobp))
+                (not (string-match "[[:space:]]"
+                                   (format "%c" (char-after (point))))))
           (forward-char)
           (setq
-           indentation-column (current-column)
-           indentation-line (line-number-at-pos (point))
-           indentation-pos (point)
-           )
+           indentation-column
+           (current-column)
+           indentation-line
+           (line-number-at-pos (point))
+           indentation-pos
+           (point))
           (let* ((delta (- indentation-pos initial-pos))
                  (plural (or (and (= delta 1) "") "s")))
             (c-message "forwarded %d char%s" delta plural)
@@ -5270,117 +5315,132 @@ element to string like `princ' would.
   (or (plist-get (current-indentation-data) :column) 0))
 ;;${BASH_SOURCE[0]}:${BASH_LINENO[0]}
 (defun shell-script-insert-argv-skel(&optional local arg-prefix log-prefix)
-  (unless (or (stringp log-prefix)
-              (null log-prefix))
-    (signal 'type-error (format "shell-script-insert-argv-skel argument log-prefix should be string or nil, got %s %S" (type-of log-prefix) log-prefix)))
+  (unless (or (stringp log-prefix) (null log-prefix))
+    (signal 'type-error
+            (format "shell-script-insert-argv-skel argument log-prefix should be string or nil, got %s %S"
+                    (type-of log-prefix)
+                    log-prefix)))
 
-  (unless (or (stringp arg-prefix)
-              (null arg-prefix))
-    (signal 'type-error (format "shell-script-insert-argv-skel argument arg-prefix should be string or nil, got %s %S" (type-of arg-prefix) arg-prefix)))
+  (unless (or (stringp arg-prefix) (null arg-prefix))
+    (signal 'type-error
+            (format "shell-script-insert-argv-skel argument arg-prefix should be string or nil, got %s %S"
+                    (type-of arg-prefix)
+                    arg-prefix)))
   ;; (erase-c-messages)
   ;; (c-message-open "shell-script-insert-argv-skel")
-  (let* ((declare-stmt (cond ((or (equal t local)
-                                  (equal local 'local)
-                                  (equal local :local))
-                              "local")
-                             ((or (null local)
-                                  (equal local 'declare)
-                                  (equal local :declare))
-                              "declare")
-                             ("declare")))
-         (default-log-prefix (cond ((string= "declare" declare-stmt)
-                                    "[${BASH_SOURCE[0]}:${LINENO[0]}]")
-                                   ((string= "local" declare-stmt)
-                                    "[${FUNCNAME[0]}:${LINENO[0]}]")))
+  (let* ((declare-stmt
+          (cond
+           ((or
+             (equal t local)
+             (equal local 'local)
+             (equal local :local))
+            "local")
+           ((or
+             (null local)
+             (equal local 'declare)
+             (equal local :declare))
+            "declare")
+           ("declare")))
+         (default-log-prefix
+          (cond
+           ((string= "declare" declare-stmt)
+            "[${BASH_SOURCE[0]}:${LINENO[0]}]")
+           ((string= "local" declare-stmt)
+            "[${FUNCNAME[0]}:${LINENO[0]}]")))
 
          (log-prefix (or log-prefix default-log-prefix))
-         (arg-prefix (string-trim (format "%s_" (string-trim-right (or arg-prefix "") "_+")) "_+"))
-         (exit-stmt (cond ((string= "declare" declare-stmt)
-                           "exit")
-                          ((string= "local" declare-stmt)
-                           "return")))
+         (arg-prefix
+          (string-trim
+           (format "%s_" (string-trim-right (or arg-prefix "") "_+"))
+           "_+"))
+         (exit-stmt
+          (cond
+           ((string= "declare" declare-stmt)
+            "exit")
+           ((string= "local" declare-stmt)
+            "return")))
 
-         (replacements (list
-                        (cons "%declare%" declare-stmt)
-                        (cons "%arg_prefix%" arg-prefix )
-                        (cons "%log_prefix%" log-prefix )
-                        (cons "%exit_stmt%" exit-stmt )
-                        (cons "%exit%" exit-stmt )
-                        ))
+         (replacements
+          (list
+           (cons "%declare%" declare-stmt)
+           (cons "%arg_prefix%" arg-prefix )
+           (cons "%log_prefix%" log-prefix )
+           (cons "%exit_stmt%" exit-stmt )
+           (cons "%exit%" exit-stmt )))
          (col (current-indentation-in-columns))
-         (statements (mapcar #'(lambda (stmt)
-                                 (seq-reduce #'(lambda (string kv)
-                                                 (let ((from (car kv))
-                                                       (to (cdr kv))
-                                                       ;;(dbgs (auto-propertize-string "replace"))
-                                                       )
-                                                   ;; (c-message "<%s>\nfrom: %s\nto: %s\nstring: %s\n</%s>" dbgs (auto-propertize-string from) (auto-propertize-string to) (auto-propertize-string string) dbgs)
-                                                   (replace-regexp-in-string from to string t)))
-                                             replacements stmt))
-                             '(
-                               "%declare% -a %arg_prefix%argv=($@)"
-                               "%declare% -i %arg_prefix%argc=${#%arg_prefix%argv[@]}"
-                               "%declare% -i index=0"
-                               "%declare% -i current=0"
-                               "%declare% -- arg=\"\""
-                               ""
-                               "if [ ${%arg_prefix%argc} -eq 0 ]; then"
-                               "    1>&2 echo -e \"%log_prefix%\" \"missing arguments\""
-                               "    %exit% 1"
-                               "fi"
-                               ""
-                               "for index in ${!%arg_prefix%argv[@]}; do"
-                               "    current=$(($index + 1))"
-                               "    arg=\"${%arg_prefix%argv[$index]}\""
-                               "    case \"${arg}\" in"
-                               "        -h|--help)"
-                               "            1>&2 echo -e \"HELP\""
-                               "            ;;"
-                               "        *)"
-                               "            ;;"
-                               "    esac"
-                               "done"
-                               ""
-                               )))
+         (statements
+          (mapcar
+           #'(lambda (stmt)
+               (seq-reduce
+                #'(lambda (string kv)
+                    (let ((from (car kv))
+                          (to (cdr kv))
+                          ;;(dbgs (auto-propertize-string "replace"))
+                          )
+                      ;; (c-message "<%s>\nfrom: %s\nto: %s\nstring: %s\n</%s>" dbgs (auto-propertize-string from) (auto-propertize-string to) (auto-propertize-string string) dbgs)
+                      (replace-regexp-in-string from to string t)))
+                replacements stmt))
+           '("%declare% -a %arg_prefix%argv=($@)"
+             "%declare% -i %arg_prefix%argc=${#%arg_prefix%argv[@]}"
+             "%declare% -i index=0"
+             "%declare% -i current=0"
+             "%declare% -- arg=\"\""
+             ""
+             "if [ ${%arg_prefix%argc} -eq 0 ]; then"
+             "    1>&2 echo -e \"%log_prefix%\" \"missing arguments\""
+             "    %exit% 1"
+             "fi"
+             ""
+             "for index in ${!%arg_prefix%argv[@]}; do"
+             "    current=$(($index + 1))"
+             "    arg=\"${%arg_prefix%argv[$index]}\""
+             "    case \"${arg}\" in"
+             "        -h|--help)"
+             "            1>&2 echo -e \"HELP\""
+             "            ;;"
+             "        *)"
+             "            ;;"
+             "    esac"
+             "done"
+             "")))
          )
 
     (save-mark-and-excursion
-      (seq-do #'(lambda (stmt)
-                  (beginning-of-line)
-                  (forward-char col)
-                  (insert stmt "\n" (string-join (make-list col " ")))
-                  );;end lambda
-              statements))
-    ))
+      (seq-do
+       #'(lambda (stmt)
+           (beginning-of-line)
+           (forward-char col)
+           (insert stmt "\n" (string-join (make-list col " "))));;end lambda
+       statements))))
 
 (defun shell-script-declare-argv()
   (interactive)
   (shell-script-insert-argv-skel))
 
-(defvar shell-script-local-argv-read-input-history
-  (list))
+(defvar shell-script-local-argv-read-input-history (list))
 
 (defun shell-script-local-argv-read-input (prompt)
   (setq c-message-write-to-minibuffer nil)
-  (let* (
-         (initial-input (car shell-script-local-argv-read-input-history))
-         (arg-prefix (string-trim (read-string (format "%s: " prompt) initial-input
-                                               'shell-script-local-argv-read-input-history)))
-         )
+  (let* ((initial-input
+          (car shell-script-local-argv-read-input-history))
+         (arg-prefix
+          (string-trim
+           (read-string
+            (format "%s: " prompt)
+            initial-input
+            'shell-script-local-argv-read-input-history))))
     (add-to-history 'shell-script-local-argv-read-input-history arg-prefix)
-    (list arg-prefix)
-    ))
+    (list arg-prefix)))
 
 (defun shell-script-local-argv(arg-prefix)
-  (interactive (shell-script-local-argv-read-input "prefix (optional)"))
+  (interactive
+   (shell-script-local-argv-read-input "prefix (optional)"))
   (shell-script-insert-argv-skel t arg-prefix))
 
 (defmacro save-mark-excursion-and-match-data (&rest body)
   "shortcut to nesting macro calls to `save-match-data' and `save-mark-and-excursion'."
   (declare (indent 0) (debug t))
-  `(save-match-data
-     (save-mark-and-excursion
-       ,@body)))
+  `(save-match-data (save-mark-and-excursion ,@body)))
 
 (defun interactive-read-region-enabling-prompt ()
   (unless (region-active-p)
@@ -5389,46 +5449,46 @@ element to string like `princ' would.
 
 (defun mode-name-as-string()
   (let ((result
-         (or (and (stringp mode-name)
-                  mode-name)
-             (and (listp mode-name)
-                  (car mode-name))
-             (error (signal 'type-error (format "mode-name has unexpected type %s: %S" (type-of mode-name) mode-name)))
-             )))
+         (or
+          (and (stringp mode-name) mode-name)
+          (and (listp mode-name) (car mode-name))
+          (error
+           (signal 'type-error
+                   (format "mode-name has unexpected type %s: %S"
+                           (type-of mode-name)
+                           mode-name))))))
     (downcase result)))
 
 (defun shell-script-expand-oneliner-region (beg end)
   ;; OzsgOzsgKGRlZnVuIHNoZWxsLXNjcmlwdC1leHBhbmQtb25lbGluZXIgKGJlZyBlbmQpCjs7IDs7ICAgKGludGVyYWN0aXZlICJyIikKOzsgOzsgICAocmVwbGFjZS1yZWdleHAtaW4tcmVnaW9uCjs7IDs7ICAgICJcXGJcXChkb1xcfGRvbmVcXHx0aGVuXFx8ZWxzZVxcfGZpXFwpXFxiIiAiXG5cXDFcbiIgYmVnIGVuZCkpCjs7ICh1bmRlZnVuICMnc2hlbGwtc2NyaXB0LWV4cGFuZC1vbmVsaW5lcikK
   (interactive (interactive-read-region-enabling-prompt))
   (unless (string= (mode-name-as-string) "shell-script")
-    (user-error "only works in shell-script-mode, not %s-mode" (mode-name-as-string)))
+    (user-error "only works in shell-script-mode, not %s-mode"
+                (mode-name-as-string)))
   (let* ((new-end (copy-marker end))
-         (last-pos (copy-marker end))
-         )
+         (last-pos (copy-marker end)))
     (save-mark-excursion-and-match-data
-     (widen)
-     (replace-regexp-in-region "\\(do\\|;\\)\\s-+\\b\\(if\\|then\\|else\\|fi\\|done\\)\\b"
-                               "\\1\n\\2\n" beg end)
-     (setq last-pos (point)
-           new-end (point))
-     )
+      (widen)
+      (replace-regexp-in-region
+       "\\(do\\|;\\)\\s-+\\b\\(if\\|then\\|else\\|fi\\|done\\)\\b"
+       "\\1\n\\2\n" beg end)
+      (setq last-pos (point) new-end (point)))
 
     (save-mark-excursion-and-match-data
-     (replace-regexp-in-region "\\(if\\|then\\)[\n[:space:]]+"
-                               "\\1 " beg new-end)
-     (replace-regexp-in-region "\\(;\\)\\(\\s-*\\)\n\\(\\s-*\\)\\(then\\)\\s-+"
-                               "\\1 \\2 \\3\\4\n\\2\\3"
-                               beg new-end)
-     ) ;; save-mark-excursion-and-match-data
+      (replace-regexp-in-region
+       "\\(if\\|then\\)[\n[:space:]]+"
+       "\\1 " beg new-end)
+      (replace-regexp-in-region
+       "\\(;\\)\\(\\s-*\\)\n\\(\\s-*\\)\\(then\\)\\s-+"
+       "\\1 \\2 \\3\\4\n\\2\\3"
+       beg new-end)) ;; save-mark-excursion-and-match-data
     (save-mark-and-excursion
       (widen)
       (goto-char beg)
-      (indent-region beg new-end)
-      )
+      (indent-region beg new-end))
     (save-mark-and-excursion
       (widen)
-      (flush-lines "^\\s-*[;]\\s-*$" beg new-end)
-      )
+      (flush-lines "^\\s-*[;]\\s-*$" beg new-end))
     );; let*
   );defun
 
@@ -5459,15 +5519,13 @@ element to string like `princ' would.
 
 (defun format-string-signal-error(spec value)
   (condition-case format-err
-      (and (funcall #'format (list spec sexp-value ))
-           nil)
+      (and (funcall #'format (list spec sexp-value )) nil)
     (error (signal 'format-string-error format-err))))
 
 
 (defun eval-sexp-signal-error(sexp)
   (condition-case eval-err
-      (and                (eval-expression sexp)
-                          nil)
+      (and (eval-expression sexp) nil)
     (error (signal 'eval-sexp-string-error eval-err))))
 
 (defun rgb-red-green-blue-assign-create-regex-propertized-symlist-for-each-band(band index)
@@ -5477,8 +5535,7 @@ element to string like `princ' would.
          (val (string-to-number match))
          (hexa (format "%02x" val))
          (sym-name (format "%s#%s" band-name hexa))
-         (sym (intern sym-name))
-         ) ;; let* varlist
+         (sym (intern sym-name))) ;; let* varlist
     (put sym 'decimal-value val)
     (put sym 'hexa hexa)
     (put sym 'band band)
@@ -5486,26 +5543,26 @@ element to string like `princ' would.
     sym);; end (let*
   );; end (lambda
 
-(defun rgb-triband-symlist()
-  (list 'red 'green 'blue))
+(defun rgb-triband-symlist() (list 'red 'green 'blue))
 
 (defun rgb-red-green-blue-get-triband-list-from-match-data()
   (seq-map-indexed #'rgb-red-green-blue-assign-create-regex-propertized-symlist-for-each-band
                    (rgb-triband-symlist)))
 
 (defun rgb-red-green-blue-band-sym-to-hex(sym)
-  (or (get sym 'hexa)
-      (error "expected symbol %s to have property `'hexa'" sym)))
+  (or
+   (get sym 'hexa)
+   (error "expected symbol %s to have property `'hexa'" sym)))
 
 
 (defun rgb-red-green-blue-matched-triband-to-rgb-hex(bands)
-  (format "#%s" (string-join (mapcar #'rgb-red-green-blue-band-sym-to-hex
-                                     bands))))
+  (format "#%s"
+          (string-join
+           (mapcar #'rgb-red-green-blue-band-sym-to-hex bands))))
 
 (defconst rgb-red-green-blue-assign-regex
   ;;"\\(\\bred\\b\\s-*=\\s-*\\([0-9]+\\)\\s-*\\)\\(\\bgreen\\b\\s-*=\\s-*\\([0-9]+\\)\\s-*\\)\\(\\bblue\\b\\s-*=\\s-*\\([0-9]+\\)\\s-*\\)"
-  "\\(red\\s-*=\\s-*\\([0-9]+\\)\\s-*\\)\\(green\\s-*=\\s-*\\([0-9]+\\)\\s-*\\)\\(blue\\s-*=\\s-*\\([0-9]+\\)\\s-*\\)"
-  )
+  "\\(red\\s-*=\\s-*\\([0-9]+\\)\\s-*\\)\\(green\\s-*=\\s-*\\([0-9]+\\)\\s-*\\)\\(blue\\s-*=\\s-*\\([0-9]+\\)\\s-*\\)")
 
 (defun rgb-red-green-blue-re-search-forward(beg end)
   (re-search-forward rgb-red-green-blue-assign-regex end t))
@@ -5516,23 +5573,26 @@ element to string like `princ' would.
   ;;     (save-mark-excursion-and-match-data
   (save-match-data
     (let* ((new-end end)
-           (re-match-index (rgb-red-green-blue-re-search-forward beg new-end))
-           (matched-indexes (list re-match-index))
-           );end let* varlist
+           (re-match-index
+            (rgb-red-green-blue-re-search-forward beg new-end))
+           (matched-indexes (list re-match-index)));end let* varlist
       (unless (not (null re-match-index))
-        (user-error "%s" (c-message "could not match regexp %S againt text: %S"
-                                    rgb-red-green-blue-assign-regex
-                                    (buffer-substring-no-properties beg new-end))))
+        (user-error "%s"
+                    (c-message "could not match regexp %S againt text: %S"
+                               rgb-red-green-blue-assign-regex
+                               (buffer-substring-no-properties beg new-end))))
       (while re-match-index
-        (setq bands (rgb-red-green-blue-get-triband-list-from-match-data))
-        (setq rgb-hex (rgb-red-green-blue-matched-triband-to-rgb-hex bands))
+        (setq bands
+              (rgb-red-green-blue-get-triband-list-from-match-data))
+        (setq rgb-hex
+              (rgb-red-green-blue-matched-triband-to-rgb-hex bands))
         (setq new-end (match-end))
         (goto-char (match-beginning))
         (replace-match rgb-hex)
         (goto-char (match-end))
-        (setq re-match-index (rgb-red-green-blue-re-search-forward beg end))
-        (push re-match-index matched-indexes)
-        );; end while
+        (setq re-match-index
+              (rgb-red-green-blue-re-search-forward beg end))
+        (push re-match-index matched-indexes));; end while
       );; end let*
     );; save-match-data
   ;;       );; save-mark-excursion-and-match-data
@@ -5542,28 +5602,32 @@ element to string like `princ' would.
   (unless (length> types 0)
     (error "ensure-type-of missing list of acceptable types or predicates to ensure type of `obj': %S" obj))
   (set (make-local-variable 'obj-t-name) (type-of obj))
-  (mapc #'(lambda (err) )
-        (signal 'type-error err)
+  (mapc
+   #'(lambda (err))
+   (signal 'type-error err)
 
-        (seq-map-indexed #'(lambda (pred index)
-                             (or
-                              (when (stringp pred)
-                                (unless (string= obj-t-name pred)
-                                  (cons :string  (format ""))
-                                  (unless (bufferp buffer)
-                                    (error "`buffer' is not a `bufferp' but rather `%s': %S" (type-of buffer) buffer))
-                                  )
-                                ); end when stringp
-                              ); end or
-                             types)
-                         ); end seq-map-indexed
-        );; end mapc
+   (seq-map-indexed
+    #'(lambda (pred index)
+        (or
+         (when (stringp pred)
+           (unless (string= obj-t-name pred)
+             (cons :string (format ""))
+             (unless (bufferp buffer)
+               (error "`buffer' is not a `bufferp' but rather `%s': %S"
+                      (type-of buffer)
+                      buffer)))
+           ); end when stringp
+         ); end or
+        types)); end seq-map-indexed
+   );; end mapc
   );; end defun ensure-type-of
 
 
 (defun save-session-info-get-each-buffer-info-callback (buffer)
   (unless (bufferp buffer)
-    (error "`buffer' is not a `bufferp' but rather `%s': %S" (type-of buffer) buffer))
+    (error "`buffer' is not a `bufferp' but rather `%s': %S"
+           (type-of buffer)
+           buffer))
 
   (let* ((start-cons (now-sexp))
          (contents
@@ -5573,15 +5637,15 @@ element to string like `princ' would.
          (end-cons (now-sexp))
          (start (car start-cons))
          (end (car end-cons))
-         (elapsed-seconds (- end start))
-         );;let
+         (elapsed-seconds (- end start)));;let
     ;; <body>
     (list
      :read-start start
      :read-end end
      :contents contents
      :name (buffer-name buffer)
-     :slug (shell-script-gen-safe-variable-name-from-string (buffer-name buffer))
+     :slug (shell-script-gen-safe-variable-name-from-string
+            (buffer-name buffer))
      :filename (buffer-file-name buffer)
      :filename-relatice (buffer-file-name buffer)
      :cwd (getcwd)
@@ -5611,22 +5675,27 @@ element to string like `princ' would.
 ;;;set-buffer "29.1") side-effect-free error-free)
 (defun get-all-buffers-info()
   "returns list with information of each open buffer"
-  (and (unless (or (null dir-path) (stringp dir-path))
-         (signal 'type-error (format "dir-path is not a string but rather %s: %S" (type-of dir-path) dir-path))
-         );; end unless
-       (unless (file-directory-p dir-path)
-         (signal 'type-error (format "dir-path is not a directory: %S" dir-path))
-         );; end unless
-       (unless (file-exists-p dir-path)
-         (make-directory dir-path t) t);; end unless
-       );; end and
-  (mapcar #'save-session-info-get-each-buffer-info-callback (buffer-list))) ;; end defun get-all-buffers-info
+  (and
+   (unless (or (null dir-path) (stringp dir-path))
+     (signal 'type-error
+             (format "dir-path is not a string but rather %s: %S"
+                     (type-of dir-path)
+                     dir-path)));; end unless
+   (unless (file-directory-p dir-path)
+     (signal 'type-error
+             (format "dir-path is not a directory: %S" dir-path)));; end unless
+   (unless (file-exists-p dir-path) (make-directory dir-path t) t);; end unless
+   );; end and
+  (mapcar #'save-session-info-get-each-buffer-info-callback
+          (buffer-list))) ;; end defun get-all-buffers-info
 
 
 (defun mkdir-p (path)
   "returns full `path'"
   (unless (stringp path)
-    (error "path should be a string but is a `%s': %s" (type-of path) path))
+    (error "path should be a string but is a `%s': %s"
+           (type-of path)
+           path))
   (let ((full-path (expand-file-name path)))
     (make-directory full-path t)
     full-path))
@@ -5640,26 +5709,27 @@ element to string like `princ' would.
 (defun workbench-path ()
   (mkdir-p (file-name-concat (workbench-root) (today-string))))
 
-(defun workbench-logs ()
-  (workbench-logs-safe-path))
+(defun workbench-logs () (workbench-logs-safe-path))
 
 (defun save-session-info(&optional dir-path)
   (interactive)
-  (when (null dir-path)
-    (setq-local dir-path (workbench-path)))
+  (when (null dir-path) (setq-local dir-path (workbench-path)))
 
 
-  (let* (
-         (date-fs (format-time-string "%Y-%m-%d-%z"))
+  (let* ((date-fs (format-time-string "%Y-%m-%d-%z"))
          (timestamp-fs (slugify-string (now)))
-         (target-dir (file-name-concat  (format "emacs-%s" date-fs)))
-         (target-file-buffers-content-backup-dir (file-name-concat target-dir (format "open-files-%s" timestamp-fs)))
-         (target-open-buffers-list-filename (format "emacs-open-buffers-%s" timestamp-fs))
-         (target-open-files-list-filename (format "emacs-open-files-%s" timestamp-fs))
-         (target-filename-buffer-list (format "emacs-open-buffers-%s" human-ts))
+         (target-dir (file-name-concat (format "emacs-%s" date-fs)))
+         (target-file-buffers-content-backup-dir
+          (file-name-concat target-dir
+                            (format "open-files-%s" timestamp-fs)))
+         (target-open-buffers-list-filename
+          (format "emacs-open-buffers-%s" timestamp-fs))
+         (target-open-files-list-filename
+          (format "emacs-open-files-%s" timestamp-fs))
+         (target-filename-buffer-list
+          (format "emacs-open-buffers-%s" human-ts))
          (buffers (get-all-buffers-info))
-         (lock-filename (file-name-concat target-dir "write.lock"))
-         )
+         (lock-filename (file-name-concat target-dir "write.lock")))
     (make-directory target-file-buffers-content-backup-dir t)
     ;; :read-start start
     ;; :read-end end
@@ -5672,24 +5742,33 @@ element to string like `princ' would.
     ;; :read-start-sec-and-nanos start-cons
     ;; :read-end-sec-and-nanos end-cons
     ;; :buffer buffer
-    (mapc #'(lambda (info)
-              (let-alist (seq-partition info 2)
-                (let* ((target-filename
-                        (file-name-concat
-                         target-file-buffers-content-backup-dir (string-trim-left .filename "^/+")))
-                       (target-dir (file-name-directory target-filename)))
-                  (make-directory target-dir t)
-                  (with-temp-buffer
-                    (insert .contents)
-                    (widen)
-                    (beginning-of-buffer)
-                    (write-region (point-min) (point-max) .filename nil nil lock-filename))
-                  (with-temp-buffer
-                    (insert (json-encode-plist info))
-                    (widen)
-                    (write-region (point-min) (point-max) (format "%s.info.json" .filename) nil nil lock-filename))
-                  )))
-          buffers) ;;end mapc #'(lambda (info))
+    (mapc
+     #'(lambda (info)
+         (let-alist
+             (seq-partition info 2)
+           (let* ((target-filename
+                   (file-name-concat
+                    target-file-buffers-content-backup-dir
+                    (string-trim-left .filename "^/+")))
+                  (target-dir (file-name-directory target-filename)))
+             (make-directory target-dir t)
+             (with-temp-buffer
+               (insert .contents)
+               (widen)
+               (beginning-of-buffer)
+               (write-region
+                (point-min)
+                (point-max)
+                .filename nil nil lock-filename))
+             (with-temp-buffer
+               (insert (json-encode-plist info))
+               (widen)
+               (write-region
+                (point-min)
+                (point-max)
+                (format "%s.info.json" .filename)
+                nil nil lock-filename)))))
+     buffers) ;;end mapc #'(lambda (info))
     (with-temp-buffer
       (insert (json-encode buffers))
       (widen)
@@ -5697,8 +5776,9 @@ element to string like `princ' would.
       (write-region
        (point-min)
        (point-max)
-       (file-name-concat target-dir (format "all-buffers-%s.json" timestamp-fs) nil nil lock-filename)))
-    ); end let of defun
+       (file-name-concat target-dir
+                         (format "all-buffers-%s.json" timestamp-fs)
+                         nil nil lock-filename)))); end let of defun
   );defun save-session-info
 (defun set-prop-right-margin-region (beg end)
   "These text properties affect the behavior of the fill commands.  They
@@ -5726,8 +5806,8 @@ Margins::.
 
 
 "
-  (interactive "*r")
-  (add-text-properties beg end (list 'right-margin 10)))
+     (interactive "*r")
+     (add-text-properties beg end (list 'right-margin 10)))
 
 
 
@@ -5798,39 +5878,69 @@ Margins::.
 
 (defun find-file-open-minibuffer-at-directory-interactive(initial-directory)
   (let* ((~/opt/libexec/path (expand-file-name initial-directory))
-         (result (list (read-file-name "Find file: " ~/opt/libexec/path "confirm-after-completion" nil nil ))))
+         (result
+          (list
+           (read-file-name "Find file: " ~/opt/libexec/path "confirm-after-completion" nil nil ))))
     (with-minibuffer-selected-window
       (minibuffer-complete)
-      (minibuffer-complete)
-      )
-    result
-    ));; end defun closure
+      (minibuffer-complete))
+    result));; end defun closure
 
 (defun find-file-open-minibuffer-at-directory-body (filename)
   (let* ((value (find-file-noselect filename nil nil t))
-         (result (if (listp value)
-		     (mapcar 'pop-to-buffer-same-window (nreverse value))
-		   (pop-to-buffer-same-window value))))
+         (result
+          (if (listp value)
+	      (mapcar 'pop-to-buffer-same-window (nreverse value))
+	    (pop-to-buffer-same-window value))))
     (with-minibuffer-selected-window
       (minibuffer-complete)
-      (minibuffer-complete)
-      )
+      (minibuffer-complete))
     result))
 
 (defun Ox33b4O/find-file/~/opt/libexec(filename)
   "bound to `C-x' 'M-f'"
-  (interactive (find-file-open-minibuffer-at-directory-interactive "~/opt/libexec/"))
+  (interactive
+   (find-file-open-minibuffer-at-directory-interactive "~/opt/libexec/"))
+  (find-file-open-minibuffer-at-directory-body filename))
+
+
+(defun workbench/path (&optional time zone)
+  "returns the date-bound workbench path for today, unless the optional
+argument TIME is provided.
+
+The argument TIME is forwarded to `format-time-string', so if its value
+is `nil' then the current date is assumed.
+
+Likewise, the argument ZONE is forwarded to `format-time-string', so if its value
+is `nil' then the current timezone is assumed.
+
+This function automatically creates the workbench before returning its path.
+"
+  (let ((workbench-path
+         (file-name-concat "~/workbench/"
+                           (format-time-string "%Y-%m-%d" time zone))))
+    (unless (file-directory-p workbench-path)
+      (make-directory workbench-path t))
+    workbench-path))
+
+(defun Ox33b4O/find-file/~/workbench/today(filename)
+  "bound to `C-x' 'M-f'"
+  (interactive
+   (find-file-open-minibuffer-at-directory-interactive
+    (workbench/path)))
   (find-file-open-minibuffer-at-directory-body filename))
 
 
 (defun Ox33b4O/find-file/~/.shell.d(filename)
   "bound to `C-x' 'M-s'"
-  (interactive (find-file-open-minibuffer-at-directory-interactive "~/.shell.d/"))
+  (interactive
+   (find-file-open-minibuffer-at-directory-interactive "~/.shell.d/"))
   (find-file-open-minibuffer-at-directory-body filename))
 
 (defun Ox33b4O/find-file/~/.emacs.d(filename)
   "bound to `C-x' 'M-s'"
-  (interactive (find-file-open-minibuffer-at-directory-interactive "~/.emacs.d/"))
+  (interactive
+   (find-file-open-minibuffer-at-directory-interactive "~/.emacs.d/"))
   (find-file-open-minibuffer-at-directory-body filename))
 
 ;; (defun describe (symbol-s)
@@ -5871,35 +5981,32 @@ Margins::.
 ;; MMMMMMMMMMM
 
 (defclass search-info ()
-	  (
-	   (beginning :initarg :beginning
-		      :type (or integer marker)
-		      :documentation "the `point' within the searched `buffer' (integer or marker) to the beginning of a successful search result"
-		      :writer search-info-set-beginning
-		      :reader search-info-get-beginning)
-	   (end :initarg :end
-		:type (or integer marker)
-		:documentation "the `point' within the searched `buffer' (integer or marker) to the end of a successful search result"
-		:writer search-info-set-end
-		:reader search-info-get-end)
-	   (direction :initarg :direction
-		      :type (member :forward :backward)
-		      :documentation "the direction of a successful search (either :forward or :backward)"
-		      :writer search-info-set-direction
-		      :reader search-info-get-direction)
-	   (query :initarg :query
-		  :type string
-		  :documentation "the \"string\" used in the search. if `:type' is `'regexp' then `:query' is a regular-expression written in the \"string\" syntax since that's the format used in `isearch-regexp-forward' and `isearch-regexp-forward'"
-		  :writer search-info-set-query
-		  :reader search-info-get-query)
-	   (type :initarg :type
-		 :type (member :regexp :string
-			       'regexp 'string)
-		 :documentation "the type of a search-info (either `'regexp' or `'string'"
-		 :writer search-info-set-type
-		 :reader search-info-get-type)
-	   )
-	  )
+  ((beginning :initarg :beginning
+	      :type (or integer marker)
+	      :documentation "the `point' within the searched `buffer' (integer or marker) to the beginning of a successful search result"
+	      :writer search-info-set-beginning
+	      :reader search-info-get-beginning)
+   (end :initarg :end
+	:type (or integer marker)
+	:documentation "the `point' within the searched `buffer' (integer or marker) to the end of a successful search result"
+	:writer search-info-set-end
+	:reader search-info-get-end)
+   (direction :initarg :direction
+	      :type (member :forward :backward)
+	      :documentation "the direction of a successful search (either :forward or :backward)"
+	      :writer search-info-set-direction
+	      :reader search-info-get-direction)
+   (query :initarg :query
+	  :type string
+	  :documentation "the \"string\" used in the search. if `:type' is `'regexp' then `:query' is a regular-expression written in the \"string\" syntax since that's the format used in `isearch-regexp-forward' and `isearch-regexp-forward'"
+	  :writer search-info-set-query
+	  :reader search-info-get-query)
+   (type :initarg :type
+	 :type (member :regexp :string 'regexp 'string)
+	 :documentation "the type of a search-info (either `'regexp' or `'string'"
+	 :writer search-info-set-type
+	 :reader search-info-get-type))
+  )
 
 
 (defun make-search-info (beg end direction query type)
@@ -5918,59 +6025,59 @@ Margins::.
       (or
        (save-mark-and-excursion
          (widen)
-         (and (setq end (re-search-forward latest-regexp-search nil t))
-              (setq beg (match-beginning 0))
-              (setq direction :forward)
-              (search-info :beginning beg
-                           :end end
-                           :direction direction
-                           :query latest-regexp-search
-                           :type 'regexp
-                           )))
+         (and
+          (setq end (re-search-forward latest-regexp-search nil t))
+          (setq beg (match-beginning 0))
+          (setq direction :forward)
+          (search-info :beginning beg
+                       :end end
+                       :direction direction
+                       :query latest-regexp-search
+                       :type 'regexp)))
        (save-mark-and-excursion
          (widen)
-         (and (setq end (re-search-backward latest-regexp-search nil t))
-              (setq beg (match-beginning 0))
-              (setq direction :backward)
-              (search-info :beginning beg
-                           :end end
-                           :direction direction
-                           :query latest-regexp-search
-                           :type 'regexp
-                           )))))))
+         (and
+          (setq end (re-search-backward latest-regexp-search nil t))
+          (setq beg (match-beginning 0))
+          (setq direction :backward)
+          (search-info :beginning beg
+                       :end end
+                       :direction direction
+                       :query latest-regexp-search
+                       :type 'regexp)))))))
 
 (defun get-recent-literal-search-string-if-results()
-  (let (beg end direction
-            (latest-literal-search (car search-ring)))
+  (let (beg end direction (latest-literal-search (car search-ring)))
     (when (stringp latest-literal-search)
       (or
        (save-mark-and-excursion
          (widen)
-         (and (setq end (search-forward latest-literal-search nil t))
-              (setq beg (match-beginning 0))
-              (setq direction :forward)
-              (search-info :beginning beg
-                           :end end
-                           :direction direction
-                           :query latest-literal-search
-                           :type 'literal
-                           )))
+         (and
+          (setq end (search-forward latest-literal-search nil t))
+          (setq beg (match-beginning 0))
+          (setq direction :forward)
+          (search-info :beginning beg
+                       :end end
+                       :direction direction
+                       :query latest-literal-search
+                       :type 'literal)))
        (save-mark-and-excursion
          (widen)
-         (and (setq end (search-backward latest-literal-search nil t))
-              (setq beg (match-beginning 0))
-              (setq direction :backward)
-              (search-info :beginning beg
-                           :end end
-                           :direction direction
-                           :query latest-literal-search
-                           :type 'literal
-                           )))))))
+         (and
+          (setq end (search-backward latest-literal-search nil t))
+          (setq beg (match-beginning 0))
+          (setq direction :backward)
+          (search-info :beginning beg
+                       :end end
+                       :direction direction
+                       :query latest-literal-search
+                       :type 'literal)))))))
 
 (defun get-search-info-from-isearch-rings()
   "returns a `search-info' if the latest query in either `regexp-search-ring' or `search-ring' provided at least one of the rings are non-empty"
-  (or (get-recent-regexp-search-string-if-results)
-      (get-recent-regexp-search-string-if-results)))
+  (or
+   (get-recent-regexp-search-string-if-results)
+   (get-recent-regexp-search-string-if-results)))
 
 
 (defun g/search()
@@ -5985,8 +6092,10 @@ Margins::.
           (or
            (when (region-active-p)
              (save-mark-and-excursion
-               (buffer-substring-no-properties (region-beginning) (region-end)))
-                                        ; end when region-active-p
+               (buffer-substring-no-properties
+                (region-beginning)
+                (region-end)))
+             ;; end when region-active-p
              )
            (when (setq info (get-search-info-from-isearch-rings))
              (search-info-get-query info))
@@ -6016,50 +6125,58 @@ Margins::.
 
 (defun escape-newlines-in-string(value)
   (replace-regexp-in-string "
-"  "\\n" (if (stringp value) (format "%S" (substring-no-properties (format "%s" value))))))
+"  "\\n"
+(if (stringp value)
+    (format "%S" (substring-no-properties (format "%s" value))))))
 
 (defun wrap-lines-in-quotes (string &optional quote-type trailing-char)
   (unless (stringp string)
-    (signal 'type-error (format "`string' should be a string not %s: %s" (type-of string) string)))
+    (signal 'type-error
+            (format "`string' should be a string not %s: %s"
+                    (type-of string)
+                    string)))
 
   (let ((trailing-char (if (stringp trailing-char) trailing-char ""))
-        (quote-char (cond ((or (equal quote-type 'single)
-                               (equal quote-type :single))
-                           "'")
-                          ((or (equal quote-type 'double)
-                               (equal quote-type :double))
-                           "\"")
-                          (t "\"")))
+        (quote-char
+         (cond
+          ((or (equal quote-type 'single) (equal quote-type :single))
+           "'")
+          ((or (equal quote-type 'double) (equal quote-type :double))
+           "\"")
+          (t "\"")))
 
         (sol quote-char)
         (eol (format "%s%s" quote-char trailing-char))
         (result string))
     (setq result (replace-regexp-in-string "^" sol result))
     (setq result (replace-regexp-in-string "$" eol result))
-    result
-    ))
+    result))
 
 
 (defun wrap-lines-in-quotes-region (beg end &optional quote-type trailing-char)
   (interactive "*r")
   (let* ((trailing-char (if (stringp trailing-char) trailing-char ""))
-        (quote-char (cond ((or (equal quote-type 'single)
-                               (equal quote-type :single))
-                           "'")
-                          ((or (equal quote-type 'double)
-                               (equal quote-type :double))
-                           "\"")
-                          (t "\"")))
+         (quote-char
+          (cond
+           ((or (equal quote-type 'single) (equal quote-type :single))
+            "'")
+           ((or (equal quote-type 'double) (equal quote-type :double))
+            "\"")
+           (t "\"")))
 
-        (sol quote-char)
-        (eol (format "%s%s" quote-char trailing-char)))
-   (save-match-data
-     (save-mark-and-excursion
-       (while (re-search-forward "^\\(\\s-*\\)\\(.*\\)$" end t count)
-         (let ((replacement (format "%s%s%s%s"  (match-string 1) sol (match-string 2) eol)))
-           ;; (c-message-open "%s" replacement)
-           (replace-match replacement nil t)))))
-   ))
+         (sol quote-char)
+         (eol (format "%s%s" quote-char trailing-char)))
+    (save-match-data
+      (save-mark-and-excursion
+        (while (re-search-forward "^\\(\\s-*\\)\\(.*\\)$" end t count)
+          (let ((replacement
+                 (format "%s%s%s%s"
+                         (match-string 1)
+                         sol
+                         (match-string 2)
+                         eol)))
+            ;; (c-message-open "%s" replacement)
+            (replace-match replacement nil t)))))))
 
 
 ;;WIP/broken
@@ -6196,9 +6313,9 @@ Margins::.
   (let* ((current-file-name (expand-file-name (buffer-file-name)))
          (no-extension
           (file-name-sans-extension (file-name-base current-file-name))))
-     (when (string= no-extension "__init__")
-       (file-name-parent-directory current-file-name))
-     current-file-name))
+    (when (string= no-extension "__init__")
+      (file-name-parent-directory current-file-name))
+    current-file-name))
 
 (defun python-insert-members-from-file ()
   "BEG END."
@@ -6229,5 +6346,4 @@ Margins::.
           (switch-to-buffer tmp-buffer)
           (user-error
            (format "failed to list items of file %s"
-                   (abbreviate-file-name (python-file-name))))))
-      )))
+                   (abbreviate-file-name (python-file-name)))))))))
