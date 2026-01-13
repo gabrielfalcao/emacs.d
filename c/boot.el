@@ -32,6 +32,8 @@
 (defalias '~opt #'Ox33b4O/find-file/~/opt/libexec)
 (defalias 'opt #'Ox33b4O/find-file/~/opt/libexec)
 
+(defalias '~workbench #'Ox33b4O/find-file/~/workbench/today)
+
 (defalias '~shell.d #'Ox33b4O/find-file/~/.shell.d)
 (defalias '~/shell.d #'Ox33b4O/find-file/~/.shell.d)
 

@@ -14,6 +14,9 @@
 ;; (add-hook 'web-mode-hook 'prettier-js-mode)
 ;; (add-hook 'web-mode-hook 'prettier-js-mode)
 
+(require 'company-box)
+(add-hook 'company-mode-hook 'company-box-mode)
+
 (defun python-mode-hook-bind-custom-keys()
   (interactive)
   (define-key python-mode-map (kbd "C-c C-f") #'g/format/prettify)

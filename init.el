@@ -45,14 +45,14 @@
  '(ignored-local-variable-values '((sh-indent-comment . t)))
  '(package-selected-packages
    '(ansi autothemer blacken brightscript-mode cargo-mode company
-          csharp-mode dockerfile-mode elixir-mode exec-path-from-shell
-          expand-region flycheck-rust flymake-shellcheck go-mode
-          haml-mode highlight-indentation jinja2-mode jsonnet-mode
-          kotlin-mode lua-mode markdown-mode nginx-mode pcre2el peg
-          php-mode protobuf-mode python-mode pythonic restclient
-          rust-mode sed-mode solidity-flycheck swift-mode
-          terraform-mode toml toml-mode typescript-mode web-mode
-          yaml-mode))
+          company-box csharp-mode dockerfile-mode elixir-mode
+          exec-path-from-shell expand-region flycheck-rust
+          flymake-shellcheck gdscript-mode go-mode haml-mode
+          highlight-indentation jinja2-mode jsonnet-mode kotlin-mode
+          lua-mode markdown-mode nginx-mode pcre2el peg php-mode
+          protobuf-mode python-mode pythonic restclient rust-mode
+          sed-mode solidity-flycheck swift-mode terraform-mode toml
+          toml-mode typescript-mode web-mode yaml-mode))
  '(py-electric-colon-greedy-p t)
  '(py-electric-colon-newline-and-indent-p t)
  '(py-indent-honors-inline-comment t)
