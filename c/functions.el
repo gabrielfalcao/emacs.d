@@ -3164,23 +3164,23 @@ which returns the exit-status and the string output.
   "BEG END."
   (interactive "*r")
   (save-mark-excursion-and-match-data
-    (goto-char beg)
-    (while (re-search-forward
-            "\\(^\\|\\b\\)[a-fA-F0-9]+\\(\\b\\|$\\)" end t)
-      (let* ((val (format "%s" (string-to-number (match-string) 16)))
-             ;; (hexa (or (and (length= val 1) (format "0%s" val))
-             ;;           val))
-             )
-        (replace-match val)))))
+   (goto-char beg)
+   (while (re-search-forward
+           "\\(^\\|\\b\\)[a-fA-F0-9]+\\(\\b\\|$\\)" end t)
+     (let* ((val (format "%s" (string-to-number (match-string) 16)))
+            ;; (hexa (or (and (length= val 1) (format "0%s" val))
+            ;;           val))
+            )
+       (replace-match val)))))
 
 (defun decimal-to-hex-region (beg end)
   "BEG END."
   (interactive "*r")
   (save-mark-excursion-and-match-data
-    (goto-char beg)
-    (while (re-search-forward "\\(^\\|\\b\\)[0-9]+\\(\\b\\|$\\)" end t)
-      (replace-match
-       (format "%02x" (string-to-number (match-string 0)))))))
+   (goto-char beg)
+   (while (re-search-forward "\\(^\\|\\b\\)[0-9]+\\(\\b\\|$\\)" end t)
+     (replace-match
+      (format "%02x" (string-to-number (match-string 0)))))))
 
 ;; WIP/TODO: replace with rgb-parser.el
 ;; (defun hex-rgb-to-ansi-region (beg end)
@@ -5473,20 +5473,20 @@ element to string like `princ' would.
   (let* ((new-end (copy-marker end))
          (last-pos (copy-marker end)))
     (save-mark-excursion-and-match-data
-      (widen)
-      (replace-regexp-in-region
-       "\\(do\\|;\\)\\s-+\\b\\(if\\|then\\|else\\|fi\\|done\\)\\b"
-       "\\1\n\\2\n" beg end)
-      (setq last-pos (point) new-end (point)))
+     (widen)
+     (replace-regexp-in-region
+      "\\(do\\|;\\)\\s-+\\b\\(if\\|then\\|else\\|fi\\|done\\)\\b"
+      "\\1\n\\2\n" beg end)
+     (setq last-pos (point) new-end (point)))
 
     (save-mark-excursion-and-match-data
-      (replace-regexp-in-region
-       "\\(if\\|then\\)[\n[:space:]]+"
-       "\\1 " beg new-end)
-      (replace-regexp-in-region
-       "\\(;\\)\\(\\s-*\\)\n\\(\\s-*\\)\\(then\\)\\s-+"
-       "\\1 \\2 \\3\\4\n\\2\\3"
-       beg new-end)) ;; save-mark-excursion-and-match-data
+     (replace-regexp-in-region
+      "\\(if\\|then\\)[\n[:space:]]+"
+      "\\1 " beg new-end)
+     (replace-regexp-in-region
+      "\\(;\\)\\(\\s-*\\)\n\\(\\s-*\\)\\(then\\)\\s-+"
+      "\\1 \\2 \\3\\4\n\\2\\3"
+      beg new-end)) ;; save-mark-excursion-and-match-data
     (save-mark-and-excursion
       (widen)
       (goto-char beg)
@@ -5811,8 +5811,8 @@ Margins::.
 
 
 "
-     (interactive "*r")
-     (add-text-properties beg end (list 'right-margin 10)))
+  (interactive "*r")
+  (add-text-properties beg end (list 'right-margin 10)))
 
 
 
@@ -5986,32 +5986,32 @@ This function automatically creates the workbench before returning its path.
 ;; MMMMMMMMMMM
 
 (defclass search-info ()
-  ((beginning :initarg :beginning
-	      :type (or integer marker)
-	      :documentation "the `point' within the searched `buffer' (integer or marker) to the beginning of a successful search result"
-	      :writer search-info-set-beginning
-	      :reader search-info-get-beginning)
-   (end :initarg :end
-	:type (or integer marker)
-	:documentation "the `point' within the searched `buffer' (integer or marker) to the end of a successful search result"
-	:writer search-info-set-end
-	:reader search-info-get-end)
-   (direction :initarg :direction
-	      :type (member :forward :backward)
-	      :documentation "the direction of a successful search (either :forward or :backward)"
-	      :writer search-info-set-direction
-	      :reader search-info-get-direction)
-   (query :initarg :query
-	  :type string
-	  :documentation "the \"string\" used in the search. if `:type' is `'regexp' then `:query' is a regular-expression written in the \"string\" syntax since that's the format used in `isearch-regexp-forward' and `isearch-regexp-forward'"
-	  :writer search-info-set-query
-	  :reader search-info-get-query)
-   (type :initarg :type
-	 :type (member :regexp :string 'regexp 'string)
-	 :documentation "the type of a search-info (either `'regexp' or `'string'"
-	 :writer search-info-set-type
-	 :reader search-info-get-type))
-  )
+	  ((beginning :initarg :beginning
+		      :type (or integer marker)
+		      :documentation "the `point' within the searched `buffer' (integer or marker) to the beginning of a successful search result"
+		      :writer search-info-set-beginning
+		      :reader search-info-get-beginning)
+	   (end :initarg :end
+		:type (or integer marker)
+		:documentation "the `point' within the searched `buffer' (integer or marker) to the end of a successful search result"
+		:writer search-info-set-end
+		:reader search-info-get-end)
+	   (direction :initarg :direction
+		      :type (member :forward :backward)
+		      :documentation "the direction of a successful search (either :forward or :backward)"
+		      :writer search-info-set-direction
+		      :reader search-info-get-direction)
+	   (query :initarg :query
+		  :type string
+		  :documentation "the \"string\" used in the search. if `:type' is `'regexp' then `:query' is a regular-expression written in the \"string\" syntax since that's the format used in `isearch-regexp-forward' and `isearch-regexp-forward'"
+		  :writer search-info-set-query
+		  :reader search-info-get-query)
+	   (type :initarg :type
+		 :type (member :regexp :string 'regexp 'string)
+		 :documentation "the type of a search-info (either `'regexp' or `'string'"
+		 :writer search-info-set-type
+		 :reader search-info-get-type))
+	  )
 
 
 (defun make-search-info (beg end direction query type)
@@ -6352,3 +6352,132 @@ This function automatically creates the workbench before returning its path.
           (user-error
            (format "failed to list items of file %s"
                    (abbreviate-file-name (python-file-name)))))))))
+
+(defun represent-unicode-codepoint(codepoint &optional base prefix)
+  (when (null base)
+    (setq base 16))
+
+  (let* (
+         (radix
+          (cond
+           ((or
+             (equal 16 base)
+             (equal "16" base)
+             (eq 'hex base)
+             (eq :hex base))
+            16)
+           ((or (equal 10 base)
+                (equal "10" base)
+                (equal 'dec base)
+                (equal :dec base))
+            10)
+
+           ((or (eq 'oct base)
+                (eq :oct base))
+            8)
+           (t
+            (error "unexpected/invalid value (of type %s) for base argument: %S " (type-of base) base)))
+          )
+         (format-char
+          (cond
+           ((equal radix 16) "x")
+           ((equal radix 10) "d")
+           ((equal radix 8) "o")
+           (t (error "unexpected radix (type %s): %s" (type-of radix) (format "%S" radix)))))
+         (prefix-extension
+          (cond
+           ((equal radix 8) "0")
+           ((equal radix 16) "x")
+           (t "")))
+         (prefix-start (cond
+                        ((or
+                          (equal "\\" prefix)
+                          (equal #x5c prefix)
+                          (equal 'escape prefix)
+                          (equal :escape prefix)
+                          (equal 'backslash prefix)
+                          (equal :backslash prefix)
+                          (equal 'slash prefix)
+                          (equal :slash prefix)
+                          (equal 'shell prefix)
+                          (equal :shell prefix)
+                          (equal 'bash prefix)
+                          (equal :bash prefix)
+                          )
+                         "\\")
+                        ((or
+                          (equal "#" prefix)
+                          (equal #x23 prefix)
+                          (equal 'emacs prefix)
+                          (equal :emacs prefix)
+                          (equal 'hash prefix)
+                          (equal :hash prefix)
+                          )
+                         "#")
+                        ((or
+                          (equal "0" prefix)
+                          (equal #x00 prefix)
+                          (equal 'number prefix)
+                          (equal :number prefix)
+                          (equal 'num prefix)
+                          (equal :num prefix)
+                          (equal 'integer prefix)
+                          (equal :integer prefix)
+                          (equal 'int prefix)
+                          (equal :int prefix)
+                          (equal 'zero prefix)
+                          (equal :zero prefix)
+                          (equal :shell prefix)
+                          )
+                         "0")
+
+                        ((stringp prefix)
+                         prefix))
+                       )
+         )
+    ;; body
+    (unless (or
+             (not (= radix 10))
+             (null prefix))
+      (error "cannot add prefix %s to codepoint represented in decimal number system (base: %S)"
+             (format "%S" prefix) base))
+
+    )
+  )
+
+(defun string-to-unicode-codepoints(string &optional base prefix)
+  (map #'(lambda (codepoint)
+           (represent-unicode-codepoint codepoint base prefix))
+       (string-to-list string)))
+
+
+(defun ascii-punctuation-to-unicode-codepoint-region(beg end)
+  (interactive "*r")
+  (progn
+    (replace-regexp-in-region "[,]" "\x2c" beg end)
+    (replace-regexp-in-region "[~]" "\x7e" beg end)
+    (replace-regexp-in-region "[]]" "\x5d" beg end)
+    (replace-regexp-in-region "[;]" "\x3b" beg end)
+    (replace-regexp-in-region "[|]" "\x7c" beg end)
+    (replace-regexp-in-region "[\"]" "\x22" beg end)
+    (replace-regexp-in-region "[[]" "\x5b" beg end)
+    (replace-regexp-in-region "[*]" "\x2a" beg end)
+    (replace-regexp-in-region "[`]" "\x60" beg end)
+    (replace-regexp-in-region "[#]" "\x23" beg end)
+    (replace-regexp-in-region "[{]" "\x7b" beg end)
+    (replace-regexp-in-region "[.]" "\x2e" beg end)
+    (replace-regexp-in-region "[\^]" "\x5e" beg end)
+    (replace-regexp-in-region "[@]" "\x40" beg end)
+    (replace-regexp-in-region "[?]" "\x3f" beg end)
+    (replace-regexp-in-region "[\\]" "\x5c" beg end)
+    (replace-regexp-in-region "[%]" "\x25" beg end)
+    (replace-regexp-in-region "[&]" "\x26" beg end)
+    (replace-regexp-in-region "[:]" "\x3a" beg end)
+    (replace-regexp-in-region "[$]" "\x24" beg end)
+    (replace-regexp-in-region "[}]" "\x7d" beg end)
+    (replace-regexp-in-region "[ ]" "\x20" beg end)
+    (replace-regexp-in-region "[']" "\x27" beg end)
+    (replace-regexp-in-region "[!]" "\x21" beg end)
+    (replace-regexp-in-region "[/]" "\x2f" beg end)
+    )
+  )
