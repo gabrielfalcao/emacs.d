@@ -41,7 +41,7 @@
 (defalias '~/emacs.d #'Ox33b4O/find-file/~/.emacs.d)
 
 (setq gdscript-use-tab-indents nil)
-
+(setq binary-as-unsigned t)
 (defalias 'file-name-canonicalize #'expand-file-name)
 (defalias 'file-name-full-path #'expand-file-name)
 (add-to-list 'custom-safe-themes "5bd001a0f95d54174370e9275b1f594829930a1a95ed82741a5492facb7415e7")
