@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
 
+declare -r ifs_lb=$'\n'
+declare -r ifs_old=${IFS:-${ifs_lb}}
 export IFS=$'\n'
 set -umeTE
 set +f
 set -o pipefail
-unset IFS
+export IFS="${ifs_old}"
+
 
 declare -- script_name="$(basename "${BASH_SOURCE[0]}")"
 declare -- script_path="$(2>/dev/random 1>/dev/random cd $(dirname "${BASH_SOURCE[0]}") && pwd)"

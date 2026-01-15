@@ -2798,7 +2798,12 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 
 	(save-buffer 0)
 	(chmod buf-filename (string-to-number "755" 8))
-	(shfmt)))))
+	(shfmt))
+
+      ;; (isearch-edit-string)
+      ;; "[a-z_]*\(git\|help\|\(us\(ag\)?e\|fulness\)\|description\|repl\|stdin\|return.*code\|\(input\|source\)s?\)[a-z_]*")
+
+      )))
 
 (defun read-file-to-string (filename)
   "inserts template file at beginning of current buffer."
