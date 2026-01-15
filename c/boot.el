@@ -40,6 +40,7 @@
 (defalias '~emacs.d #'Ox33b4O/find-file/~/.emacs.d)
 (defalias '~/emacs.d #'Ox33b4O/find-file/~/.emacs.d)
 
+(setq gdscript-use-tab-indents nil)
 
 (defalias 'file-name-canonicalize #'expand-file-name)
 (defalias 'file-name-full-path #'expand-file-name)
