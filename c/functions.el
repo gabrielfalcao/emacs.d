@@ -5743,89 +5743,90 @@ interactive command `replace-regexp' like so:
                         )))
             (string-join items item-separator) ;; (format "%d=`%s`\n" g value)
             )
-          ))                  ;; mapcar `function' argument #0
-      (number-sequence 0 (- (/ (length (match-data)) 2) 1))  ;; mapcar `sequence' argument #1
-      ) ;; string-join `strings' argument   #0
-    "" ;; string-join `separator' argument #1
-    )
-   ) ;; end defun debug-regexp-subexpressions
+          )) ;
+      );; mapcar `function' argument #0
+    (number-sequence 0 (- (/ (length (match-data)) 2) 1))  ;; mapcar `sequence' argument #1
+    ) ;; string-join `strings' argument   #0
+   "" ;; string-join `separator' argument #1
+   )
+  ) ;; end defun debug-regexp-subexpressions
 
-  (defun workbench-path ()
-    (mkdir-p (file-name-concat (workbench-root) (today-string))))
+(defun workbench-path ()
+  (mkdir-p (file-name-concat (workbench-root) (today-string))))
 
-  (defun workbench-logs () (workbench-logs-safe-path))
+(defun workbench-logs () (workbench-logs-safe-path))
 
-  (defun save-session-info(&optional dir-path)
-    (interactive)
-    (when (null dir-path) (setq-local dir-path (workbench-path)))
+(defun save-session-info(&optional dir-path)
+  (interactive)
+  (when (null dir-path) (setq-local dir-path (workbench-path)))
 
 
-    (let* ((date-fs (format-time-string "%Y-%m-%d-%z"))
-           (timestamp-fs (slugify-string (now)))
-           (target-dir (file-name-concat (format "emacs-%s" date-fs)))
-           (target-file-buffers-content-backup-dir
-            (file-name-concat target-dir
-                              (format "open-files-%s" timestamp-fs)))
-           (target-open-buffers-list-filename
-            (format "emacs-open-buffers-%s" timestamp-fs))
-           (target-open-files-list-filename
-            (format "emacs-open-files-%s" timestamp-fs))
-           (target-filename-buffer-list
-            (format "emacs-open-buffers-%s" human-ts))
-           (buffers (get-all-buffers-info))
-           (lock-filename (file-name-concat target-dir "write.lock")))
-      (make-directory target-file-buffers-content-backup-dir t)
-      ;; :read-start start
-      ;; :read-end end
-      ;; :contents contents
-      ;; :name (buffer-name buffer)
-      ;; :slug (shell-script-gen-safe-variable-name-from-string (buffer-name buffer))
-      ;; :filename (buffer-file-name buffer)
-      ;; :filename-relatice (buffer-file-name buffer)
-      ;; :cwd (getcwd)
-      ;; :read-start-sec-and-nanos start-cons
-      ;; :read-end-sec-and-nanos end-cons
-      ;; :buffer buffer
-      (mapc
-       #'(lambda (info)
-           (let-alist
-               (seq-partition info 2)
-             (let* ((target-filename
-                     (file-name-concat
-                      target-file-buffers-content-backup-dir
-                      (string-trim-left .filename "^/+")))
-                    (target-dir (file-name-directory target-filename)))
-               (make-directory target-dir t)
-               (with-temp-buffer
-		 (insert .contents)
-		 (widen)
-		 (beginning-of-buffer)
-		 (write-region
-                  (point-min)
-                  (point-max)
-                  .filename nil nil lock-filename))
-               (with-temp-buffer
-		 (insert (json-encode-plist info))
-		 (widen)
-		 (write-region
-                  (point-min)
-                  (point-max)
-                  (format "%s.info.json" .filename)
-                  nil nil lock-filename)))))
-       buffers) ;;end mapc #'(lambda (info))
-      (with-temp-buffer
-	(insert (json-encode buffers))
-	(widen)
-	(beginning-of-buffer)
-	(write-region
-	 (point-min)
-	 (point-max)
-	 (file-name-concat target-dir
-                           (format "all-buffers-%s.json" timestamp-fs)
-                           nil nil lock-filename)))); end let of defun
-    );defun save-session-info
-  (defun set-prop-right-margin-region (beg end)
-    "These text properties affect the behavior of the fill commands.  They
+  (let* ((date-fs (format-time-string "%Y-%m-%d-%z"))
+         (timestamp-fs (slugify-string (now)))
+         (target-dir (file-name-concat (format "emacs-%s" date-fs)))
+         (target-file-buffers-content-backup-dir
+          (file-name-concat target-dir
+                            (format "open-files-%s" timestamp-fs)))
+         (target-open-buffers-list-filename
+          (format "emacs-open-buffers-%s" timestamp-fs))
+         (target-open-files-list-filename
+          (format "emacs-open-files-%s" timestamp-fs))
+         (target-filename-buffer-list
+          (format "emacs-open-buffers-%s" human-ts))
+         (buffers (get-all-buffers-info))
+         (lock-filename (file-name-concat target-dir "write.lock")))
+    (make-directory target-file-buffers-content-backup-dir t)
+    ;; :read-start start
+    ;; :read-end end
+    ;; :contents contents
+    ;; :name (buffer-name buffer)
+    ;; :slug (shell-script-gen-safe-variable-name-from-string (buffer-name buffer))
+    ;; :filename (buffer-file-name buffer)
+    ;; :filename-relatice (buffer-file-name buffer)
+    ;; :cwd (getcwd)
+    ;; :read-start-sec-and-nanos start-cons
+    ;; :read-end-sec-and-nanos end-cons
+    ;; :buffer buffer
+    (mapc
+     #'(lambda (info)
+         (let-alist
+             (seq-partition info 2)
+           (let* ((target-filename
+                   (file-name-concat
+                    target-file-buffers-content-backup-dir
+                    (string-trim-left .filename "^/+")))
+                  (target-dir (file-name-directory target-filename)))
+             (make-directory target-dir t)
+             (with-temp-buffer
+	       (insert .contents)
+	       (widen)
+	       (beginning-of-buffer)
+	       (write-region
+                (point-min)
+                (point-max)
+                .filename nil nil lock-filename))
+             (with-temp-buffer
+	       (insert (json-encode-plist info))
+	       (widen)
+	       (write-region
+                (point-min)
+                (point-max)
+                (format "%s.info.json" .filename)
+                nil nil lock-filename)))))
+     buffers) ;;end mapc #'(lambda (info))
+    (with-temp-buffer
+      (insert (json-encode buffers))
+      (widen)
+      (beginning-of-buffer)
+      (write-region
+       (point-min)
+       (point-max)
+       (file-name-concat target-dir
+                         (format "all-buffers-%s.json" timestamp-fs)
+                         nil nil lock-filename)))); end let of defun
+  );defun save-session-info
+(defun set-prop-right-margin-region (beg end)
+  "These text properties affect the behavior of the fill commands.  They
 are used for representing formatted text.  *Note Filling::, and *Note
 Margins::.
 
@@ -5850,106 +5851,106 @@ Margins::.
 
 
 "
-    (interactive "*r")
-    (add-text-properties beg end (list 'right-margin 10)))
+  (interactive "*r")
+  (add-text-properties beg end (list 'right-margin 10)))
 
 
 
 
-  (defun Ox33b4O/open-boot-el()
-    (interactive)
-    (find-file-existing "~/.emacs.d/c/boot.el"))
+(defun Ox33b4O/open-boot-el()
+  (interactive)
+  (find-file-existing "~/.emacs.d/c/boot.el"))
 
-  (defun Ox33b4O/open-ui-el()
-    (interactive)
-    (find-file-existing "~/.emacs.d/c/ui.el"))
+(defun Ox33b4O/open-ui-el()
+  (interactive)
+  (find-file-existing "~/.emacs.d/c/ui.el"))
 
-  (defun Ox33b4O/open-e02491d9-el()
-    (interactive)
-    (find-file-existing "~/.emacs.d/c/e02491d9.el"))
+(defun Ox33b4O/open-e02491d9-el()
+  (interactive)
+  (find-file-existing "~/.emacs.d/c/e02491d9.el"))
 
-  (defun Ox33b4O/open-modes-el()
-    (interactive)
-    (find-file-existing "~/.emacs.d/c/modes.el"))
+(defun Ox33b4O/open-modes-el()
+  (interactive)
+  (find-file-existing "~/.emacs.d/c/modes.el"))
 
-  (defun Ox33b4O/open-debug-et-diagnostics-el()
-    (interactive)
-    (find-file-existing "~/.emacs.d/c/debug-et-diagnostics.el"))
+(defun Ox33b4O/open-debug-et-diagnostics-el()
+  (interactive)
+  (find-file-existing "~/.emacs.d/c/debug-et-diagnostics.el"))
 
-  (defun Ox33b4O/open-keys-el()
-    (interactive)
-    (find-file-existing "~/.emacs.d/c/keys.el"))
+(defun Ox33b4O/open-keys-el()
+  (interactive)
+  (find-file-existing "~/.emacs.d/c/keys.el"))
 
-  (defun Ox33b4O/open-hooks-el()
-    (interactive)
-    (find-file-existing "~/.emacs.d/c/hooks.el"))
+(defun Ox33b4O/open-hooks-el()
+  (interactive)
+  (find-file-existing "~/.emacs.d/c/hooks.el"))
 
-  (defun Ox33b4O/open-advices-el()
-    (interactive)
-    (find-file-existing "~/.emacs.d/c/advices.el"))
+(defun Ox33b4O/open-advices-el()
+  (interactive)
+  (find-file-existing "~/.emacs.d/c/advices.el"))
 
-  (defun Ox33b4O/open-functions-el()
-    (interactive)
-    (find-file-existing "~/.emacs.d/c/functions.el"))
+(defun Ox33b4O/open-functions-el()
+  (interactive)
+  (find-file-existing "~/.emacs.d/c/functions.el"))
 
-  (defun Ox33b4O/open-flatten-el()
-    (interactive)
-    (find-file-existing "~/.emacs.d/c/flatten.el"))
+(defun Ox33b4O/open-flatten-el()
+  (interactive)
+  (find-file-existing "~/.emacs.d/c/flatten.el"))
 
-  (defun Ox33b4O/open-g-modeline-el()
-    (interactive)
-    (find-file-existing "~/.emacs.d/c/g-modeline.el"))
+(defun Ox33b4O/open-g-modeline-el()
+  (interactive)
+  (find-file-existing "~/.emacs.d/c/g-modeline.el"))
 
-  (defun Ox33b4O/open-other-functions-el()
-    (interactive)
-    (find-file-existing "~/.emacs.d/c/other-functions.el"))
+(defun Ox33b4O/open-other-functions-el()
+  (interactive)
+  (find-file-existing "~/.emacs.d/c/other-functions.el"))
 
-  (defun Ox33b4O/open-elpamelpa-el()
-    (interactive)
-    (find-file-existing "~/.emacs.d/c/elpamelpa.el"))
+(defun Ox33b4O/open-elpamelpa-el()
+  (interactive)
+  (find-file-existing "~/.emacs.d/c/elpamelpa.el"))
 
-  (defun Ox33b4O/open-rgb-parser-el()
-    (interactive)
-    (find-file-existing "~/.emacs.d/c/rgb-parser.el"))
+(defun Ox33b4O/open-rgb-parser-el()
+  (interactive)
+  (find-file-existing "~/.emacs.d/c/rgb-parser.el"))
 
-  (defun Ox33b4O/open-write-refactor-tool-instead-el()
-    (interactive)
-    (find-file-existing "~/.emacs.d/c/write-refactor-tool-instead.el"))
+(defun Ox33b4O/open-write-refactor-tool-instead-el()
+  (interactive)
+  (find-file-existing "~/.emacs.d/c/write-refactor-tool-instead.el"))
 
-  (defun Ox33b4O/open-macros-el()
-    (interactive)
-    (find-file-existing "~/.emacs.d/c/macros.el"))
+(defun Ox33b4O/open-macros-el()
+  (interactive)
+  (find-file-existing "~/.emacs.d/c/macros.el"))
 
-  (defun find-file-open-minibuffer-at-directory-interactive(initial-directory)
-    (let* ((~/opt/libexec/path (expand-file-name initial-directory))
-           (result
-            (list
-             (read-file-name "Find file: " ~/opt/libexec/path "confirm-after-completion" nil nil ))))
-      (with-minibuffer-selected-window
-	(minibuffer-complete)
-	(minibuffer-complete))
-      result));; end defun closure
+(defun find-file-open-minibuffer-at-directory-interactive(initial-directory)
+  (let* ((~/opt/libexec/path (expand-file-name initial-directory))
+         (result
+          (list
+           (read-file-name "Find file: " ~/opt/libexec/path "confirm-after-completion" nil nil ))))
+    (with-minibuffer-selected-window
+      (minibuffer-complete)
+      (minibuffer-complete))
+    result));; end defun closure
 
-  (defun find-file-open-minibuffer-at-directory-body (filename)
-    (let* ((value (find-file-noselect filename nil nil t))
-           (result
-            (if (listp value)
-		(mapcar 'pop-to-buffer-same-window (nreverse value))
-	      (pop-to-buffer-same-window value))))
-      (with-minibuffer-selected-window
-	(minibuffer-complete)
-	(minibuffer-complete))
-      result))
+(defun find-file-open-minibuffer-at-directory-body (filename)
+  (let* ((value (find-file-noselect filename nil nil t))
+         (result
+          (if (listp value)
+	      (mapcar 'pop-to-buffer-same-window (nreverse value))
+	    (pop-to-buffer-same-window value))))
+    (with-minibuffer-selected-window
+      (minibuffer-complete)
+      (minibuffer-complete))
+    result))
 
-  (defun Ox33b4O/find-file/~/opt/libexec(filename)
-    "bound to `C-x' 'M-f'"
-    (interactive
-     (find-file-open-minibuffer-at-directory-interactive "~/opt/libexec/"))
-    (find-file-open-minibuffer-at-directory-body filename))
+(defun Ox33b4O/find-file/~/opt/libexec(filename)
+  "bound to `C-x' 'M-f'"
+  (interactive
+   (find-file-open-minibuffer-at-directory-interactive "~/opt/libexec/"))
+  (find-file-open-minibuffer-at-directory-body filename))
 
 
-  (defun workbench/path (&optional time zone)
-    "returns the date-bound workbench path for today, unless the optional
+(defun workbench/path (&optional time zone)
+  "returns the date-bound workbench path for today, unless the optional
 argument TIME is provided.
 
 The argument TIME is forwarded to `format-time-string', so if its value
@@ -5960,569 +5961,569 @@ is `nil' then the current timezone is assumed.
 
 This function automatically creates the workbench before returning its path.
 "
-    (let ((workbench-path
-           (file-name-concat "~/workbench/"
-                             (format-time-string "%Y-%m-%d" time zone))))
-      (unless (file-directory-p workbench-path)
-	(make-directory workbench-path t))
-      workbench-path))
+  (let ((workbench-path
+         (file-name-concat "~/workbench/"
+                           (format-time-string "%Y-%m-%d" time zone))))
+    (unless (file-directory-p workbench-path)
+      (make-directory workbench-path t))
+    workbench-path))
 
-  (defun Ox33b4O/find-file/~/workbench/today(filename)
-    "bound to `C-x' 'M-f'"
-    (interactive
-     (find-file-open-minibuffer-at-directory-interactive
-      (workbench/path)))
-    (find-file-open-minibuffer-at-directory-body filename))
-
-
-  (defun Ox33b4O/find-file/~/.shell.d(filename)
-    "bound to `C-x' 'M-s'"
-    (interactive
-     (find-file-open-minibuffer-at-directory-interactive "~/.shell.d/"))
-    (find-file-open-minibuffer-at-directory-body filename))
-
-  (defun Ox33b4O/find-file/~/.emacs.d(filename)
-    "bound to `C-x' 'M-s'"
-    (interactive
-     (find-file-open-minibuffer-at-directory-interactive "~/.emacs.d/"))
-    (find-file-open-minibuffer-at-directory-body filename))
-
-  ;; (defun describe (symbol-s)
-  ;;   "makes a \"popup\" frame and calls `describe-symbol' in that popup window's buffer."
-  ;;   (interactive
-  ;;    (let* ((v-or-f (symbol-at-point))
-  ;;           (found (if v-or-f (cl-some (lambda (x) (funcall (nth 1 x) v-or-f))
-  ;;                                      describe-symbol-backends)))
-  ;;           (v-or-f (if found v-or-f (function-called-at-point)))
-  ;;           (found (or found v-or-f))
-  ;;           (enable-recursive-minibuffers t)
-  ;;           (val (completing-read (format-prompt "Describe symbol"
-  ;;                                                (and found v-or-f))
-  ;; 				#'help--symbol-completion-table
-  ;; 				(lambda (vv)
-  ;;                                   (cl-some (lambda (x) (funcall (nth 1 x) vv))
-  ;;                                            describe-symbol-backends))
-  ;; 				t nil nil
-  ;; 				(if found (symbol-name v-or-f)))))
-  ;;      (list (if (equal val "")
-  ;; 	       (or v-or-f "") (intern val)))))
-  ;;   (let* ((frm (let ((frm (make-frame)))
-  ;;                 (select-frame frm)
-  ;;                 frm))
-  ;;          (wnd (frame-root-window frm))
-  ;;          (buf (window-buffer wnd)))
-  ;;     (describe-symbol symbol-s buf frm)))
-  (defalias 'describe #'describe-symbol)
+(defun Ox33b4O/find-file/~/workbench/today(filename)
+  "bound to `C-x' 'M-f'"
+  (interactive
+   (find-file-open-minibuffer-at-directory-interactive
+    (workbench/path)))
+  (find-file-open-minibuffer-at-directory-body filename))
 
 
+(defun Ox33b4O/find-file/~/.shell.d(filename)
+  "bound to `C-x' 'M-s'"
+  (interactive
+   (find-file-open-minibuffer-at-directory-interactive "~/.shell.d/"))
+  (find-file-open-minibuffer-at-directory-body filename))
 
-  ;; MP""""""`MM                                     dP
-  ;; M  mmmmm..M                                     88
-  ;; M.      `YM .d8888b. .d8888b. 88d888b. .d8888b. 88d888b.
-  ;; MMMMMMM.  M 88ooood8 88'  `88 88'  `88 88'  `"" 88'  `88
-  ;; M. .MMM'  M 88.  ... 88.  .88 88       88.  ... 88    88
-  ;; Mb.     .dM `88888P' `88888P8 dP       `88888P' dP    dP
-  ;; MMMMMMMMMMM
+(defun Ox33b4O/find-file/~/.emacs.d(filename)
+  "bound to `C-x' 'M-s'"
+  (interactive
+   (find-file-open-minibuffer-at-directory-interactive "~/.emacs.d/"))
+  (find-file-open-minibuffer-at-directory-body filename))
 
-  (defclass search-info ()
-	    ((beginning :initarg :beginning
-			:type (or integer marker)
-			:documentation "the `point' within the searched `buffer' (integer or marker) to the beginning of a successful search result"
-			:writer search-info-set-beginning
-			:reader search-info-get-beginning)
-	     (end :initarg :end
-		  :type (or integer marker)
-		  :documentation "the `point' within the searched `buffer' (integer or marker) to the end of a successful search result"
-		  :writer search-info-set-end
-		  :reader search-info-get-end)
-	     (direction :initarg :direction
-			:type (member :forward :backward)
-			:documentation "the direction of a successful search (either :forward or :backward)"
-			:writer search-info-set-direction
-			:reader search-info-get-direction)
-	     (query :initarg :query
-		    :type string
-		    :documentation "the \"string\" used in the search. if `:type' is `'regexp' then `:query' is a regular-expression written in the \"string\" syntax since that's the format used in `isearch-regexp-forward' and `isearch-regexp-forward'"
-		    :writer search-info-set-query
-		    :reader search-info-get-query)
-	     (type :initarg :type
-		   :type (member :regexp :string 'regexp 'string)
-		   :documentation "the type of a search-info (either `'regexp' or `'string'"
-		   :writer search-info-set-type
-		   :reader search-info-get-type))
-	    )
-
-
-  (defun make-search-info (beg end direction query type)
-    "creates a new `search-info' object"
-    (make-instance 'search-info
-                   :beginning beg
-                   :end end
-                   :direction direction
-                   :query query
-                   :type type))
-
-  (defun get-recent-regexp-search-string-if-results()
-    (let (beg end direction
-              (latest-regexp-search (car regexp-search-ring)))
-      (when (stringp latest-regexp-search)
-	(or
-	 (save-mark-and-excursion
-           (widen)
-           (and
-            (setq end (re-search-forward latest-regexp-search nil t))
-            (setq beg (match-beginning 0))
-            (setq direction :forward)
-            (search-info :beginning beg
-			 :end end
-			 :direction direction
-			 :query latest-regexp-search
-			 :type 'regexp)))
-	 (save-mark-and-excursion
-           (widen)
-           (and
-            (setq end (re-search-backward latest-regexp-search nil t))
-            (setq beg (match-beginning 0))
-            (setq direction :backward)
-            (search-info :beginning beg
-			 :end end
-			 :direction direction
-			 :query latest-regexp-search
-			 :type 'regexp)))))))
-
-  (defun get-recent-literal-search-string-if-results()
-    (let (beg end direction (latest-literal-search (car search-ring)))
-      (when (stringp latest-literal-search)
-	(or
-	 (save-mark-and-excursion
-           (widen)
-           (and
-            (setq end (search-forward latest-literal-search nil t))
-            (setq beg (match-beginning 0))
-            (setq direction :forward)
-            (search-info :beginning beg
-			 :end end
-			 :direction direction
-			 :query latest-literal-search
-			 :type 'literal)))
-	 (save-mark-and-excursion
-           (widen)
-           (and
-            (setq end (search-backward latest-literal-search nil t))
-            (setq beg (match-beginning 0))
-            (setq direction :backward)
-            (search-info :beginning beg
-			 :end end
-			 :direction direction
-			 :query latest-literal-search
-			 :type 'literal)))))))
-
-  (defun get-search-info-from-isearch-rings()
-    "returns a `search-info' if the latest query in either `regexp-search-ring' or `search-ring' provided at least one of the rings are non-empty"
-    (or
-     (get-recent-regexp-search-string-if-results)
-     (get-recent-regexp-search-string-if-results)))
+;; (defun describe (symbol-s)
+;;   "makes a \"popup\" frame and calls `describe-symbol' in that popup window's buffer."
+;;   (interactive
+;;    (let* ((v-or-f (symbol-at-point))
+;;           (found (if v-or-f (cl-some (lambda (x) (funcall (nth 1 x) v-or-f))
+;;                                      describe-symbol-backends)))
+;;           (v-or-f (if found v-or-f (function-called-at-point)))
+;;           (found (or found v-or-f))
+;;           (enable-recursive-minibuffers t)
+;;           (val (completing-read (format-prompt "Describe symbol"
+;;                                                (and found v-or-f))
+;; 				#'help--symbol-completion-table
+;; 				(lambda (vv)
+;;                                   (cl-some (lambda (x) (funcall (nth 1 x) vv))
+;;                                            describe-symbol-backends))
+;; 				t nil nil
+;; 				(if found (symbol-name v-or-f)))))
+;;      (list (if (equal val "")
+;; 	       (or v-or-f "") (intern val)))))
+;;   (let* ((frm (let ((frm (make-frame)))
+;;                 (select-frame frm)
+;;                 frm))
+;;          (wnd (frame-root-window frm))
+;;          (buf (window-buffer wnd)))
+;;     (describe-symbol symbol-s buf frm)))
+(defalias 'describe #'describe-symbol)
 
 
-  (defun g/search()
-    "searches the current buffer like a G.
+
+;; MP""""""`MM                                     dP
+;; M  mmmmm..M                                     88
+;; M.      `YM .d8888b. .d8888b. 88d888b. .d8888b. 88d888b.
+;; MMMMMMM.  M 88ooood8 88'  `88 88'  `88 88'  `"" 88'  `88
+;; M. .MMM'  M 88.  ... 88.  .88 88       88.  ... 88    88
+;; Mb.     .dM `88888P' `88888P8 dP       `88888P' dP    dP
+;; MMMMMMMMMMM
+
+(defclass search-info ()
+	  ((beginning :initarg :beginning
+		      :type (or integer marker)
+		      :documentation "the `point' within the searched `buffer' (integer or marker) to the beginning of a successful search result"
+		      :writer search-info-set-beginning
+		      :reader search-info-get-beginning)
+	   (end :initarg :end
+		:type (or integer marker)
+		:documentation "the `point' within the searched `buffer' (integer or marker) to the end of a successful search result"
+		:writer search-info-set-end
+		:reader search-info-get-end)
+	   (direction :initarg :direction
+		      :type (member :forward :backward)
+		      :documentation "the direction of a successful search (either :forward or :backward)"
+		      :writer search-info-set-direction
+		      :reader search-info-get-direction)
+	   (query :initarg :query
+		  :type string
+		  :documentation "the \"string\" used in the search. if `:type' is `'regexp' then `:query' is a regular-expression written in the \"string\" syntax since that's the format used in `isearch-regexp-forward' and `isearch-regexp-forward'"
+		  :writer search-info-set-query
+		  :reader search-info-get-query)
+	   (type :initarg :type
+		 :type (member :regexp :string 'regexp 'string)
+		 :documentation "the type of a search-info (either `'regexp' or `'string'"
+		 :writer search-info-set-type
+		 :reader search-info-get-type))
+	  )
+
+
+(defun make-search-info (beg end direction query type)
+  "creates a new `search-info' object"
+  (make-instance 'search-info
+                 :beginning beg
+                 :end end
+                 :direction direction
+                 :query query
+                 :type type))
+
+(defun get-recent-regexp-search-string-if-results()
+  (let (beg end direction
+            (latest-regexp-search (car regexp-search-ring)))
+    (when (stringp latest-regexp-search)
+      (or
+       (save-mark-and-excursion
+         (widen)
+         (and
+          (setq end (re-search-forward latest-regexp-search nil t))
+          (setq beg (match-beginning 0))
+          (setq direction :forward)
+          (search-info :beginning beg
+		       :end end
+		       :direction direction
+		       :query latest-regexp-search
+		       :type 'regexp)))
+       (save-mark-and-excursion
+         (widen)
+         (and
+          (setq end (re-search-backward latest-regexp-search nil t))
+          (setq beg (match-beginning 0))
+          (setq direction :backward)
+          (search-info :beginning beg
+		       :end end
+		       :direction direction
+		       :query latest-regexp-search
+		       :type 'regexp)))))))
+
+(defun get-recent-literal-search-string-if-results()
+  (let (beg end direction (latest-literal-search (car search-ring)))
+    (when (stringp latest-literal-search)
+      (or
+       (save-mark-and-excursion
+         (widen)
+         (and
+          (setq end (search-forward latest-literal-search nil t))
+          (setq beg (match-beginning 0))
+          (setq direction :forward)
+          (search-info :beginning beg
+		       :end end
+		       :direction direction
+		       :query latest-literal-search
+		       :type 'literal)))
+       (save-mark-and-excursion
+         (widen)
+         (and
+          (setq end (search-backward latest-literal-search nil t))
+          (setq beg (match-beginning 0))
+          (setq direction :backward)
+          (search-info :beginning beg
+		       :end end
+		       :direction direction
+		       :query latest-literal-search
+		       :type 'literal)))))))
+
+(defun get-search-info-from-isearch-rings()
+  "returns a `search-info' if the latest query in either `regexp-search-ring' or `search-ring' provided at least one of the rings are non-empty"
+  (or
+   (get-recent-regexp-search-string-if-results)
+   (get-recent-regexp-search-string-if-results)))
+
+
+(defun g/search()
+  "searches the current buffer like a G.
   if region is active, places string within region in `regexp-search-ring' otherwise invokes `isearch-edit-string';
   then performs search with `isearch-forward-regexp', if nothing is found then performs `isearch-backward-regexp'.
   if neither search yields result then tries to search using `isearch-forward' and `isearch-backward' instead.
 "
-    (interactive)
-    (let* ((info nil)
-           (search-input
-            (or
-             (when (region-active-p)
-               (save-mark-and-excursion
-		 (buffer-substring-no-properties
-                  (region-beginning)
-                  (region-end)))
-               ;; end when region-active-p
-               )
-             (when (setq info (get-search-info-from-isearch-rings))
-               (search-info-get-query info))
-             (progn
-               (isearch-edit-string)
+  (interactive)
+  (let* ((info nil)
+         (search-input
+          (or
+           (when (region-active-p)
+             (save-mark-and-excursion
+	       (buffer-substring-no-properties
+                (region-beginning)
+                (region-end)))
+             ;; end when region-active-p
+             )
+           (when (setq info (get-search-info-from-isearch-rings))
+             (search-info-get-query info))
+           (progn
+             (isearch-edit-string)
 
-               ;; try to forward search: option 1
-               (if isearch-other-end (goto-char isearch-other-end))
-               (isearch-search)
-               (isearch-push-state)
-               (isearch-update)
+             ;; try to forward search: option 1
+             (if isearch-other-end (goto-char isearch-other-end))
+             (isearch-search)
+             (isearch-push-state)
+             (isearch-update)
 
-               ;; try to forward search: option 2
-               (isearch-search-and-update)
-               (isearch-repeat-forward)
-               (setq info (get-search-info-from-isearch-rings))
-               (search-info-get-query info))))); end let* varlist
-      (if (search-info-p search-input)
-          (message "g/searching %s with %S"
-                   (search-info-get-direction info)
-                   search-input))); end (let*
-    ); end defun g/search
+             ;; try to forward search: option 2
+             (isearch-search-and-update)
+             (isearch-repeat-forward)
+             (setq info (get-search-info-from-isearch-rings))
+             (search-info-get-query info))))); end let* varlist
+    (if (search-info-p search-input)
+        (message "g/searching %s with %S"
+                 (search-info-get-direction info)
+                 search-input))); end (let*
+  ); end defun g/search
 
-  (defun escape-newlines-region(beg end)
-    (interactive "*r")
-    (replace-regexp-in-region "\n"  "\\n" beg end))
+(defun escape-newlines-region(beg end)
+  (interactive "*r")
+  (replace-regexp-in-region "\n"  "\\n" beg end))
 
-  (defun escape-newlines-in-string(value)
-    (replace-regexp-in-string "
+(defun escape-newlines-in-string(value)
+  (replace-regexp-in-string "
 "  "\\n"
 (if (stringp value)
     (format "%S" (substring-no-properties (format "%s" value))))))
 
-  (defun wrap-lines-in-quotes (string &optional quote-type trailing-char)
-    (unless (stringp string)
-      (signal 'type-error
-              (format "`string' should be a string not %s: %s"
-                      (type-of string)
-                      string)))
+(defun wrap-lines-in-quotes (string &optional quote-type trailing-char)
+  (unless (stringp string)
+    (signal 'type-error
+            (format "`string' should be a string not %s: %s"
+                    (type-of string)
+                    string)))
 
-    (let ((trailing-char (if (stringp trailing-char) trailing-char ""))
-          (quote-char
-           (cond
-            ((or (equal quote-type 'single) (equal quote-type :single))
-             "'")
-            ((or (equal quote-type 'double) (equal quote-type :double))
-             "\"")
-            (t "\"")))
+  (let ((trailing-char (if (stringp trailing-char) trailing-char ""))
+        (quote-char
+         (cond
+          ((or (equal quote-type 'single) (equal quote-type :single))
+           "'")
+          ((or (equal quote-type 'double) (equal quote-type :double))
+           "\"")
+          (t "\"")))
 
-          (sol quote-char)
-          (eol (format "%s%s" quote-char trailing-char))
-          (result string))
-      (setq result (replace-regexp-in-string "^" sol result))
-      (setq result (replace-regexp-in-string "$" eol result))
-      result))
-
-
-  (defun wrap-lines-in-quotes-region (beg end &optional quote-type trailing-char)
-    (interactive "*r")
-    (let* ((trailing-char (if (stringp trailing-char) trailing-char ""))
-           (quote-char
-            (cond
-             ((or (equal quote-type 'single) (equal quote-type :single))
-              "'")
-             ((or (equal quote-type 'double) (equal quote-type :double))
-              "\"")
-             (t "\"")))
-
-           (sol quote-char)
-           (eol (format "%s%s" quote-char trailing-char)))
-      (save-match-data
-	(save-mark-and-excursion
-          (while (re-search-forward "^\\(\\s-*\\)\\(.*\\)$" end t count)
-            (let ((replacement
-                   (format "%s%s%s%s"
-                           (match-string 1)
-                           sol
-                           (match-string 2)
-                           eol)))
-              ;; (c-message-open "%s" replacement)
-              (replace-match replacement nil t)))))))
+        (sol quote-char)
+        (eol (format "%s%s" quote-char trailing-char))
+        (result string))
+    (setq result (replace-regexp-in-string "^" sol result))
+    (setq result (replace-regexp-in-string "$" eol result))
+    result))
 
 
-  ;;WIP/broken
-  ;;(defun get-region-plist()
-  ;;  (let (
-  ;;         (region-is-active (region-active-p))
-  ;;         (point-min-restricted (point-min))
-  ;;         (point-max-restricted (point-min))
-  ;;         (region-beg-restricted (region-beginning))
-  ;;         (region-end-restricted (region-end))
-  ;;         restriction-is-set
-  ;;          point-min-widen
-  ;;          point-max-widen
-  ;;          region-beg-widen
-  ;;          region-end-widen
-  ;;          result (list)
-  ;;         )
-  ;;
-  ;;  (save-mark-and-excursion
-  ;;    (widen)
-  ;;         (setq region-is-active (region-active-p))
-  ;;         (setq point-min-widen (point-min))
-  ;;         (setq point-max-widen (point-min))
-  ;;         (setq region-beg-widen (region-beginning))
-  ;;         (setq region-end-widen (region-end)))
-  ;;
-  ;;  (when region-is-active
-  ;;    (setq result (append result (list :region (list ;; widen or restricted?
-  ;;                                               :beg region-beg-widen
-  ;;                                               :end region-end-widen)))))
-  ;;
-  ;;  (setq result (append result (list
-  ;;                               :restricted (list
-  ;;                                            :beg region-beg-restricted
-  ;;                                            :end region-end-restricted))))
-  ;;
-  ;;  (setq result (append result (list
-  ;;                               :widen (list
-  ;;                                            :beg region-beg-widen
-  ;;                                            :end region-end-widen))))
-  ;;
-  ;;  (setq restriction-is-set
-  ;;        (or (not (= region-beg-restricted region-beg-widen))
-  ;;            (not (= region-end-restricted region-end-widen))))
-  ;;
-  ;;  (unless restriction-is-set
-  ;;      (setq result (append result (list
-  ;;                                   :beg region-beg-widen
-  ;;                                   :end region-end-widen))))
-  ;;
-  ;;  (when restriction-is-set
-  ;;      (setq result (append result (list
-  ;;                                   :beg region-beg-restricted
-  ;;                                   :end region-end-restricted))))
-  ;;  result
-  ;;  )
-  ;;  )
-  ;;
-  ;;
-  ;;
-  ;;(defun wrap-lines-in-quotes-buffer (&optional beg end quote-type trailing-char count)
-  ;;  "wrap each line in quotes of `quote-type' within within whole buffer or region - provided that region is active.
-  ;;
-  ;;
-  ;;`quote-type' is `symbol', `keyword' or `string', otherwise defaults to `double'.
-  ;;`trailing-char' can be a `string' to be added after the quote at the end of each line.
-  ;;
-  ;;the last argument, `count' is passed to the form `re-search-forward'
-  ;;
-  ;;when `quote-type' is a string, use that string literally at the
-  ;;beginning and end of each line.  when it is a symbol, the only two valid
-  ;;values are `'single' and `'double', or `:single' and `:double' if it is
-  ;;a keyword.
-  ;;
-  ;;
-  ;;"
-  ;;  ;; (declare)
-  ;;  (let* ((region-data (when (and  (number-or-marker-p beg)
-  ;;                                  (number-or-marker-p end) )
-  ;;                        (get-region-plist)))
-  ;;         (beg (if (plistp region-data)
-  ;;                  (plist-get region-data :beg)
-  ;;                beg))
-  ;;         (end (if (plistp region-data)
-  ;;                  (plist-get region-data :end)
-  ;;                end))
-  ;;
-  ;;         (trailing-char (if (stringp trailing-char) trailing-char ""))
-  ;;         (quote-char (cond ((and (stringp quote-type) (length> quote-type 0))
-  ;;                            (format "%s" quote-type))
-  ;;
-  ;;                           ((or (equal quote-type 'single)
-  ;;                               (equal quote-type :single))
-  ;;                           "'")
-  ;;                           ((or (equal quote-type 'double)
-  ;;                                (equal quote-type :double))
-  ;;                            "\"")
-  ;;                           (t "\"")))
-  ;;
-  ;;         (sol quote-char)
-  ;;         (eol (format "%s%s" quote-char trailing-char))
-  ;;         )
-  ;;
-  ;;    (save-match-data
-  ;;      (save-mark-and-excursion
-  ;;        (while (re-search-forward "^\\(\\s-*\\)\\(.*\\)$" end t count)
-  ;;          (replace-match (format "%s%s%s%s"  (match-string 1) sol (match-string 2) eol)))))
-  ;;    )
-  ;;
-  ;;  )
-  ;;
-  ;;
-  ;;(defun wrap-lines-in-quotes-guess-trailing-char-from-mode-name ()
-  ;;  (cond ((seq-contains-p (list "py-mode" "python-mode"  "typescript-mode" "javascript-mode")
-  ;;                         (Ox33b4O/$/mode-name))
-  ;;         ",")
-  ;;        (t "")))
-  ;;
-  ;;
-  ;;
-  ;;(defun wrap-lines-in-double-quotes-region (beg end)
-  ;;  (interactive "*r")
-  ;;  (let ((trailing-char (wrap-lines-in-quotes-guess-trailing-char-from-mode-name)))
-  ;;    (wrap-lines-in-quotes-buffer beg end :double trailing-char)))
-  ;;
-  ;;(defun wrap-lines-in-single-quotes-region (beg end)
-  ;;  (interactive "*r")
-  ;;  (let ((trailing-char (wrap-lines-in-quotes-guess-trailing-char-from-mode-name)))
-  ;;    (wrap-lines-in-quotes-buffer beg end :single trailing-char)))
-  ;;
+(defun wrap-lines-in-quotes-region (beg end &optional quote-type trailing-char)
+  (interactive "*r")
+  (let* ((trailing-char (if (stringp trailing-char) trailing-char ""))
+         (quote-char
+          (cond
+           ((or (equal quote-type 'single) (equal quote-type :single))
+            "'")
+           ((or (equal quote-type 'double) (equal quote-type :double))
+            "\"")
+           (t "\"")))
+
+         (sol quote-char)
+         (eol (format "%s%s" quote-char trailing-char)))
+    (save-match-data
+      (save-mark-and-excursion
+        (while (re-search-forward "^\\(\\s-*\\)\\(.*\\)$" end t count)
+          (let ((replacement
+                 (format "%s%s%s%s"
+                         (match-string 1)
+                         sol
+                         (match-string 2)
+                         eol)))
+            ;; (c-message-open "%s" replacement)
+            (replace-match replacement nil t)))))))
 
 
-  (defun python-path-to-current-file-mod ()
-    (let* ((current-file-name (expand-file-name (buffer-file-name)))
-           (no-extension
-            (file-name-sans-extension (file-name-base current-file-name))))
-      (when (string= no-extension "__init__")
-	(file-name-parent-directory current-file-name))
-      current-file-name))
+;;WIP/broken
+;;(defun get-region-plist()
+;;  (let (
+;;         (region-is-active (region-active-p))
+;;         (point-min-restricted (point-min))
+;;         (point-max-restricted (point-min))
+;;         (region-beg-restricted (region-beginning))
+;;         (region-end-restricted (region-end))
+;;         restriction-is-set
+;;          point-min-widen
+;;          point-max-widen
+;;          region-beg-widen
+;;          region-end-widen
+;;          result (list)
+;;         )
+;;
+;;  (save-mark-and-excursion
+;;    (widen)
+;;         (setq region-is-active (region-active-p))
+;;         (setq point-min-widen (point-min))
+;;         (setq point-max-widen (point-min))
+;;         (setq region-beg-widen (region-beginning))
+;;         (setq region-end-widen (region-end)))
+;;
+;;  (when region-is-active
+;;    (setq result (append result (list :region (list ;; widen or restricted?
+;;                                               :beg region-beg-widen
+;;                                               :end region-end-widen)))))
+;;
+;;  (setq result (append result (list
+;;                               :restricted (list
+;;                                            :beg region-beg-restricted
+;;                                            :end region-end-restricted))))
+;;
+;;  (setq result (append result (list
+;;                               :widen (list
+;;                                            :beg region-beg-widen
+;;                                            :end region-end-widen))))
+;;
+;;  (setq restriction-is-set
+;;        (or (not (= region-beg-restricted region-beg-widen))
+;;            (not (= region-end-restricted region-end-widen))))
+;;
+;;  (unless restriction-is-set
+;;      (setq result (append result (list
+;;                                   :beg region-beg-widen
+;;                                   :end region-end-widen))))
+;;
+;;  (when restriction-is-set
+;;      (setq result (append result (list
+;;                                   :beg region-beg-restricted
+;;                                   :end region-end-restricted))))
+;;  result
+;;  )
+;;  )
+;;
+;;
+;;
+;;(defun wrap-lines-in-quotes-buffer (&optional beg end quote-type trailing-char count)
+;;  "wrap each line in quotes of `quote-type' within within whole buffer or region - provided that region is active.
+;;
+;;
+;;`quote-type' is `symbol', `keyword' or `string', otherwise defaults to `double'.
+;;`trailing-char' can be a `string' to be added after the quote at the end of each line.
+;;
+;;the last argument, `count' is passed to the form `re-search-forward'
+;;
+;;when `quote-type' is a string, use that string literally at the
+;;beginning and end of each line.  when it is a symbol, the only two valid
+;;values are `'single' and `'double', or `:single' and `:double' if it is
+;;a keyword.
+;;
+;;
+;;"
+;;  ;; (declare)
+;;  (let* ((region-data (when (and  (number-or-marker-p beg)
+;;                                  (number-or-marker-p end) )
+;;                        (get-region-plist)))
+;;         (beg (if (plistp region-data)
+;;                  (plist-get region-data :beg)
+;;                beg))
+;;         (end (if (plistp region-data)
+;;                  (plist-get region-data :end)
+;;                end))
+;;
+;;         (trailing-char (if (stringp trailing-char) trailing-char ""))
+;;         (quote-char (cond ((and (stringp quote-type) (length> quote-type 0))
+;;                            (format "%s" quote-type))
+;;
+;;                           ((or (equal quote-type 'single)
+;;                               (equal quote-type :single))
+;;                           "'")
+;;                           ((or (equal quote-type 'double)
+;;                                (equal quote-type :double))
+;;                            "\"")
+;;                           (t "\"")))
+;;
+;;         (sol quote-char)
+;;         (eol (format "%s%s" quote-char trailing-char))
+;;         )
+;;
+;;    (save-match-data
+;;      (save-mark-and-excursion
+;;        (while (re-search-forward "^\\(\\s-*\\)\\(.*\\)$" end t count)
+;;          (replace-match (format "%s%s%s%s"  (match-string 1) sol (match-string 2) eol)))))
+;;    )
+;;
+;;  )
+;;
+;;
+;;(defun wrap-lines-in-quotes-guess-trailing-char-from-mode-name ()
+;;  (cond ((seq-contains-p (list "py-mode" "python-mode"  "typescript-mode" "javascript-mode")
+;;                         (Ox33b4O/$/mode-name))
+;;         ",")
+;;        (t "")))
+;;
+;;
+;;
+;;(defun wrap-lines-in-double-quotes-region (beg end)
+;;  (interactive "*r")
+;;  (let ((trailing-char (wrap-lines-in-quotes-guess-trailing-char-from-mode-name)))
+;;    (wrap-lines-in-quotes-buffer beg end :double trailing-char)))
+;;
+;;(defun wrap-lines-in-single-quotes-region (beg end)
+;;  (interactive "*r")
+;;  (let ((trailing-char (wrap-lines-in-quotes-guess-trailing-char-from-mode-name)))
+;;    (wrap-lines-in-quotes-buffer beg end :single trailing-char)))
+;;
 
-  (defun python-insert-members-from-file ()
-    "BEG END."
-    (interactive)
-    (let ((python-file-name
-           (expand-file-name
-            (read-file-name
-             "insert members of python file: "
-             (python-path-to-current-file-mod)
-             nil 'confirm-after-completion))))
 
-      (let* ((tmp-buffer-name
-              (format "*python-autocomplete:%s*" python-file-name))
-             (tmp-buffer (get-buffer-create tmp-buffer-name))
-             (exit-code
-              (call-process "extract-members-py" nil tmp-buffer nil "-i" python-file-name)))
-	(if (eq 0 exit-code)
-            (let ((items
-                   (with-current-buffer tmp-buffer
-                     (widen)
-                     (buffer-substring-no-properties
-                      (point-min)
-                      (point-max)))))
-              (kill-buffer tmp-buffer)
-              (insert (format "%s" items))
-              (g/format/prettify))
-	  (progn
-            (switch-to-buffer tmp-buffer)
-            (user-error
-             (format "failed to list items of file %s"
-                     (abbreviate-file-name (python-file-name)))))))))
+(defun python-path-to-current-file-mod ()
+  (let* ((current-file-name (expand-file-name (buffer-file-name)))
+         (no-extension
+          (file-name-sans-extension (file-name-base current-file-name))))
+    (when (string= no-extension "__init__")
+      (file-name-parent-directory current-file-name))
+    current-file-name))
 
-  (defun buffer-list-builtin-only ()
-    "returns all open emacs-only buffers, i.e: starting and ending in `*'."
-    (seq-filter
-     (apply-partially #'string-match-p "^[*].*[*]$")
-     (mapcar 'buffer-name (buffer-list))))
+(defun python-insert-members-from-file ()
+  "BEG END."
+  (interactive)
+  (let ((python-file-name
+         (expand-file-name
+          (read-file-name
+           "insert members of python file: "
+           (python-path-to-current-file-mod)
+           nil 'confirm-after-completion))))
 
-  (defun represent-unicode-codepoint(codepoint &optional base prefix)
-    (when (null base)
-      (setq base 16))
+    (let* ((tmp-buffer-name
+            (format "*python-autocomplete:%s*" python-file-name))
+           (tmp-buffer (get-buffer-create tmp-buffer-name))
+           (exit-code
+            (call-process "extract-members-py" nil tmp-buffer nil "-i" python-file-name)))
+      (if (eq 0 exit-code)
+          (let ((items
+                 (with-current-buffer tmp-buffer
+                   (widen)
+                   (buffer-substring-no-properties
+                    (point-min)
+                    (point-max)))))
+            (kill-buffer tmp-buffer)
+            (insert (format "%s" items))
+            (g/format/prettify))
+	(progn
+          (switch-to-buffer tmp-buffer)
+          (user-error
+           (format "failed to list items of file %s"
+                   (abbreviate-file-name (python-file-name)))))))))
 
-    (let* (
-           (radix
-            (cond
-             ((or
-               (equal 16 base)
-               (equal "16" base)
-               (eq 'hex base)
-               (eq :hex base))
-              16)
-             ((or (equal 10 base)
-                  (equal "10" base)
-                  (equal 'dec base)
-                  (equal :dec base))
-              10)
+(defun buffer-list-builtin-only ()
+  "returns all open emacs-only buffers, i.e: starting and ending in `*'."
+  (seq-filter
+   (apply-partially #'string-match-p "^[*].*[*]$")
+   (mapcar 'buffer-name (buffer-list))))
 
-             ((or (eq 'oct base)
-                  (eq :oct base))
-              8)
-             (t
-              (error "unexpected/invalid value (of type %s) for base argument: %S " (type-of base) base)))
-            )
-           (format-char
-            (cond
-             ((equal radix 16) "x")
-             ((equal radix 10) "d")
-             ((equal radix 8) "o")
-             (t (error "unexpected radix (type %s): %s" (type-of radix) (format "%S" radix)))))
-           (prefix-extension
-            (cond
-             ((equal radix 8) "0")
-             ((equal radix 16) "x")
-             (t "")))
-           (prefix-start (cond
-                          ((or
-                            (equal "\\" prefix)
-                            (equal #x5c prefix)
-                            (equal 'escape prefix)
-                            (equal :escape prefix)
-                            (equal 'backslash prefix)
-                            (equal :backslash prefix)
-                            (equal 'slash prefix)
-                            (equal :slash prefix)
-                            (equal 'shell prefix)
-                            (equal :shell prefix)
-                            (equal 'bash prefix)
-                            (equal :bash prefix)
-                            )
-                           "\\")
-                          ((or
-                            (equal "#" prefix)
-                            (equal #x23 prefix)
-                            (equal 'emacs prefix)
-                            (equal :emacs prefix)
-                            (equal 'hash prefix)
-                            (equal :hash prefix)
-                            )
-                           "#")
-                          ((or
-                            (equal "0" prefix)
-                            (equal #x00 prefix)
-                            (equal 'number prefix)
-                            (equal :number prefix)
-                            (equal 'num prefix)
-                            (equal :num prefix)
-                            (equal 'integer prefix)
-                            (equal :integer prefix)
-                            (equal 'int prefix)
-                            (equal :int prefix)
-                            (equal 'zero prefix)
-                            (equal :zero prefix)
-                            (equal :shell prefix)
-                            )
-                           "0")
+(defun represent-unicode-codepoint(codepoint &optional base prefix)
+  (when (null base)
+    (setq base 16))
 
-                          ((stringp prefix)
-                           prefix))
-			 )
-           )
-      ;; body
-      (unless (or
-               (not (= radix 10))
-               (null prefix))
-	(error "cannot add prefix %s to codepoint represented in decimal number system (base: %S)"
-               (format "%S" prefix) base))
+  (let* (
+         (radix
+          (cond
+           ((or
+             (equal 16 base)
+             (equal "16" base)
+             (eq 'hex base)
+             (eq :hex base))
+            16)
+           ((or (equal 10 base)
+                (equal "10" base)
+                (equal 'dec base)
+                (equal :dec base))
+            10)
 
-      )
+           ((or (eq 'oct base)
+                (eq :oct base))
+            8)
+           (t
+            (error "unexpected/invalid value (of type %s) for base argument: %S " (type-of base) base)))
+          )
+         (format-char
+          (cond
+           ((equal radix 16) "x")
+           ((equal radix 10) "d")
+           ((equal radix 8) "o")
+           (t (error "unexpected radix (type %s): %s" (type-of radix) (format "%S" radix)))))
+         (prefix-extension
+          (cond
+           ((equal radix 8) "0")
+           ((equal radix 16) "x")
+           (t "")))
+         (prefix-start (cond
+                        ((or
+                          (equal "\\" prefix)
+                          (equal #x5c prefix)
+                          (equal 'escape prefix)
+                          (equal :escape prefix)
+                          (equal 'backslash prefix)
+                          (equal :backslash prefix)
+                          (equal 'slash prefix)
+                          (equal :slash prefix)
+                          (equal 'shell prefix)
+                          (equal :shell prefix)
+                          (equal 'bash prefix)
+                          (equal :bash prefix)
+                          )
+                         "\\")
+                        ((or
+                          (equal "#" prefix)
+                          (equal #x23 prefix)
+                          (equal 'emacs prefix)
+                          (equal :emacs prefix)
+                          (equal 'hash prefix)
+                          (equal :hash prefix)
+                          )
+                         "#")
+                        ((or
+                          (equal "0" prefix)
+                          (equal #x00 prefix)
+                          (equal 'number prefix)
+                          (equal :number prefix)
+                          (equal 'num prefix)
+                          (equal :num prefix)
+                          (equal 'integer prefix)
+                          (equal :integer prefix)
+                          (equal 'int prefix)
+                          (equal :int prefix)
+                          (equal 'zero prefix)
+                          (equal :zero prefix)
+                          (equal :shell prefix)
+                          )
+                         "0")
+
+                        ((stringp prefix)
+                         prefix))
+		       )
+         )
+    ;; body
+    (unless (or
+             (not (= radix 10))
+             (null prefix))
+      (error "cannot add prefix %s to codepoint represented in decimal number system (base: %S)"
+             (format "%S" prefix) base))
+
     )
+  )
 
-  (defun string-to-unicode-codepoints(string &optional base prefix)
-    (map #'(lambda (codepoint)
-             (represent-unicode-codepoint codepoint base prefix))
-	 (string-to-list string)))
+(defun string-to-unicode-codepoints(string &optional base prefix)
+  (map #'(lambda (codepoint)
+           (represent-unicode-codepoint codepoint base prefix))
+       (string-to-list string)))
 
 
-  (defun ascii-punctuation-to-unicode-codepoint-region(beg end)
-    (interactive "*r")
-    (progn
-      (replace-regexp-in-region "[,]" "\x2c" beg end)
-      (replace-regexp-in-region "[~]" "\x7e" beg end)
-      (replace-regexp-in-region "[]]" "\x5d" beg end)
-      (replace-regexp-in-region "[;]" "\x3b" beg end)
-      (replace-regexp-in-region "[|]" "\x7c" beg end)
-      (replace-regexp-in-region "[\"]" "\x22" beg end)
-      (replace-regexp-in-region "[[]" "\x5b" beg end)
-      (replace-regexp-in-region "[*]" "\x2a" beg end)
-      (replace-regexp-in-region "[`]" "\x60" beg end)
-      (replace-regexp-in-region "[#]" "\x23" beg end)
-      (replace-regexp-in-region "[{]" "\x7b" beg end)
-      (replace-regexp-in-region "[.]" "\x2e" beg end)
-      (replace-regexp-in-region "[\^]" "\x5e" beg end)
-      (replace-regexp-in-region "[@]" "\x40" beg end)
-      (replace-regexp-in-region "[?]" "\x3f" beg end)
-      (replace-regexp-in-region "[\\]" "\x5c" beg end)
-      (replace-regexp-in-region "[%]" "\x25" beg end)
-      (replace-regexp-in-region "[&]" "\x26" beg end)
-      (replace-regexp-in-region "[:]" "\x3a" beg end)
-      (replace-regexp-in-region "[$]" "\x24" beg end)
-      (replace-regexp-in-region "[}]" "\x7d" beg end)
-      (replace-regexp-in-region "[ ]" "\x20" beg end)
-      (replace-regexp-in-region "[']" "\x27" beg end)
-      (replace-regexp-in-region "[!]" "\x21" beg end)
-      (replace-regexp-in-region "[/]" "\x2f" beg end)
-      )
+(defun ascii-punctuation-to-unicode-codepoint-region(beg end)
+  (interactive "*r")
+  (progn
+    (replace-regexp-in-region "[,]" "\x2c" beg end)
+    (replace-regexp-in-region "[~]" "\x7e" beg end)
+    (replace-regexp-in-region "[]]" "\x5d" beg end)
+    (replace-regexp-in-region "[;]" "\x3b" beg end)
+    (replace-regexp-in-region "[|]" "\x7c" beg end)
+    (replace-regexp-in-region "[\"]" "\x22" beg end)
+    (replace-regexp-in-region "[[]" "\x5b" beg end)
+    (replace-regexp-in-region "[*]" "\x2a" beg end)
+    (replace-regexp-in-region "[`]" "\x60" beg end)
+    (replace-regexp-in-region "[#]" "\x23" beg end)
+    (replace-regexp-in-region "[{]" "\x7b" beg end)
+    (replace-regexp-in-region "[.]" "\x2e" beg end)
+    (replace-regexp-in-region "[\^]" "\x5e" beg end)
+    (replace-regexp-in-region "[@]" "\x40" beg end)
+    (replace-regexp-in-region "[?]" "\x3f" beg end)
+    (replace-regexp-in-region "[\\]" "\x5c" beg end)
+    (replace-regexp-in-region "[%]" "\x25" beg end)
+    (replace-regexp-in-region "[&]" "\x26" beg end)
+    (replace-regexp-in-region "[:]" "\x3a" beg end)
+    (replace-regexp-in-region "[$]" "\x24" beg end)
+    (replace-regexp-in-region "[}]" "\x7d" beg end)
+    (replace-regexp-in-region "[ ]" "\x20" beg end)
+    (replace-regexp-in-region "[']" "\x27" beg end)
+    (replace-regexp-in-region "[!]" "\x21" beg end)
+    (replace-regexp-in-region "[/]" "\x2f" beg end)
     )
+  )
