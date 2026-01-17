@@ -5710,7 +5710,8 @@ element to string like `princ' would.
 
 (defun workbench-logs-safe-path ()
   (mkdir-p (file-name-concat (workbench-root) "logs" (today-string))))
-(defun debug-regexp-subexpressions ()
+
+(defun debug-regexp-subexpressions (&optional collapse-linebreaks)
   "this function returns a string with N+1 lines, where every line is
 comprised of the subexp number and subexp contents for each subexp in
 the current `match-data' in order to help debug and visualize matched
@@ -5737,14 +5738,24 @@ interactive command `replace-regexp' like so:
           (let ((items (list
                         subexp-start
                         value-prefix
-                        value
+                        (if collapse-linebreaks ;; if `cond' argument #0
+                            (string-join
+                             (seq-filter (lambda (char)
+                                           (not (memq char '(9 10 11 12 13 32)))
+                                           ) ;; seq-filter `pred' argument #0
+
+                                         (string-to-list value)  ;; seq-filter `sequence' argument #1
+                                         ) ;; string-join `strings' argument #0
+                             ) ;; if `then' argument #1
+                          value  ;; if `else' argument #2
+                          )
                         value-suffix
                         subexp-end
                         )))
             (string-join items item-separator) ;; (format "%d=`%s`\n" g value)
             )
           )) ;
-      );; mapcar `function' argument #0
+      )         ;; mapcar `function' argument #0
     (number-sequence 0 (- (/ (length (match-data)) 2) 1))  ;; mapcar `sequence' argument #1
     ) ;; string-join `strings' argument   #0
    "" ;; string-join `separator' argument #1
