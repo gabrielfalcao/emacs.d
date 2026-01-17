@@ -5710,6 +5710,45 @@ element to string like `princ' would.
 
 (defun workbench-logs-safe-path ()
   (mkdir-p (file-name-concat (workbench-root) "logs" (today-string))))
+(defun debug-regexp-subexpressions (&optional fmt)
+  "this function returns a string with N+1 lines, where every line is
+comprised of the subexp number and subexp contents for each subexp in
+the current `match-data' in order to help debug and visualize matched
+groups in interactive invocations `replace-regexp' involving relatively
+complex regular expressions containing multiple groups.
+
+this function is meant to be used as the `TO-STRING' argument of the
+interactive command `replace-regexp' like so:
+
+\,(debug-regexp-subexpressions)
+"
+  (string-join
+   (mapcar
+    (lambda (g)
+      (let* (
+             (subexp-start (format "%d" g)) ;; (subexp-start (format "<%d>" g))
+             (value-prefix "=`")
+             (value        (match-string-no-properties g))
+             (value-suffix "`")
+             (subexp-end   "") ;; (subexp-end (format "</%d>" g))
+             (item-separator "\n")
+             (items        (list
+                            subexp-start
+                            value-prefix
+                            value
+                            value-suffix
+                            subexp-end
+                            ))
+             ) ;; end let varlist
+        (when (stringp value)
+          (string-join items)
+          (format "%d=`%s`\n" g value))
+        ))                  ;; mapcar `function' argument #0
+    (number-sequence 0 (- (/ (length (match-data)) 2) 1))  ;; mapcar `sequence' argument #1
+    ) ;; string-join `strings' argument   #0
+   "" ;; string-join `separator' argument #1
+   )
+  ) ;; end defun debug-regexp-subexpressions
 
 (defun workbench-path ()
   (mkdir-p (file-name-concat (workbench-root) (today-string))))
@@ -6352,6 +6391,12 @@ This function automatically creates the workbench before returning its path.
           (user-error
            (format "failed to list items of file %s"
                    (abbreviate-file-name (python-file-name)))))))))
+
+(defun buffer-list-builtin-only ()
+  "returns all open emacs-only buffers, i.e: starting and ending in `*'."
+  (seq-filter
+   (apply-partially #'string-match-p "^[*].*[*]$")
+   (mapcar 'buffer-name (buffer-list))))
 
 (defun represent-unicode-codepoint(codepoint &optional base prefix)
   (when (null base)
