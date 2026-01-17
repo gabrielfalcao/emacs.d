@@ -5739,14 +5739,9 @@ interactive command `replace-regexp' like so:
                         subexp-start
                         value-prefix
                         (if collapse-linebreaks ;; if `cond' argument #0
-                            (string-join
-                             (seq-filter (lambda (char)
-                                           (not (memq char '(9 10 11 12 13 32)))
-                                           ) ;; seq-filter `pred' argument #0
-
-                                         (string-to-list value)  ;; seq-filter `sequence' argument #1
-                                         ) ;; string-join `strings' argument #0
-                             ) ;; if `then' argument #1
+                            (save-match-data
+                              (replace-regexp-in-string "\\(\\s-*\\)\\(\r\n\\|\n\\)+\\(\\s-*\\)" "\\1\\3" value)
+                              ) ;; if `then' argument #1
                           value  ;; if `else' argument #2
                           )
                         value-suffix
