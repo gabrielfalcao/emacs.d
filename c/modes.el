@@ -80,6 +80,7 @@
 (add-to-list 'auto-mode-alist '("Pipfile.lock" . toml-mode))
 (add-to-list 'auto-mode-alist '("\\.babelrc" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.bash$" . shell-script-mode))
+(add-to-list 'auto-mode-alist '("/workbench/[0-9-]+/[^/]*bash[^/]*$" . shell-script-mode))
 (add-to-list 'auto-mode-alist '("\\.bashrc$" . shell-script-mode))
 (add-to-list 'auto-mode-alist '("\\.c?js$" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.erl$" . erlang-mode))
