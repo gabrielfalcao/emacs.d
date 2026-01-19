@@ -5732,7 +5732,7 @@ interactive command `replace-regexp' like so:
             (value          (match-string-no-properties g))
             (value-suffix   "`")
             (subexp-end     "")              ;; (subexp-end (format "</%d>" g))
-            (item-separator "\n")
+            (item-separator "")
             ) ;; end let varlist
         (when (stringp value)
           (let ((items (list
@@ -5747,13 +5747,15 @@ interactive command `replace-regexp' like so:
                         value-suffix
                         subexp-end
                         )))
+            ;; (message "items %S" items)
+            ;; (c-message-open "items %S" items)
             (string-join items item-separator) ;; (format "%d=`%s`\n" g value)
             )
           )) ;
       )         ;; mapcar `function' argument #0
     (number-sequence 0 (- (/ (length (match-data)) 2) 1))  ;; mapcar `sequence' argument #1
     ) ;; string-join `strings' argument   #0
-   "" ;; string-join `separator' argument #1
+   "\n" ;; string-join `separator' argument #1
    )
   ) ;; end defun debug-regexp-subexpressions
 
