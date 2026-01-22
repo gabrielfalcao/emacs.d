@@ -3379,6 +3379,36 @@ BEG END."
   (let ((regexp
          "\\([a-zA-Z0-9+=(.|*){@}%,:<>\"'`_-]+\\|[[]\\|[]]\\)+"))))
 
+(defun quote-regexp-string (string)
+  (unless (stringp string)
+    (signal 'type-error
+            (format  "[quote-regexp-string] argument `string' must be string but instead received `%s': %s"
+                     (type-of string)
+                     string)))
+
+  (c-message-open "(quote-regexp-string %S)" string)
+
+  (let* ((firstpass (replace-regexp-in-string "\\(.\\)" "[\\1]" string))
+         (result firstpass))
+  (save-match-data
+    (while (string-match "[[]\\([\\]\\|[\\\\]\\|[\\^]\\|[\\$]\\)[]]" result)
+      (let* (
+             (subexp (match-string 1 result))
+             (new-text (format "\\%s" subexp))
+             )
+        (c-message-debug-symbols (list 'result 'subexp 'new-text))
+        (setq result (replace-match new-text nil t result 1)))
+      )
+    (setq result (replace-regexp-in-string "[[] []]" "[[:space:]]" result ))
+    (c-message-debug-symbols (list 'result))
+    result)))
+
+
+(defun quote-regexp-in-region (beg end)
+  (interactive "*r")
+  (let ((string (buffer-substring-no-properties beg end)))
+    (quote-regexp-string string)))
+
 (defun elisp-escape-regexp-with-double-slashes-in-region (beg end)
   (interactive "*r")
   (if (or
