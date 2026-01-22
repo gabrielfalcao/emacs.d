@@ -3386,7 +3386,7 @@ BEG END."
                      (type-of string)
                      string)))
 
-  (c-message-open "(quote-regexp-string %S)" string)
+  ;; (c-message-open "(quote-regexp-string %S)" string)
 
   (let* ((firstpass (replace-regexp-in-string "\\(.\\)" "[\\1]" string))
          (result firstpass))
@@ -3396,11 +3396,11 @@ BEG END."
              (subexp (match-string 1 result))
              (new-text (format "\\%s" subexp))
              )
-        (c-message-debug-symbols (list 'result 'subexp 'new-text))
+        ;; (c-message-debug-symbols (list 'result 'subexp 'new-text))
         (setq result (replace-match new-text nil t result 1)))
       )
     (setq result (replace-regexp-in-string "[[] []]" "[[:space:]]" result ))
-    (c-message-debug-symbols (list 'result))
+    ;; (c-message-debug-symbols (list 'result))
     result)))
 
 
