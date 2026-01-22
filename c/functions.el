@@ -3390,18 +3390,18 @@ BEG END."
 
   (let* ((firstpass (replace-regexp-in-string "\\(.\\)" "[\\1]" string))
          (result firstpass))
-  (save-match-data
-    (while (string-match "[[]\\([\\]\\|[\\\\]\\|[\\^]\\|[\\$]\\)[]]" result)
-      (let* (
-             (subexp (match-string 1 result))
-             (new-text (format "\\%s" subexp))
-             )
-        ;; (c-message-debug-symbols (list 'result 'subexp 'new-text))
-        (setq result (replace-match new-text nil t result 1)))
-      )
-    (setq result (replace-regexp-in-string "[[] []]" "[[:space:]]" result ))
-    ;; (c-message-debug-symbols (list 'result))
-    result)))
+    (save-match-data
+      (while (string-match "[[]\\([\\]\\|[\\\\]\\|[\\^]\\|[\\$]\\)[]]" result)
+	(let* (
+               (subexp (match-string 1 result))
+               (new-text (format "\\%s" subexp))
+               )
+          ;; (c-message-debug-symbols (list 'result 'subexp 'new-text))
+          (setq result (replace-match new-text nil t result 1)))
+	)
+      (setq result (replace-regexp-in-string "[[] []]" "[[:space:]]" result ))
+      ;; (c-message-debug-symbols (list 'result))
+      result)))
 
 
 (defun quote-regexp-in-region (beg end)
@@ -6565,3 +6565,25 @@ This function automatically creates the workbench before returning its path.
     (replace-regexp-in-region "[/]" "\x2f" beg end)
     )
   )
+
+
+(defun escape-ps1-backvars-region (beg end)
+  (interactive "*r")
+  (save-mark-and-excursion
+    (let* (
+           (region-string (buffer-substring-no-properties beg end))
+           )
+      ;; (c-message-open "escape-ps1-backvars-region")
+      ;; (c-message-debug-symbols (list 'region-string))
+      (mapc (lambda (n)
+              (let* (
+                     (string (format "%c" n))
+                     (regexp (format "\\\\%s" string))
+                     (escaped_hex (format "\\\\x%02x\\\\n" n))
+                     ) ;; end let varlist
+		;; (c-message-debug-symbols (list 'string 'regexp 'escaped_hex))
+		(save-match-data
+		  (replace-regexp-in-region regexp escaped_hex beg end))
+		)) ;; end lambda
+            (string-to-list "uwh"))
+      )))
