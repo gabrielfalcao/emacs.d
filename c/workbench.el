@@ -29,6 +29,55 @@ This function automatically creates the workbench before returning its path.
     workbench-path))
 
 
+(defun save-session-info-get-each-buffer-info-callback (buffer)
+  (unless (bufferp buffer)
+    (error "`buffer' is not a `bufferp' but rather `%s': %S"
+           (type-of buffer)
+           buffer))
+
+  (let* ((start-cons (now-sexp))
+         (contents
+          (save-mark-and-excursion
+            (widen)
+            (buffer-substring-no-properties (point-min) (point-max))))
+         (end-cons (now-sexp))
+         (start (car start-cons))
+         (end (car end-cons))
+         (elapsed-seconds (- end start)));;let
+    ;; <body>
+    (list
+     :read-start start
+     :read-end end
+     :contents contents
+     :name (buffer-name buffer)
+     :slug (shell-script-gen-safe-variable-name-from-string
+            (buffer-name buffer))
+     :filename (buffer-file-name buffer)
+     :filename-relatice (buffer-file-name buffer)
+     :cwd (getcwd)
+     :read-start-sec-and-nanos start-cons
+     :read-end-sec-and-nanos end-cons
+     ;;      :buffer buffer
+     )
+    ;; </body>
+    );; let* (after body)
+  ); defun save-session-info-get-buffer-contents-timed
+(defun get-all-buffers-info()
+  "returns list with information of each open buffer"
+  (and
+   (unless (or (null dir-path) (stringp dir-path))
+     (signal 'type-error
+             (format "dir-path is not a string but rather %s: %S"
+                     (type-of dir-path)
+                     dir-path)));; end unless
+   (unless (file-directory-p dir-path)
+     (signal 'type-error
+             (format "dir-path is not a directory: %S" dir-path)));; end unless
+   (unless (file-exists-p dir-path) (make-directory dir-path t) t);; end unless
+   );; end and
+  (mapcar #'save-session-info-get-each-buffer-info-callback
+          (buffer-list))) ;; end defun get-all-buffers-info
+
 (defun workbench/save-session-info(&optional dir-path)
   (interactive)
   (when (null dir-path) (setq-local dir-path (workbench-path)))
