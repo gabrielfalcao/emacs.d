@@ -12,7 +12,6 @@
       (string-match regexp result)
       (while (string-match regexp result)
         (setq rounds (+ 1 rounds))
-        (save-match-data
           (let* (
                 (parens-char (match-string 1 result))
                 (extra-occurrences (match-string 2 result))
@@ -24,7 +23,6 @@
             (setq states (append states (list result)))
             (setq state-count (length states))
             ) ;; end let
-          )  ;; end save-match-data
         )  ;; end while
       )  ;; end save-match-data
     )  ;; end let*
