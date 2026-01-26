@@ -1,5 +1,6 @@
 (defun string-shift-right (g) "." (format "\t%s" g))
 
+
 (defun debug-symbol-props-format (sym &optional indent)
   (setq-local indent (or indent 0))
   (setq-local do-indent
@@ -5753,7 +5754,7 @@ interactive command `replace-regexp' like so:
 
 \,(debug-regexp-subexpressions)
 "
-  (string-join
+  (let ((regexp-groups
    (mapcar
     (lambda (g)
       (let (
@@ -5785,8 +5786,14 @@ interactive command `replace-regexp' like so:
       )         ;; mapcar `function' argument #0
     (number-sequence 0 (- (/ (length (match-data)) 2) 1))  ;; mapcar `sequence' argument #1
     ) ;; string-join `strings' argument   #0
-   "\n" ;; string-join `separator' argument #1
    )
+        )
+    (format "\n%s\n"
+    (string-join regexp-groups
+                 "\n\n" ;; string-join `separator' argument #1
+                 ))
+)
+
   ) ;; end defun debug-regexp-subexpressions
 
 (defun workbench-path ()
@@ -6585,5 +6592,91 @@ This function automatically creates the workbench before returning its path.
 		(save-match-data
 		  (replace-regexp-in-region regexp escaped_hex beg end))
 		)) ;; end lambda
-            (string-to-list "uwh"))
+            (string-to-list "uwhn"))
       )))
+
+(defun load-functions-wip()
+  (let* ((elisp-wip-function-files-root-path "~/.emacs.d/c/functions-wip")
+         (elisp-wip-function-files-day-path (file-name-concat
+                                             elisp-wip-function-files-root-path
+                                             "functions-wip-2026-01-25"))
+         (elisp-wip-function-files-day-filenames (list
+                                                  "functions-wip-2026-01-25.21-52-12.1769388732.el"))
+
+         (elisp-function-files-list (mapcar #'(lambda (filename-sans-parent)
+                                                (file-name-concat elisp-wip-function-files-day-path
+                                                                  filename-sans-parent));; end #'(lambda (filename-sans-parent) ...)
+                                            elisp-wip-function-files-day-filenames))
+         (result-load-functions-wip nil)
+         );; end varlist (let* elisp-wip-function-files... )
+
+    (setq result-load-functions-wip
+          (mapcar (lambda(el-file-path)
+                    (let (
+                          (lambda-result (list :function #'load-file
+                                               :args (list
+                                                      :file el-file-path) ;; end :args
+                                               :el-file-path el-file-path
+                                               ) ;; end list (proplist)
+                                         )
+                          )
+                      (condition-case original-error
+                          (let* ( ;;open let*
+                                 (return-value (load-file el-file-path))
+                                 (funcall-display (format "(load-file \"%s\")" el-file-path))
+
+                                 )  ;;end varlist (let ((return-value ...)) ...varlist...)
+
+
+                            (append lambda-result
+                                    (list :return-value return-value) ;; end plist (list :return-value ...)
+                                    ) ;; end append
+                            )
+                        (error
+                         (let* ((cause (format "failed to %s" funcall-display))
+                                (message (format "%s" original-error))
+                                (detailed-message (format "%s: %s" cause message))
+                                (error-props (list
+                                              :detailed-message detailed-message
+                                              :cause cause
+                                              :message message
+                                              :original-error original-error))
+                                (error-result (append lambda-result (list :error error-props)))
+                                );; end (let* ...)
+                           error-result
+                           ))
+
+
+                        )
+                      ) ;; end (lambda ... (let ...))
+                    );; end (mapcar  (lambda(el-file-path) ...) )
+
+                  elisp-function-files-list)
+          ); end (setq result-load-functions-wip ...)
+    ) ;; end (defun load-functions-wip (let* ...))
+  );; end (defun load-functions-wip () ...)
+
+
+;;; (mapc (lambda (result)
+;;;         (let* (
+;;;                (error-props (or (plist-get result :error) nil))
+;;;                (return-value  (or  (plist-get result :return-value) nil))
+;;;                (return-type (type-of return-value))
+;;;                )
+;;;
+;;;           (when (plistp (error-props))
+;;;             (let ((error-prefix (plist-get error-props :cause))
+;;;                   (error-message (plist-get error-props :detailed-message)))
+;;;
+;;;             (c-message-error error-prefix error-message)))
+;;;
+;;;           (when (not (null return-value))
+;;;             (let ((value (if (stringp return-value)
+;;;                               (substring-no-properties return-value)
+;;;                             (format "%S (%s)" return-value return-type))))
+;;;               (c-message "loaded functions-wip file: %s" value)))
+;;;           )
+;;;         ); end (lambda ...)
+;;;       (load-functions-wip)
+;;;       );; end ^ (mapc ...)
+;;;
