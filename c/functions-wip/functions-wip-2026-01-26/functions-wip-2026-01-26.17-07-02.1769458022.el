@@ -4,5 +4,5 @@
 
 
 (defconst 'shell-script-varname-regexp-string
-  "\(^\|[^_]\b\)\(\([a-zA-Z_]\)\([a-zA-Z0-9_]*\)\)\($\|\b[^_]\)"
+  "\(^\(?:\(\s-*\)\(declare\|local\)\(\s-+[-][a-zA-Z-]+\s-*\)\)\|[^_a-zA-Z0-9_\x0a]\b\)\(\([a-zA-Z_]+\)\([a-zA-Z0-9_]*\)\)\($\|\b[^_\x0a]\)"
   "regular expression for matching shell-script varnames such as `${varname}' or `varname' but never `_varname_'")
