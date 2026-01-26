@@ -1,12 +1,9 @@
 #!/usr/bin/env bash
 
-declare -r ifs_lb=$'\n'
-declare -r ifs_old=${IFS:-${ifs_lb}}
-export IFS=$'\n'
 set -umeTE
 set +f
 set -o pipefail
-export IFS="${ifs_old}"
+export IFS=$'\n'
 
 declare -- script_name="$(basename "${BASH_SOURCE[0]}")"
 declare -- script_path="$(2>/dev/random 1>/dev/random cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -24,14 +21,14 @@ declare -a argv=("$@")
 declare -i argc=${#argv[@]}
 declare -a stdin_lines=("$@")
 declare -i stdin_line_count=${#stdin_lines[@]}
-declare -a inputs=()
-declare -A sources_by_input=()
-declare -i input_count=0
 declare -- git_repo_path=""
 declare -i exit_code=0
 declare -i argv_return_code=0
 declare -i stdin_return_code=0
 declare -- curdir="$PWD"
+if [ -z "${PWD}" ]; then
+    curdir=$(pwd)
+fi
 
 declare -- error_prefix_color_rgb="239;41;41"
 declare -- error_color_rgb="204;0;0"
@@ -72,11 +69,6 @@ repl() {
     local -a stty_args=()
     case "$1" in -*no*stdin | no*stdin | -*no*echo | no*echo | capture) args+=('-echo') ;; *) args+=('sane') ;; esac
     2>/dev/random 1>/dev/random stty "${stty_args[@]}"
-}
-usage() {
-    repl no echo
-    1>&2 echo -e "$(basename "$0") <ARGUMENT>"
-    repl sane
 }
 exit_error() {
     error "${@}"
@@ -176,25 +168,11 @@ process_inputs() {
     if ! process_argv; then
         argv_return_code=$?
     fi
-    if [ "$argc" -gt 0 ]; then
-        for index in ${!argv[@]}; do
-            current=$(( index + 1 ))
-            item="${argv[${index}]}"
-            sources_by_input+=(["argv:${index}"]="$item")
-        done
-    fi
 
     if [ ! -t 0 ]; then
         if ! process_stdin; then
             stdin_return_code=$?
         fi
-    fi
-    if [ "$stdin_line_count" -gt 0 ]; then
-        for index in ${!stdin_lines[@]}; do
-            current=$(( index + 1 ))
-            item="${stdin_lines[${index}]}"
-            sources_by_input+=(["stdin:${index}"]="$item")
-        done
     fi
 }
 
@@ -217,9 +195,6 @@ process_stdin() {
     stdin_line_count=${#stdin_lines[@]}
 }
 
-display_usage() {
-    echo -e "${script_name} [-v|--verbose] [-q|--quiet|--silent] [-h|-help|--help]"
-}
 process_argv() {
     if [ "$argc" -eq 0 ]; then
         return 1
@@ -229,36 +204,27 @@ process_argv() {
     local -i current=0
     local -i index=0
     local -- arg=""
+    local -i next_index=0
+    local -- next_arg=""
+    local -i skip_next=0
+    local -i has_next_arg=0
+
     for index in "${!argv[@]}"; do
-        current=$(( index + 1 ))
+        next_index=$((index + 1))
+        if [ ${next_index} -lt ${argc} ]; then
+            has_next_arg=1
+        else
+            has_next_arg=0
+        fi
+
+        current=${next_index}
         arg="${argv[$index]}"
-        case "$arg" in
-            -h | --help | -help)
-                colored_manual "NAME
-    ${script_name} - ${usefulness}
-
-SYNOPSIS
-$(printf '%-*s' 4 "$(display_usage)")
-
-DESCRIPTION
-
-$(printf '%-*s\n' 4 "${description_lines[@]}")
-
-    Options:
-
-      -v, --verbose
-          prints debug information
-
-      -q, --quiet, --silent
-          omits debug information
-
-      -h, -help, --help
-          prints this help
-"
-
-                ;;
-            *) ;;
-        esac
+        next_arg="${argv[$current]}"
+        prefix="$(printf '%*s of %f' "${#argc}" "${current}" "${argc}")"
+        if (($skip_next)); then
+            skip_next=0
+            continue
+        fi
     done
     repl sane
 }
