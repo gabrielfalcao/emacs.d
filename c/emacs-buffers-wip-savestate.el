@@ -1,0 +1,7 @@
+;;(load-file "~/.emacs.d/c/workbench.el")
+(load-library "workbench")
+(let ((info (get-all-buffers-info)))
+  (erase-c-messages)
+  (c-message-open "")
+  (enable-debug-on-error)
+  (c-message-debug-symbols (list 'info)))
