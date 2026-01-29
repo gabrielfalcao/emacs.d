@@ -1,5 +1,15 @@
 (defun string-shift-right (g) "." (format "\t%s" g))
 
+;; (progn
+;;   (erase-c-messages)
+;;   (let* (
+;;          (predicate #'stringp)
+;;          (predicate-name (symbol-name predicate))
+;;          (predicate-type (type-of (intern predicate-name)))
+;;          ) ;; end (let* varlist)
+;;     (c-message-open "%s" (format "predicate %S\n name: %s\n type: %s"
+;;                                  predicate predicate-name predicate-type))
+;;     predicate-name))
 
 (defun debug-symbol-props-format (sym &optional indent)
   (setq-local indent (or indent 0))
@@ -5700,6 +5710,51 @@ element to string like `princ' would.
   "    "
   "string that repeats for each indentation level > 0")
 
+  (defun validate-arg-type (arg-value expected-type-name arg-name function-name
+    (unless (stringp indentation-value)
+      (signal 'type-error
+              (format  "[debug-regexp-subexpressions] optional argument `indentation-value' must be a non-empty string but received a `%s': %s"
+                       (type-of indentation-value)
+                       indentation-value)))
+    (unless (length> indentation-value 0)
+      (signal 'type-error
+              "[debug-regexp-subexpressions] optional argument `indentation-value' cannot be an empty string")))
+
+
+(defun repeat-string (value times)
+  (when (null indentation-value)
+    (setq indentation-value g-functions-default-indentation-value))
+
+  (when (null times)
+    (setq times 0))
+
+  (progn
+    (unless (stringp indentation-value)
+      (signal 'type-error
+              (format  "[debug-regexp-subexpressions] optional argument `indentation-value' must be a non-empty string but received a `%s': %s"
+                       (type-of indentation-value)
+                       indentation-value)))
+    (unless (length> indentation-value 0)
+      (signal 'type-error
+              "[debug-regexp-subexpressions] optional argument `indentation-value' cannot be an empty string")))
+
+  (progn
+    (unless (integerp times)
+      (signal 'type-error
+              (format  "[debug-regexp-subexpressions] optional argument `times' must be an integer (unsigned) but received a `%s': %s"
+                       (type-of times)
+                       times)))
+
+    (unless (>= times 0)
+      (signal 'type-error
+              (format  "[debug-regexp-subexpressions] optional argument `times' must be a unsigned integer but received %s"
+                       times))))
+
+
+  (mapcar #'(lambda (_)
+              (format "%s" indentation-value))
+          (number-sequence 0 (+ 1 indentation-level))))
+
 (defun debug-regexp-subexpressions (&optional collapse-linebreaks indentation-level indentation-value)
   "this function returns a string with N+1 lines, where every line is
 comprised of the subexp number and subexp contents for each subexp in
@@ -5742,6 +5797,11 @@ interactive command `replace-regexp' like so:
 
 
   (let* (
+         (global-indentation-level indentation-level)
+         (global-indentation-value indentation-value)
+
+         (indent-value (repeat-string indentation-value indentation-level))
+
          (regexp-groups
 	  (mapcar
 	   (lambda (g)
@@ -5757,7 +5817,6 @@ interactive command `replace-regexp' like so:
 		 (let ((items (seq-map-indexed
                                #'(lambda (elt index)
                                    ;; (cond ((= 0 indentation-level))
-                                   elt
                                    )
                                (list subexp-start
 			             value-prefix
