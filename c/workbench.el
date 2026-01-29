@@ -64,17 +64,6 @@ This function automatically creates the workbench before returning its path.
   ); defun save-session-info-get-buffer-contents-timed
 (defun get-all-buffers-info()
   "returns list with information of each open buffer"
-  (and
-   (unless (or (null dir-path) (stringp dir-path))
-     (signal 'type-error
-             (format "dir-path is not a string but rather %s: %S"
-                     (type-of dir-path)
-                     dir-path)));; end unless
-   (unless (file-directory-p dir-path)
-     (signal 'type-error
-             (format "dir-path is not a directory: %S" dir-path)));; end unless
-   (unless (file-exists-p dir-path) (make-directory dir-path t) t);; end unless
-   );; end and
   (mapcar #'save-session-info-get-each-buffer-info-callback
           (buffer-list))) ;; end defun get-all-buffers-info
 
