@@ -5713,11 +5713,13 @@ interactive command `replace-regexp' like so:
    (mapcar
     (lambda (g)
       (let (
-            (subexp-start   (format "%d" g)) ;; (subexp-start (format "<%d>" g))
+            ;; (subexp-start (format "<%d>" g))
+            (subexp-start   (format "%d" g))
             (value-prefix   "=`")
             (value          (match-string-no-properties g))
             (value-suffix   "`")
-            (subexp-end     "")              ;; (subexp-end (format "</%d>" g))
+            ;; (subexp-end (format "</%d>" g))
+            (subexp-end     "")
             (item-separator "")
             ) ;; end let varlist
         (when (stringp value)
