@@ -3899,18 +3899,18 @@ cursor position in buffer."
           (condition-case err
               (or
                (when (stringp sym)
-                 (message "symbol %S is stringp" sym)
+                 ;; (message "symbol %S is stringp" sym)
                  (intern-soft sym))
                (when (symbolp sym)
-                 (message "symbol %S is symbolp" sym)
+                 ;; (message "symbol %S is symbolp" sym)
                  (symbol-value sym))
                (when (listp sym)
-                 (message "symbol %S is listp" sym)
+                 ;; (message "symbol %S is listp" sym)
                  (format
                   "'(%s)"
                   (string-join (mapcar #'display-symbol sym) " ")))
                (when (sequencep sym)
-                 (message "symbol %S is listp" sym)
+                 ;; (message "symbol %S is listp" sym)
                  (format ";; sequencep\n(%s)"
                          (string-join
                           (mapcar #'display-symbol sym)
