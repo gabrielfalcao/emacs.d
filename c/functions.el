@@ -5696,8 +5696,11 @@ element to string like `princ' would.
   (let ((full-path (expand-file-name path)))
     (make-directory full-path t)
     full-path))
+(defconst g-functions-default-indent-string
+  "    "
+  "string that repeats for each indentation level > 0")
 
-(defun debug-regexp-subexpressions (&optional collapse-linebreaks)
+(defun debug-regexp-subexpressions (&optional collapse-linebreaks indentation-level indentation-value)
   "this function returns a string with N+1 lines, where every line is
 comprised of the subexp number and subexp contents for each subexp in
 the current `match-data' in order to help debug and visualize matched
@@ -5709,47 +5712,75 @@ interactive command `replace-regexp' like so:
 
 \,(debug-regexp-subexpressions)
 "
-  (let ((regexp-groups
-   (mapcar
-    (lambda (g)
-      (let (
-            ;; (subexp-start (format "<%d>" g))
-            (subexp-start   (format "%d" g))
-            (value-prefix   "=`")
-            (value          (match-string-no-properties g))
-            (value-suffix   "`")
-            ;; (subexp-end (format "</%d>" g))
-            (subexp-end     "")
-            (item-separator "")
-            ) ;; end let varlist
-        (when (stringp value)
-          (let ((items (list
-                        subexp-start
-                        value-prefix
-                        (if collapse-linebreaks ;; if `cond' argument #0
-                            (save-match-data
-                              (replace-regexp-in-string "\\(\\s-*\\)\\(\r\n\\|\n\\)+\\(\\s-*\\)" "\\1\\3" value)
-                              ) ;; if `then' argument #1
-                          value  ;; if `else' argument #2
-                          )
-                        value-suffix
-                        subexp-end
-                        )))
-            ;; (message "items %S" items)
-            ;; (c-message-open "items %S" items)
-            (string-join items item-separator) ;; (format "%d=`%s`\n" g value)
-            )
-          )) ;
-      )         ;; mapcar `function' argument #0
-    (number-sequence 0 (- (/ (length (match-data)) 2) 1))  ;; mapcar `sequence' argument #1
-    ) ;; string-join `strings' argument   #0
-   )
-        )
+  (when (null indentation-value)
+    (setq indentation-value g-functions-default-indentation-value))
+
+  (when (null indentation-level)
+    (setq indentation-level 0))
+
+  (progn
+    (unless (stringp indentation-value)
+      (signal 'type-error
+              (format  "[debug-regexp-subexpressions] optional argument `indentation-value' must be a non-empty string but received a `%s': %s"
+                       (type-of indentation-value)
+                       indentation-value)))
+    (unless (length> indentation-value 0)
+      (signal 'type-error
+              "[debug-regexp-subexpressions] optional argument `indentation-value' cannot be an empty string")))
+
+  (progn
+    (unless (integerp indentation-level)
+      (signal 'type-error
+              (format  "[debug-regexp-subexpressions] optional argument `indentation-level' must be an integer (unsigned) but received a `%s': %s"
+                       (type-of indentation-level)
+                       indentation-level)))
+
+    (unless (>= indentation-level 0)
+      (signal 'type-error
+              (format  "[debug-regexp-subexpressions] optional argument `indentation-level' must be a unsigned integer but received %s"
+                       indentation-level))))
+
+
+  (let* (
+         (regexp-groups
+	  (mapcar
+	   (lambda (g)
+	     (let (
+		   (subexp-start (format "<%d>" g))
+		   (value-prefix   "\n")
+		   (value          (match-string-no-properties g))
+		   (value-suffix   "\n")
+		   (subexp-end (format "</%d>" g))
+		   (item-separator "")
+		   ) ;; end let varlist
+               (when (stringp value)
+		 (let ((items (list
+			       subexp-start
+			       value-prefix
+			       (if collapse-linebreaks ;; if `cond' argument #0
+				   (save-match-data
+				     (replace-regexp-in-string "\\(\\s-*\\)\\(\r\n\\|\n\\)+\\(\\s-*\\)" "\\1\\3" value)
+				     ) ;; if `then' argument #1
+				 value  ;; if `else' argument #2
+				 )
+			       value-suffix
+			       subexp-end
+			       )))
+		   ;; (message "items %S" items)
+		   ;; (c-message-open "items %S" items)
+		   (string-join items item-separator) ;; (format "%d=`%s`\n" g value)
+		   )
+		 )) ;
+	     )         ;; mapcar `function' argument #0
+	   (number-sequence 0 (- (/ (length (match-data)) 2) 1))  ;; mapcar `sequence' argument #1
+	   ) ;; string-join `strings' argument   #0
+	  )
+         )
     (format "\n%s\n"
-    (string-join regexp-groups
-                 "\n\n" ;; string-join `separator' argument #1
-                 ))
-)
+	    (string-join regexp-groups
+			 "\n\n" ;; string-join `separator' argument #1
+			 ))
+    )
 
   ) ;; end defun debug-regexp-subexpressions
 
@@ -5835,35 +5866,35 @@ Margins::.
 (defun make-search-info (beg end direction query type)
   "creates a new `search-info' object"
   (make-instance 'search-info
-                 :beginning beg
-                 :end end
-                 :direction direction
-                 :query query
-                 :type type))
+		 :beginning beg
+		 :end end
+		 :direction direction
+		 :query query
+		 :type type))
 
 (defun get-recent-regexp-search-string-if-results()
   (let (beg end direction
-            (latest-regexp-search (car regexp-search-ring)))
+	    (latest-regexp-search (car regexp-search-ring)))
     (when (stringp latest-regexp-search)
       (or
        (save-mark-and-excursion
-         (widen)
-         (and
-          (setq end (re-search-forward latest-regexp-search nil t))
-          (setq beg (match-beginning 0))
-          (setq direction :forward)
-          (search-info :beginning beg
+	 (widen)
+	 (and
+	  (setq end (re-search-forward latest-regexp-search nil t))
+	  (setq beg (match-beginning 0))
+	  (setq direction :forward)
+	  (search-info :beginning beg
 		       :end end
 		       :direction direction
 		       :query latest-regexp-search
 		       :type 'regexp)))
        (save-mark-and-excursion
-         (widen)
-         (and
-          (setq end (re-search-backward latest-regexp-search nil t))
-          (setq beg (match-beginning 0))
-          (setq direction :backward)
-          (search-info :beginning beg
+	 (widen)
+	 (and
+	  (setq end (re-search-backward latest-regexp-search nil t))
+	  (setq beg (match-beginning 0))
+	  (setq direction :backward)
+	  (search-info :beginning beg
 		       :end end
 		       :direction direction
 		       :query latest-regexp-search
@@ -5874,23 +5905,23 @@ Margins::.
     (when (stringp latest-literal-search)
       (or
        (save-mark-and-excursion
-         (widen)
-         (and
-          (setq end (search-forward latest-literal-search nil t))
-          (setq beg (match-beginning 0))
-          (setq direction :forward)
-          (search-info :beginning beg
+	 (widen)
+	 (and
+	  (setq end (search-forward latest-literal-search nil t))
+	  (setq beg (match-beginning 0))
+	  (setq direction :forward)
+	  (search-info :beginning beg
 		       :end end
 		       :direction direction
 		       :query latest-literal-search
 		       :type 'literal)))
        (save-mark-and-excursion
-         (widen)
-         (and
-          (setq end (search-backward latest-literal-search nil t))
-          (setq beg (match-beginning 0))
-          (setq direction :backward)
-          (search-info :beginning beg
+	 (widen)
+	 (and
+	  (setq end (search-backward latest-literal-search nil t))
+	  (setq beg (match-beginning 0))
+	  (setq direction :backward)
+	  (search-info :beginning beg
 		       :end end
 		       :direction direction
 		       :query latest-literal-search
@@ -5911,35 +5942,35 @@ Margins::.
 "
   (interactive)
   (let* ((info nil)
-         (search-input
-          (or
-           (when (region-active-p)
-             (save-mark-and-excursion
+	 (search-input
+	  (or
+	   (when (region-active-p)
+	     (save-mark-and-excursion
 	       (buffer-substring-no-properties
-                (region-beginning)
-                (region-end)))
-             ;; end when region-active-p
-             )
-           (when (setq info (get-search-info-from-isearch-rings))
-             (search-info-get-query info))
-           (progn
-             (isearch-edit-string)
+		(region-beginning)
+		(region-end)))
+	     ;; end when region-active-p
+	     )
+	   (when (setq info (get-search-info-from-isearch-rings))
+	     (search-info-get-query info))
+	   (progn
+	     (isearch-edit-string)
 
-             ;; try to forward search: option 1
-             (if isearch-other-end (goto-char isearch-other-end))
-             (isearch-search)
-             (isearch-push-state)
-             (isearch-update)
+	     ;; try to forward search: option 1
+	     (if isearch-other-end (goto-char isearch-other-end))
+	     (isearch-search)
+	     (isearch-push-state)
+	     (isearch-update)
 
-             ;; try to forward search: option 2
-             (isearch-search-and-update)
-             (isearch-repeat-forward)
-             (setq info (get-search-info-from-isearch-rings))
-             (search-info-get-query info))))); end let* varlist
+	     ;; try to forward search: option 2
+	     (isearch-search-and-update)
+	     (isearch-repeat-forward)
+	     (setq info (get-search-info-from-isearch-rings))
+	     (search-info-get-query info))))); end let* varlist
     (if (search-info-p search-input)
-        (message "g/searching %s with %S"
-                 (search-info-get-direction info)
-                 search-input))); end (let*
+	(message "g/searching %s with %S"
+		 (search-info-get-direction info)
+		 search-input))); end (let*
   ); end defun g/search
 
 (defun escape-newlines-region(beg end)
@@ -5955,22 +5986,22 @@ Margins::.
 (defun wrap-lines-in-quotes (string &optional quote-type trailing-char)
   (unless (stringp string)
     (signal 'type-error
-            (format "`string' should be a string not %s: %s"
-                    (type-of string)
-                    string)))
+	    (format "`string' should be a string not %s: %s"
+		    (type-of string)
+		    string)))
 
   (let ((trailing-char (if (stringp trailing-char) trailing-char ""))
-        (quote-char
-         (cond
-          ((or (equal quote-type 'single) (equal quote-type :single))
-           "'")
-          ((or (equal quote-type 'double) (equal quote-type :double))
-           "\"")
-          (t "\"")))
+	(quote-char
+	 (cond
+	  ((or (equal quote-type 'single) (equal quote-type :single))
+	   "'")
+	  ((or (equal quote-type 'double) (equal quote-type :double))
+	   "\"")
+	  (t "\"")))
 
-        (sol quote-char)
-        (eol (format "%s%s" quote-char trailing-char))
-        (result string))
+	(sol quote-char)
+	(eol (format "%s%s" quote-char trailing-char))
+	(result string))
     (setq result (replace-regexp-in-string "^" sol result))
     (setq result (replace-regexp-in-string "$" eol result))
     result))
@@ -5979,27 +6010,27 @@ Margins::.
 (defun wrap-lines-in-quotes-region (beg end &optional quote-type trailing-char)
   (interactive "*r")
   (let* ((trailing-char (if (stringp trailing-char) trailing-char ""))
-         (quote-char
-          (cond
-           ((or (equal quote-type 'single) (equal quote-type :single))
-            "'")
-           ((or (equal quote-type 'double) (equal quote-type :double))
-            "\"")
-           (t "\"")))
+	 (quote-char
+	  (cond
+	   ((or (equal quote-type 'single) (equal quote-type :single))
+	    "'")
+	   ((or (equal quote-type 'double) (equal quote-type :double))
+	    "\"")
+	   (t "\"")))
 
-         (sol quote-char)
-         (eol (format "%s%s" quote-char trailing-char)))
+	 (sol quote-char)
+	 (eol (format "%s%s" quote-char trailing-char)))
     (save-match-data
       (save-mark-and-excursion
-        (while (re-search-forward "^\\(\\s-*\\)\\(.*\\)$" end t count)
-          (let ((replacement
-                 (format "%s%s%s%s"
-                         (match-string 1)
-                         sol
-                         (match-string 2)
-                         eol)))
-            ;; (c-message-open "%s" replacement)
-            (replace-match replacement nil t)))))))
+	(while (re-search-forward "^\\(\\s-*\\)\\(.*\\)$" end t count)
+	  (let ((replacement
+		 (format "%s%s%s%s"
+			 (match-string 1)
+			 sol
+			 (match-string 2)
+			 eol)))
+	    ;; (c-message-open "%s" replacement)
+	    (replace-match replacement nil t)))))))
 
 
 ;;WIP/broken
@@ -6134,8 +6165,8 @@ Margins::.
 
 (defun python-path-to-current-file-mod ()
   (let* ((current-file-name (expand-file-name (buffer-file-name)))
-         (no-extension
-          (file-name-sans-extension (file-name-base current-file-name))))
+	 (no-extension
+	  (file-name-sans-extension (file-name-base current-file-name))))
     (when (string= no-extension "__init__")
       (file-name-parent-directory current-file-name))
     current-file-name))
@@ -6144,32 +6175,32 @@ Margins::.
   "BEG END."
   (interactive)
   (let ((python-file-name
-         (expand-file-name
-          (read-file-name
-           "insert members of python file: "
-           (python-path-to-current-file-mod)
-           nil 'confirm-after-completion))))
+	 (expand-file-name
+	  (read-file-name
+	   "insert members of python file: "
+	   (python-path-to-current-file-mod)
+	   nil 'confirm-after-completion))))
 
     (let* ((tmp-buffer-name
-            (format "*python-autocomplete:%s*" python-file-name))
-           (tmp-buffer (get-buffer-create tmp-buffer-name))
-           (exit-code
-            (call-process "extract-members-py" nil tmp-buffer nil "-i" python-file-name)))
+	    (format "*python-autocomplete:%s*" python-file-name))
+	   (tmp-buffer (get-buffer-create tmp-buffer-name))
+	   (exit-code
+	    (call-process "extract-members-py" nil tmp-buffer nil "-i" python-file-name)))
       (if (eq 0 exit-code)
-          (let ((items
-                 (with-current-buffer tmp-buffer
-                   (widen)
-                   (buffer-substring-no-properties
-                    (point-min)
-                    (point-max)))))
-            (kill-buffer tmp-buffer)
-            (insert (format "%s" items))
-            (g/format/prettify))
+	  (let ((items
+		 (with-current-buffer tmp-buffer
+		   (widen)
+		   (buffer-substring-no-properties
+		    (point-min)
+		    (point-max)))))
+	    (kill-buffer tmp-buffer)
+	    (insert (format "%s" items))
+	    (g/format/prettify))
 	(progn
-          (switch-to-buffer tmp-buffer)
-          (user-error
-           (format "failed to list items of file %s"
-                   (abbreviate-file-name (python-file-name)))))))))
+	  (switch-to-buffer tmp-buffer)
+	  (user-error
+	   (format "failed to list items of file %s"
+		   (abbreviate-file-name (python-file-name)))))))))
 
 (defun buffer-list-builtin-only ()
   "returns all open emacs-only buffers, i.e: starting and ending in `*'."
@@ -6182,96 +6213,96 @@ Margins::.
     (setq base 16))
 
   (let* (
-         (radix
-          (cond
-           ((or
-             (equal 16 base)
-             (equal "16" base)
-             (eq 'hex base)
-             (eq :hex base))
-            16)
-           ((or (equal 10 base)
-                (equal "10" base)
-                (equal 'dec base)
-                (equal :dec base))
-            10)
+	 (radix
+	  (cond
+	   ((or
+	     (equal 16 base)
+	     (equal "16" base)
+	     (eq 'hex base)
+	     (eq :hex base))
+	    16)
+	   ((or (equal 10 base)
+		(equal "10" base)
+		(equal 'dec base)
+		(equal :dec base))
+	    10)
 
-           ((or (eq 'oct base)
-                (eq :oct base))
-            8)
-           (t
-            (error "unexpected/invalid value (of type %s) for base argument: %S " (type-of base) base)))
-          )
-         (format-char
-          (cond
-           ((equal radix 16) "x")
-           ((equal radix 10) "d")
-           ((equal radix 8) "o")
-           (t (error "unexpected radix (type %s): %s" (type-of radix) (format "%S" radix)))))
-         (prefix-extension
-          (cond
-           ((equal radix 8) "0")
-           ((equal radix 16) "x")
-           (t "")))
-         (prefix-start (cond
-                        ((or
-                          (equal "\\" prefix)
-                          (equal #x5c prefix)
-                          (equal 'escape prefix)
-                          (equal :escape prefix)
-                          (equal 'backslash prefix)
-                          (equal :backslash prefix)
-                          (equal 'slash prefix)
-                          (equal :slash prefix)
-                          (equal 'shell prefix)
-                          (equal :shell prefix)
-                          (equal 'bash prefix)
-                          (equal :bash prefix)
-                          )
-                         "\\")
-                        ((or
-                          (equal "#" prefix)
-                          (equal #x23 prefix)
-                          (equal 'emacs prefix)
-                          (equal :emacs prefix)
-                          (equal 'hash prefix)
-                          (equal :hash prefix)
-                          )
-                         "#")
-                        ((or
-                          (equal "0" prefix)
-                          (equal #x00 prefix)
-                          (equal 'number prefix)
-                          (equal :number prefix)
-                          (equal 'num prefix)
-                          (equal :num prefix)
-                          (equal 'integer prefix)
-                          (equal :integer prefix)
-                          (equal 'int prefix)
-                          (equal :int prefix)
-                          (equal 'zero prefix)
-                          (equal :zero prefix)
-                          (equal :shell prefix)
-                          )
-                         "0")
+	   ((or (eq 'oct base)
+		(eq :oct base))
+	    8)
+	   (t
+	    (error "unexpected/invalid value (of type %s) for base argument: %S " (type-of base) base)))
+	  )
+	 (format-char
+	  (cond
+	   ((equal radix 16) "x")
+	   ((equal radix 10) "d")
+	   ((equal radix 8) "o")
+	   (t (error "unexpected radix (type %s): %s" (type-of radix) (format "%S" radix)))))
+	 (prefix-extension
+	  (cond
+	   ((equal radix 8) "0")
+	   ((equal radix 16) "x")
+	   (t "")))
+	 (prefix-start (cond
+			((or
+			  (equal "\\" prefix)
+			  (equal #x5c prefix)
+			  (equal 'escape prefix)
+			  (equal :escape prefix)
+			  (equal 'backslash prefix)
+			  (equal :backslash prefix)
+			  (equal 'slash prefix)
+			  (equal :slash prefix)
+			  (equal 'shell prefix)
+			  (equal :shell prefix)
+			  (equal 'bash prefix)
+			  (equal :bash prefix)
+			  )
+			 "\\")
+			((or
+			  (equal "#" prefix)
+			  (equal #x23 prefix)
+			  (equal 'emacs prefix)
+			  (equal :emacs prefix)
+			  (equal 'hash prefix)
+			  (equal :hash prefix)
+			  )
+			 "#")
+			((or
+			  (equal "0" prefix)
+			  (equal #x00 prefix)
+			  (equal 'number prefix)
+			  (equal :number prefix)
+			  (equal 'num prefix)
+			  (equal :num prefix)
+			  (equal 'integer prefix)
+			  (equal :integer prefix)
+			  (equal 'int prefix)
+			  (equal :int prefix)
+			  (equal 'zero prefix)
+			  (equal :zero prefix)
+			  (equal :shell prefix)
+			  )
+			 "0")
 
-                        ((stringp prefix)
-                         prefix))
+			((stringp prefix)
+			 prefix))
 		       )
-         )
+	 )
     ;; body
     (unless (or
-             (not (= radix 10))
-             (null prefix))
+	     (not (= radix 10))
+	     (null prefix))
       (error "cannot add prefix %s to codepoint represented in decimal number system (base: %S)"
-             (format "%S" prefix) base))
+	     (format "%S" prefix) base))
 
     )
   )
 
 (defun string-to-unicode-codepoints(string &optional base prefix)
   (map #'(lambda (codepoint)
-           (represent-unicode-codepoint codepoint base prefix))
+	   (represent-unicode-codepoint codepoint base prefix))
        (string-to-list string)))
 
 
@@ -6311,81 +6342,81 @@ Margins::.
   (interactive "*r")
   (save-mark-and-excursion
     (let* (
-           (region-string (buffer-substring-no-properties beg end))
-           )
+	   (region-string (buffer-substring-no-properties beg end))
+	   )
       ;; (c-message-open "escape-ps1-backvars-region")
       ;; (c-message-debug-symbols (list 'region-string))
       (mapc (lambda (n)
-              (let* (
-                     (string (format "%c" n))
-                     (regexp (format "\\\\%s" string))
-                     (escaped_hex (format "\\\\x%02x\\\\n" n))
-                     ) ;; end let varlist
+	      (let* (
+		     (string (format "%c" n))
+		     (regexp (format "\\\\%s" string))
+		     (escaped_hex (format "\\\\x%02x\\\\n" n))
+		     ) ;; end let varlist
 		;; (c-message-debug-symbols (list 'string 'regexp 'escaped_hex))
 		(save-match-data
 		  (replace-regexp-in-region regexp escaped_hex beg end))
 		)) ;; end lambda
-            (string-to-list "uwhn"))
+	    (string-to-list "uwhn"))
       )))
 
 (defun load-functions-wip()
   (let* ((elisp-wip-function-files-root-path "~/.emacs.d/c/functions-wip")
-         (elisp-wip-function-files-day-path (file-name-concat
-                                             elisp-wip-function-files-root-path
-                                             "functions-wip-2026-01-25"))
-         (elisp-wip-function-files-day-filenames (list
-                                                  "functions-wip-2026-01-25.21-52-12.1769388732.el"))
+	 (elisp-wip-function-files-day-path (file-name-concat
+					     elisp-wip-function-files-root-path
+					     "functions-wip-2026-01-25"))
+	 (elisp-wip-function-files-day-filenames (list
+						  "functions-wip-2026-01-25.21-52-12.1769388732.el"))
 
-         (elisp-function-files-list (mapcar #'(lambda (filename-sans-parent)
-                                                (file-name-concat elisp-wip-function-files-day-path
-                                                                  filename-sans-parent));; end #'(lambda (filename-sans-parent) ...)
-                                            elisp-wip-function-files-day-filenames))
-         (result-load-functions-wip nil)
-         );; end varlist (let* elisp-wip-function-files... )
+	 (elisp-function-files-list (mapcar #'(lambda (filename-sans-parent)
+						(file-name-concat elisp-wip-function-files-day-path
+								  filename-sans-parent));; end #'(lambda (filename-sans-parent) ...)
+					    elisp-wip-function-files-day-filenames))
+	 (result-load-functions-wip nil)
+	 );; end varlist (let* elisp-wip-function-files... )
 
     (setq result-load-functions-wip
-          (mapcar (lambda(el-file-path)
-                    (let (
-                          (lambda-result (list :function #'load-file
-                                               :args (list
-                                                      :file el-file-path) ;; end :args
-                                               :el-file-path el-file-path
-                                               ) ;; end list (proplist)
-                                         )
-                          )
-                      (condition-case original-error
-                          (let* ( ;;open let*
-                                 (return-value (load-file el-file-path))
-                                 (funcall-display (format "(load-file \"%s\")" el-file-path))
+	  (mapcar (lambda(el-file-path)
+		    (let (
+			  (lambda-result (list :function #'load-file
+					       :args (list
+						      :file el-file-path) ;; end :args
+					       :el-file-path el-file-path
+					       ) ;; end list (proplist)
+					 )
+			  )
+		      (condition-case original-error
+			  (let* ( ;;open let*
+				 (return-value (load-file el-file-path))
+				 (funcall-display (format "(load-file \"%s\")" el-file-path))
 
-                                 )  ;;end varlist (let ((return-value ...)) ...varlist...)
-
-
-                            (append lambda-result
-                                    (list :return-value return-value) ;; end plist (list :return-value ...)
-                                    ) ;; end append
-                            )
-                        (error
-                         (let* ((cause (format "failed to %s" funcall-display))
-                                (message (format "%s" original-error))
-                                (detailed-message (format "%s: %s" cause message))
-                                (error-props (list
-                                              :detailed-message detailed-message
-                                              :cause cause
-                                              :message message
-                                              :original-error original-error))
-                                (error-result (append lambda-result (list :error error-props)))
-                                );; end (let* ...)
-                           error-result
-                           ))
+				 )  ;;end varlist (let ((return-value ...)) ...varlist...)
 
 
-                        )
-                      ) ;; end (lambda ... (let ...))
-                    );; end (mapcar  (lambda(el-file-path) ...) )
+			    (append lambda-result
+				    (list :return-value return-value) ;; end plist (list :return-value ...)
+				    ) ;; end append
+			    )
+			(error
+			 (let* ((cause (format "failed to %s" funcall-display))
+				(message (format "%s" original-error))
+				(detailed-message (format "%s: %s" cause message))
+				(error-props (list
+					      :detailed-message detailed-message
+					      :cause cause
+					      :message message
+					      :original-error original-error))
+				(error-result (append lambda-result (list :error error-props)))
+				);; end (let* ...)
+			   error-result
+			   ))
 
-                  elisp-function-files-list)
-          ); end (setq result-load-functions-wip ...)
+
+			)
+		      ) ;; end (lambda ... (let ...))
+		    );; end (mapcar  (lambda(el-file-path) ...) )
+
+		  elisp-function-files-list)
+	  ); end (setq result-load-functions-wip ...)
     ) ;; end (defun load-functions-wip (let* ...))
   );; end (defun load-functions-wip () ...)
 
