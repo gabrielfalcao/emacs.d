@@ -5754,18 +5754,23 @@ interactive command `replace-regexp' like so:
 		   (item-separator "")
 		   ) ;; end let varlist
                (when (stringp value)
-		 (let ((items (list
-			       subexp-start
-			       value-prefix
-			       (if collapse-linebreaks ;; if `cond' argument #0
-				   (save-match-data
-				     (replace-regexp-in-string "\\(\\s-*\\)\\(\r\n\\|\n\\)+\\(\\s-*\\)" "\\1\\3" value)
-				     ) ;; if `then' argument #1
-				 value  ;; if `else' argument #2
-				 )
-			       value-suffix
-			       subexp-end
-			       )))
+		 (let ((items (seq-map-indexed
+                               #'(lambda (elt index)
+                                   ;; (cond ((= 0 indentation-level))
+                                   elt
+                                   )
+                               (list subexp-start
+			             value-prefix
+			             (if collapse-linebreaks ;; if `cond' argument #0
+				         (save-match-data
+				           (replace-regexp-in-string "\\(\\s-*\\)\\(\r\n\\|\n\\)+\\(\\s-*\\)" "\\1\\3" value)
+				           ) ;; if `then' argument #1
+				       value  ;; if `else' argument #2
+				       )
+			             value-suffix subexp-end);; end (list ...)
+                               );; end (seq-map-indexed ...)
+                              ) ;; end (let ((items ...)))
+                       );;end (let (... varlist ... ))
 		   ;; (message "items %S" items)
 		   ;; (c-message-open "items %S" items)
 		   (string-join items item-separator) ;; (format "%d=`%s`\n" g value)
