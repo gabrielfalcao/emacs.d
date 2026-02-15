@@ -1,7 +1,7 @@
 (defun clipboard-get-string()
   (gui-get-selection 'CLIPBOARD 'STRING))
 
-(defun clipboard-get-lines (&key :omit-nulls omit-nulls :trim trim :line-separator line-separator)
+(defun clipboard-get-lines (&optional omit-nulls trim line-separator)
   (unless (or (stringp line-separator)
               (null line-separator))
     (signal 'type-error
@@ -14,7 +14,8 @@
 
   (string-split (clipboard-get-string) line-separator omit-nulls trim))
 
-(defun string-prefix-lines (prefix lines &optional output-string &key :omit-nulls omit-nulls :trim trim :line-separator line-separator)
+
+(defun string-prefix-lines (prefix lines &optional output-string omit-nulls trim line-separator)
   "prefixes each line from `lines' with the string `prefix' and returns a
 list of strings with each line, unless `output-string' is non-nil, in
 which case each string in that list of strings is joined by
@@ -51,6 +52,6 @@ a list of strings `line-separator'.
                      (type-of lines)
                      lines)))
 
-  (let ((result (mapcar (lambda (line) (format "%s%s" prefix line)) lines)))
+  (let ((result (mapcar #'(lambda (line) (format "%s%s" prefix line)) lines)))
     (or (and output-string (string-join result line-separator))
         result)))

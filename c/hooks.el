@@ -27,8 +27,13 @@
   (save-mark-and-excursion
     (widen)
     (beginning-of-buffer)
+;; 0x2c \x2c 44 ','
+;; 0x2d \x2d 45 '-' -
+;; 0x2e \x2e 46 '.' .
+;; 0x2f \x2f 47 '/' /
+;; 0x5f \x5f 95 '_' _
 
-    (re-search-forward "^([#][!]([a-zA-Z0-9_,./-]))" [',', '-', '.', '/', '_']
+    (re-search-forward "^([#][!]([a-zA-Z0-9,-/_]))" [',', '-', '.', '/', '_']
     (end-of-line)
     (buffer-substring-no-properties (point-min) (point))))
 
@@ -44,38 +49,7 @@
        )))
   )
 
-(defun clipboard-get-string()
-  (gui-get-selection 'CLIPBOARD 'STRING))
 
-(defun clipboard-get-lines()
-  (string-split (clipboard-get-string) "\n"))
-
-(defun prefix-lines (prefix lines &key :omit-nulls omit-nulls :trim trim :line-separator line-separator)
-  (unless (or (stringp line-separator)
-              (null line-separator))
-    (signal 'type-error
-            (format  "wrong type argument `line-separator' is a `%s', not a string: %s"
-                     (type-of line-separator)
-                     line-separator)))
-
-  (unless (and line-separator (length> line-separator 0))
-    (setq line-separator "\n"))
-
-  (unless (stringp prefix)
-    (signal 'type-error
-            (format  "wrong type argument `prefix' is a `%s', not a string: %s"
-                     (type-of prefix)
-                     prefix)))
-  (when (stringp lines)
-    (setq lines (string-split lines "\n" omit-nulls trim)))
-
-  (unless (list-of-strings-p lines)
-    (signal 'type-error
-            (format  "wrong type argument `lines' is not a list of strings: %s"
-                     (type-of lines)
-                     lines)))
-  (string-join (mapcar (lambda (line) (format "%s%s" prefix line)) lines) "\n")
-  )
 
 ;;   (gui-get-selection 'CLIPBOARD 'STRING))
 ;; (insert (string-join (mapcar (lambda (line) (format ";; %s" line )) (string-split (gui-get-selection) "\n" t t ) "\n")))
