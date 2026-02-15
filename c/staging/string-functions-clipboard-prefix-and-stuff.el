@@ -1,6 +1,7 @@
 (defun clipboard-get-string()
   (gui-get-selection 'CLIPBOARD 'STRING))
 
+
 (defun clipboard-get-lines (&optional omit-nulls trim line-separator)
   (unless (or (stringp line-separator)
               (null line-separator))
@@ -14,6 +15,8 @@
 
   (string-split (clipboard-get-string) line-separator omit-nulls trim))
 
+(defalias 'string-from-clipboard #'clipboard-get-string)
+(defalias 'list-of-strings-from-clipboard #'clipboard-get-lines)
 
 (defun string-prefix-lines (prefix lines &optional output-string omit-nulls trim line-separator)
   "prefixes each line from `lines' with the string `prefix' and returns a

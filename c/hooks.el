@@ -15,44 +15,13 @@
 ;; (add-hook 'web-mode-hook 'prettier-js-mode)
 
 
-
-(defun buffer-first-line ()
-  (save-mark-and-excursion
-    (widen)
-    (beginning-of-buffer)
-    (end-of-line)
-    (buffer-substring-no-properties (point-min) (point))))
-
-(defun buffer-shebang-firstline ()
-  (save-mark-and-excursion
-    (widen)
-    (beginning-of-buffer)
-;; 0x2c \x2c 44 ','
-;; 0x2d \x2d 45 '-' -
-;; 0x2e \x2e 46 '.' .
-;; 0x2f \x2f 47 '/' /
-;; 0x5f \x5f 95 '_' _
-
-    (re-search-forward "^([#][!]([a-zA-Z0-9,-/_]))" [',', '-', '.', '/', '_']
-    (end-of-line)
-    (buffer-substring-no-properties (point-min) (point))))
-
-(defun shebang-file-executable()
-  (when-let ((filename (buffer-file-name)))
-    (let ((first-line (save-mark-and-excursion
-                        (widen)
-                        (beginning-of-buffer)
-                        (end-of-line)
-                        (buffer-substring-no-properties (point-min) (point)))))
-      (string-
-
-       )))
-  )
+;; <TODO>
+;; (add-hook 'after-save-hook #'shebang-file-make-executable)
+;; (load-staging "buffer-shebang.el")
+;; (load-staging "string-functions-clipboard-prefix-and-stuff.el")
+;; </TODO>
 
 
-
-;;   (gui-get-selection 'CLIPBOARD 'STRING))
-;; (insert (string-join (mapcar (lambda (line) (format ";; %s" line )) (string-split (gui-get-selection) "\n" t t ) "\n")))
 
 
 (require 'company-box)
