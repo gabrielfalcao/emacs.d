@@ -23,7 +23,6 @@ declare -i stdin_line_count=0
 declare -i has_params=$((argc))
 has_params=$((argc + stdin_line_count))
 
-
 declare -i code=0
 
 declare -i current=0
@@ -75,19 +74,27 @@ fi
 # </GIT>
 export IFS=$'\n'
 
+main() {
+    if ! ((${has_params})); then
+        1>&2 echo "[${script_name} error] missing command-line arguments (or stdin data)"
+        exit 1
+    fi
 
-if ! (( ${has_params} )); then
-    1>&2 echo "[${script_name} error] missing command-line arguments (or stdin data)"
-    exit 1
+    for index in ${!argv[@]}; do
+        current=$((${index} + 1))
+        arg="${argv[${index}]}"
+        case "${arg}" in
+            -h | --help)
+                1>&2 echo -e "HELP"
+                ;;
+            *) ;;
+        esac
+    done
+
+}
+
+if [ "${0}" == "${BASH_SOURCE[0]}" ]; then
+    main
+else
+    1>&2 echo -e "${BASH_SOURCE[0]} appears to being used as a library by ${0@Q}"
 fi
-
-for index in ${!argv[@]}; do
-    current=$((${index} + 1))
-    arg="${argv[${index}]}"
-    case "${arg}" in
-        -h | --help)
-            1>&2 echo -e "HELP"
-            ;;
-        *) ;;
-    esac
-done
