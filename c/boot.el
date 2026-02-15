@@ -4,9 +4,10 @@
 (require 'subr-x)
 (require 'help-fns)
 
-;; TODO: defadvice for auto-complete of `find-file' to exclude from completion:
-;; - empty files
-;; - the same file as the current buffer's
+;; TODO: defadvice for auto-complete of `find-file' to:
+;;   - exclude from empty files from completion
+;;   - exclude the same file as the (buffer-file-name) from which find-file was called
+;;   - sort filenames by their modified-at timestamp
 
 
 (defun eval-buffer-goto-failure()
