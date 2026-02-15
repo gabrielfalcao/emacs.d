@@ -66,6 +66,14 @@
       )
 ; (add-to-list 'magic-mode-alist '("^#!/usr/bin/\\(env\\s-+.*\\)?\\(python\\)" . python-mode))
 ; (add-to-list 'magic-mode-alist '("^#!/usr/bin/\\(env\\s-+.*\\)?\\(ba\\)?sh\\)" . shell-script-mode))
+
+(setq whitespace-style 'empty)
+(setq web-mode-content-types-alist
+      '(("json" . ".*[.]json$'")
+        ("jsx"  . ".*[.]jsx")))
+;; (flycheck-define-checker sh-shellcheck :command ("shellcheck" "-x" "-f" "checkstyle" "-s" (eval (symbol-name sh-shell)) source) :modes shell-script-mode :error-parser flycheck-parse-checkstyle)
+
+
 (add-to-list 'auto-mode-alist '("/shell[.]d/" . shell-script-mode))
 (add-to-list 'auto-mode-alist '("/bash_completion\\([.]d\\)?/" . shell-script-mode))
 (add-to-list 'auto-mode-alist '("/opt[\/]libexec/" . shell-script-mode))
@@ -106,7 +114,6 @@
 (add-to-list 'auto-mode-alist '("\\.brs$" . brightscript-mode))
 (add-to-list 'auto-mode-alist '("\\.sed$" . sed-mode))
 (add-to-list 'auto-mode-alist '("\\.g?awk$" . awk-mode))
-
 (add-to-list 'auto-mode-alist '("\\.tsx$" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.typ?$" . typst-mode))
 (add-to-list 'auto-mode-alist '("\\.el\(\\.gz\)?$" . emacs-lisp-mode))
@@ -118,21 +125,11 @@
 (add-to-list 'auto-mode-alist '("\\.frm$" . visual-basic-mode))
 (add-to-list 'auto-mode-alist '("\\.vbp$" . visual-basic-mode))
 (add-to-list 'auto-mode-alist '("\\.pest$" . pest-mode))
-
-(setq whitespace-style 'empty)
-(setq web-mode-content-types-alist
-      '(("json" . ".*[.]json$'")
-        ("jsx"  . ".*[.]jsx")))
-
-
 (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
-;; (flycheck-define-checker sh-shellcheck :command ("shellcheck" "-x" "-f" "checkstyle" "-s" (eval (symbol-name sh-shell)) source) :modes shell-script-mode :error-parser flycheck-parse-checkstyle)
-
-
 (add-to-list 'auto-mode-alist '("\\.c?j$" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.er$" . erlang-mode))
 (add-to-list 'auto-mode-alist '("\\.j$" . jinja2-mode))
