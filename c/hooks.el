@@ -14,6 +14,73 @@
 ;; (add-hook 'web-mode-hook 'prettier-js-mode)
 ;; (add-hook 'web-mode-hook 'prettier-js-mode)
 
+
+
+(defun buffer-first-line ()
+  (save-mark-and-excursion
+    (widen)
+    (beginning-of-buffer)
+    (end-of-line)
+    (buffer-substring-no-properties (point-min) (point))))
+
+(defun buffer-shebang-firstline ()
+  (save-mark-and-excursion
+    (widen)
+    (beginning-of-buffer)
+
+    (re-search-forward "^([#][!]([a-zA-Z0-9_,./-]))" [',', '-', '.', '/', '_']
+    (end-of-line)
+    (buffer-substring-no-properties (point-min) (point))))
+
+(defun shebang-file-executable()
+  (when-let ((filename (buffer-file-name)))
+    (let ((first-line (save-mark-and-excursion
+                        (widen)
+                        (beginning-of-buffer)
+                        (end-of-line)
+                        (buffer-substring-no-properties (point-min) (point)))))
+      (string-
+
+       )))
+  )
+
+(defun clipboard-get-string()
+  (gui-get-selection 'CLIPBOARD 'STRING))
+
+(defun clipboard-get-lines()
+  (string-split (clipboard-get-string) "\n"))
+
+(defun prefix-lines (prefix lines &key :omit-nulls omit-nulls :trim trim :line-separator line-separator)
+  (unless (or (stringp line-separator)
+              (null line-separator))
+    (signal 'type-error
+            (format  "wrong type argument `line-separator' is a `%s', not a string: %s"
+                     (type-of line-separator)
+                     line-separator)))
+
+  (unless (and line-separator (length> line-separator 0))
+    (setq line-separator "\n"))
+
+  (unless (stringp prefix)
+    (signal 'type-error
+            (format  "wrong type argument `prefix' is a `%s', not a string: %s"
+                     (type-of prefix)
+                     prefix)))
+  (when (stringp lines)
+    (setq lines (string-split lines "\n" omit-nulls trim)))
+
+  (unless (list-of-strings-p lines)
+    (signal 'type-error
+            (format  "wrong type argument `lines' is not a list of strings: %s"
+                     (type-of lines)
+                     lines)))
+  (string-join (mapcar (lambda (line) (format "%s%s" prefix line)) lines) "\n")
+  )
+
+;;   (gui-get-selection 'CLIPBOARD 'STRING))
+;; (insert (string-join (mapcar (lambda (line) (format ";; %s" line )) (string-split (gui-get-selection) "\n" t t ) "\n")))
+
+
 (require 'company-box)
 (add-hook 'company-mode-hook 'company-box-mode)
 
