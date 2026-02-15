@@ -14,7 +14,7 @@
 
   (string-split (clipboard-get-string) line-separator omit-nulls trim))
 
-(defun string-prefix-lines (prefix lines &key :omit-nulls omit-nulls :trim trim :line-separator line-separator)
+(defun string-prefix-lines (prefix lines &optional output-string &key :omit-nulls omit-nulls :trim trim :line-separator line-separator)
   (unless (or (stringp line-separator)
               (null line-separator))
     (signal 'type-error
@@ -38,4 +38,7 @@
             (format  "wrong type argument `lines' is not a list of strings: %s"
                      (type-of lines)
                      lines)))
-  (string-join (mapcar (lambda (line) (format "%s%s" prefix line)) lines) line-separator))
+
+  (let ((result (mapcar (lambda (line) (format "%s%s" prefix line)) lines)))
+    (or (and output-string (string-join result line-separator))
+        result)))
