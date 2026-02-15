@@ -4,7 +4,11 @@
 (require 'subr-x)
 (require 'help-fns)
 
-;; TODO: defadvice for auto-complete of `find-file' to exclude empty files from completion
+;; TODO: defadvice for auto-complete of `find-file' to exclude from completion:
+;; - empty files
+;; - the same file as the current buffer's
+
+
 (defun eval-buffer-goto-failure()
   (interactive)
   (condition-case err
