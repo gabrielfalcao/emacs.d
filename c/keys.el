@@ -1,5 +1,9 @@
 (setup-utf8)
-
+;;
+;;
+;;a2V5XChcKFteCiddK1sjXVsnXVx8LipbWzpzcGFjZTpdCl0rLipcKVx8Lio/XClbWzpzcGFjZTpdCl0qaW5zZXJ0XChbLV1cfFstXVthLXowLTlfLV0rXCk/
+;;
+;;
 (Ox33b4O/$/undefine-key
  '(
    "C-x C-z"
@@ -70,9 +74,14 @@
 (Ox33b4O/$/set-key '("C-c C-l") 'collapse-lines-region)
 (Ox33b4O/$/set-key '("C-c C-t C-m C-l") '$$$$$)
 (Ox33b4O/$/set-key '("C-c C-x C-f") 'show-face-at-point)
+
 (Ox33b4O/$/set-key '("C-c C-w" "C-c M-w") 'clipboard-kill-ring-save)
 (Ox33b4O/$/set-key '("C-c C-x C-w") 'clipboard-kill-region)
 (Ox33b4O/$/set-key '("C-c C-y" "C-c M-y") 'clipboard-yank)
+
+(Ox33b4O/$/set-key '("C-M-v" "M-V") 'clipboard-yank)
+(Ox33b4O/$/set-key '("C-M-c" "M-c") 'clipboard-kill-ring-save)
+(Ox33b4O/$/set-key '("C-M-x" "M-X" ) 'clipboard-kill-region)
 (Ox33b4O/$/set-key '("C-x C-q" "C-c M-y" "C-γ") 'keyboard-quit)
 (Ox33b4O/$/set-key '("C-x C-d C-h") 'info)
 ;; (Ox33b4O/$/set-key "C-c C-u C-d C-a" #'(lambda () (interactive) (when (read-only-mode -8) (message "%s unlocked" (buffer-name)))))
@@ -162,10 +171,6 @@
 (Ox33b4O/$/set-key   '("C-M-S" "C-x C-g C-a") #'git-add)
 (Ox33b4O/$/set-key   '("C-x C-g C-s") #'git-save)
 (Ox33b4O/$/set-key   '("C-x C-g C-d") #'git-diff)
-
-(Ox33b4O/$/set-key   '("C-M-v" "M-V") 'clipboard-yank)
-(Ox33b4O/$/set-key   '("C-M-c" "M-c") 'clipboard-kill-ring-save)
-(Ox33b4O/$/set-key   '("C-M-x" "M-X" ) 'clipboard-kill-region)
 
 (Ox33b4O/$/set-key   '("C-g" "C-q") 'keyboard-quit   )
 

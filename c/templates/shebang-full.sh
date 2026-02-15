@@ -17,18 +17,25 @@ declare -a description_lines=(
     "help looks not unlike a nice unix manpage"
 )
 
-declare -a argv=("$@")
+declare -a argv=(${@})
 declare -i argc=${#argv[@]}
-declare -a stdin_lines=("$@")
+declare -a stdin_lines=(${@})
 declare -i stdin_line_count=${#stdin_lines[@]}
 declare -- git_repo_path=""
-declare -i exit_code=0
+declare -i code=0
 declare -i argv_return_code=0
 declare -i stdin_return_code=0
+
+
+
 declare -- curdir="$PWD"
 if [ -z "${PWD}" ]; then
     curdir=$(pwd)
 fi
+
+
+
+
 
 declare -- error_prefix_color_rgb="239;41;41"
 declare -- error_color_rgb="204;0;0"
@@ -78,7 +85,7 @@ exit_error() {
 achtung_prefixed() {
     local -- prefix="$1"
     shift
-    local -- message="$@"
+    local -- message=${@}
     1>&2 echo -e "\x1b[1;38;2;${achtung_prefix_color_rgb}m${prefix}\x1b[1;38;2;${achtung_color_rgb}m ${message}\x1b[0m"
 }
 achtung() {
@@ -88,7 +95,7 @@ achtung() {
 warn_prefixed() {
     local -- prefix="$1"
     shift
-    local -- message="$@"
+    local -- message=${@}
     1>&2 echo -e "\x1b[1;38;2;${warn_prefix_color_rgb}m${prefix}\x1b[1;38;2;${warn_color_rgb}m ${message}\x1b[0m"
 }
 warn() {
@@ -102,7 +109,7 @@ error() {
 error_prefixed() {
     local -- prefix="$1"
     shift
-    local -- message="$@"
+    local -- message=${@}
     1>&2 echo -e "\x1b[1;38;2;${error_prefix_color_rgb}m${prefix}\x1b[1;38;2;${error_color_rgb}m ${message}\x1b[0m"
 }
 info() {
@@ -112,7 +119,7 @@ info() {
 info_prefixed() {
     local -- prefix="$1"
     shift
-    local -- message="$@"
+    local -- message=${@}
     1>&2 echo -e "\x1b[1;38;2;${info_prefix_color_rgb}m${prefix}\x1b[1;38;2;${info_color_rgb}m ${message}\x1b[0m"
 }
 msg() {
@@ -122,7 +129,7 @@ msg() {
 msg_prefixed() {
     local -- prefix="$1"
     shift
-    local -- message="$@"
+    local -- message=${@}
     1>&2 echo -e "\x1b[1;38;2;${msg_prefix_color_rgb}m${prefix}\x1b[1;38;2;${msg_color_rgb}m ${message}\x1b[0m"
 }
 display() {
@@ -132,13 +139,13 @@ display() {
 display_prefixed() {
     local -- prefix="$1"
     shift
-    local -- message="$@"
+    local -- message=${@}
     1>&2 echo -e "\x1b[1;38;2;${display_prefix_color_rgb}m${prefix}\x1b[1;38;2;${display_color_rgb}m ${message}\x1b[0m"
 }
 debug_prefixed() {
     local -- prefix="$1"
     shift
-    local -- message="$@"
+    local -- message=${@}
     1>&2 echo -e "\x1b[1;38;2;${debug_prefix_color_rgb}m${prefix}\x1b[1;38;2;${debug_color_rgb}m ${message}\x1b[0m"
 }
 debug() {

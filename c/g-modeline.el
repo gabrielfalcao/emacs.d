@@ -1,3 +1,8 @@
+;; TODO:
+;;
+;; when mark is active, begin modeline with (line number and line
+;; length of shortest and widest selected line)
+
 (defun Ox33b4O/$/bfan ()
   "."
   (or
@@ -127,6 +132,8 @@
     (Ox33b4O/$/mode-line-arrow-right)
     'face
     (list :foreground (Ox33b4O/$/mark-indicator-color)))
+   " "
+   '(:eval (format "W:%s H:%s" (frame-width) (frame-height) ))
    " "
    '(:eval (Ox33b4O/$/paint-mode-name))
    " "

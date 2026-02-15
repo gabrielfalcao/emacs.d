@@ -1,64 +1,93 @@
 #!/usr/bin/env bash
 
-declare -r ifs_lb=$'\n'
-declare -r ifs_old=${IFS:-${ifs_lb}}
-export IFS=$'\n'
 set -umeTE
 set +f
 set -o pipefail
-export IFS="${ifs_old}"
+unset IFS
+export IFS=$'\n'
 
 declare -- script_name="$(basename "${BASH_SOURCE[0]}")"
 declare -- script_path="$(2>/dev/random 1>/dev/random cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 declare -- this_script_path="${script_path}/${script_name}"
 
-declare -a argv=("$@")
+declare -a argv=(${@})
 declare -i argc=${#argv[@]}
+
 declare -a stdin_lines=()
-declare -i stdin_line_count=${#stdin_lines[@]}
-declare -- git_repo_path=""
-declare -i exit_code=0
+declare -i stdin_line_count=0
+
+# has_params "boolean flag" - .i.e.:  "(( ${has_params} ))"
+#
+# "false' if the sum of ${argc} + ${stdin_line_count} is 0
+# otherwise, otherwise 1 (or any positive integer: true)
+declare -i has_params=$((argc))
+has_params=$((argc + stdin_line_count))
+
+
+declare -i code=0
+
+declare -i current=0
+
+declare -i index=0
+declare -- arg=''
+declare -- param=''
+
+declare -i next_index=0
+declare -- next_arg=''
+declare -- next_param=''
+
+declare -i skip_next=0
 
 declare -i lineno=0
-declare -- line=""
+declare -i line_number=0
+declare -- line=''
+
+declare -- argument=''
+declare -- field=''
+declare -- key=''
+declare -- name=''
+declare -- path=''
+declare -- value=''
+
+declare -- stderr="$(mktemp)"
+
+# <STDIN>
+declare -a stdin_lines=()
+declare -i stdin_line_count=0
 
 if [ ! -t 0 ]; then
     export IFS=$'\n'
     while read line; do
-        if ! stdin_lines+=("$line"); then
+        if ! stdin_lines+=("${line}"); then
             continue
         fi
     done </dev/stdin
-elif [ "$argc" -eq 0 ]; then
-    1>&2 echo "${script_name} missing argument: <PATH> [SUB PATH...]"
-    diplay_help
-    exit 1
 fi
 stdin_line_count=${#stdin_lines[@]}
+has_params=$((argc + stdin_line_count))
+# </STDIN>
+
+# <GIT>
+declare -- git_repo_path=""
+if ! git_repo_path=$(2>${stderr} git rev-parse --show-toplevel); then
+    code=$?
+fi
+# </GIT>
+export IFS=$'\n'
 
 
-if [ ${argc} -eq 0 ]  && [ ${stdin_line_count} -eq 0 ]; then
-    1>&2 echo -e "\x1b[1;38;5;231m${script_name}\x1b[0m\t\x1b[1;38;5;196mERROR\x1b[0m"
-    1>&2 echo -e "ARGV is empty"
-    1>&2 echo -e "STDIN is empty"
+if ! (( ${has_params} )); then
+    1>&2 echo "[${script_name} error] missing command-line arguments (or stdin data)"
     exit 1
 fi
 
-if [ ${argc} -gt 0 ]; then
-    1>&2 echo -e "\x1b[1;38;5;231m${script_name}\x1b[0m\t\x1b[1;38;5;27mARGV\x1b[0m"
-    for index in ${!argv[@]}; do
-        current=$(( $index + 1 ))
-        arg=${argv[$index]}
-        1>&2 echo -e "    \x1b[1;38;5;231m[arg ${current}]. \x1b[1;38;5;27m${arg@Q}\x1b[0m"
-    done
-fi
-
-
-if [ ${stdin_line_count} -gt 0 ]; then
-    1>&2 echo -e "\x1b[1;38;5;231m${script_name}\x1b[0m\t\x1b[1;38;5;27mSTDIN LINES\x1b[0m"
-    for index in ${!stdin_lines[@]}; do
-        current=$(( $index + 1 ))
-        line=${argv[$index]}
-        1>&2 echo -e "    \x1b[1;38;5;231m[stdin line ${current}]. \x1b[1;38;5;27m${line@Q}\x1b[0m"
-    done
-fi
+for index in ${!argv[@]}; do
+    current=$((${index} + 1))
+    arg="${argv[${index}]}"
+    case "${arg}" in
+        -h | --help)
+            1>&2 echo -e "HELP"
+            ;;
+        *) ;;
+    esac
+done

@@ -1,0 +1,12 @@
+
+
+BEGIN {
+}
+
+2132:.B BASH_XTRACEFD
+2140:.B BASH_XTRACEFD
+2144:.B BASH_XTRACEFD
+2149:.B BASH_XTRACEFD
+
+
+# ^\s*([.](SS\s+Shell\s+Variables|B\s+([A-Z_]+[A-Z0-9_]*))

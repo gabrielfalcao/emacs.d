@@ -1,3 +1,56 @@
+;; ADVICES
+;; =======
+;;
+;; create new lisp types (structs or classes)
+;; ------------------------------------------
+;;
+;; buffer-info
+;; +++++++++++
+;;
+;; -[ ] buffer-name,
+;; -[ ] point-min,
+;; -[ ] point-max,
+;; -[ ] widen-point-min,
+;; -[ ] widen-point-max,
+;; -[ ] buffer-length,
+;; -[ ] buffer-mode-name
+;; -[ ] created-at (timestamp)
+;; -[ ] last-modified-at (timestamp)
+;; -[ ] modified-at-list (list of timestamps of each time the buffer was modified)
+;; -[ ] last-switched-to-at (timestamp)
+;; -[ ] switched-to-at-list (list of timestamps of each time the buffer was switched-to via #'switch-to-buffer and so on)
+;; -[ ] last-saved-at (timestamp)
+;; -[ ] saved-at-list (list of timestamps of each time the buffer was saved via #'save-buffer)
+;;
+;;
+;; buffer-local vars
+;; =================
+;;
+;; - buffer-info
+;;
+;; GLOBAL VARS
+;; ===========
+;;
+;; - list of 'buffer-info list of references to each buffer's `buffer-info'
+;;
+;;
+;; ADVICE FUNCTION LIST
+;; ====================
+;;
+;; file/buffer  ;; context-switching
+;; -----------
+;;
+;; - [ ] #'switch-to-buffer [buffer-info: buffer-name, point-min, point-max, widen-point-min, widen-point-max, buffer-length, buffer-mode-name
+;;
+;; - [ ] #'find-file (filename, buffer-length
+;;
+;;
+;;
+;; keylogger:
+;;
+;; - [ ] #'self-insert-command
+
+
 ;;;;; ;;;;; ;;;;; ;;;;; ;;;;; ;;;;; TODO ;;;;; ;;;;; ;;;;;  ;;;;; ;;;;;
 ;;;;;
 ;;;;; (progn ;; isearch-printing-char

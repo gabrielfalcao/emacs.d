@@ -1,0 +1,43 @@
+diff --git a/init.el b/init.el
+index 3a7580c..451da46 100644
+--- a/init.el
++++ b/init.el
+@@ -25,7 +25,9 @@
+     (mapcar callback (list-dir-path path))))
+ 
+ 
+-(setq server-socket-dir "~/.emacs.d/socket" server-log t)
++
++
++
+ (let ((foreground "#A79C83")
+       (background "#333"))
+   (set-face-attribute 'default nil :foreground foreground :background background :font $font-name$)
+@@ -35,6 +37,7 @@
+   (add-to-list 'load-path "~/.emacs.d/3pty")
+   (add-to-list 'load-path "~/.emacs.d/c")
+   (load-library "boot")
++  ;; (load-library "server-setup")
+   (load-library "elfmt"))
+ (custom-set-variables
+  ;; custom-set-variables was added by Custom.
+@@ -59,7 +62,8 @@
+  '(py-indent-no-completion-p t)
+  '(py-ipython-command "~/.shell.d/.venv/bin/ipython3")
+  '(py-known-shells '("~/.shell.d/.venv/bin/python3"))
+- '(py-known-shells-extended-commands '("~/.shell.d/.venv/bin/python3"))
++ '(py-known-shells-extended-commands
++   '("~/.shell.d/.venv/bin/python3"))
+  '(py-max-specpdl-size 1337)
+  '(py-python-command "~/.shell.d/.venv/bin/python")
+  '(py-python3-command "~/.shell.d/.venv/bin/python3")
+@@ -71,7 +75,8 @@
+  '(python-interpreter "~/.shell.d/.venv/bin/python3")
+  '(python-mode-hook
+    '(#[nil
+-       ((define-key python-mode-map (kbd "C-c C-f")
++       ((define-key python-mode-map
++                    (kbd "C-c C-f")
+                     #'g/format/prettify))
+        nil nil nil nil]))
+  '(ruby-deep-indent-paren '(40 91 93 t 58))
