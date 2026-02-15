@@ -15,6 +15,18 @@
   (string-split (clipboard-get-string) line-separator omit-nulls trim))
 
 (defun string-prefix-lines (prefix lines &optional output-string &key :omit-nulls omit-nulls :trim trim :line-separator line-separator)
+  "prefixes each line from `lines' with the string `prefix' and returns a
+list of strings with each line, unless `output-string' is non-nil, in
+which case each string in that list of strings is joined by
+`line-separator' via `string-join'.
+
+`lines' is either a list of strings or a string which will be split into
+a list of strings `line-separator'.
+
+`output-string' can be any non-nil value
+
+`omit-nulls' and `trim' are forwarded to `string-split', which see.
+"
   (unless (or (stringp line-separator)
               (null line-separator))
     (signal 'type-error
