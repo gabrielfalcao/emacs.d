@@ -74,7 +74,11 @@
 ;; (flycheck-define-checker sh-shellcheck :command ("shellcheck" "-x" "-f" "checkstyle" "-s" (eval (symbol-name sh-shell)) source) :modes shell-script-mode :error-parser flycheck-parse-checkstyle)
 
 
-(json-encode
+(progn
+  (erase-c-messages)
+  (c-message-open "")
+  (c-message "modes:\n\n%s"
+             (json-encode
  (list
   '("/shell[.]d/" . shell-script-mode)
   '("/bash_completion\\([.]d\\)?/" . shell-script-mode)
@@ -156,3 +160,4 @@
   '("\\.ya?m$" . yaml-mode)
   )
  )
+))
