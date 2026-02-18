@@ -74,12 +74,7 @@
 ;; (flycheck-define-checker sh-shellcheck :command ("shellcheck" "-x" "-f" "checkstyle" "-s" (eval (symbol-name sh-shell)) source) :modes shell-script-mode :error-parser flycheck-parse-checkstyle)
 
 
-(progn
-  (erase-c-messages)
-  (c-message-open "")
-  (c-message "modes:\n\n%s"
-             (json-encode
- (list
+(list
   '("/shell[.]d/" . shell-script-mode)
   '("/bash_completion\\([.]d\\)?/" . shell-script-mode)
   '("/opt[\/]libexec/" . shell-script-mode)
@@ -144,6 +139,7 @@
   '("\\.jsonne$" . jsonnet-mode)
   '("\\.m?jsx$" . web-mode)
   '("\\.libsonne$" . jsonnet-mode)
+  '("\\.libsonnet$" . jsonnet-mode)
   '("\\.ph$" . php-mode)
   '("\\.plis$" . xml-mode)
   '("\\.prot$" . protobuf-mode)
