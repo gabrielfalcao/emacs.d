@@ -553,3 +553,10 @@ classified-paths=%S
       (c-message-open "%s" result));; end let[debug]
     ) ;;end let*
   );; end defun git-status-get-filenames
+
+(defun file-is-git-tracked ()
+  "."
+  (let* ((status-output (git-rev-parse (buffer-file-name)))
+         (status (car status-output))
+         (output (car (cdr status-output))))
+    (eq 0 status)))

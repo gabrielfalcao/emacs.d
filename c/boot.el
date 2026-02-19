@@ -10,6 +10,10 @@
 ;;   - sort filenames by their modified-at timestamp
 
 
+(defconst user-emacs-d-c-directory
+  "path to ~/.emacs.d/c/"
+  (file-name-concat user-emacs-directory "./c/"))
+
 (defun eval-buffer-goto-failure()
   (interactive)
   (condition-case err
