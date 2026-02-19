@@ -25,7 +25,8 @@
                       (format  "[ishell] unix socket file exists neither in `%s' nor in `%s'"
                                unix-socket-path
 
-                               wezterm-unix-socket-path)))
+                               wezterm-unix-socket-path))
+              ); end unless
             socket))
          (cwd (getcwd))
          (now (format-time-string "%Y-%m-%d.%H-%M-%S.%s"))
