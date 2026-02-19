@@ -289,108 +289,177 @@ shortcut to calling \\[git-add] and \\[git-commit]
    (git-autocommit-current-file-buffer)
    (message "auto-commited emacs file %s" filename)))
 
+;; (progn (erase-c-messages) (c-message-open "") (seq-do-indexed (lambda (item index)
+;;                                                                 (let* ((name (car item)) (value (cadr item)))
+;;                                                                   (c-message "- item:%d:\n    index: %d\n    name: %s\n    value: %s\n\n" index index name value)))
+;;                                                               (mapcar (lambda (func)  (list (symbol-name func) (funcall func (buffer-file-name))))
+;;                                                                       (list #'file-name-directory #'file-name-parent-directory))))
 
-(defun git-add ()
-  "."
-  (interactive)
-  (shell-command-to-string
-   (format "git add --renormalize -f %s" (expand-file-name (buffer-file-name)))))
+(defun call-process-git-argv-list-of-strings (argv)
+  (let* (
+         (git-argv (list))
+         (git-argc 0)
 
-(defun git-rm-force ()
-  "."
-  (interactive)
-  (shell-command-to-string
-   (format "git rm --force %s" (expand-file-name (buffer-file-name)))))
+         )
+    (unless (listp argv)
+      (signal 'type-error
+              (format "[call-process-git-argv-list-of-strings] unexpected value type for argument `argv', received `%s' but expected string: %S"
+                      (type-of argv)
+                      argv)))
 
-(defun git-rm-cached ()
-  "."
-  (interactive)
-  (shell-command-to-string
-   (format "git rm --cached %s"
-           (expand-file-name (buffer-file-name)))))
-
-(defun git-restore-staged ()
-  "."
-  (interactive)
-  (shell-command-to-string
-   (format "git restore --staged %s"
-           (expand-file-name (buffer-file-name))))
-  (shell-command-to-string
-   (format "git restore %s" (expand-file-name (buffer-file-name))))
-  (revert-buffer t t t))
-
-
-(defun git-restore ()
-  "."
-  (interactive)
-  (shell-command-to-string
-   (format "git restore %s" (expand-file-name (buffer-file-name))))
-  (revert-buffer t t t))
+    (seq-do-indexed (lambda (item index)
+		      (let* (
+			     (item-ty (type-of item))
+			     )
+			(unless (stringp item)
+			  (signal 'type-error
+				  (format "wrong value type in element index (%d of %d) %d of list argument `argv', received `%s' but expected string: %S"
+					  (1+ index)
+					  git-argc
+					  index
+					  item-ty
+					  (format "%S" item)
+					  )))
+			(setq index (1+ index)))
+		      )
+		    argv)))
 
 
-(defun git-rev-parse (arg)
-  "."
-  (let* ((extra-args
-          (if (listp arg) arg '((format "%S" arg))))
-         (call-process-args
-          (append
-           '("git" nil git-rev-parse-output-buf nil "rev-parse")
-           extra-args))
-         (git-rev-parse-output-buf
-          (get-buffer-create "*git-rev-parse*"))
-         (exitcode (apply #'call-process call-process-args))
-         (output
-          (with-current-buffer git-rev-parse-output-buf
-	    (widen)
-	    (buffer-string))))
-    (ignore-errors (kill-buffer git-rev-parse-output-buf))
-    (cons exitcode output)))
-
-(defun git-delete ()
-  "runs \"git rm -rf \" against `buffer-file-name'."
-  (interactive)
-  (let* ((git-status-output-buf (get-buffer-create "*git-delete*"))
-         (exitcode
-          (call-process
-           "git" nil git-status-output-buf nil "rm" "-rf"
-           (buffer-file-name)))
-         (output
-          (with-current-buffer git-status-output-buf
-	    (widen)
-	    (buffer-string))))
-    (ignore-errors (kill-buffer git-status-output-buf))
-    (cons exitcode output)))
+(defun git-repo-path (&optional base-directory-for-relative)
+  (let* (
+         (base-directory (cond
+                          ((and (stringp base-directory)
+                                (length> base-directory 0)
+                                (file-exists-p base-directory-for-relative)
+                                )
+                           base-directory-for-relative)
+                          ((or (null base-directory-for-relative)
+                               (not (and
+                                     (stringp base-directory-for-relative)
+                                     (length> base-directory-for-relative ))))
+                           (file-name-parent-directory
+                            (buffer-file-name)))
+                          (t (file-name-parent-directory
+                              (buffer-file-name)))
+                          ))
+         (git-toplevel-path (condition-case sh-cmd-err
+                                (shell-command-to-string "git rev-parse --show-top-level")
+			      )
 
 
-;; git-status-porcelain stuff
-(defun git-status-porcelain ()
-  "."
-  (let* ((git-status-output-buf
-          (get-buffer-create "*git-status-porcelain*"))
-         (exitcode
-          (call-process
-           "git" nil git-status-output-buf nil "status" "--porcelain"))
-         (output
-          (with-current-buffer git-status-output-buf
-	    (widen)
-	    (buffer-string))))
-    (ignore-errors (kill-buffer git-status-output-buf))
-    (list exitcode output)))
+			    ;;
+			    (defun git-add (&optional renormalize noforce)
+			      "."
+			      (interactive)
+			      (let* ((filename (
+						(git-args (list "add")))
 
-;; (defconst git-status-porcelain-class-group-regexp
-;;   "\\([[:space:]!?ACDMRTU]\\)"
+					       (unless (null renormalize)
+						 (push git-args "--renormalize"))
 
-;;   "regular expression used within `git-status-porcelain-class-group-regexp' in call to `string-match'."
-;;   )
+					       (unless (eq noforce t)
+						 (push git-args "--force"))
 
-(defconst git-status-porcelain-regexp
-  ;; "^\\(.\\)\\(.\\)\\s-+\\(.+\\)$"
-  "^\\([[:space:]!?ACDMRTU]\\)\\([[:space:]!?ACDMRTU]\\)[[:space:]]+\\(.*\\)$"
 
-  "regular expression used within `git-status-get-filenames' in call to `string-match'.")
+					       (shell-command-to-string
+						(format "git add --renormalize -f %s" (expand-file-name (buffer-file-name)))))
+				     )
 
-(defun git-status-porcelain-class-char-to-symbol(char)
-  "`maps the given `char' to semantic symbols according to table below:
+				(defun git-rm-force ()
+				  "."
+				  (interactive)
+				  (shell-command-to-string
+				   (format "git rm --force %s" (expand-file-name (buffer-file-name)))))
+
+				(defun git-rm-cached ()
+				  "."
+				  (interactive)
+				  (shell-command-to-string
+				   (format "git rm --cached %s"
+					   (expand-file-name (buffer-file-name)))))
+
+				(defun git-restore-staged ()
+				  "."
+				  (interactive)
+				  (shell-command-to-string
+				   (format "git restore --staged %s"
+					   (expand-file-name (buffer-file-name))))
+				  (shell-command-to-string
+				   (format "git restore %s" (expand-file-name (buffer-file-name))))
+				  (revert-buffer t t t))
+
+
+				(defun git-restore ()
+				  "."
+				  (interactive)
+				  (shell-command-to-string
+				   (format "git restore %s" (expand-file-name (buffer-file-name))))
+				  (revert-buffer t t t))
+
+
+				(defun git-rev-parse (arg)
+				  "."
+				  (let* ((extra-args
+					  (if (listp arg) arg '((format "%S" arg))))
+					 (call-process-args
+					  (append
+					   '("git" nil git-rev-parse-output-buf nil "rev-parse")
+					   extra-args))
+					 (git-rev-parse-output-buf
+					  (get-buffer-create "*git-rev-parse*"))
+					 (exitcode (apply #'call-process call-process-args))
+					 (output
+					  (with-current-buffer git-rev-parse-output-buf
+					    (widen)
+					    (buffer-string))))
+				    (ignore-errors (kill-buffer git-rev-parse-output-buf))
+				    (cons exitcode output)))
+
+				(defun git-delete ()
+				  "runs \"git rm -rf \" against `buffer-file-name'."
+				  (interactive)
+				  (let* ((git-status-output-buf (get-buffer-create "*git-delete*"))
+					 (exitcode
+					  (call-process
+					   "git" nil git-status-output-buf nil "rm" "-rf"
+					   (buffer-file-name)))
+					 (output
+					  (with-current-buffer git-status-output-buf
+					    (widen)
+					    (buffer-string))))
+				    (ignore-errors (kill-buffer git-status-output-buf))
+				    (cons exitcode output)))
+
+
+				;; git-status-porcelain stuff
+				(defun git-status-porcelain ()
+				  "."
+				  (let* ((git-status-output-buf
+					  (get-buffer-create "*git-status-porcelain*"))
+					 (exitcode
+					  (call-process
+					   "git" nil git-status-output-buf nil "status" "--porcelain"))
+					 (output
+					  (with-current-buffer git-status-output-buf
+					    (widen)
+					    (buffer-string))))
+				    (ignore-errors (kill-buffer git-status-output-buf))
+				    (list exitcode output)))
+
+				;; (defconst git-status-porcelain-class-group-regexp
+				;;   "\\([[:space:]!?ACDMRTU]\\)"
+
+				;;   "regular expression used within `git-status-porcelain-class-group-regexp' in call to `string-match'."
+				;;   )
+
+				(defconst git-status-porcelain-regexp
+				  ;; "^\\(.\\)\\(.\\)\\s-+\\(.+\\)$"
+				  "^\\([[:space:]!?ACDMRTU]\\)\\([[:space:]!?ACDMRTU]\\)[[:space:]]+\\(.*\\)$"
+
+				  "regular expression used within `git-status-get-filenames' in call to `string-match'.")
+
+				(defun git-status-porcelain-class-char-to-symbol(char)
+				  "`maps the given `char' to semantic symbols according to table below:
 
 ' ' = unmodified
 `!' = ignored
@@ -403,87 +472,87 @@ shortcut to calling \\[git-add] and \\[git-commit]
 `T' = file type changed (regular file, symbolic link or submodule)
 `U' = updated but unmerged
 ."
-  (let ((input
-         (cond
-          ((or (stringp char) (characterp char))
-	   (format "%s" char))
-	  ((and (listp char) (length= char 1))
-	   (car char))
-	  (t
-	   (error "invalid value (neither string nor character) for argument `char': %S" char))))
-        (len (length input)))
-    (if (> len 1)
-        (error "`char' argument must be a string of length 1, instead got `%S' (normalized to `%s' of length `%d')"
-	       char input len))
-    (cond
+				  (let ((input
+					 (cond
+					  ((or (stringp char) (characterp char))
+					   (format "%s" char))
+					  ((and (listp char) (length= char 1))
+					   (car char))
+					  (t
+					   (error "invalid value (neither string nor character) for argument `char': %S" char))))
+					(len (length input)))
+				    (if (> len 1)
+					(error "`char' argument must be a string of length 1, instead got `%S' (normalized to `%s' of length `%d')"
+					       char input len))
+				    (cond
 
-     ((string= " " input)
-      (list :sym 'unmodified :desc "" :long_desc "unmodified")
-      ;; end list
-      );; end clause
+				     ((string= " " input)
+				      (list :sym 'unmodified :desc "" :long_desc "unmodified")
+				      ;; end list
+				      );; end clause
 
-     ((string= "!" input)
-      (list :sym 'ignored :desc "" :long_desc "ignored")
-      ;; end list
-      );; end clause
+				     ((string= "!" input)
+				      (list :sym 'ignored :desc "" :long_desc "ignored")
+				      ;; end list
+				      );; end clause
 
-     ((string= "?" input)
-      (list :sym 'untracked :desc "" :long_desc "untracked")
-      ;; end list
-      );; end clause
+				     ((string= "?" input)
+				      (list :sym 'untracked :desc "" :long_desc "untracked")
+				      ;; end list
+				      );; end clause
 
-     ((string= "A" input)
-      (list :sym 'added :desc "" :long_desc "added")
-      ;; end list
-      );; end clause
+				     ((string= "A" input)
+				      (list :sym 'added :desc "" :long_desc "added")
+				      ;; end list
+				      );; end clause
 
-     ((string= "C" input)
-      (list :sym 'copied
-	    :desc ""
-	    :long_desc "copied (if config option status.renames is set to \"copies\")"
-	    :note "(if config option status.renames is set to \"copies\")"
-	    )
-      ;; end list
-      );; end clause
+				     ((string= "C" input)
+				      (list :sym 'copied
+					    :desc ""
+					    :long_desc "copied (if config option status.renames is set to \"copies\")"
+					    :note "(if config option status.renames is set to \"copies\")"
+					    )
+				      ;; end list
+				      );; end clause
 
-     ((string= "D" input)
-      (list :sym 'deleted :desc "" :long_desc "deleted")
-      ;; end list
-      );; end clause
+				     ((string= "D" input)
+				      (list :sym 'deleted :desc "" :long_desc "deleted")
+				      ;; end list
+				      );; end clause
 
-     ((string= "M" input)
-      (list :sym 'modified :desc "" :long_desc "modified")
-      ;; end list
-      );; end clause
+				     ((string= "M" input)
+				      (list :sym 'modified :desc "" :long_desc "modified")
+				      ;; end list
+				      );; end clause
 
-     ((string= "R" input)
-      (list :sym 'renamed :desc "" :long_desc "renamed")
-      ;; end list
-      );; end clause
+				     ((string= "R" input)
+				      (list :sym 'renamed :desc "" :long_desc "renamed")
+				      ;; end list
+				      );; end clause
 
-     ((string= "T" input)
-      (list :sym 'file
-	    :desc " type changed"
-	    :long_desc "file type changed (regular file, symbolic link or submodule)"
-	    :note "(regular file, symbolic link or submodule)"
-	    )
-      ;; end list
-      );; end clause
+				     ((string= "T" input)
+				      (list :sym 'file
+					    :desc " type changed"
+					    :long_desc "file type changed (regular file, symbolic link or submodule)"
+					    :note "(regular file, symbolic link or submodule)"
+					    )
+				      ;; end list
+				      );; end clause
 
-     ((string= "U" input)
-      (list :sym 'updated
-	    :desc " but unmerged"
-	    :long_desc "updated but unmerged")
-      ;; end list
-      );; end clause
+				     ((string= "U" input)
+				      (list :sym 'updated
+					    :desc " but unmerged"
+					    :long_desc "updated but unmerged")
+				      ;; end list
+				      );; end clause
 
 
-     );;end cond
-    );;end let
-  );; end defun git-status-porcelain-class-char-to-symbol
+				     );;end cond
+				    );;end let
+				  );; end defun git-status-porcelain-class-char-to-symbol
 
-(defun git-status-porcelain-categorized()
-  "runs git status --porcelain=v1 in the current working directory and parses the status characters according to the list below:
+				(defun git-status-porcelain-categorized()
+				  "runs git status --porcelain=v1 in the current working directory and parses the status characters according to the list below:
 
 ` ' = unmodified
 `!' = ignored
@@ -497,66 +566,66 @@ shortcut to calling \\[git-add] and \\[git-commit]
 `U' = updated but unmerged
 
 ."
-  (interactive)
-  ;;(replace-regexp-in-string regexp rep string &optional fixedcase literal subexp start)
+				  (interactive)
+				  ;;(replace-regexp-in-string regexp rep string &optional fixedcase literal subexp start)
 
-  (let* ((status-code-and-output (git-status-porcelain))
-         (status (car status-code-and-output))
-         (output (car (cdr status-code-and-output)))
-         (output-lines (save-match-data (string-lines output t)))
-         ;; (seq-filter #'numberp '(a b 3 4 f 6))
-         ;;   ⇒ (3 4 6)
-         ;;
-         ;; (seq-remove #'numberp '(1 2 c d 5))
-         ;;   ⇒ (c d)
+				  (let* ((status-code-and-output (git-status-porcelain))
+					 (status (car status-code-and-output))
+					 (output (car (cdr status-code-and-output)))
+					 (output-lines (save-match-data (string-lines output t)))
+					 ;; (seq-filter #'numberp '(a b 3 4 f 6))
+					 ;;   ⇒ (3 4 6)
+					 ;;
+					 ;; (seq-remove #'numberp '(1 2 c d 5))
+					 ;;   ⇒ (c d)
 
-         (classified-paths
-	  ;;(seq-remove #'null
-          (mapcar
-           #'(lambda (line)
-	       (save-match-data
-                 (setq case-fold-search nil) ;; case sensitive
-	         (if (string-match git-status-porcelain-regexp line)
-		     (let ((staged (match-string 1 line))   ;; then
-			   (unstaged (match-string 2 line)) ;; then
-			   (path (match-string 3 line)))    ;; then
-		       (list 'staged staged             ;; then
-			     'unstaged unstaged         ;; then
-			     'path path))               ;; end inner let varlist
+					 (classified-paths
+					  ;;(seq-remove #'null
+					  (mapcar
+					   #'(lambda (line)
+					       (save-match-data
+						 (setq case-fold-search nil) ;; case sensitive
+						 (if (string-match git-status-porcelain-regexp line)
+						     (let ((staged (match-string 1 line))   ;; then
+							   (unstaged (match-string 2 line)) ;; then
+							   (path (match-string 3 line)))    ;; then
+						       (list 'staged staged             ;; then
+							     'unstaged unstaged         ;; then
+							     'path path))               ;; end inner let varlist
 
-                   ;; else
-                   nil ;; else ;; KGxpc3QgJ3N0YWdlZCBuaWwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICd1bnN0YWdlZCBuaWwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICdwYXRoIG5pbCkpKQ==
-                   ) ;;end if
-                 ) ;; end save-match-data
-	       ) ;;end lambda
-           ;; sequence
-           output-lines ;; sequence
-           ) ;; mapcar
-	  ;; ) ;;seq-remove
-          ))  ;; end let* varlist
-    ;; let* [body]
-    (let ;; [debug]
-        ((result
-          (format "
+						   ;; else
+						   nil ;; else ;; KGxpc3QgJ3N0YWdlZCBuaWwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICd1bnN0YWdlZCBuaWwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICdwYXRoIG5pbCkpKQ==
+						   ) ;;end if
+						 ) ;; end save-match-data
+					       ) ;;end lambda
+					   ;; sequence
+					   output-lines ;; sequence
+					   ) ;; mapcar
+					  ;; ) ;;seq-remove
+					  ))  ;; end let* varlist
+				    ;; let* [body]
+				    (let ;; [debug]
+					((result
+					  (format "
 status=%S
 output=%S
 output-lines=%S
 classified-paths=%S
 "
-                  status
-                  output
-                  output-lines
-                  classified-paths))) ;; end varlist let[debug]
-      ;; let[debug] body
-      (erase-messages)
-      (message "%s" result)
-      (c-message-open "%s" result));; end let[debug]
-    ) ;;end let*
-  );; end defun git-status-get-filenames
+						  status
+						  output
+						  output-lines
+						  classified-paths))) ;; end varlist let[debug]
+				      ;; let[debug] body
+				      (erase-messages)
+				      (message "%s" result)
+				      (c-message-open "%s" result));; end let[debug]
+				    ) ;;end let*
+				  );; end defun git-status-get-filenames
 
-(defun file-is-git-tracked ()
-  "."
-  (let* ((status-output (git-rev-parse (buffer-file-name)))
-         (status (car status-output))
-         (output (car (cdr status-output))))
-    (eq 0 status)))
+				(defun file-is-git-tracked ()
+				  "."
+				  (let* ((status-output (git-rev-parse (buffer-file-name)))
+					 (status (car status-output))
+					 (output (car (cdr status-output))))
+				    (eq 0 status)))
