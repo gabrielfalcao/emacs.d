@@ -2195,6 +2195,8 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
       #'elfmt)
      ((string= "py-mode" name-of-current-mode)
       #'blackpy)
+     ((string= "awk-mode" name-of-current-mode)
+      #'prettify-gawk)
      ((string= "python-mode" name-of-current-mode)
       #'blackpy)
      (t nil))))
