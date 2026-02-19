@@ -124,6 +124,8 @@
 (load-library "debug-et-diagnostics")
 (load-library "g-modeline")
 (load-library "keys")
+(load-library "c-staging-after-save-hooks")
+
 (load-library "modes")
 (load-library "hooks")
 (load-library "macros")
