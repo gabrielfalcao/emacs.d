@@ -234,7 +234,7 @@ shortcut to calling \\[git-add] and \\[git-commit]
   "returns list of cons cells where the head is the remote name and the tail is the remote url."
   (mapcar 'git-remote-get-url (git-remote-names)))
 
-  ;; (progn (message  "%s" (git-remotes)))
+;; (progn (message  "%s" (git-remotes)))
 
 (defun git-commit-all ()
   "."
@@ -362,7 +362,7 @@ shortcut to calling \\[git-add] and \\[git-commit]
     (cons exitcode output)))
 
 
-  ;; git-status-porcelain stuff
+;; git-status-porcelain stuff
 (defun git-status-porcelain ()
   "."
   (let* ((git-status-output-buf
@@ -377,11 +377,11 @@ shortcut to calling \\[git-add] and \\[git-commit]
     (ignore-errors (kill-buffer git-status-output-buf))
     (list exitcode output)))
 
-  ;; (defconst git-status-porcelain-class-group-regexp
-  ;;   "\\([[:space:]!?ACDMRTU]\\)"
+;; (defconst git-status-porcelain-class-group-regexp
+;;   "\\([[:space:]!?ACDMRTU]\\)"
 
-  ;;   "regular expression used within `git-status-porcelain-class-group-regexp' in call to `string-match'."
-  ;;   )
+;;   "regular expression used within `git-status-porcelain-class-group-regexp' in call to `string-match'."
+;;   )
 
 (defconst git-status-porcelain-regexp
   ;; "^\\(.\\)\\(.\\)\\s-+\\(.+\\)$"
