@@ -1,5 +1,5 @@
-(defmacro switch (value &optional body &rest :test #'eq)
-  (let ((tempvar (make-symbol "max")))
+;; (defmacro switch (value &optional body &rest :test #'eq)
+;;   (let ((tempvar (make-symbol "max")))
 
 
 

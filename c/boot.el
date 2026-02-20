@@ -111,15 +111,15 @@
 
 
 (defun cursor-type-for-system()
-  "retrieve `cursor-type' based on `kernel-name'"
-  (let (
-        (cursor-type-macos '( bar . 3))
-        (cursor-type-linux '( bar . 4))
-        )
-    (cond
-     ((string= kernel-name "Darwin") cursor-type-macos)
-     ((string= kernel-name "Linux")  cursor-type-linux)
-     (t cursor-type-macos))))
+ "retrieve `cursor-type' based on `kernel-name'"
+ (let (
+       (cursor-type-macos '( bar . 3))
+       (cursor-type-linux '( bar . 4))
+      )
+  (cond
+   ((string= kernel-name "Darwin") cursor-type-macos)
+   ((string= kernel-name "Linux")  cursor-type-linux)
+   (t cursor-type-macos))))
 
 
 (load-library "ui")
@@ -128,7 +128,10 @@
 (load-library "debug-et-diagnostics")
 (load-library "g-modeline")
 (load-library "keys")
-(load-library "c-staging-after-save-hooks")
+(load-library "server-setup")
+(ensure-server-ready)
+
+;; (load-library "c-staging-after-save-hooks")
 
 (load-library "modes")
 (load-library "hooks")

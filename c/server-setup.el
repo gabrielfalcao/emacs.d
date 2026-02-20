@@ -110,7 +110,7 @@
      (lambda (step-fn) (funcall step-fn pid now tty))
      ensure-server-ready-step-functions)))
 
-(progn
-  (erase-c-messages)
-  (c-message-open "")
-  (ensure-server-ready))
+;; (progn
+;;   (erase-c-messages)
+;;   (c-message-open "")
+;;   (ensure-server-ready))

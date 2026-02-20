@@ -1,4 +1,4 @@
-(setq debug-on-error nil)
+(setq debug-on-error t)
 (setq $font-name$ "JetBrains Mono-16")
 (set-face-attribute 'default nil :font $font-name$ :background "#1c1c1c")
 
