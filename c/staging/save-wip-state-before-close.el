@@ -2,8 +2,8 @@
   ((name :initarg :name
 	      :type (or integer marker)
 	      :documentation "the `point' within the searched `buffer' (integer or marker) to the name of a successful search result"
-	      :writer search-info-set-name
-	      :reader search-info-get-name)
+	      :writer buffer-info-name-set
+	      :reader buffer-info-name)
    (path :initarg :path
 	      :type (member :forward :backward)
 	      :documentation "the path of a successful search (either :forward or :backward)"
