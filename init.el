@@ -25,7 +25,11 @@
     (mapcar callback (list-dir-path path))))
 
 
-(setq server-socket-dir "~/.emacs.d/socket" server-log t)
+(setq server-name "server" server-socket-dir "~/.emacs.d/socket" server-log t)
+(unless (and (server-running-p server-name)
+             (not server-process))
+  (server-reboot))
+
 (let ((foreground "#A79C83")
       (background "#333"))
   (set-face-attribute 'default nil :foreground foreground :background background :font $font-name$)
