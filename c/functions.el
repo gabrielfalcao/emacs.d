@@ -594,12 +594,31 @@
   ;; (format "%s:%s"  (symbol-name algo) (Ox33b4O/$/hash-take-last-n-chars algo hwm contents)))
   (format "%s" (Ox33b4O/$/hash-take-last-n-chars algo hwm contents)))
 
+(define-error 'server-reboot "Server Reboot Error" 'c-functions-server-error)
 (defun server-reboot ()
   "."
   (interactive)
-  (ignore-errors (server-force-delete))
-  (ignore-errors (server-mode 9))
-  (ignore-errors (server-start)))
+  (let* ((reboot-fun-sequence (list (list #'server-force-delete)
+                                    (list #'server-mode 9)
+                                    (list #'server-start)))
+         (step-count (length reboot-fun-sequence)))
+
+    (seq-map-indexed (lambda (reboot-step step-index)
+                      (let* ((fun (car reboot-step))
+                             (args (cdr reboot-step))
+                             (step-name (symbol-name fun))
+                             (step-number (1+ step-index))
+                             )
+                        (condition-case err
+                            (funcall fun args)
+                          (error
+                           (signal 'server-reboot-error
+                                   (format  "server-reboot failed to execute step `%s' [%d of %d]: %S"
+                                            step-name
+                                            step-number
+                                            step-count
+                                            err))))))
+                     reboot-fun-sequence)))
 
 (defun Ox33b4O/$/hash (algo)
   "."
