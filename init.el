@@ -1,5 +1,8 @@
+(setq force-load-messages t)
 (setq debug-on-error t)
 (setq $font-name$ "JetBrains Mono-16")
+
+(load "server")
 (set-face-attribute 'default nil :font $font-name$ :background "#1c1c1c")
 
 (defun list-dir-path(path)
@@ -26,9 +29,7 @@
 
 
 (setq server-name "server" server-socket-dir "~/.emacs.d/socket" server-log t)
-(unless (and (server-running-p server-name)
-             (not server-process))
-  (server-reboot))
+
 
 (let ((foreground "#A79C83")
       (background "#333"))
