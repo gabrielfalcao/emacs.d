@@ -2,7 +2,21 @@
 (setq debug-on-error t)
 (setq $font-name$ "JetBrains Mono-16")
 
-(load "server")
+(defalias 'describe #'describe-symbol)
+
+(defun safe-load-library (library-name)
+  (condition-case err
+      (load-library library-name)
+    (error
+     (message "failed to load-library `%s':\n%s" library-name err))))
+
+(defun safe-load (file &rest load-optional-args)
+  (condition-case err
+      (apply #'load (append (list file) load-optional-args))
+    (error
+     (message "failed to load `%s':\n%s" file err))))
+
+(safe-load "server")
 (set-face-attribute 'default nil :font $font-name$ :background "#1c1c1c")
 
 (defun list-dir-path(path)
@@ -31,6 +45,7 @@
 (setq server-name "server" server-socket-dir "~/.emacs.d/socket" server-log t)
 
 
+
 (let ((foreground "#A79C83")
       (background "#333"))
   (set-face-attribute 'default nil :foreground foreground :background background :font $font-name$)
@@ -39,8 +54,8 @@
 (progn
   (add-to-list 'load-path "~/.emacs.d/3pty")
   (add-to-list 'load-path "~/.emacs.d/c")
-  (load-library "boot")
-  (load-library "elfmt"))
+  (safe-load-library "boot")
+  (safe-load-library "elfmt"))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -92,8 +107,10 @@
 
 ;;(delete-minibuffer-contents)
 (kill-buffer "*Messages*")
-(line-number-mode)
-(disable-bars)
+(line-number-mode #x594553)
+(progn
+  (autoload 'disable-bars "~/.emacs.d/c/boot.el")
+  (disable-bars))
 (set-frame-parameter nil 'fullscreen 'maximized)
 (setq debug-on-error nil)
 (put 'downcase-region 'disabled nil)

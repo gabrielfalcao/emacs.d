@@ -1,8 +1,82 @@
 (require 'package)
 (require 'flycheck)
 (require 'seq)
+(require 'server)
+;(load "subr")
 (require 'subr-x)
 (require 'help-fns)
+
+(define-error 'c-el-internal-error (format "Internal Error in elisp files under `default-directory'/`c/*.el'"))
+(define-error 'c-el-server-error "Server Error")
+(define-error 'server-reboot-error "Server Reboot Error" 'c-el-server-error)
+
+(define-error 'load-error "Type Error" 'c-el-internal-error)
+(define-error 'format-string-error "Format Error" 'c-el-internal-error)
+(define-error 'type-error "Type Error" 'c-el-internal-error)
+(define-error 'eval-sexp-string-error "Eval Expression Error" 'c-el-internal-error)
+(define-error 'filesystem-error "File-System Error" 'c-el-internal-error)
+(define-error 'io-error "I/O Error" 'c-el-internal-error)
+
+(defconst set-bar-modes-mode-names
+  '(
+    'scroll-bar-mode
+    'menu-bar-mode
+    'tool-bar-mode
+    )
+  )
+(defconst set-bar-modes-disable
+  (* -1 #x004E4F))
+(defconst set-bar-modes-enable
+  #x594553)
+
+(defun set-bar-modes (&optional arg)
+  "."
+  (interactive "P")
+  (let* (
+         (total   (length set-bar-modes-mode-names))
+         (index 0)
+         (current 1)
+         (result (mapcar
+		  (lambda (minor-mode-func)
+		    (let* (
+			   (minor-mode-props (symbol-plist minor-mode-func))
+			   ;; (minor-mode-name (symbol-name minor-mode-func))
+
+			   (minor-mode-name
+                            (condition-case mf-err
+                                (symbol-name minor-mode-func)
+                              (error
+                               (signal 'c-el-internal-error  "caught error when loading `%S':\n" (minor-mode-func)
+                              )
+                           
+                           
+			   (current-value (intern-soft minor-mode-name))
+			   )
+
+		      (unless (or (functionp minor-mode-func)
+				  (functionp current-value))
+			(signal 'type-error
+				(format  "set-bar-modes-mode-names' element index #%d is not a function but rather a %S: %S"
+					 index
+					 (type-of minor-mode-func)
+					 (format "%S" minor-mode-func))))
+		      (apply minor-mode-func arg)
+		      (setq current (1+ (setq index (1+ index))))
+		      ) ; end (lambda (let* ...))
+		    ) ; end (lambda ...)
+		  
+		  ;; start (mapcar ... SEQUENCE)
+		  set-bar-modes-mode-names ;; end (mapcar ... SEQUENCE)
+		  )
+		 )
+	 ) ;; end (defun ... (let* ...) varlist )
+    ) ;; end (defun ... (let* ...) )
+  ) ;; end (defun set-bar-modes)
+
+(defun disable-bars ()
+  (interactive)
+  (set-bar-modes set-bar-modes-disable))
+
 
 ;; TODO: defadvice for auto-complete of `find-file' to:
 ;;   - exclude from empty files from completion
@@ -111,15 +185,15 @@
 
 
 (defun cursor-type-for-system()
- "retrieve `cursor-type' based on `kernel-name'"
- (let (
-       (cursor-type-macos '( bar . 3))
-       (cursor-type-linux '( bar . 4))
-      )
-  (cond
-   ((string= kernel-name "Darwin") cursor-type-macos)
-   ((string= kernel-name "Linux")  cursor-type-linux)
-   (t cursor-type-macos))))
+  "retrieve `cursor-type' based on `kernel-name'"
+  (let (
+	(cursor-type-macos '( bar . 3))
+	(cursor-type-linux '( bar . 4))
+	)
+    (cond
+     ((string= kernel-name "Darwin") cursor-type-macos)
+     ((string= kernel-name "Linux")  cursor-type-linux)
+     (t cursor-type-macos))))
 
 
 (load-library "ui")
@@ -128,8 +202,8 @@
 (load-library "debug-et-diagnostics")
 (load-library "g-modeline")
 (load-library "keys")
-(load-library "server-setup")
-(ensure-server-ready)
+;; (load-library "server-setup") ;; not ready
+;; (ensure-server-ready)
 
 ;; (load-library "c-staging-after-save-hooks")
 

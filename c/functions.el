@@ -135,10 +135,6 @@
                 "^\\(.*\\)\n\\(\\(.*\n\\)*\\)\\1\n" end t))
         (replace-match "\\1\n\\2")))))
 
-(defun disable-bars ()
-  "."
-  (interactive)
-  (progn (scroll-bar-mode 0) (menu-bar-mode 0) (tool-bar-mode 0)))
 
 (defun disable-auto-save-list ()
   "."
@@ -594,31 +590,37 @@
   ;; (format "%s:%s"  (symbol-name algo) (Ox33b4O/$/hash-take-last-n-chars algo hwm contents)))
   (format "%s" (Ox33b4O/$/hash-take-last-n-chars algo hwm contents)))
 
-(define-error 'server-reboot "Server Reboot Error" 'c-functions-server-error)
+(define-error 'server-reboot-error "Server Reboot Error" 'c-functions-server-error)
+
 (defun server-reboot ()
   "."
   (interactive)
-  (let* ((reboot-fun-sequence (list (list #'server-force-delete)
-                                    (list #'server-mode 9)
-                                    (list #'server-start)))
+  (let* ((reboot-fun-sequence
+          (list
+           (list #'server-force-delete)
+           (list #'server-mode 9)
+           (list #'server-start)))
          (step-count (length reboot-fun-sequence)))
 
-    (seq-map-indexed (lambda (reboot-step step-index)
-                      (let* ((fun (car reboot-step))
-                             (args (cdr reboot-step))
-                             (step-name (symbol-name fun))
-                             (step-number (1+ step-index))
-                             )
-                        (condition-case err
-                            (funcall fun args)
-                          (error
-                           (signal 'server-reboot-error
-                                   (format  "server-reboot failed to execute step `%s' [%d of %d]: %S"
-                                            step-name
-                                            step-number
-                                            step-count
-                                            err))))))
-                     reboot-fun-sequence)))
+    (seq-map-indexed
+     (lambda (reboot-step step-index)
+       (let* ((fun (car reboot-step))
+              (args (cdr reboot-step))
+              (step-name (symbol-name fun))
+              (step-number (1+ step-index)))
+         (condition-case err
+             (funcall fun args)
+           (error
+            (signal 'server-reboot-error
+                    (format  "server-reboot failed to execute step `%s' [%d of %d]: %S"
+                             step-name
+                             step-number
+                             step-count
+                             err))))))
+     reboot-fun-sequence)))
+(unless (and (server-running-p server-name) (not server-process))
+  (server-reboot))
+
 
 (defun Ox33b4O/$/hash (algo)
   "."
@@ -1570,7 +1572,8 @@ shortcut to calling \\[git-add] and \\[git-commit]
                   (file-name-nondirectory filename))))
     (shell-command-to-string (format "git branch %s" branch-name))
     (shell-command-to-string (format "git checkout %s" branch-name))
-    (shell-command-to-string (format "git add --renormalize -f %s" filename))
+    (shell-command-to-string
+     (format "git add --renormalize -f %s" filename))
     (shell-command-to-string
      (format "git commit %s -m '%s'" filename
              (file-name-nondirectory filename)))
@@ -1923,7 +1926,8 @@ shortcut to calling \\[git-add] and \\[git-commit]
   "."
   (interactive)
   (shell-command-to-string
-   (format "git add --renormalize -f %s" (expand-file-name (buffer-file-name)))))
+   (format "git add --renormalize -f %s"
+           (expand-file-name (buffer-file-name)))))
 
 (defun git-rm-force ()
   "."
@@ -2016,8 +2020,7 @@ shortcut to calling \\[git-add] and \\[git-commit]
                         error-type
                         error-message
                         error-lineno
-                        error-column)))
-                 ))))
+                        error-column)))))))
        (if (and
             (listp error-details)
             (not (null (nth 4 error-details))))
@@ -5153,8 +5156,7 @@ examples:
                           error-type
                           error-message
                           error-lineno
-                          error-column)))
-                   )))))
+                          error-column))))))))
        (if (and
             (listp error-details)
             (not (null (nth 4 error-details))))
@@ -6305,8 +6307,7 @@ Margins::.
             "0")
 
            ((stringp prefix)
-            prefix)))
-         )
+            prefix))))
     ;; body
     (unless (or (not (= radix 10)) (null prefix))
       (error "cannot add prefix %s to codepoint represented in decimal number system (base: %S)"
@@ -6349,8 +6350,7 @@ Margins::.
     (replace-regexp-in-region "[ ]" "\x20" beg end)
     (replace-regexp-in-region "[']" "\x27" beg end)
     (replace-regexp-in-region "[!]" "\x21" beg end)
-    (replace-regexp-in-region "[/]" "\x2f" beg end))
-  )
+    (replace-regexp-in-region "[/]" "\x2f" beg end)))
 
 
 (defun escape-ps1-backvars-region (beg end)

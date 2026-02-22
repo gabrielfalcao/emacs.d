@@ -4,3 +4,9 @@ tramp
 .ignore
 .3pty-2025-12-12/
 .3pty-old/
+
+
+emacs*.pid
+emacs*.std*.log
+
+

@@ -65,7 +65,6 @@
 
 ;; (Ox33b4O/$/set-key '("C-x M-t") #')
 (Ox33b4O/$/set-key '("C-x C-a") #'eval-elisp-buffer)
-(Ox33b4O/$/set-key '("C-x C-x") #'eval-elisp-buffer)
 
 (Ox33b4O/$/set-key '("C-x C--") 'text-scale-adjust)
 (Ox33b4O/$/set-key '("C-x C-+") 'text-scale-adjust)
