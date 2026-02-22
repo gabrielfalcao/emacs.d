@@ -2,7 +2,7 @@
 (require 'flycheck)
 (require 'seq)
 (require 'server)
-;(load "subr")
+					;(load "subr")
 (require 'subr-x)
 (require 'help-fns)
 
@@ -39,16 +39,31 @@
          (result (mapcar
 		  (lambda (minor-mode-func)
 		    (let* (
+			   (minor-mode-func-ty (type-of minor-mode-func))
 			   (minor-mode-props (symbol-plist minor-mode-func))
 			   ;; (minor-mode-name (symbol-name minor-mode-func))
 
 			   (minor-mode-name
                             (condition-case mf-err
-                                (symbol-name minor-mode-func)
-                              (error
-                               (signal 'c-el-internal-error  "caught error when loading `%S':\n" (minor-mode-func)
-                              )
-                           
+				(message "%S"
+					 (symbol-name minor-mode-func)
+					 (error
+					  (signal 'c-el-internal-error
+						  (format (string-join
+							   (list
+							    "caught error when calling (symbol-name `sym') for %S `sym':"
+							    "\n%S"
+							    "\n"
+							    "\n<PROPS>"
+							    "\n%S"
+							    "\n</PROPS>"
+							    "\n"
+							    )
+							   "\n")
+							  minor-mode-func
+							  mf-err
+							  minor-mode-props
+							  ))))))
                            
 			   (current-value (intern-soft minor-mode-name))
 			   )
@@ -93,12 +108,12 @@
   (condition-case err
       (eval-buffer)
     (error (if (string-match "\\([Ii]nvalid.*syntax\\|syntax.*error\\).*\\s-*,\\s-*\\([0-9]+\\)\\s-*,\\s-*\\([0-9]+\\)"  (format "%s" err)
-                             nil t)
-               (let* ((position (string-to-number (match-string 2)))
-                      (wat (string-to-number (match-string 3))))
-                 (message "going to position %d"  position)
-                 (goto-char position))
-             (c-message "ERROR: %s" err)))))
+			     nil t)
+	       (let* ((position (string-to-number (match-string 2)))
+		      (wat (string-to-number (match-string 3))))
+		 (message "going to position %d"  position)
+		 (goto-char position))
+	     (c-message "ERROR: %s" err)))))
 
 (line-number-mode t)
 (setq global-package-online nil) ;; set to non-nil to enable
