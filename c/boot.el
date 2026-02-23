@@ -18,12 +18,13 @@
 (define-error 'io-error "I/O Error" 'c-el-internal-error)
 
 (defconst set-bar-modes-mode-names
-  '(
-    'scroll-bar-mode
-    'menu-bar-mode
-    'tool-bar-mode
+  (list 
+    #'scroll-bar-mode
+    #'menu-bar-mode
+    #'tool-bar-mode
     )
   )
+
 (defconst set-bar-modes-disable
   (* -1 #x004E4F))
 (defconst set-bar-modes-enable
@@ -36,55 +37,15 @@
          (total   (length set-bar-modes-mode-names))
          (index 0)
          (current 1)
-         (result (mapcar
-		  (lambda (minor-mode-func)
-		    (let* (
-			   (minor-mode-func-ty (type-of minor-mode-func))
-			   (minor-mode-props (symbol-plist minor-mode-func))
-			   ;; (minor-mode-name (symbol-name minor-mode-func))
-
-			   (minor-mode-name
-                            (condition-case mf-err
-				(message "%S"
-					 (symbol-name minor-mode-func)
-					 (error
-					  (signal 'c-el-internal-error
-						  (format (string-join
-							   (list
-							    "caught error when calling (symbol-name `sym') for %S `sym':"
-							    "\n%S"
-							    "\n"
-							    "\n<PROPS>"
-							    "\n%S"
-							    "\n</PROPS>"
-							    "\n"
-							    )
-							   "\n")
-							  minor-mode-func
-							  mf-err
-							  minor-mode-props
-							  ))))))
-                           
-			   (current-value (intern-soft minor-mode-name))
-			   )
-
-		      (unless (or (functionp minor-mode-func)
-				  (functionp current-value))
-			(signal 'type-error
-				(format  "set-bar-modes-mode-names' element index #%d is not a function but rather a %S: %S"
-					 index
-					 (type-of minor-mode-func)
-					 (format "%S" minor-mode-func))))
-		      (apply minor-mode-func arg)
-		      (setq current (1+ (setq index (1+ index))))
-		      ) ; end (lambda (let* ...))
-		    ) ; end (lambda ...)
-		  
-		  ;; start (mapcar ... SEQUENCE)
-		  set-bar-modes-mode-names ;; end (mapcar ... SEQUENCE)
-		  )
-		 )
-	 ) ;; end (defun ... (let* ...) varlist )
+         )
+    (mapcar
+     (lambda (minor-mode-func)
+       (funcall minor-mode-func arg)
+       (setq current (1+ (setq index (1+ index))))
+       ) ; end (lambda ...)
+     ;; start (mapcar ... SEQUENCE)
+     set-bar-modes-mode-names ;; end (mapcar ... SEQUENCE)
+     ) ;; end (defun ... (let* ...) varlist )
     ) ;; end (defun ... (let* ...) )
   ) ;; end (defun set-bar-modes)
 
