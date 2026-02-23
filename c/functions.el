@@ -306,8 +306,9 @@
       (list (point-min) (point-max)))))
 
 (defun eval-elisp-buffer ()
-  (interactive)
   "evaluates the entire buffer as emacs-lisp expression so long as calling `buffer-elisp-heuristic' returns non-nil."
+
+  (interactive)
   (if (buffer-elisp-heuristic)
       (save-mark-and-excursion
         (widen)
