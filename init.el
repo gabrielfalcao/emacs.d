@@ -1,7 +1,14 @@
 (setq-default force-load-messages t)
 (setq-default debug-on-error t)
-(setq-default $font-name$ "JetBrains Mono-16")
-(setq-default warning-minimum-level (setq-default warning-minimum-log-level :debug))
+
+(progn ; font
+  ;; (setq-default $font-family$ "JetBrains Mono")
+  ;; (setq-default $font-size$ "14")
+  ;; (setq-default $font-name$ (string-join (list $font-family$ $font-size$) "-"))
+  (setq-default $font-name$ "JetBrains Mono-14"))
+
+(setq-default warning-minimum-level
+              (setq-default warning-minimum-log-level :debug))
 
 
 (defalias 'describe #'describe-symbol)
@@ -12,36 +19,30 @@
     (error
      (display-warning 'emacs
                       (format "failed to load-file `%s': %s" file-name err)
-                      ; :debug / :warning / :error / :emergency
-                      :emergency
-                      )
+                      ;; :debug / :warning / :error / :emergency
+                      :error)
      ); end (display-warning ...)
-    )
-  )
+    ))
 
 (defun safe-load-library (library-name)
   (condition-case err
       (load-library library-name)
     (error
-          (display-warning 'emacs
-                           (format "failed to load-library `%s':\n%s" library-name err)
-                      ; :debug / :warning / :error / :emergency
-                      :emergency
-                      )
-          )
-    )
+     (display-warning 'emacs
+                      (format "failed to load-library `%s':\n%s" library-name err)
+                      ;; :debug / :warning / :error / :emergency
+                      :error)
+     ))
   )
 
-          
+
 
 (defun safe-load (file &rest load-optional-args)
   (condition-case err
       (apply #'load (append (list file) load-optional-args))
-    (error
-     (message "failed to load `%s':\n%s" file err))))
+    (error (message "failed to load `%s':\n%s" file err))))
 
 (safe-load "server")
-(set-face-attribute 'default nil :font $font-name$ :background "#1c1c1c")
 
 (defun list-dir-path(path)
   (unless (stringp path)
@@ -71,9 +72,11 @@
 
 (let ((foreground "#A79C83")
       (background "#333"))
+  (set-face-attribute 'default nil :font $font-name$ :background "#1c1c1c")
   (set-face-attribute 'default nil :foreground foreground :background background :font $font-name$)
   (set-face-attribute 'mode-line nil :background background :foreground foreground)
   (set-face-attribute 'mode-line-inactive nil :background background :foreground foreground))
+
 (progn
   (add-to-list 'load-path "~/.emacs.d/3pty")
   (add-to-list 'load-path "~/.emacs.d/c")
