@@ -18,7 +18,7 @@
 (define-error 'io-error "I/O Error" 'c-el-internal-error)
 
 (defconst set-bar-modes-mode-names
-  (list 
+  (list
     #'scroll-bar-mode
     #'menu-bar-mode
     #'tool-bar-mode
@@ -182,7 +182,7 @@
 ;; (ensure-server-ready)
 
 ;; (load-library "c-staging-after-save-hooks")
-
+(load-library "regexp")
 (load-library "modes")
 (load-library "hooks")
 (load-library "macros")

@@ -320,16 +320,6 @@
 	       (Ox33b4O/$/paint-mode-line-color "elisp-mode"))
       (g/format/prettify))))
 
-(defun Ox33b4O/$/reload-all-c ()
-  "."
-  (interactive)
-  (cleanup-elc)
-  (load-file "~/.emacs.d/c/boot.el"))
-(defun Ox33b4O/$/reload-init ()
-  "."
-  (interactive)
-  (cleanup-elc)
-  (load-file "~/.emacs.d/init.el"))
 
 (defun Ox33b4O/$/undefine-key (key)
   "KEY."
@@ -3005,6 +2995,45 @@ The `:background' property is computed in contrast with its
       (message  "elc cleanup ok" )
       (length> stderr 0)
       (message "elc cleanup error:\n'%s'" stderr )))))
+
+(defun c/reload-boot-el ()
+  "."
+  (interactive)
+  (cleanup-elc)
+  (load-file "~/.emacs.d/c/boot.el"))
+
+(defun c/reload-init ()
+  "."
+  (interactive)
+  (cleanup-elc)
+  (load-file "~/.emacs.d/init.el"))
+
+(defun rename-symbols-via-replace-regexp-buffer ()
+  (interactive)
+(let ((from-to-list (list
+                     (list  'Ox33b4O/$/reload-all-c #'c/reload-boot-el)
+                     (list 'Ox33b4O/$/reload-init  #'c/reload-init))))
+  (seq-do-indexed (lambda (pair index)
+                    (let* (
+                           (current (1+ index))
+                           (from-sym (car pair))
+                           (to-sym (cadr pair))
+
+                           (from-name (symbol-name from-sym))
+                           (from-regex (regexp-quote from-name))
+                           (to-name (symbol-name to-sym))
+                           )
+                      (save-restriction
+                        (save-mark-and-excursion
+                          (widen)
+                          (replace-regexp from-regex to-name nil (point-min) (point-max))
+                          ))
+                      ))
+                  from-to-list
+                  )
+  )
+)
+
 
 
 (defun get-logwip-string ()

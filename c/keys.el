@@ -138,6 +138,7 @@
 (Ox33b4O/$/set-key "C-x C-e C-r" #'insert-regexp-negate-string)
 (Ox33b4O/$/set-key "C-c C-p" #'(lambda () (interactive) (message "cur %d" (point))))
 (Ox33b4O/$/set-key '("M-f") 'forward-word)
+;; (Ox33b4O/$/set-key '("M-F") 'isearch-edit-string)
 (Ox33b4O/$/set-key '("M-b") 'backward-word)
 (Ox33b4O/$/set-key '("C-Ꮎ" "C-n") 'next-line)
 (Ox33b4O/$/set-key '("C-p" "C-Ꮑ") 'previous-line)
