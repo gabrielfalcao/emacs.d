@@ -47,6 +47,7 @@
                   :total      buffer-count
                   :name       bufname
                   :filename       filename
+                  :wip_filename       wip-filename
                   :pos        pos
                   :name_raw   buffer-name-raw
                   :is_file    (if is-file "true" "false")
