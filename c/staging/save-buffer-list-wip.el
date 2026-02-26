@@ -24,36 +24,32 @@
            (lambda (buf index)
              (with-current-buffer buf
                (let* (
-                      (number (1+ index))
-                      (pos (format "%d of %d" number buffer-count))
-                      (buffer-name-raw (buffer-name buf))
-                      (filename (buffer-file-name buf))
-                      (is-file (not (null filename)))
-                      (buffer-name-fallback (replace-regexp-in-string "[[:space:]]+" "-" (string-trim (replace-regexp-in-string "[^a-zA-Z0-9_./-]+" " " (buffer-name)))))
-                      (wip-filename (format "%s.bkp" buffer-name-fallback))
-                      (bufname (if is-file (file-name-nondirectory filename)  buffer-name-fallback))
-                      (bufcontents
-                       (save-match-data
-                         (save-mark-and-excursion
-                           (widen)
-                           (buffer-substring-no-properties (point-min) (point-max))
-                           )))
-                      (index-file-vector-json-array (make-vector buffer-count nil))
+(number (1+ index))
+(pos (format "%d of %d" number buffer-count))
+(buffer-name-raw (buffer-name buf))
+(filename (buffer-file-name buf))
+(is-file (not (null filename)))
+(buffer-name-fallback (replace-regexp-in-string "[[:space:]]+" "-" (string-trim (replace-regexp-in-string "[^a-zA-Z0-9_./-]+" " " (buffer-name)))))
+(wip-filename (format "%s.bkp" buffer-name-fallback))
+(bufname (if is-file (file-name-nondirectory filename)  buffer-name-fallback))
+(bufcontents (save-match-data (save-mark-and-excursion (widen) (buffer-substring-no-properties (point-min) (point-max)))))
+(buf-plist-to-json-object
+                       (list
+			:index          index
+			:number         number
+			:total          buffer-count
+			:name           bufname
+			:filename       filename
+			:wip_filename   wip-filename
+			:pos            pos
+			:name_raw       buffer-name-raw
+			:is_file        (if is-file "true" "false")
+			:contents       bufcontents
+			:size           (length bufcontents)
+			))
                       ) ;; end (with-current-buffer (let* ...) varlist )
                  ;; <seq-map-indexed lambda body>
-                 (list
-                  :index          index
-                  :number         number
-                  :total          buffer-count
-                  :name           bufname
-                  :filename       filename
-                  :wip_filename   wip-filename
-                  :pos            pos
-                  :name_raw       buffer-name-raw
-                  :is_file        (if is-file "true" "false")
-                  :contents       bufcontents
-                  :size           (length bufcontents)
-                  )
+                 (write-region bufcontents         nil wip-filename nil nil nil nil)
                  ;; </seq-map-indexed lambda body>
                  );; end (let* ...)
                );; end (with-current-buffer ...)
