@@ -1,0 +1,53 @@
+(defun save-open-buffers-as-wip-in-workbench ()
+  (let* ((workbench-root (file-name-canonicalize "~/workbench"))
+         (today (format-time-string "%Y-%m-%d" nil t))
+         (workbench-path (file-name-concat workbench-root today))
+         (workbench-wip-buffers-path (file-name-concat workbench-root
+                                                       (format "emacs-buffers-%s"
+                                                               (format-time-string "%s" nil t))))
+         (workbench-wip-buffers-index-file-path
+          (progn
+            (mkdir workbench-wip-buffers-path t)
+            (file-name-concat workbench-wip-buffers-path
+                              "index.txt")))
+         (index-file-lines (list))
+         (buffers (buffer-list))
+         (buffer-count (length buffers))
+         )
+    (seq-do-indexed
+     (lambda (buf index)
+       (with-current-buffer buf
+         (let* (
+                (number (1+ index))
+                (pos (format "%d of %d" number buffer-count))
+                (buffer-name-raw (buffer-name buf))
+                (filename (buffer-file-name buf))
+                (is-file (not (null filename)))
+                (buffer-name-fallback (replace-regexp-in-string "[[:space:]]+" "-" (string-trim (replace-regexp-in-string "[^a-zA-Z0-9_./-]+" " " (buffer-name)))))
+                (bufname (if is-file (file-name-nondirectory filename)  buffer-name-fallback))
+                (bufcontents
+                 (save-match-data
+                   (save-mark-and-excursion
+                     (widen)
+                     (buffer-substring-no-properties (point-min) (point-max))
+                     )))
+                (index-file-data (string-join (list
+                                               (format "[buffer %s]{" pos)
+                                               (format "    \"index\": %S," index)
+                                               (format "    \"total\": %S," buffer-count)
+                                               (format "    \"name\": %S," bufname)
+                                               (format "    \"pos\": %S," pos)
+                                               (format "    \"name_raw\": %S," buffer-name-raw)
+                                               (format "    \"is_file\": %s," (if is-file "true" "false"))
+                                               (format "    \"contents\": %S," bufcontents)
+                                               (format "}")
+                                               )
+                                              "\n"))
+                )
+           (push index-file-data  index-file-lines)
+
+
+         )
+    )
+
+  )
