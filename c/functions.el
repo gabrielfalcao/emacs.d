@@ -454,7 +454,7 @@
   "."
   (format "%s" (file-relative-name (buffer-file-name))))
 
-  ;; KGRlZnVuIGRlYnVnLyQvYmNocyAoKQogICIuIgogIChpbnRlcmFjdGl2ZSkKCiAgKG1lc3NhZ2UKICAgKGZvcm1hdCAiPCQvYmNocyBkZWJ1Zz5cblxubW9kZTogJyVTJ1xuXG5maWxlLWF0dHJpYnV0ZS1tb2RlOiAnJVMnXG5cbiQvYmZhbjogJyVzJ1xuXG5idWZmZXItbmFtZTogJyVTJ1xuPC8kL2JjaHMgZGVidWc+IgogICAgICAgICAgICgkL21vZGUtbmFtZSkKICAgICAgICAgICAoZmlsZS1hdHRyaWJ1dGUtbW9kZXMgKGZpbGUtYXR0cmlidXRlcyAoYnVmZmVyLWZpbGUtbmFtZSkpKQogICAgICAgICAgICgkL2JmYW4pCiAgICAgICAgICAgKGJ1ZmZlci1uYW1lKQoKICAgICAgICAgICApKQo=
+;; KGRlZnVuIGRlYnVnLyQvYmNocyAoKQogICIuIgogIChpbnRlcmFjdGl2ZSkKCiAgKG1lc3NhZ2UKICAgKGZvcm1hdCAiPCQvYmNocyBkZWJ1Zz5cblxubW9kZTogJyVTJ1xuXG5maWxlLWF0dHJpYnV0ZS1tb2RlOiAnJVMnXG5cbiQvYmZhbjogJyVzJ1xuXG5idWZmZXItbmFtZTogJyVTJ1xuPC8kL2JjaHMgZGVidWc+IgogICAgICAgICAgICgkL21vZGUtbmFtZSkKICAgICAgICAgICAoZmlsZS1hdHRyaWJ1dGUtbW9kZXMgKGZpbGUtYXR0cmlidXRlcyAoYnVmZmVyLWZpbGUtbmFtZSkpKQogICAgICAgICAgICgkL2JmYW4pCiAgICAgICAgICAgKGJ1ZmZlci1uYW1lKQoKICAgICAgICAgICApKQo=
 
 (defun Ox33b4O/$/bchs ()
   "."
@@ -480,9 +480,9 @@
   (interactive)
   (format "(group: %S)" f))
 
-  ;; (defun current-column ()
-  ;;   "returns the current column number."
-  ;;   (- (point) (line-beginning-position)))
+;; (defun current-column ()
+;;   "returns the current column number."
+;;   (- (point) (line-beginning-position)))
 
 (defun location-at-pos (pos)
   "returns a string describing the line number and column at `pos'"
@@ -525,10 +525,10 @@
                                    (collapse-string-2 region))))))
 
 (defun Ox33b4O/$/mt (p) "P." (interactive) (format "%S" p))
-  ;; (let* ((p (replace-regexp-in-string "[o-t]" "🧾" p))
-  ;;        (p (replace-regexp-in-string "[s-w]" "🖍️" p))
-  ;;        (p (replace-regexp-in-string "[xX]" "👥️" p)))
-  ;;   p))
+;; (let* ((p (replace-regexp-in-string "[o-t]" "🧾" p))
+;;        (p (replace-regexp-in-string "[s-w]" "🖍️" p))
+;;        (p (replace-regexp-in-string "[xX]" "👥️" p)))
+;;   p))
 
 (defun Ox33b4O/$/fm ()
   "."
@@ -706,7 +706,7 @@
           (buffer-substring-no-properties pi pa)
           "MHgwYzlmNjAwMCAtZCAtLSAnJXMn"))))))
 
-  ;;(Ox33b4O/$/undefine-key (list "C-c C-e C-2" "C-c C-d C-2"))
+;;(Ox33b4O/$/undefine-key (list "C-c C-e C-2" "C-c C-d C-2"))
 (ignore-errors
   (Ox33b4O/$/set-key
    (list "C-c C-e C-2 C-0")
@@ -873,15 +873,15 @@
            (regex-single-space-all-whitespace-and-newlines region)))
       (flush-lines "^$" beg end))))
 
-  ;; (defun regex-remove-trailing-commas (string)
-  ;;   "STRING."
-  ;;   (replace-regexp-in-string
-  ;;    ")\\(\\s-\\|\n\\)*,\\(\\s-\\|\n\\)*)" "))"
-  ;;    (replace-regexp-in-string
-  ;;     "]\\(\\s-\\|\n\\)*,\\(\\s-\\|\n\\)*]" "]]"
-  ;;     (replace-regexp-in-string
-  ;;      "}\\(\\s-\\|\n\\)*,\\(\\s-\\|\n\\)*}" "}}"
-  ;;      string))))
+;; (defun regex-remove-trailing-commas (string)
+;;   "STRING."
+;;   (replace-regexp-in-string
+;;    ")\\(\\s-\\|\n\\)*,\\(\\s-\\|\n\\)*)" "))"
+;;    (replace-regexp-in-string
+;;     "]\\(\\s-\\|\n\\)*,\\(\\s-\\|\n\\)*]" "]]"
+;;     (replace-regexp-in-string
+;;      "}\\(\\s-\\|\n\\)*,\\(\\s-\\|\n\\)*}" "}}"
+;;      string))))
 
 (defun regex-remove-trailing-commas (string)
   "STRING."
@@ -1000,44 +1000,44 @@
         (match-string 0))
        t))))
 
-  ;; (defun regex-cargo-dependencies-to-cargo-add (string)
-  ;;   "STRING."
-  ;;   ;; ;; ICA7OyA7O3F1YXNpIDs7Il5cXChbYS16XVthLXowLTlfLV0rXFwpXFwoXFxzLVxcfFxuXFwpKj9bPV1cXChcXHMtXFx8XG5cXCkqP1t7XVxcKC5cXHxcblxcKSo/XFwodmVyc2lvblxccy0qPVxccy0qXCJbMC05Ll0rP1wiXFwpLFxcKFxccy1cXHxcblxcKSo/XFwoZmVhdHVyZXNcXChcXHMtXFx8XG5cXCkqPz1cXChcXHMtXFx8XG5cXCkqP1tbXVxcKFxcKFxccy1cXHxcblxcfFthLXowLTlcIl8tXSs/XFwoXFxzLSosXFxzLSokXFwpXFwpKlxcfFxuXFwpKlxcKVxccy0qW11dXFxzLSpbfV1cXHMtKiIKICA7OyA7OzsgKHJlcGxhY2UtcmVnZXhwLWluLXN0cmluZwogIDs7IDs7OyAgIl5cXChbYS16XVthLXowLTlfLV0rXFwpXFxzLSpbPV1cXHMtKlt7XS4qJCIKICA7OyA7OzsgICJcXDEgZmVhdHVyZXMgPSAiCiAgOzsgOzs7IChyZXBsYWNlLXJlZ2V4cC1pbi1zdHJpbmcKICA7OyA7OzsgICJeXFwoW2Etel1bYS16MC05Xy1dK1xcKVxccy0qPVxcKFtePV0rXFwpPVteLF0rXFwoXFxzLVxcfFxuXFwpKj8sXFwoXFxzLVxcfFxuXFwpKj9mZWF0dXJlc1xcKFxccy1cXHxcblxcKSo9XFwoXFxzLVxcfFxuXFwpKltbXVxcKC4qXFwpW11dLiokIgogIDs7IDs7OyAgIlxcMSBmZWF0dXJlcyA9IFxcNyIKICA7OyAgKHJlcGxhY2UtcmVnZXhwLWluLXN0cmluZwogIDs7ICAgOzsgOzsiPS4qZmVhdHVyZXMgPSBbW11cXChcblxcfFxccy1cXCkqXFwoXFwoXFwoW15cbl0rXFwoXG4qXFx8XFxzLSpcXClcXClcXClcXChcblxcfFxccy1cXCkqXFwpW11dXFwoXG5cXHxcXHMtXFwpKlt9XVxcKFxuXFx8XFxzLVxcKSoiCiAgOzsgICA7OyAiPS4qW3tdLipmZWF0dXJlc1xccy0qPVxccy0qP1tbXVxcKFxuXFx8XFxzLVxcKSo/XFwoXFwoXFwoW15cbl0rXFwoXG4qXFx8XFxzLSo/XFwpXFwpXFwpXFwoXG5cXHxcXHMtXFwpKj9cXClbXV1cXChcblxcfFxccy1cXCkqP1t9XVxcKFxuXFx8XFxzLVxcKSo/IgogIDs7ICAgOzsgOzsgIj0uKmZlYXR1cmVzXFxzLSo9XFxzLSpbW11cXChcblxcfFxccy1cXCkqXFwoXFwoXFwoW15cbl0rXFwoXG4qXFx8XFxzLSpcXClcXClcXClcXChcblxcfFxccy1cXCkqXFwpW11dXFwoXG5cXHxcXHMtXFwpKlt9XVxcKFxuXFx8XFxzLVxcKSoiCiAgOzsgICAiXlxcKFthLXpdW2EtejAtOV8tXStcXClcXChcXHMtXFx8XG5cXCkqWz1dLipbe10uKmZlYXR1cmVzXFxzLSo9XFxzLSo/W1tdXFwoXG5cXHxcXHMtXFwpKj9cXChcXChcXChbXlxuXStcXChcbipcXHxcXHMtKj9cXClcXClcXClcXChcblxcfFxccy1cXCkqP1xcKVtdXVxcKFxuXFx8XFxzLVxcKSo/W31dXFwoXG5cXHxcXHMtXFwpKj8iCiAgOzsgICAiXFwxIGZlYXR1cmVzID0gXFw2IgogIDs7IChyZXBsYWNlLXJlZ2V4cC1pbi1zdHJpbmcKICA7OyAgIj0uKmZlYXR1cmVzXFxzLSo9XFxzLSpcXChcXChcIlxcfFtbXVxcKVxcKC4qXFwpXCJcXCk/IgogIDs7ICAiID0gZmVhdHVyZXMgPSBcIlxcM1wiIgogIDs7IChyZXBsYWNlLXJlZ2V4cC1pbi1zdHJpbmcKICA7OyAgIl5cXChbYS16MC05Xy1dK1xcKVxccy0qPVxccy0qW3tdLipmZWF0dXJlc1xccy0qPVxccy0qXFwoXCJcXHxbW11cXClcXCguKlxcKVwiLioiCiAgOzsgICIgXFwxIGZlYXR1cmVzID0gXFwzIgo=
-  ;;   ;; ;; (replace-regexp-in-string
-  ;;   ;; ;;  "[^]]+\\s-*[}]$"
-  ;;   ;; (replace-regexp-in-string
-  ;;   ;;  "\\s-*\\([]]\\|,\\)*\\s-*[}]"
-  ;;   ;;  "]"
-  ;;   ;; (replace-regexp-in-string
-  ;;   ;;  "^\\([a-z0-9_-]+\\)\\s-*[=]\\s-[{].*$"
-  ;;   ;;  "\\1 features = []"
-  ;;   ;; (replace-regexp-in-string
-  ;;   ;;  "^\\([a-z0-9_-]+\\)\\s-*=\\s-*[{].*features\\s-*[=]\\s-*[[]?"
-  ;;   ;;  "\\1 features = ["
-  ;;   (replace-regexp-in-string
-  ;;    "^\\([a-z0-9_-]+\\)\\s-*[=]\\s-*[{]\\s-*version\\s-*=\\s-*\\S-+\\s-*[}]"
-  ;;    "\\1 features = []"
-  ;;   (replace-regexp-in-string
-  ;;    "[[]\\(\n\\|\\s-\\)*\\(.*?,\\|[]]\\)*\\(\n\\|\\s-\\)*[]]"
-  ;;    " \\2 "
-  ;;    (replace-regexp-in-string
-  ;;     "^\\([a-z][a-z0-9_-]+\\)\\(\\s-\\|\n\\)*[=]\\(\\s-\\|\n\\)*[{]\\(\\s-\\|\n\\)*\\(version\\s-*=\\s-*\"[0-9.]+\"\\)\\(\\s-\\|\n\\)[}]"
-  ;;     "\\1 = { \\5, features = [] }"
-  ;;     string
-  ;;     ))))
-  ;;    ;; )))))
+;; (defun regex-cargo-dependencies-to-cargo-add (string)
+;;   "STRING."
+;;   ;; ;; ICA7OyA7O3F1YXNpIDs7Il5cXChbYS16XVthLXowLTlfLV0rXFwpXFwoXFxzLVxcfFxuXFwpKj9bPV1cXChcXHMtXFx8XG5cXCkqP1t7XVxcKC5cXHxcblxcKSo/XFwodmVyc2lvblxccy0qPVxccy0qXCJbMC05Ll0rP1wiXFwpLFxcKFxccy1cXHxcblxcKSo/XFwoZmVhdHVyZXNcXChcXHMtXFx8XG5cXCkqPz1cXChcXHMtXFx8XG5cXCkqP1tbXVxcKFxcKFxccy1cXHxcblxcfFthLXowLTlcIl8tXSs/XFwoXFxzLSosXFxzLSokXFwpXFwpKlxcfFxuXFwpKlxcKVxccy0qW11dXFxzLSpbfV1cXHMtKiIKICA7OyA7OzsgKHJlcGxhY2UtcmVnZXhwLWluLXN0cmluZwogIDs7IDs7OyAgIl5cXChbYS16XVthLXowLTlfLV0rXFwpXFxzLSpbPV1cXHMtKlt7XS4qJCIKICA7OyA7OzsgICJcXDEgZmVhdHVyZXMgPSAiCiAgOzsgOzs7IChyZXBsYWNlLXJlZ2V4cC1pbi1zdHJpbmcKICA7OyA7OzsgICJeXFwoW2Etel1bYS16MC05Xy1dK1xcKVxccy0qPVxcKFtePV0rXFwpPVteLF0rXFwoXFxzLVxcfFxuXFwpKj8sXFwoXFxzLVxcfFxuXFwpKj9mZWF0dXJlc1xcKFxccy1cXHxcblxcKSo9XFwoXFxzLVxcfFxuXFwpKltbXVxcKC4qXFwpW11dLiokIgogIDs7IDs7OyAgIlxcMSBmZWF0dXJlcyA9IFxcNyIKICA7OyAgKHJlcGxhY2UtcmVnZXhwLWluLXN0cmluZwogIDs7ICAgOzsgOzsiPS4qZmVhdHVyZXMgPSBbW11cXChcblxcfFxccy1cXCkqXFwoXFwoXFwoW15cbl0rXFwoXG4qXFx8XFxzLSpcXClcXClcXClcXChcblxcfFxccy1cXCkqXFwpW11dXFwoXG5cXHxcXHMtXFwpKlt9XVxcKFxuXFx8XFxzLVxcKSoiCiAgOzsgICA7OyAiPS4qW3tdLipmZWF0dXJlc1xccy0qPVxccy0qP1tbXVxcKFxuXFx8XFxzLVxcKSo/XFwoXFwoXFwoW15cbl0rXFwoXG4qXFx8XFxzLSo/XFwpXFwpXFwpXFwoXG5cXHxcXHMtXFwpKj9cXClbXV1cXChcblxcfFxccy1cXCkqP1t9XVxcKFxuXFx8XFxzLVxcKSo/IgogIDs7ICAgOzsgOzsgIj0uKmZlYXR1cmVzXFxzLSo9XFxzLSpbW11cXChcblxcfFxccy1cXCkqXFwoXFwoXFwoW15cbl0rXFwoXG4qXFx8XFxzLSpcXClcXClcXClcXChcblxcfFxccy1cXCkqXFwpW11dXFwoXG5cXHxcXHMtXFwpKlt9XVxcKFxuXFx8XFxzLVxcKSoiCiAgOzsgICAiXlxcKFthLXpdW2EtejAtOV8tXStcXClcXChcXHMtXFx8XG5cXCkqWz1dLipbe10uKmZlYXR1cmVzXFxzLSo9XFxzLSo/W1tdXFwoXG5cXHxcXHMtXFwpKj9cXChcXChcXChbXlxuXStcXChcbipcXHxcXHMtKj9cXClcXClcXClcXChcblxcfFxccy1cXCkqP1xcKVtdXVxcKFxuXFx8XFxzLVxcKSo/W31dXFwoXG5cXHxcXHMtXFwpKj8iCiAgOzsgICAiXFwxIGZlYXR1cmVzID0gXFw2IgogIDs7IChyZXBsYWNlLXJlZ2V4cC1pbi1zdHJpbmcKICA7OyAgIj0uKmZlYXR1cmVzXFxzLSo9XFxzLSpcXChcXChcIlxcfFtbXVxcKVxcKC4qXFwpXCJcXCk/IgogIDs7ICAiID0gZmVhdHVyZXMgPSBcIlxcM1wiIgogIDs7IChyZXBsYWNlLXJlZ2V4cC1pbi1zdHJpbmcKICA7OyAgIl5cXChbYS16MC05Xy1dK1xcKVxccy0qPVxccy0qW3tdLipmZWF0dXJlc1xccy0qPVxccy0qXFwoXCJcXHxbW11cXClcXCguKlxcKVwiLioiCiAgOzsgICIgXFwxIGZlYXR1cmVzID0gXFwzIgo=
+;;   ;; ;; (replace-regexp-in-string
+;;   ;; ;;  "[^]]+\\s-*[}]$"
+;;   ;; (replace-regexp-in-string
+;;   ;;  "\\s-*\\([]]\\|,\\)*\\s-*[}]"
+;;   ;;  "]"
+;;   ;; (replace-regexp-in-string
+;;   ;;  "^\\([a-z0-9_-]+\\)\\s-*[=]\\s-[{].*$"
+;;   ;;  "\\1 features = []"
+;;   ;; (replace-regexp-in-string
+;;   ;;  "^\\([a-z0-9_-]+\\)\\s-*=\\s-*[{].*features\\s-*[=]\\s-*[[]?"
+;;   ;;  "\\1 features = ["
+;;   (replace-regexp-in-string
+;;    "^\\([a-z0-9_-]+\\)\\s-*[=]\\s-*[{]\\s-*version\\s-*=\\s-*\\S-+\\s-*[}]"
+;;    "\\1 features = []"
+;;   (replace-regexp-in-string
+;;    "[[]\\(\n\\|\\s-\\)*\\(.*?,\\|[]]\\)*\\(\n\\|\\s-\\)*[]]"
+;;    " \\2 "
+;;    (replace-regexp-in-string
+;;     "^\\([a-z][a-z0-9_-]+\\)\\(\\s-\\|\n\\)*[=]\\(\\s-\\|\n\\)*[{]\\(\\s-\\|\n\\)*\\(version\\s-*=\\s-*\"[0-9.]+\"\\)\\(\\s-\\|\n\\)[}]"
+;;     "\\1 = { \\5, features = [] }"
+;;     string
+;;     ))))
+;;    ;; )))))
 
-  ;; (defun cargo-dependencies-to-cargo-add-region (beg end)
-  ;;   "BEG END."
-  ;;   (interactive "*r")
-  ;;   (save-excursion
-  ;;     (cargo-dependencies-normalize-region beg end)
-  ;;     (let ((region (buffer-substring-no-properties beg end)))
-  ;;       (replace-region-contents
-  ;;        beg end
-  ;;        #'(lambda ()
-  ;;            (regex-cargo-dependencies-to-cargo-add region)))
-  ;;       )))
+;; (defun cargo-dependencies-to-cargo-add-region (beg end)
+;;   "BEG END."
+;;   (interactive "*r")
+;;   (save-excursion
+;;     (cargo-dependencies-normalize-region beg end)
+;;     (let ((region (buffer-substring-no-properties beg end)))
+;;       (replace-region-contents
+;;        beg end
+;;        #'(lambda ()
+;;            (regex-cargo-dependencies-to-cargo-add region)))
+;;       )))
 
 (defun rust-members-region (beg end)
   "BEG END."
@@ -1539,7 +1539,7 @@ shortcut to calling \\[git-add] and \\[git-commit]
   "returns list of cons cells where the head is the remote name and the tail is the remote url."
   (mapcar 'git-remote-get-url (git-remote-names)))
 
-  ;; (progn (message  "%s" (git-remotes)))
+;; (progn (message  "%s" (git-remotes)))
 
 (defun git-commit-all ()
   "."
@@ -2266,15 +2266,15 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
         (file-exists-p (buffer-file-name buf))))
    (buffer-list)))
 
-  ;; (defun ask-whether-to-kill-emacs (&optional predicate)
-  ;;     (interactive)
-  ;;   (when (only-builtin-buffers-open-p)
-  ;;     (y-or-n-p "exit emacs?")))
-  ;;
-  ;; (setq confirm-kill-emacs 'ask-whether-to-kill-emacs)
+;; (defun ask-whether-to-kill-emacs (&optional predicate)
+;;     (interactive)
+;;   (when (only-builtin-buffers-open-p)
+;;     (y-or-n-p "exit emacs?")))
+;;
+;; (setq confirm-kill-emacs 'ask-whether-to-kill-emacs)
 (setq confirm-kill-emacs nil)
 
-  ;; TODO: build rust refactoring tool using `minibuffer-lazy-highlight-setup' to find callers of functions, structs etc
+;; TODO: build rust refactoring tool using `minibuffer-lazy-highlight-setup' to find callers of functions, structs etc
 
 (defun buffer-names-in-current-frame ()
   "."
@@ -2316,21 +2316,21 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
       (forward-char 1)
       (indent-for-tab-command))))
 
-  ;; (defadvice find-file (before existing-file activate compile)
-  ;;   "when interactive, try to auto-complete to existing file first."
-  ;;   (interactive
-  ;;    (list
-  ;;     (find-file-read-args "Find file: "
-  ;;                          (read-buffer "Find file: "
-  ;;                                       (existing-file-current-buffer)
-  ;;                                       (null current-prefix-arg))))))
+;; (defadvice find-file (before existing-file activate compile)
+;;   "when interactive, try to auto-complete to existing file first."
+;;   (interactive
+;;    (list
+;;     (find-file-read-args "Find file: "
+;;                          (read-buffer "Find file: "
+;;                                       (existing-file-current-buffer)
+;;                                       (null current-prefix-arg))))))
 
-  ;; (defun existing-file-current-buffer ()
-  ;;   (let* ((path (confirm-nonexistent-file-or-buffer)))
-  ;;     (message  "confirm-nonexistent-file-or-buffer: %s" path)
-  ;;     ;;(abbreviate-file-name (expand-file-name (buffer-file-name)))
-  ;;     path
-  ;;     ))
+;; (defun existing-file-current-buffer ()
+;;   (let* ((path (confirm-nonexistent-file-or-buffer)))
+;;     (message  "confirm-nonexistent-file-or-buffer: %s" path)
+;;     ;;(abbreviate-file-name (expand-file-name (buffer-file-name)))
+;;     path
+;;     ))
 
 (defun rust-get-item ()
   (interactive)
@@ -3010,29 +3010,29 @@ The `:background' property is computed in contrast with its
 
 (defun rename-symbols-via-replace-regexp-buffer ()
   (interactive)
-(let ((from-to-list (list
-                     (list  'Ox33b4O/$/reload-all-c #'c/reload-boot-el)
-                     (list 'Ox33b4O/$/reload-init  #'c/reload-init))))
-  (seq-do-indexed (lambda (pair index)
-                    (let* (
-                           (current (1+ index))
-                           (from-sym (car pair))
-                           (to-sym (cadr pair))
+  (let ((from-to-list (list
+                       (list  'Ox33b4O/$/reload-all-c #'c/reload-boot-el)
+                       (list 'Ox33b4O/$/reload-init  #'c/reload-init))))
+    (seq-do-indexed (lambda (pair index)
+                      (let* (
+                             (current (1+ index))
+                             (from-sym (car pair))
+                             (to-sym (cadr pair))
 
-                           (from-name (symbol-name from-sym))
-                           (from-regex (regexp-quote from-name))
-                           (to-name (symbol-name to-sym))
-                           )
-                      (save-restriction
-                        (save-mark-and-excursion
-                          (widen)
-                          (replace-regexp from-regex to-name nil (point-min) (point-max))
-                          ))
-                      ))
-                  from-to-list
-                  )
+                             (from-name (symbol-name from-sym))
+                             (from-regex (regexp-quote from-name))
+                             (to-name (symbol-name to-sym))
+                             )
+			(save-restriction
+                          (save-mark-and-excursion
+                            (widen)
+                            (replace-regexp from-regex to-name nil (point-min) (point-max))
+                            ))
+			))
+                    from-to-list
+                    )
+    )
   )
-)
 
 
 
@@ -3152,11 +3152,11 @@ which returns the exit-status and the string output.
     (cons exitcode
           (if (not (null trim-output)) (string-trim output) output))))
 
-  ;; ;; testing call-program-with-list-args
-  ;; (progn
-  ;;   (erase-messages)
-  ;;   (message  "which shprettier: %S" (call-program-with-list-args "which" '("shprettier")))
-  ;;   (message  "hostname: %S" (call-program-with-list-args "hostname" nil t)))
+;; ;; testing call-program-with-list-args
+;; (progn
+;;   (erase-messages)
+;;   (message  "which shprettier: %S" (call-program-with-list-args "which" '("shprettier")))
+;;   (message  "hostname: %S" (call-program-with-list-args "hostname" nil t)))
 
 (defun ack (regexp)
   "."
@@ -3278,48 +3278,48 @@ which returns the exit-status and the string output.
   "BEG END."
   (interactive "*r")
   (save-mark-excursion-and-match-data
-    (goto-char beg)
-    (while (re-search-forward
-            "\\(^\\|\\b\\)[a-fA-F0-9]+\\(\\b\\|$\\)" end t)
-      (let* ((val (format "%s" (string-to-number (match-string) 16)))
-             ;; (hexa (or (and (length= val 1) (format "0%s" val))
-             ;;           val))
-             )
-        (replace-match val)))))
+   (goto-char beg)
+   (while (re-search-forward
+           "\\(^\\|\\b\\)[a-fA-F0-9]+\\(\\b\\|$\\)" end t)
+     (let* ((val (format "%s" (string-to-number (match-string) 16)))
+            ;; (hexa (or (and (length= val 1) (format "0%s" val))
+            ;;           val))
+            )
+       (replace-match val)))))
 
 (defun decimal-to-hex-region (beg end)
   "BEG END."
   (interactive "*r")
   (save-mark-excursion-and-match-data
-    (goto-char beg)
-    (while (re-search-forward "\\(^\\|\\b\\)[0-9]+\\(\\b\\|$\\)" end t)
-      (replace-match
-       (format "%02x" (string-to-number (match-string 0)))))))
+   (goto-char beg)
+   (while (re-search-forward "\\(^\\|\\b\\)[0-9]+\\(\\b\\|$\\)" end t)
+     (replace-match
+      (format "%02x" (string-to-number (match-string 0)))))))
 
-  ;; WIP/TODO: replace with rgb-parser.el
-  ;; (defun hex-rgb-to-ansi-region (beg end)
-  ;;   "BEG END."
-  ;;   (interactive "*r")
-  ;;   (let ((regexp-6
-  ;;          "\\([A-F0-9]\\{2\\}\\|[A-F0-9]\\{4\\}\\|[A-F0-9]\\{6\\}\\)")
-  ;;         (regexp-2 "[A-F0-9]\\{2\\}"))
-  ;;     (save-mark-and-excursion
-  ;;       (goto-char beg)
-  ;;       (if (re-search-forward regexp-6 end t)
-  ;;           (progn
-  ;;             (goto-char (match-beginning 0))
-  ;;             (while (re-search-forward regexp-2 end t)
-  ;; 	      (goto-char (match-beginning 0))
-  ;; 	      (replace-match
-  ;; 	       (format
-  ;; 		"$(( 0x%x ));"
-  ;;                 (string-to-number (match-string 0) 16)))
-  ;; 	      (setq end (point))
-  ;; 	      (backward-word 0))
-  ;;             )
-  ;; 	(user-error "no match for regex %S in %S" regexp-6
-  ;;                     (buffer-substring-no-properties beg end)))
-  ;;       )))
+;; WIP/TODO: replace with rgb-parser.el
+;; (defun hex-rgb-to-ansi-region (beg end)
+;;   "BEG END."
+;;   (interactive "*r")
+;;   (let ((regexp-6
+;;          "\\([A-F0-9]\\{2\\}\\|[A-F0-9]\\{4\\}\\|[A-F0-9]\\{6\\}\\)")
+;;         (regexp-2 "[A-F0-9]\\{2\\}"))
+;;     (save-mark-and-excursion
+;;       (goto-char beg)
+;;       (if (re-search-forward regexp-6 end t)
+;;           (progn
+;;             (goto-char (match-beginning 0))
+;;             (while (re-search-forward regexp-2 end t)
+;; 	      (goto-char (match-beginning 0))
+;; 	      (replace-match
+;; 	       (format
+;; 		"$(( 0x%x ));"
+;;                 (string-to-number (match-string 0) 16)))
+;; 	      (setq end (point))
+;; 	      (backward-word 0))
+;;             )
+;; 	(user-error "no match for regex %S in %S" regexp-6
+;;                     (buffer-substring-no-properties beg end)))
+;;       )))
 
 (defun slugify-string (string)
   "depends on cargo crate heck-string-cli: `cargo install heck-string-cli'
@@ -3350,26 +3350,15 @@ BEG END."
 (defun heck-string-to-case-buffer (case beg end)
   "depends on cargo crate heck-string-cli: `cargo install heck-string-cli'
 BEG END."
-  (let* ((tmp-buffer-name (format "*string-to-%s*" case))
-         (tmp-buffer (get-buffer-create tmp-buffer-name))
+  (let* (
          (input-string (buffer-substring-no-properties beg end))
-         (exit-code
-          (call-process "heck-string" nil tmp-buffer nil
-                        (format "--to=%s" case)
-                        input-string)))
+         (output (heck-string-to-case input-string case))
+         )
 
-    (if (eq 0 exit-code)
-        (let ((output
-	       (with-current-buffer tmp-buffer
-		 (widen)
-		 (string-trim (buffer-string)))))
-          (kill-buffer tmp-buffer)
-          (save-excursion
-            (replace-region-contents beg end #'(lambda () output))))
+    (save-mark-and-excursion
+      (save-match-data
+        (replace-region-contents beg end #'(lambda () output))))))
 
-      (kill-buffer tmp-buffer)
-      (user-error
-       (format "command failed with status %d: heck-string --to=%s '%s'"  case input-string)))))
 
 (defun heck-string-to-case (input-string case)
   (unless (or (stringp input-string) (null input-string))
@@ -3385,9 +3374,9 @@ BEG END."
                         (format "--to=%s" case)
                         input-string))
          (output
-	          (with-current-buffer tmp-buffer
-		    (widen)
-		    (string-trim (buffer-string))))
+	  (with-current-buffer tmp-buffer
+	    (widen)
+	    (string-trim (buffer-string))))
          (error-messages (list))
          )
     (condition-case kill-buf-err
@@ -3412,49 +3401,98 @@ BEG END."
     output))
 
 
-
-
-
-
+;; <string-to train>
 (defun string-to-train-region (beg end)
-  "BEG END."
+  "converts string in region to train case."
   (interactive "*r")
   (heck-string-to-case-buffer "train" beg end))
 
+(defun string-to-train (input-string)
+  "converts input string to train case."
+  (heck-string-to-case input-string "train"))
+
+;; </string-to train>
+;; <string-to title>
 (defun string-to-title-region (beg end)
-  "BEG END."
+  "converts string in region to title case."
   (interactive "*r")
   (heck-string-to-case-buffer "title" beg end))
 
+(defun string-to-title (input-string)
+  "converts input string to title case."
+  (heck-string-to-case input-string "title"))
+
+;; </string-to title>
+;; <string-to kebab>
 (defun string-to-kebab-region (beg end)
-  "BEG END."
+  "converts string in region to kebab case."
   (interactive "*r")
   (heck-string-to-case-buffer "kebab" beg end))
 
+(defun string-to-kebab (input-string)
+  "converts input string to kebab case."
+  (heck-string-to-case input-string "kebab"))
+
+;; </string-to kebab>
+;; <string-to snake>
 (defun string-to-snake-region (beg end)
-  "BEG END."
+  "converts string in region to snake case."
   (interactive "*r")
   (heck-string-to-case-buffer "snake" beg end))
 
+(defun string-to-snake (input-string)
+  "converts input string to snake case."
+  (heck-string-to-case input-string "snake"))
+
+;; </string-to snake>
+;; <string-to shouty-snake>
 (defun string-to-shouty-snake-region (beg end)
-  "BEG END."
+  "converts string in region to shouty-snake case."
   (interactive "*r")
   (heck-string-to-case-buffer "shouty-snake" beg end))
 
+(defun string-to-shouty-snake (input-string)
+  "converts input string to shouty-snake case."
+  (heck-string-to-case input-string "shouty-snake"))
+
+;; </string-to shouty-snake>
+;; <string-to shouty-kebab>
 (defun string-to-shouty-kebab-region (beg end)
-  "BEG END."
+  "converts string in region to shouty-kebab case."
   (interactive "*r")
   (heck-string-to-case-buffer "shouty-kebab" beg end))
 
+(defun string-to-shouty-kebab (input-string)
+  "converts input string to shouty-kebab case."
+  (heck-string-to-case input-string "shouty-kebab"))
+
+;; </string-to shouty-kebab>
+;; <string-to pascal>
 (defun string-to-pascal-region (beg end)
-  "BEG END."
+  "converts string in region to pascal case."
   (interactive "*r")
   (heck-string-to-case-buffer "pascal" beg end))
 
+(defun string-to-pascal (input-string)
+  "converts input string to pascal case."
+  (heck-string-to-case input-string "pascal"))
+
+;; </string-to pascal>
+;; <string-to lower-camel>
 (defun string-to-lower-camel-region (beg end)
-  "BEG END."
+  "converts string in region to lower-camel case."
   (interactive "*r")
-  (heck-string-to-case-buffer "camel" beg end))
+  (heck-string-to-case-buffer "lower-camel" beg end))
+
+(defun string-to-lower-camel (input-string)
+  "converts input string to lower-camel case."
+  (heck-string-to-case input-string "lower-camel"))
+
+;; </string-to lower-camel>
+
+
+
+
 
 (defun cargo-craft-get-replace-regexp-pattern-string ()
   "."
@@ -3775,10 +3813,10 @@ cursor position in buffer."
     (select-frame-set-input-focus tmp-frame nil)
     (pop-to-buffer-same-window tmp-buffer nil)))
 
-  ;; 1. set mode in tmp-buffer to current-mode-name
-  ;; 2. open new frame and window with tmp-buffer
-  ;; 3. pop to window/tmp-buffer))
-  ;; (ignore-errors (cleanup-elc))
+;; 1. set mode in tmp-buffer to current-mode-name
+;; 2. open new frame and window with tmp-buffer
+;; 3. pop to window/tmp-buffer))
+;; (ignore-errors (cleanup-elc))
 (setq
  ;; resize-mini-windows is a variable defined in ‘C source code’.
  ;;
@@ -4213,7 +4251,7 @@ signals error if the `string' argument is not a string"
   (list)
   "history of strings input in previous calls to `insert-regexp-negate-string'")
 
-  ;;(enable-debug-on-error)
+;;(enable-debug-on-error)
 (defun get-regexp-string-negation (string)
   (if (not (stringp string))
       (error "string-to-list-of-strings %S" string))
@@ -4285,7 +4323,7 @@ signals error if the `string' argument is not a string"
   );; defun
 
 
-  ;; git-status-porcelain stuff
+;; git-status-porcelain stuff
 (defun git-status-porcelain ()
   "."
   (let* ((git-status-output-buf
@@ -4300,11 +4338,11 @@ signals error if the `string' argument is not a string"
     (ignore-errors (kill-buffer git-status-output-buf))
     (list exitcode output)))
 
-  ;; (defconst git-status-porcelain-class-group-regexp
-  ;;   "\\([[:space:]!?ACDMRTU]\\)"
+;; (defconst git-status-porcelain-class-group-regexp
+;;   "\\([[:space:]!?ACDMRTU]\\)"
 
-  ;;   "regular expression used within `git-status-porcelain-class-group-regexp' in call to `string-match'."
-  ;;   )
+;;   "regular expression used within `git-status-porcelain-class-group-regexp' in call to `string-match'."
+;;   )
 
 (defconst git-status-porcelain-regexp
   ;; "^\\(.\\)\\(.\\)\\s-+\\(.+\\)$"
@@ -4478,7 +4516,7 @@ classified-paths=%S
   );; end defun git-status-get-filenames
 
 
-  ;;(enable-debug-on-error)
+;;(enable-debug-on-error)
 (defun flat-assoc-list-p (seq &optional signal-error)
   "returns `t' if `seq' is valid flat-assoc-list or else `nil', unless
 `signal-error' is not nil, in which case signals an `error' instead.
@@ -4556,8 +4594,8 @@ and minor modes. To be precise, no `auto-mode' changes happen.
 "
 
   )
-  ;; slugify-string (WIP) OzsgKGRlZmNvbnN0IHNsdWdpZnktc3RyaW5nLWRlZmF1bHQtc2VwYXJhdG9yCjs7ICAgIi0iCjs7ICAgInRoZSBzZXBhcmF0b3IgdGhhdCByZXBsYWNlcyBub24tc2x1Zy1jb21wYXRpYmxlIGNoYXJhY3RlcnMgb2YgdGFyZ2V0IHN0cmluZyIpCjs7Cjs7IChkZWZ1biBzbHVnaWZ5LXN0cmluZy1nZXQtbm9uc3RhbmRhcmQtc2VwLWFzc29jKHNlcCkKOzsgICAoaWYgKG5vdCAoc3RyaW5ncCBzZXApKQo7OyAgICAgICAoZXJyb3IgImBzZXAnIGlzIG5vdCBhIHN0cmluZzogJXMiIHNlcCkpCjs7ICAgKHNhdmUtbWF0Y2gtZGF0YQo7OyAgICAgKHdoZW4gKHN0cmluZy1tYXRjaCAiXlxcKFxcKFthLXpBLVowLTlAKy9cXH4hKl8tXStcXClcXHxcXChbXmEtekEtWjAtOVs6c3BhY2U6XVxuXy1dK1xcKVxcKSskIiBzZXApCjs7ICAgICAgIChsaXN0IDphbGwgKG1hdGNoLXN0cmluZyAwIHNlcCkgOztib2R5Cjs7ICAgICAgICAgICAgIDpvdXRlciAobWF0Y2gtc3RyaW5nIDEgc2VwKQo7OyAgICAgICAgICAgICA6YXNjaWkgKG1hdGNoLXN0cmluZyAyIHNlcCkKOzsgICAgICAgICAgICAgOm5vbi1zcGFjZSAobWF0Y2gtc3RyaW5nIDMgc2VwKSkgOztlbmQgd2hlbiBib2R5Cjs7ICAgICAgICAgICAgICkKOzsgICAgICkpCjs7Cjs7IChkZWZ1biBzbHVnaWZ5LXN0cmluZy1yZWdleHAtbWlkZGxlKHNlcCkKOzsgICAicmV0dXJucyB0aGUgcmVnZXhwIHRvIHNsdWdpZnkgc3RyaW5nIGJhc2VkIG9uIGEgZ2l2ZW4gc2VwYXJhdG9yIgo7OyAgIChpZiAobm90IChzdHJpbmdwIHNlcCkpCjs7ICAgICAgIChlcnJvciAiYHNlcCcgaXMgbm90IGEgc3RyaW5nOiAlcyIgc2VwKSkKOzsKOzsgICAobGV0ICgobm9uc3RhbmRhcmQtc2VwCjs7ICAgICAgICAgIChzbHVnaWZ5LXN0cmluZy1nZXQtbm9uc3RhbmRhcmQtc2VwLWFzc29jIHNlcCkpCjs7ICAgICAgICAgKTs7IGVuZCBsZXQgdmFybGlzdAo7OyAgICAgKG9yICh3aGVuIChvciAoc3RyaW5nPSBzZXAgIl8iKQo7OyAgICAgICAgICAgICAgICAgICAoc3RyaW5nPSBzZXAgc2x1Z2lmeS1zdHJpbmctZGVmYXVsdC1zZXBhcmF0b3IpCjs7ICAgICAgICAgICAgICAgICAgIChub3QgKGxpc3RwIG5vbnN0YW5kYXJkLXNlcCkpKQo7OyAgICAgICAgICAgOzsgYm9keQo7OyAgICAgICAgICAgIlteYS16QS1aMC05Xy1dKyIpIDs7ZW5kIHdoZW4gYm9keQo7OyAgICAgICAgICh3aGVuIChsaXN0cCBub25zdGFuZGFyZC1zZXApCjs7ICAgICAgICAgICAobGV0ICgobm9ucy1hbGwgKGZsYXQtbGlzdC1nZXQtYXNzb2Mta2V5LXZhbHVlIG5vbnN0YW5kYXJkLXNlcCA6YWxsKSkKOzsgICAgICAgICAgICAgICAgIChub25zLW91dGVyIChmbGF0LWxpc3QtZ2V0LWFzc29jLWtleS12YWx1ZSBub25zdGFuZGFyZC1zZXAgOm91dGVyKSkKOzsgICAgICAgICAgICAgICAgIChub25zLWFzY2lpIChmbGF0LWxpc3QtZ2V0LWFzc29jLWtleS12YWx1ZSBub25zdGFuZGFyZC1zZXAgOmFzY2lpKSkKOzsgICAgICAgICAgICAgICAgIChub25zLW5zcGMgKGZsYXQtbGlzdC1nZXQtYXNzb2Mta2V5LXZhbHVlIG5vbnN0YW5kYXJkLXNlcCA6bm9uLXNwYWNlKSkpCjs7ICAgICAgICAgICAgS0dNdGJXVnpjMkZuWlMxa1pXSjFaeTF6ZVcxaWIyeHpJQ2hzYVhOMElDZHViMjV6ZEdGdVpHRnlaQzF6WlhBS0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNkdWIyNXpMV0ZzYkNBZ0oyNXZibk10YjNWMFpYSWdJQ2R1YjI1ekxXRnpZMmxwSUNBbmJtOXVjeTF1YzNCaklDZHpaWEFwQ2lBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBbmMyVndJQ2R1YjI1ekxXRnNiQ0FnSjI1dmJuTXRiM1YwWlhJZ0lDZHViMjV6TFdGelkybHBJQ0FuYm05dWN5MXVjM0JqS1E9PQo7Owo7OyAgICAgICAgICAgICAoZm9ybWF0ICJbXmEtekEtWjAtOV8lcy1dKyIgc2x1Z2lmeS1zdHJpbmctZGVmYXVsdC1zZXBhcmF0b3IpKSkKOzsgICAgICAgICBzbHVnaWZ5LXN0cmluZy1kZWZhdWx0LXNlcGFyYXRvcikpCjs7ICAgKQo7Owo7Owo7Owo7OyAoZGVmdW4gc2x1Z2lmeS1zdHJpbmctcmVnZXhwLWVuZHMoc2VwKQo7OyAgICJyZXR1cm5zIHRoZSByZWdleHAgdG8gZml4IHRoZSBlbmRzIG9mIHRoZSBzdHJpbmcgcG9zdCBzbHVnaWZ5aW5nIGl0Igo7OyAgIChpZiAobm90IChzdHJpbmdwIHNlcCkpCjs7ICAgICAgIChlcnJvciAiYHNlcCcgaXMgbm90IGEgc3RyaW5nOiAlcyIgc2VwKSkKOzsgICAobGV0ICgobm9uc3RhbmRhcmQtc2VwCjs7ICAgICAgICAgIChzbHVnaWZ5LXN0cmluZy1nZXQtbm9uc3RhbmRhcmQtc2VwLWFzc29jIHNlcCkpCjs7ICAgICAgICAgKTs7IGVuZCBsZXQgdmFybGlzdAo7OyAgICAgKG9yICh3aGVuIChvciAoc3RyaW5nPSBzZXAgIl8iKQo7OyAgICAgICAgICAgICAgICAgICAoc3RyaW5nPSBzZXAgc2x1Z2lmeS1zdHJpbmctZGVmYXVsdC1zZXBhcmF0b3IpCjs7ICAgICAgICAgICAgICAgICAgIChub3QgKGxpc3RwIG5vbnN0YW5kYXJkLXNlcCkpKQo7OyAgICAgICAgICAgKGZvcm1hdCAiXFwoXlslc10rXFx8WyVzXSskXFwpIiBzZXAgc2VwKSkKOzsgICAgICAgICAod2hlbiAobGlzdHAgbm9uc3RhbmRhcmQtc2VwKQo7OyAgICAgICAgICAgKGxldCAoKG5vbnMtYWxsIChmbGF0LWxpc3QtZ2V0LWFzc29jLWtleS12YWx1ZSBub25zdGFuZGFyZC1zZXAgOmFsbCkpCjs7ICAgICAgICAgICAgICAgICAobm9ucy1vdXRlciAoZmxhdC1saXN0LWdldC1hc3NvYy1rZXktdmFsdWUgbm9uc3RhbmRhcmQtc2VwIDpvdXRlcikpCjs7ICAgICAgICAgICAgICAgICAobm9ucy1hc2NpaSAoZmxhdC1saXN0LWdldC1hc3NvYy1rZXktdmFsdWUgbm9uc3RhbmRhcmQtc2VwIDphc2NpaSkpCjs7ICAgICAgICAgICAgICAgICAobm9ucy1uc3BjIChmbGF0LWxpc3QtZ2V0LWFzc29jLWtleS12YWx1ZSBub25zdGFuZGFyZC1zZXAgOm5vbi1zcGFjZSkpCjs7ICAgICAgICAgICAgICAgICAoYWN0dWFsLXNlcCBzbHVnaWZ5LXN0cmluZy1kZWZhdWx0LXNlcGFyYXRvcikpCjs7ICAgICAgICAgICA7OyBLR010YldWemMyRm5aUzFrWldKMVp5MXplVzFpYjJ4eklDaHNhWE4wSUNkdWIyNXpkR0Z1WkdGeVpDMXpaWEFLSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ2R1YjI1ekxXRnNiQ0FnSjI1dmJuTXRiM1YwWlhJZ0lDZHViMjV6TFdGelkybHBJQ0FuYm05dWN5MXVjM0JqSUNkelpYQXBDaUFnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FuYzJWd0lDZHViMjV6TFdGc2JDQWdKMjV2Ym5NdGIzVjBaWElnSUNkdWIyNXpMV0Z6WTJscElDQW5ibTl1Y3kxdWMzQmpLUT09Cjs7Cjs7ICAgICAgICAgICAgIChmb3JtYXQgIlxcKF5bJXNdK1xcfFslc10rJFxcKSIgYWN0dWFsLXNlcCBhY3R1YWwtc2VwKSkpCjs7ICAgICAgICAgc2x1Z2lmeS1zdHJpbmctZGVmYXVsdC1zZXBhcmF0b3IpCjs7ICAgICApCjs7ICAgKQo7Owo7Owo7OyAoZGVmdW4gc2x1Z2lmeS1zdHJpbmcgKHN0cmluZyAmb3B0aW9uYWwgc2VwYXJhdG9yKQo7OyAgICJyZXR1cm5zIGEgc2x1Z2lmaWVkIHZlcnNpb24gb2YgYHN0cmluZyciCjs7ICAgKGxldCogKChyYXctc2VwICAoc3RyaW5nLXRyaW0gKGNvbmQgKChzdHJpbmdwIHNlcGFyYXRvcikKOzsgCQkJCSAgICAgICBzZXBhcmF0b3IpCjs7IAkJCQkgICAgICAoKGNoYXJhY3RlcnAgc2VwYXJhdG9yKQo7OyAJCQkJICAgICAgIChmb3JtYXQgIiVzIiBzZXBhcmF0b3IpKQo7OyAJCQkJICAgICAgKChudWxsIHNlcGFyYXRvcikgc2x1Z2lmeS1zdHJpbmctZGVmYXVsdC1zZXBhcmF0b3IpCjs7IAkJCQkgICAgICAodCAocHJvZ24KOzsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICh3YXJuICJpZ25vcmluZyBzbHVnaWZ5LXN0cmluZyBhcmd1bWVudCBgc2VwYXJhdG9yJyBiZWNhdXNlIGl0IHVuZXhwZWN0ZWQgdHlwZTogJVMiCjs7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzZXBhcmF0b3IpCjs7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzbHVnaWZ5LXN0cmluZy1kZWZhdWx0LXNlcGFyYXRvcikpKSkpCjs7ICAgICAgICAgIChuLXNlcCAocmVwbGFjZS1yZWdleHAtaW4tc3RyaW5nICJbWzpzcGFjZTpdXSsiICIiIHJhdy1zZXApKQo7OyAgICAgICAgICAobi1sZW4gKGxlbmd0aCBuLXNlcCkpCjs7ICAgICAgICAgIChzZXAgKG9yICh3aGVuICg9IG4tbGVuIDApIHNsdWdpZnktc3RyaW5nLWRlZmF1bHQtc2VwYXJhdG9yKQo7OyAgICAgICAgICAgICAgICAgICBuLXNlcCkpKQo7Owo7OyAgICAgKHJlcGxhY2UtcmVnZXhwLWluLXN0cmluZyBzbHVnaWZ5LXN0cmluZy1yZWdleHAtbWlkZGxlICApKQo7Owo7Owo=
-  ;; uname          (WIP) OzsgKGxldCogKChyZXN1bHQgKGNhbGwtcHJvY2Vzcy1nZXQtc3RhdHVzLWFuZC1pbmZvICJ1bmFtZSIgbmlsICItYSIpKQo7OyAgICAgICAgKGtleXMgKGZsYXQtbGlzdC1nZXQtYXNzb2Mta2V5cyByZXN1bHQpKQo7OyAgICAgICAgKHZhbHVlcyAoZmxhdC1saXN0LWdldC1hc3NvYy12YWx1ZXMgcmVzdWx0KSkKOzsgICAgICAgIChleGl0LWNvZGUgKGZsYXQtbGlzdC1nZXQtYXNzb2Mta2V5LXZhbHVlIHJlc3VsdCA6ZXhpdC1jb2RlKSkKOzsgICAgICAgIChzdGRvdXQgKGZsYXQtbGlzdC1nZXQtYXNzb2Mta2V5LXZhbHVlIHJlc3VsdCA6c3Rkb3V0KSkKOzsgICAgICAgIChzdGRlcnIgKGZsYXQtbGlzdC1nZXQtYXNzb2Mta2V5LXZhbHVlIHJlc3VsdCA6c3RkZXJyKSkKOzsgICAgICAgIChjYWxsLXByb2Nlc3MtYXJncyAoZmxhdC1saXN0LWdldC1hc3NvYy1rZXktdmFsdWUgcmVzdWx0IDpjYWxsLXByb2Nlc3MtYXJncykpCjs7ICAgICAgICAoc2hlbGwtY29tbWFuZCAoZmxhdC1saXN0LWdldC1hc3NvYy1rZXktdmFsdWUgcmVzdWx0IDpzaGVsbC1jb21tYW5kKSkpCgo7OyAgIChlcmFzZS1jLW1lc3NhZ2VzKQo7OyAgIEtHTXRiV1Z6YzJGblpTMWtaV0oxWnkxemVXMWliMnh6SUNoc2FYTjBJQ2R5WlhOMWJIUWdKMnRsZVhNZ0ozWmhiSFZsY3lBblpYaHBkQzFqYjJSbElDZHpkR1J2ZFhRZ0ozTjBaR1Z5Y2lBblkyRnNiQzF3Y205alpYTnpMV0Z5WjNNcElDZHphR1ZzYkMxamIyMXRZVzVrS1E9PQo7OyAgICkKOzsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDsK
+;; slugify-string (WIP) OzsgKGRlZmNvbnN0IHNsdWdpZnktc3RyaW5nLWRlZmF1bHQtc2VwYXJhdG9yCjs7ICAgIi0iCjs7ICAgInRoZSBzZXBhcmF0b3IgdGhhdCByZXBsYWNlcyBub24tc2x1Zy1jb21wYXRpYmxlIGNoYXJhY3RlcnMgb2YgdGFyZ2V0IHN0cmluZyIpCjs7Cjs7IChkZWZ1biBzbHVnaWZ5LXN0cmluZy1nZXQtbm9uc3RhbmRhcmQtc2VwLWFzc29jKHNlcCkKOzsgICAoaWYgKG5vdCAoc3RyaW5ncCBzZXApKQo7OyAgICAgICAoZXJyb3IgImBzZXAnIGlzIG5vdCBhIHN0cmluZzogJXMiIHNlcCkpCjs7ICAgKHNhdmUtbWF0Y2gtZGF0YQo7OyAgICAgKHdoZW4gKHN0cmluZy1tYXRjaCAiXlxcKFxcKFthLXpBLVowLTlAKy9cXH4hKl8tXStcXClcXHxcXChbXmEtekEtWjAtOVs6c3BhY2U6XVxuXy1dK1xcKVxcKSskIiBzZXApCjs7ICAgICAgIChsaXN0IDphbGwgKG1hdGNoLXN0cmluZyAwIHNlcCkgOztib2R5Cjs7ICAgICAgICAgICAgIDpvdXRlciAobWF0Y2gtc3RyaW5nIDEgc2VwKQo7OyAgICAgICAgICAgICA6YXNjaWkgKG1hdGNoLXN0cmluZyAyIHNlcCkKOzsgICAgICAgICAgICAgOm5vbi1zcGFjZSAobWF0Y2gtc3RyaW5nIDMgc2VwKSkgOztlbmQgd2hlbiBib2R5Cjs7ICAgICAgICAgICAgICkKOzsgICAgICkpCjs7Cjs7IChkZWZ1biBzbHVnaWZ5LXN0cmluZy1yZWdleHAtbWlkZGxlKHNlcCkKOzsgICAicmV0dXJucyB0aGUgcmVnZXhwIHRvIHNsdWdpZnkgc3RyaW5nIGJhc2VkIG9uIGEgZ2l2ZW4gc2VwYXJhdG9yIgo7OyAgIChpZiAobm90IChzdHJpbmdwIHNlcCkpCjs7ICAgICAgIChlcnJvciAiYHNlcCcgaXMgbm90IGEgc3RyaW5nOiAlcyIgc2VwKSkKOzsKOzsgICAobGV0ICgobm9uc3RhbmRhcmQtc2VwCjs7ICAgICAgICAgIChzbHVnaWZ5LXN0cmluZy1nZXQtbm9uc3RhbmRhcmQtc2VwLWFzc29jIHNlcCkpCjs7ICAgICAgICAgKTs7IGVuZCBsZXQgdmFybGlzdAo7OyAgICAgKG9yICh3aGVuIChvciAoc3RyaW5nPSBzZXAgIl8iKQo7OyAgICAgICAgICAgICAgICAgICAoc3RyaW5nPSBzZXAgc2x1Z2lmeS1zdHJpbmctZGVmYXVsdC1zZXBhcmF0b3IpCjs7ICAgICAgICAgICAgICAgICAgIChub3QgKGxpc3RwIG5vbnN0YW5kYXJkLXNlcCkpKQo7OyAgICAgICAgICAgOzsgYm9keQo7OyAgICAgICAgICAgIlteYS16QS1aMC05Xy1dKyIpIDs7ZW5kIHdoZW4gYm9keQo7OyAgICAgICAgICh3aGVuIChsaXN0cCBub25zdGFuZGFyZC1zZXApCjs7ICAgICAgICAgICAobGV0ICgobm9ucy1hbGwgKGZsYXQtbGlzdC1nZXQtYXNzb2Mta2V5LXZhbHVlIG5vbnN0YW5kYXJkLXNlcCA6YWxsKSkKOzsgICAgICAgICAgICAgICAgIChub25zLW91dGVyIChmbGF0LWxpc3QtZ2V0LWFzc29jLWtleS12YWx1ZSBub25zdGFuZGFyZC1zZXAgOm91dGVyKSkKOzsgICAgICAgICAgICAgICAgIChub25zLWFzY2lpIChmbGF0LWxpc3QtZ2V0LWFzc29jLWtleS12YWx1ZSBub25zdGFuZGFyZC1zZXAgOmFzY2lpKSkKOzsgICAgICAgICAgICAgICAgIChub25zLW5zcGMgKGZsYXQtbGlzdC1nZXQtYXNzb2Mta2V5LXZhbHVlIG5vbnN0YW5kYXJkLXNlcCA6bm9uLXNwYWNlKSkpCjs7ICAgICAgICAgICAgS0dNdGJXVnpjMkZuWlMxa1pXSjFaeTF6ZVcxaWIyeHpJQ2hzYVhOMElDZHViMjV6ZEdGdVpHRnlaQzF6WlhBS0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNkdWIyNXpMV0ZzYkNBZ0oyNXZibk10YjNWMFpYSWdJQ2R1YjI1ekxXRnpZMmxwSUNBbmJtOXVjeTF1YzNCaklDZHpaWEFwQ2lBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBbmMyVndJQ2R1YjI1ekxXRnNiQ0FnSjI1dmJuTXRiM1YwWlhJZ0lDZHViMjV6TFdGelkybHBJQ0FuYm05dWN5MXVjM0JqS1E9PQo7Owo7OyAgICAgICAgICAgICAoZm9ybWF0ICJbXmEtekEtWjAtOV8lcy1dKyIgc2x1Z2lmeS1zdHJpbmctZGVmYXVsdC1zZXBhcmF0b3IpKSkKOzsgICAgICAgICBzbHVnaWZ5LXN0cmluZy1kZWZhdWx0LXNlcGFyYXRvcikpCjs7ICAgKQo7Owo7Owo7Owo7OyAoZGVmdW4gc2x1Z2lmeS1zdHJpbmctcmVnZXhwLWVuZHMoc2VwKQo7OyAgICJyZXR1cm5zIHRoZSByZWdleHAgdG8gZml4IHRoZSBlbmRzIG9mIHRoZSBzdHJpbmcgcG9zdCBzbHVnaWZ5aW5nIGl0Igo7OyAgIChpZiAobm90IChzdHJpbmdwIHNlcCkpCjs7ICAgICAgIChlcnJvciAiYHNlcCcgaXMgbm90IGEgc3RyaW5nOiAlcyIgc2VwKSkKOzsgICAobGV0ICgobm9uc3RhbmRhcmQtc2VwCjs7ICAgICAgICAgIChzbHVnaWZ5LXN0cmluZy1nZXQtbm9uc3RhbmRhcmQtc2VwLWFzc29jIHNlcCkpCjs7ICAgICAgICAgKTs7IGVuZCBsZXQgdmFybGlzdAo7OyAgICAgKG9yICh3aGVuIChvciAoc3RyaW5nPSBzZXAgIl8iKQo7OyAgICAgICAgICAgICAgICAgICAoc3RyaW5nPSBzZXAgc2x1Z2lmeS1zdHJpbmctZGVmYXVsdC1zZXBhcmF0b3IpCjs7ICAgICAgICAgICAgICAgICAgIChub3QgKGxpc3RwIG5vbnN0YW5kYXJkLXNlcCkpKQo7OyAgICAgICAgICAgKGZvcm1hdCAiXFwoXlslc10rXFx8WyVzXSskXFwpIiBzZXAgc2VwKSkKOzsgICAgICAgICAod2hlbiAobGlzdHAgbm9uc3RhbmRhcmQtc2VwKQo7OyAgICAgICAgICAgKGxldCAoKG5vbnMtYWxsIChmbGF0LWxpc3QtZ2V0LWFzc29jLWtleS12YWx1ZSBub25zdGFuZGFyZC1zZXAgOmFsbCkpCjs7ICAgICAgICAgICAgICAgICAobm9ucy1vdXRlciAoZmxhdC1saXN0LWdldC1hc3NvYy1rZXktdmFsdWUgbm9uc3RhbmRhcmQtc2VwIDpvdXRlcikpCjs7ICAgICAgICAgICAgICAgICAobm9ucy1hc2NpaSAoZmxhdC1saXN0LWdldC1hc3NvYy1rZXktdmFsdWUgbm9uc3RhbmRhcmQtc2VwIDphc2NpaSkpCjs7ICAgICAgICAgICAgICAgICAobm9ucy1uc3BjIChmbGF0LWxpc3QtZ2V0LWFzc29jLWtleS12YWx1ZSBub25zdGFuZGFyZC1zZXAgOm5vbi1zcGFjZSkpCjs7ICAgICAgICAgICAgICAgICAoYWN0dWFsLXNlcCBzbHVnaWZ5LXN0cmluZy1kZWZhdWx0LXNlcGFyYXRvcikpCjs7ICAgICAgICAgICA7OyBLR010YldWemMyRm5aUzFrWldKMVp5MXplVzFpYjJ4eklDaHNhWE4wSUNkdWIyNXpkR0Z1WkdGeVpDMXpaWEFLSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ2R1YjI1ekxXRnNiQ0FnSjI1dmJuTXRiM1YwWlhJZ0lDZHViMjV6TFdGelkybHBJQ0FuYm05dWN5MXVjM0JqSUNkelpYQXBDaUFnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FuYzJWd0lDZHViMjV6TFdGc2JDQWdKMjV2Ym5NdGIzVjBaWElnSUNkdWIyNXpMV0Z6WTJscElDQW5ibTl1Y3kxdWMzQmpLUT09Cjs7Cjs7ICAgICAgICAgICAgIChmb3JtYXQgIlxcKF5bJXNdK1xcfFslc10rJFxcKSIgYWN0dWFsLXNlcCBhY3R1YWwtc2VwKSkpCjs7ICAgICAgICAgc2x1Z2lmeS1zdHJpbmctZGVmYXVsdC1zZXBhcmF0b3IpCjs7ICAgICApCjs7ICAgKQo7Owo7Owo7OyAoZGVmdW4gc2x1Z2lmeS1zdHJpbmcgKHN0cmluZyAmb3B0aW9uYWwgc2VwYXJhdG9yKQo7OyAgICJyZXR1cm5zIGEgc2x1Z2lmaWVkIHZlcnNpb24gb2YgYHN0cmluZyciCjs7ICAgKGxldCogKChyYXctc2VwICAoc3RyaW5nLXRyaW0gKGNvbmQgKChzdHJpbmdwIHNlcGFyYXRvcikKOzsgCQkJCSAgICAgICBzZXBhcmF0b3IpCjs7IAkJCQkgICAgICAoKGNoYXJhY3RlcnAgc2VwYXJhdG9yKQo7OyAJCQkJICAgICAgIChmb3JtYXQgIiVzIiBzZXBhcmF0b3IpKQo7OyAJCQkJICAgICAgKChudWxsIHNlcGFyYXRvcikgc2x1Z2lmeS1zdHJpbmctZGVmYXVsdC1zZXBhcmF0b3IpCjs7IAkJCQkgICAgICAodCAocHJvZ24KOzsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICh3YXJuICJpZ25vcmluZyBzbHVnaWZ5LXN0cmluZyBhcmd1bWVudCBgc2VwYXJhdG9yJyBiZWNhdXNlIGl0IHVuZXhwZWN0ZWQgdHlwZTogJVMiCjs7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzZXBhcmF0b3IpCjs7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzbHVnaWZ5LXN0cmluZy1kZWZhdWx0LXNlcGFyYXRvcikpKSkpCjs7ICAgICAgICAgIChuLXNlcCAocmVwbGFjZS1yZWdleHAtaW4tc3RyaW5nICJbWzpzcGFjZTpdXSsiICIiIHJhdy1zZXApKQo7OyAgICAgICAgICAobi1sZW4gKGxlbmd0aCBuLXNlcCkpCjs7ICAgICAgICAgIChzZXAgKG9yICh3aGVuICg9IG4tbGVuIDApIHNsdWdpZnktc3RyaW5nLWRlZmF1bHQtc2VwYXJhdG9yKQo7OyAgICAgICAgICAgICAgICAgICBuLXNlcCkpKQo7Owo7OyAgICAgKHJlcGxhY2UtcmVnZXhwLWluLXN0cmluZyBzbHVnaWZ5LXN0cmluZy1yZWdleHAtbWlkZGxlICApKQo7Owo7Owo=
+;; uname          (WIP) OzsgKGxldCogKChyZXN1bHQgKGNhbGwtcHJvY2Vzcy1nZXQtc3RhdHVzLWFuZC1pbmZvICJ1bmFtZSIgbmlsICItYSIpKQo7OyAgICAgICAgKGtleXMgKGZsYXQtbGlzdC1nZXQtYXNzb2Mta2V5cyByZXN1bHQpKQo7OyAgICAgICAgKHZhbHVlcyAoZmxhdC1saXN0LWdldC1hc3NvYy12YWx1ZXMgcmVzdWx0KSkKOzsgICAgICAgIChleGl0LWNvZGUgKGZsYXQtbGlzdC1nZXQtYXNzb2Mta2V5LXZhbHVlIHJlc3VsdCA6ZXhpdC1jb2RlKSkKOzsgICAgICAgIChzdGRvdXQgKGZsYXQtbGlzdC1nZXQtYXNzb2Mta2V5LXZhbHVlIHJlc3VsdCA6c3Rkb3V0KSkKOzsgICAgICAgIChzdGRlcnIgKGZsYXQtbGlzdC1nZXQtYXNzb2Mta2V5LXZhbHVlIHJlc3VsdCA6c3RkZXJyKSkKOzsgICAgICAgIChjYWxsLXByb2Nlc3MtYXJncyAoZmxhdC1saXN0LWdldC1hc3NvYy1rZXktdmFsdWUgcmVzdWx0IDpjYWxsLXByb2Nlc3MtYXJncykpCjs7ICAgICAgICAoc2hlbGwtY29tbWFuZCAoZmxhdC1saXN0LWdldC1hc3NvYy1rZXktdmFsdWUgcmVzdWx0IDpzaGVsbC1jb21tYW5kKSkpCgo7OyAgIChlcmFzZS1jLW1lc3NhZ2VzKQo7OyAgIEtHTXRiV1Z6YzJGblpTMWtaV0oxWnkxemVXMWliMnh6SUNoc2FYTjBJQ2R5WlhOMWJIUWdKMnRsZVhNZ0ozWmhiSFZsY3lBblpYaHBkQzFqYjJSbElDZHpkR1J2ZFhRZ0ozTjBaR1Z5Y2lBblkyRnNiQzF3Y205alpYTnpMV0Z5WjNNcElDZHphR1ZzYkMxamIyMXRZVzVrS1E9PQo7OyAgICkKOzsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDsK
 
 (defun shell-script-insert-ansi-clear()
   (interactive)
@@ -4993,7 +5031,7 @@ examples:
   );; end (defun shell-script-gen-variable-declaration ...)
 
 
-  ;; WIP defun shell-script... OzsgKGRlZnVuIHNoZWxsLXNjcmlwdC1pbnNlcnQtZm9yLWVhY2gtaW4taW5kZXhlZC1hcnJheShhcnJheS12YXJpYWJsZS1uYW1lCjs7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgYXJyYXktdmFyaWFibGUtdmFsdWUKOzsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAmb3B0aW9uYWwgdmFyaWFibGUtaXMtbG9jYWwKOzsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBub2Vycm9yCjs7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKQo7OyAgIChpbnRlcmFjdGl2ZSkKOzsgICAoaWYgKG5vdCAoc3RyaW5ncCBhcnJheS12YXJpYWJsZS1uYW1lKSkKOzsgICAgICAgKGVycm9yICJgYXJyYXktdmFyaWFibGUtbmFtZScgaXMgbm90IGEgc3RyaW5nOiAlUyIgYXJyYXktdmFyaWFibGUtbmFtZSkpCjs7ICAgKGlmIChub3QgKGxpc3RwIGFycmF5LXZhcmlhYmxlLXZhbHVlKSkKOzsgICAgICAgKGVycm9yICJgYXJyYXktdmFyaWFibGUtdmFsdWUnIGlzIG5vdCBhIGxpc3Q6ICVTIiBhcnJheS12YXJpYWJsZS12YWx1ZSkpCgo7OyAgIChsZXQqICgoY3VycmVudC1wb3MgKG1hcmtlci1wb3NpdGlvbiAobWFyay1tYXJrZXIpKSkKOzsgICAgICAgICAgKGN1cnJlbnQtbGluZS1udW1iZXIgKGxpbmUtbnVtYmVyLWF0LXBvcyBjdXJyZW50LXBvcykpCjs7ICAgICAgICAgIChjdXJyZW50LWNvbHVtbi1udW1iZXIgKGNvbHVtbi1hdC1wb3MgY3VycmVudC1wb3MpKQo7OyAgICAgICAgICAoZWRpdGluZy1mdW5jdGlvbiB2YXJpYWJsZS1pcy1sb2NhbCkKOzsgICAgICAgICAgKHJlc3VsdCAoc2hlbGwtc2NyaXB0LW1ldGEtZ2VuLXZhcmlhYmxlLWRlY2xhcmF0aW9uCjs7ICAgICAgICAgICAgICAgICAgIGFycmF5LXZhcmlhYmxlLW5hbWUKOzsgICAgICAgICAgICAgICAgICAgYXJyYXktdmFyaWFibGUtdmFsdWUKOzsgICAgICAgICAgICAgICAgICAgdmFyaWFibGUtaXMtbG9jYWwKOzsgICAgICAgICAgICAgICAgICAgbm9lcnJvcgo7OyAgICAgICAgICAgICAgICAgICB0Cjs7ICAgICAgICAgICAgICAgICAgICJcbiIpKQo7OyAgICAgICAgICAoZGVjbGFyYXRpb25zLXN0cmluZyAoc2hlbGwtc2NyaXB0LWdlbi12YXJpYWJsZS1kZWNsYXJhdGlvbi1mcm9tLWZsYXQtYXNzb2MtbGlzdCByZXN1bHQpKQo7OyAgICAgICAgICAoc2FmZS12YXJpYWJsZS1kZWNsYXJlLWtleXdvcmQgKGZsYXQtbGlzdC1nZXQtYXNzb2Mta2V5LXZhbHVlIHJlc3VsdCA6ZGVjbGFyYXRpb24ta2V5d29yZCkpCjs7ICAgICAgICAgIChzYWZlLXZhcmlhYmxlLWZsYWcgKGZsYXQtbGlzdC1nZXQtYXNzb2Mta2V5LXZhbHVlIHJlc3VsdCA6ZGVjbGFyYXRpb24tZmxhZykpCjs7ICAgICAgICAgIChzYWZlLXZhcmlhYmxlLW5hbWUgKGZsYXQtbGlzdC1nZXQtYXNzb2Mta2V5LXZhbHVlIHJlc3VsdCA6dmFyaWFibGUtbmFtZSkpCjs7ICAgICAgICAgIChzYWZlLXZhcmlhYmxlLXZhbHVlIChmbGF0LWxpc3QtZ2V0LWFzc29jLWtleS12YWx1ZSByZXN1bHQgOnZhcmlhYmxlLXZhbHVlKSkKOzsgICAgICAgICAgKQoKCjs7ICAgKGluc2VydCAiCjs7ICAgICAlcwo7OyAgICAgaWYgWyAkeyVzfSAtZ3QgMCBdOyB0aGVuCjs7ICAgICAgICAgJXMgLS0gYXJnPSIiCjs7ICAgICAgICAgZm9yIGluZGV4IGluICR7ISVzW0BdfTsgZG8KOzsgICAgICAgICAgICAgJXMgLWkgY3VycmVudD0kKCggJGluZGV4ICsgMSApKQo7OyAgICAgICAgICAgICBhcmc9JHslc1skaW5kZXhdfQo7OyAgICAgICAgIGRvbmUKOzsgICAgIGZpCjs7ICIgdmFyaWFibGUtZGVjbGFyYXRpb24ta2V5d29yZCApKQo7OyAgICkK
+;; WIP defun shell-script... OzsgKGRlZnVuIHNoZWxsLXNjcmlwdC1pbnNlcnQtZm9yLWVhY2gtaW4taW5kZXhlZC1hcnJheShhcnJheS12YXJpYWJsZS1uYW1lCjs7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgYXJyYXktdmFyaWFibGUtdmFsdWUKOzsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAmb3B0aW9uYWwgdmFyaWFibGUtaXMtbG9jYWwKOzsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBub2Vycm9yCjs7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKQo7OyAgIChpbnRlcmFjdGl2ZSkKOzsgICAoaWYgKG5vdCAoc3RyaW5ncCBhcnJheS12YXJpYWJsZS1uYW1lKSkKOzsgICAgICAgKGVycm9yICJgYXJyYXktdmFyaWFibGUtbmFtZScgaXMgbm90IGEgc3RyaW5nOiAlUyIgYXJyYXktdmFyaWFibGUtbmFtZSkpCjs7ICAgKGlmIChub3QgKGxpc3RwIGFycmF5LXZhcmlhYmxlLXZhbHVlKSkKOzsgICAgICAgKGVycm9yICJgYXJyYXktdmFyaWFibGUtdmFsdWUnIGlzIG5vdCBhIGxpc3Q6ICVTIiBhcnJheS12YXJpYWJsZS12YWx1ZSkpCgo7OyAgIChsZXQqICgoY3VycmVudC1wb3MgKG1hcmtlci1wb3NpdGlvbiAobWFyay1tYXJrZXIpKSkKOzsgICAgICAgICAgKGN1cnJlbnQtbGluZS1udW1iZXIgKGxpbmUtbnVtYmVyLWF0LXBvcyBjdXJyZW50LXBvcykpCjs7ICAgICAgICAgIChjdXJyZW50LWNvbHVtbi1udW1iZXIgKGNvbHVtbi1hdC1wb3MgY3VycmVudC1wb3MpKQo7OyAgICAgICAgICAoZWRpdGluZy1mdW5jdGlvbiB2YXJpYWJsZS1pcy1sb2NhbCkKOzsgICAgICAgICAgKHJlc3VsdCAoc2hlbGwtc2NyaXB0LW1ldGEtZ2VuLXZhcmlhYmxlLWRlY2xhcmF0aW9uCjs7ICAgICAgICAgICAgICAgICAgIGFycmF5LXZhcmlhYmxlLW5hbWUKOzsgICAgICAgICAgICAgICAgICAgYXJyYXktdmFyaWFibGUtdmFsdWUKOzsgICAgICAgICAgICAgICAgICAgdmFyaWFibGUtaXMtbG9jYWwKOzsgICAgICAgICAgICAgICAgICAgbm9lcnJvcgo7OyAgICAgICAgICAgICAgICAgICB0Cjs7ICAgICAgICAgICAgICAgICAgICJcbiIpKQo7OyAgICAgICAgICAoZGVjbGFyYXRpb25zLXN0cmluZyAoc2hlbGwtc2NyaXB0LWdlbi12YXJpYWJsZS1kZWNsYXJhdGlvbi1mcm9tLWZsYXQtYXNzb2MtbGlzdCByZXN1bHQpKQo7OyAgICAgICAgICAoc2FmZS12YXJpYWJsZS1kZWNsYXJlLWtleXdvcmQgKGZsYXQtbGlzdC1nZXQtYXNzb2Mta2V5LXZhbHVlIHJlc3VsdCA6ZGVjbGFyYXRpb24ta2V5d29yZCkpCjs7ICAgICAgICAgIChzYWZlLXZhcmlhYmxlLWZsYWcgKGZsYXQtbGlzdC1nZXQtYXNzb2Mta2V5LXZhbHVlIHJlc3VsdCA6ZGVjbGFyYXRpb24tZmxhZykpCjs7ICAgICAgICAgIChzYWZlLXZhcmlhYmxlLW5hbWUgKGZsYXQtbGlzdC1nZXQtYXNzb2Mta2V5LXZhbHVlIHJlc3VsdCA6dmFyaWFibGUtbmFtZSkpCjs7ICAgICAgICAgIChzYWZlLXZhcmlhYmxlLXZhbHVlIChmbGF0LWxpc3QtZ2V0LWFzc29jLWtleS12YWx1ZSByZXN1bHQgOnZhcmlhYmxlLXZhbHVlKSkKOzsgICAgICAgICAgKQoKCjs7ICAgKGluc2VydCAiCjs7ICAgICAlcwo7OyAgICAgaWYgWyAkeyVzfSAtZ3QgMCBdOyB0aGVuCjs7ICAgICAgICAgJXMgLS0gYXJnPSIiCjs7ICAgICAgICAgZm9yIGluZGV4IGluICR7ISVzW0BdfTsgZG8KOzsgICAgICAgICAgICAgJXMgLWkgY3VycmVudD0kKCggJGluZGV4ICsgMSApKQo7OyAgICAgICAgICAgICBhcmc9JHslc1skaW5kZXhdfQo7OyAgICAgICAgIGRvbmUKOzsgICAgIGZpCjs7ICIgdmFyaWFibGUtZGVjbGFyYXRpb24ta2V5d29yZCApKQo7OyAgICkK
 
 (defvar debug-fun-history (list) "history of calls to `debug-fun'")
 
@@ -5364,7 +5402,7 @@ examples:
           (error "`width' is not a positive number: %S" width))))
     (string-join (make-list width ""))))
 
-  ;; OzsgKGRlZnVuIGVuc3VyZS1saXN0LW9mLXN0cmluZ3MgKHN0cmluZ3MgJm9wdGlvbmFsIG5vZXJyb3IpCjs7ICAgInRha2VzIGEgbGlzdCBvZiBzdHJpbmdzIGFuZCByZXR1cm5zIGEgbGlzdCB3aGVyZSBldmVyeSBpdGVtIGlzIGEgc3RyaW5nCjs7IGBTVFJJTkdTJyBpcyBhIGxpc3Qgb2Ygc3RyaW5ncwoKOzsgVGhlIG9wdGlvbmFsIHRoaXJkIGFyZ3VtZW50IGBOT0VSUk9SJyBpbmRpY2F0ZXMgd2hhdCBzaG91bGQgaGFwcGVuIHdoZW4KOzsgYW55IGVsZW1lbnQgaW4gdGhlIGBTVFJJTkdTJyBsaXN0IGlzIG5vdCBhIHN0cmluZzogaWYgaXQgaXMgbmlsIG9yCjs7IG9taXR0ZWQsIGVtaXQgYW4gZXJyb3I7Cjs7IGZsYXR0ZW5zIG5lc3RlZCBsaXN0cyBpZiBgQVJHJyBpcyBgZmxhdCcuCjs7IG1vZGUgaWYgQVJHIGlzIG5pbCwgb21pdHRlZCwgb3IgaXMgYSBwb3NpdGl2ZSBudW1iZXIuICBEaXNhYmxlIHRoZSBtb2RlCjs7IGlmIEFSRyBpcyBhIG5lZ2F0aXZlIG51bWJlci4KCjs7IGlmIGl0IGlzIHQgb3IgYW55IG5vbi1uaWwgdmFsdWUsIGNvbnZlcnQgdGhlCjs7IGVsZW1lbnQgdG8gc3RyaW5nIGxpa2UgYHByaW5jJyB3b3VsZC4KOzsgIgo7OyAgIChsZXQgKChwYWRkaW5nIChtYWtlLWluZGVudCB3aWR0aCkpCjs7ICAgICAgICAgKGl0ZW1zIChzZXEtbWFwLWluZGV4ZWQKOzsgICAgICAgICAgICAgICAgICMnKGxhbWJkYSAoaW5kZXggaXRlbSkKOzsgICAgICAgICAgICAgICAgICAgICAodW5sZXNzIChhbmQgKHN0cmluZ3AgaXRlbSkgbm9lcnJvcikKOzsgICAgICAgICAgICAgICAgICAgICAgIChlcnJvciAiYHN0cmluZ3MnIGVsZW1lbnQgJXMgaXMgbm90IGEgc3RyaW5nIGNvbnM6ICVTIiBpbmRleCBpdGVtKSkKOzsgICAgICAgICAgICAgICAgICAgICAoZm9ybWF0ICIlcyVzIiBwYWRkaW5nIGl0ZW0pKSkpKSkpCg==
+;; OzsgKGRlZnVuIGVuc3VyZS1saXN0LW9mLXN0cmluZ3MgKHN0cmluZ3MgJm9wdGlvbmFsIG5vZXJyb3IpCjs7ICAgInRha2VzIGEgbGlzdCBvZiBzdHJpbmdzIGFuZCByZXR1cm5zIGEgbGlzdCB3aGVyZSBldmVyeSBpdGVtIGlzIGEgc3RyaW5nCjs7IGBTVFJJTkdTJyBpcyBhIGxpc3Qgb2Ygc3RyaW5ncwoKOzsgVGhlIG9wdGlvbmFsIHRoaXJkIGFyZ3VtZW50IGBOT0VSUk9SJyBpbmRpY2F0ZXMgd2hhdCBzaG91bGQgaGFwcGVuIHdoZW4KOzsgYW55IGVsZW1lbnQgaW4gdGhlIGBTVFJJTkdTJyBsaXN0IGlzIG5vdCBhIHN0cmluZzogaWYgaXQgaXMgbmlsIG9yCjs7IG9taXR0ZWQsIGVtaXQgYW4gZXJyb3I7Cjs7IGZsYXR0ZW5zIG5lc3RlZCBsaXN0cyBpZiBgQVJHJyBpcyBgZmxhdCcuCjs7IG1vZGUgaWYgQVJHIGlzIG5pbCwgb21pdHRlZCwgb3IgaXMgYSBwb3NpdGl2ZSBudW1iZXIuICBEaXNhYmxlIHRoZSBtb2RlCjs7IGlmIEFSRyBpcyBhIG5lZ2F0aXZlIG51bWJlci4KCjs7IGlmIGl0IGlzIHQgb3IgYW55IG5vbi1uaWwgdmFsdWUsIGNvbnZlcnQgdGhlCjs7IGVsZW1lbnQgdG8gc3RyaW5nIGxpa2UgYHByaW5jJyB3b3VsZC4KOzsgIgo7OyAgIChsZXQgKChwYWRkaW5nIChtYWtlLWluZGVudCB3aWR0aCkpCjs7ICAgICAgICAgKGl0ZW1zIChzZXEtbWFwLWluZGV4ZWQKOzsgICAgICAgICAgICAgICAgICMnKGxhbWJkYSAoaW5kZXggaXRlbSkKOzsgICAgICAgICAgICAgICAgICAgICAodW5sZXNzIChhbmQgKHN0cmluZ3AgaXRlbSkgbm9lcnJvcikKOzsgICAgICAgICAgICAgICAgICAgICAgIChlcnJvciAiYHN0cmluZ3MnIGVsZW1lbnQgJXMgaXMgbm90IGEgc3RyaW5nIGNvbnM6ICVTIiBpbmRleCBpdGVtKSkKOzsgICAgICAgICAgICAgICAgICAgICAoZm9ybWF0ICIlcyVzIiBwYWRkaW5nIGl0ZW0pKSkpKSkpCg==
 (defun indent-strings (strings &optional width noerror)
   "takes a list of strings and return a new list indenting each string
 `STRINGS' is a list of strings
@@ -5492,7 +5530,7 @@ element to string like `princ' would.
 
 (defun current-indentation-in-columns()
   (or (plist-get (current-indentation-data) :column) 0))
-  ;;${BASH_SOURCE[0]}:${BASH_LINENO[0]}
+;;${BASH_SOURCE[0]}:${BASH_LINENO[0]}
 (defun shell-script-insert-argv-skel(&optional local arg-prefix log-prefix)
   (unless (or (stringp log-prefix) (null log-prefix))
     (signal 'type-error
@@ -5646,20 +5684,20 @@ element to string like `princ' would.
   (let* ((new-end (copy-marker end))
          (last-pos (copy-marker end)))
     (save-mark-excursion-and-match-data
-      (widen)
-      (replace-regexp-in-region
-       "\\(do\\|;\\)\\s-+\\b\\(if\\|then\\|else\\|fi\\|done\\)\\b"
-       "\\1\n\\2\n" beg end)
-      (setq last-pos (point) new-end (point)))
+     (widen)
+     (replace-regexp-in-region
+      "\\(do\\|;\\)\\s-+\\b\\(if\\|then\\|else\\|fi\\|done\\)\\b"
+      "\\1\n\\2\n" beg end)
+     (setq last-pos (point) new-end (point)))
 
     (save-mark-excursion-and-match-data
-      (replace-regexp-in-region
-       "\\(if\\|then\\)[\n[:space:]]+"
-       "\\1 " beg new-end)
-      (replace-regexp-in-region
-       "\\(;\\)\\(\\s-*\\)\n\\(\\s-*\\)\\(then\\)\\s-+"
-       "\\1 \\2 \\3\\4\n\\2\\3"
-       beg new-end)) ;; save-mark-excursion-and-match-data
+     (replace-regexp-in-region
+      "\\(if\\|then\\)[\n[:space:]]+"
+      "\\1 " beg new-end)
+     (replace-regexp-in-region
+      "\\(;\\)\\(\\s-*\\)\n\\(\\s-*\\)\\(then\\)\\s-+"
+      "\\1 \\2 \\3\\4\n\\2\\3"
+      beg new-end)) ;; save-mark-excursion-and-match-data
     (save-mark-and-excursion
       (widen)
       (goto-char beg)
@@ -5669,24 +5707,24 @@ element to string like `princ' would.
       (flush-lines "^\\s-*[;]\\s-*$" beg new-end)));; let*
   );defun
 
-  ;; (defun shell-script-transform-manpage-into-case-esac-arg-matchers-region(beg end)
-  ;;   (interactive "*r")
-  ;;   (let* (
-  ;;          (main-regexp  "\\(\\s-+\\)\\([-]\\([a-zA-Z]+\\|[[]\\|[]]\\)+\\)\\(,\\s-+\\([-][-]\\([^=*\n]*\\|[a-z0-9-]\\)\\)\\(=.*\\)?\\)+")
-  ;;          (second-regexp  "^\\(\\s-+\\)\\([--][a-z0-9-]+\\)\\(=.*\\|[^a-z0-9)\n]\\)?$")
-  ;;          (pre-algo-regex "^\\(?:\\s-+\\|[|]\\)\\(?:[-]\\)\\([a-z0-9-]+\\)\\(?:[[]\\([a-z0-9]+\\)[]]\\)")
-  ;;          )
-  ;;     (replace-regexp-in-region main-regexp
-  ;;                               (save-mark-excursion-and-match-data
-  ;;                                (goto-char beg)
-  ;;                                (while (re-search-forward main-regexp end t)
-  ;;                                  (replace-match
-  ;;                                   )
-  ;;                                  )
-  ;;                                )
-  ;;                               )
-  ;;     )
-  ;;   )
+;; (defun shell-script-transform-manpage-into-case-esac-arg-matchers-region(beg end)
+;;   (interactive "*r")
+;;   (let* (
+;;          (main-regexp  "\\(\\s-+\\)\\([-]\\([a-zA-Z]+\\|[[]\\|[]]\\)+\\)\\(,\\s-+\\([-][-]\\([^=*\n]*\\|[a-z0-9-]\\)\\)\\(=.*\\)?\\)+")
+;;          (second-regexp  "^\\(\\s-+\\)\\([--][a-z0-9-]+\\)\\(=.*\\|[^a-z0-9)\n]\\)?$")
+;;          (pre-algo-regex "^\\(?:\\s-+\\|[|]\\)\\(?:[-]\\)\\([a-z0-9-]+\\)\\(?:[[]\\([a-z0-9]+\\)[]]\\)")
+;;          )
+;;     (replace-regexp-in-region main-regexp
+;;                               (save-mark-excursion-and-match-data
+;;                                (goto-char beg)
+;;                                (while (re-search-forward main-regexp end t)
+;;                                  (replace-match
+;;                                   )
+;;                                  )
+;;                                )
+;;                               )
+;;     )
+;;   )
 
 (define-error 'format-string-error "Format Error" 'c-functions-internal-error)
 (define-error 'type-error "Type Error" 'error)
@@ -5800,21 +5838,21 @@ element to string like `princ' would.
 
 
 
-  ;; (symbol-plist #'current-buffer):
-  ;;(
+;; (symbol-plist #'current-buffer):
+;;(
 ;;;byte-compile byte-compile-no-args byte-opcode byte-current-buffer gv-expander #
-  ;;[
+;;[
 ;;;385 ""
-  ;;[
+;;[
 ;;;gv--defsetter current-buffer #
-  ;;[
+;;[
 ;;;385 ""
-  ;;[
+;;[
 ;;;set-buffer append] 6 ...]] 7
-  ;;(
+;;(
 ;;;"/Applications/Emacs.app/Contents/Resources/lisp/emacs-lisp/gv.elc" . 8972)] byte-obsolete-generalized-variable
-  ;;(
-  ;;{
+;;(
+;;{
 ;;;set-buffer "29.1") side-effect-free error-free)
 
 (defun mkdir-p (path)
@@ -5904,8 +5942,8 @@ Margins::.
 
 
 "
-     (interactive "*r")
-     (add-text-properties beg end (list 'right-margin 10)))
+  (interactive "*r")
+  (add-text-properties beg end (list 'right-margin 10)))
 
 
 
@@ -5917,40 +5955,40 @@ Margins::.
 
 
 
-  ;; MP""""""`MM                                     dP
-  ;; M  mmmmm..M                                     88
-  ;; M.      `YM .d8888b. .d8888b. 88d888b. .d8888b. 88d888b.
-  ;; MMMMMMM.  M 88ooood8 88'  `88 88'  `88 88'  `"" 88'  `88
-  ;; M. .MMM'  M 88.  ... 88.  .88 88       88.  ... 88    88
-  ;; Mb.     .dM `88888P' `88888P8 dP       `88888P' dP    dP
-  ;; MMMMMMMMMMM
+;; MP""""""`MM                                     dP
+;; M  mmmmm..M                                     88
+;; M.      `YM .d8888b. .d8888b. 88d888b. .d8888b. 88d888b.
+;; MMMMMMM.  M 88ooood8 88'  `88 88'  `88 88'  `"" 88'  `88
+;; M. .MMM'  M 88.  ... 88.  .88 88       88.  ... 88    88
+;; Mb.     .dM `88888P' `88888P8 dP       `88888P' dP    dP
+;; MMMMMMMMMMM
 
 (defclass search-info ()
-  ((beginning :initarg :beginning
-	      :type (or integer marker)
-	      :documentation "the `point' within the searched `buffer' (integer or marker) to the beginning of a successful search result"
-	      :writer search-info-set-beginning
-	      :reader search-info-get-beginning)
-   (end :initarg :end
-	:type (or integer marker)
-	:documentation "the `point' within the searched `buffer' (integer or marker) to the end of a successful search result"
-	:writer search-info-set-end
-	:reader search-info-get-end)
-   (direction :initarg :direction
-	      :type (member :forward :backward)
-	      :documentation "the direction of a successful search (either :forward or :backward)"
-	      :writer search-info-set-direction
-	      :reader search-info-get-direction)
-   (query :initarg :query
-	  :type string
-	  :documentation "the \"string\" used in the search. if `:type' is `'regexp' then `:query' is a regular-expression written in the \"string\" syntax since that's the format used in `isearch-regexp-forward' and `isearch-regexp-forward'"
-	  :writer search-info-set-query
-	  :reader search-info-get-query)
-   (type :initarg :type
-	 :type (member :regexp :string 'regexp 'string)
-	 :documentation "the type of a search-info (either `'regexp' or `'string'"
-	 :writer search-info-set-type
-	 :reader search-info-get-type)))
+	  ((beginning :initarg :beginning
+		      :type (or integer marker)
+		      :documentation "the `point' within the searched `buffer' (integer or marker) to the beginning of a successful search result"
+		      :writer search-info-set-beginning
+		      :reader search-info-get-beginning)
+	   (end :initarg :end
+		:type (or integer marker)
+		:documentation "the `point' within the searched `buffer' (integer or marker) to the end of a successful search result"
+		:writer search-info-set-end
+		:reader search-info-get-end)
+	   (direction :initarg :direction
+		      :type (member :forward :backward)
+		      :documentation "the direction of a successful search (either :forward or :backward)"
+		      :writer search-info-set-direction
+		      :reader search-info-get-direction)
+	   (query :initarg :query
+		  :type string
+		  :documentation "the \"string\" used in the search. if `:type' is `'regexp' then `:query' is a regular-expression written in the \"string\" syntax since that's the format used in `isearch-regexp-forward' and `isearch-regexp-forward'"
+		  :writer search-info-set-query
+		  :reader search-info-get-query)
+	   (type :initarg :type
+		 :type (member :regexp :string 'regexp 'string)
+		 :documentation "the type of a search-info (either `'regexp' or `'string'"
+		 :writer search-info-set-type
+		 :reader search-info-get-type)))
 
 
 (defun make-search-info (beg end direction query type)
@@ -6123,134 +6161,134 @@ Margins::.
             (replace-match replacement nil t)))))))
 
 
-  ;;WIP/broken
-  ;;(defun get-region-plist()
-  ;;  (let (
-  ;;         (region-is-active (region-active-p))
-  ;;         (point-min-restricted (point-min))
-  ;;         (point-max-restricted (point-min))
-  ;;         (region-beg-restricted (region-beginning))
-  ;;         (region-end-restricted (region-end))
-  ;;         restriction-is-set
-  ;;          point-min-widen
-  ;;          point-max-widen
-  ;;          region-beg-widen
-  ;;          region-end-widen
-  ;;          result (list)
-  ;;         )
-  ;;
-  ;;  (save-mark-and-excursion
-  ;;    (widen)
-  ;;         (setq region-is-active (region-active-p))
-  ;;         (setq point-min-widen (point-min))
-  ;;         (setq point-max-widen (point-min))
-  ;;         (setq region-beg-widen (region-beginning))
-  ;;         (setq region-end-widen (region-end)))
-  ;;
-  ;;  (when region-is-active
-  ;;    (setq result (append result (list :region (list ;; widen or restricted?
-  ;;                                               :beg region-beg-widen
-  ;;                                               :end region-end-widen)))))
-  ;;
-  ;;  (setq result (append result (list
-  ;;                               :restricted (list
-  ;;                                            :beg region-beg-restricted
-  ;;                                            :end region-end-restricted))))
-  ;;
-  ;;  (setq result (append result (list
-  ;;                               :widen (list
-  ;;                                            :beg region-beg-widen
-  ;;                                            :end region-end-widen))))
-  ;;
-  ;;  (setq restriction-is-set
-  ;;        (or (not (= region-beg-restricted region-beg-widen))
-  ;;            (not (= region-end-restricted region-end-widen))))
-  ;;
-  ;;  (unless restriction-is-set
-  ;;      (setq result (append result (list
-  ;;                                   :beg region-beg-widen
-  ;;                                   :end region-end-widen))))
-  ;;
-  ;;  (when restriction-is-set
-  ;;      (setq result (append result (list
-  ;;                                   :beg region-beg-restricted
-  ;;                                   :end region-end-restricted))))
-  ;;  result
-  ;;  )
-  ;;  )
-  ;;
-  ;;
-  ;;
-  ;;(defun wrap-lines-in-quotes-buffer (&optional beg end quote-type trailing-char count)
-  ;;  "wrap each line in quotes of `quote-type' within within whole buffer or region - provided that region is active.
-  ;;
-  ;;
-  ;;`quote-type' is `symbol', `keyword' or `string', otherwise defaults to `double'.
-  ;;`trailing-char' can be a `string' to be added after the quote at the end of each line.
-  ;;
-  ;;the last argument, `count' is passed to the form `re-search-forward'
-  ;;
-  ;;when `quote-type' is a string, use that string literally at the
-  ;;beginning and end of each line.  when it is a symbol, the only two valid
-  ;;values are `'single' and `'double', or `:single' and `:double' if it is
-  ;;a keyword.
-  ;;
-  ;;
-  ;;"
-  ;;  ;; (declare)
-  ;;  (let* ((region-data (when (and  (number-or-marker-p beg)
-  ;;                                  (number-or-marker-p end) )
-  ;;                        (get-region-plist)))
-  ;;         (beg (if (plistp region-data)
-  ;;                  (plist-get region-data :beg)
-  ;;                beg))
-  ;;         (end (if (plistp region-data)
-  ;;                  (plist-get region-data :end)
-  ;;                end))
-  ;;
-  ;;         (trailing-char (if (stringp trailing-char) trailing-char ""))
-  ;;         (quote-char (cond ((and (stringp quote-type) (length> quote-type 0))
-  ;;                            (format "%s" quote-type))
-  ;;
-  ;;                           ((or (equal quote-type 'single)
-  ;;                               (equal quote-type :single))
-  ;;                           "'")
-  ;;                           ((or (equal quote-type 'double)
-  ;;                                (equal quote-type :double))
-  ;;                            "\"")
-  ;;                           (t "\"")))
-  ;;
-  ;;         (sol quote-char)
-  ;;         (eol (format "%s%s" quote-char trailing-char))
-  ;;         )
-  ;;
-  ;;    (save-match-data
-  ;;      (save-mark-and-excursion
-  ;;        (while (re-search-forward "^\\(\\s-*\\)\\(.*\\)$" end t count)
-  ;;          (replace-match (format "%s%s%s%s"  (match-string 1) sol (match-string 2) eol)))))
-  ;;    )
-  ;;
-  ;;  )
-  ;;
-  ;;
-  ;;(defun wrap-lines-in-quotes-guess-trailing-char-from-mode-name ()
-  ;;  (cond ((seq-contains-p (list "py-mode" "python-mode"  "typescript-mode" "javascript-mode")
-  ;;                         (Ox33b4O/$/mode-name))
-  ;;         ",")
-  ;;        (t "")))
-  ;;
-  ;;
-  ;;
-  ;;(defun wrap-lines-in-double-quotes-region (beg end)
-  ;;  (interactive "*r")
-  ;;  (let ((trailing-char (wrap-lines-in-quotes-guess-trailing-char-from-mode-name)))
-  ;;    (wrap-lines-in-quotes-buffer beg end :double trailing-char)))
-  ;;
-  ;;(defun wrap-lines-in-single-quotes-region (beg end)
-  ;;  (interactive "*r")
-  ;;  (let ((trailing-char (wrap-lines-in-quotes-guess-trailing-char-from-mode-name)))
-  ;;    (wrap-lines-in-quotes-buffer beg end :single trailing-char)))
-  ;;
+;;WIP/broken
+;;(defun get-region-plist()
+;;  (let (
+;;         (region-is-active (region-active-p))
+;;         (point-min-restricted (point-min))
+;;         (point-max-restricted (point-min))
+;;         (region-beg-restricted (region-beginning))
+;;         (region-end-restricted (region-end))
+;;         restriction-is-set
+;;          point-min-widen
+;;          point-max-widen
+;;          region-beg-widen
+;;          region-end-widen
+;;          result (list)
+;;         )
+;;
+;;  (save-mark-and-excursion
+;;    (widen)
+;;         (setq region-is-active (region-active-p))
+;;         (setq point-min-widen (point-min))
+;;         (setq point-max-widen (point-min))
+;;         (setq region-beg-widen (region-beginning))
+;;         (setq region-end-widen (region-end)))
+;;
+;;  (when region-is-active
+;;    (setq result (append result (list :region (list ;; widen or restricted?
+;;                                               :beg region-beg-widen
+;;                                               :end region-end-widen)))))
+;;
+;;  (setq result (append result (list
+;;                               :restricted (list
+;;                                            :beg region-beg-restricted
+;;                                            :end region-end-restricted))))
+;;
+;;  (setq result (append result (list
+;;                               :widen (list
+;;                                            :beg region-beg-widen
+;;                                            :end region-end-widen))))
+;;
+;;  (setq restriction-is-set
+;;        (or (not (= region-beg-restricted region-beg-widen))
+;;            (not (= region-end-restricted region-end-widen))))
+;;
+;;  (unless restriction-is-set
+;;      (setq result (append result (list
+;;                                   :beg region-beg-widen
+;;                                   :end region-end-widen))))
+;;
+;;  (when restriction-is-set
+;;      (setq result (append result (list
+;;                                   :beg region-beg-restricted
+;;                                   :end region-end-restricted))))
+;;  result
+;;  )
+;;  )
+;;
+;;
+;;
+;;(defun wrap-lines-in-quotes-buffer (&optional beg end quote-type trailing-char count)
+;;  "wrap each line in quotes of `quote-type' within within whole buffer or region - provided that region is active.
+;;
+;;
+;;`quote-type' is `symbol', `keyword' or `string', otherwise defaults to `double'.
+;;`trailing-char' can be a `string' to be added after the quote at the end of each line.
+;;
+;;the last argument, `count' is passed to the form `re-search-forward'
+;;
+;;when `quote-type' is a string, use that string literally at the
+;;beginning and end of each line.  when it is a symbol, the only two valid
+;;values are `'single' and `'double', or `:single' and `:double' if it is
+;;a keyword.
+;;
+;;
+;;"
+;;  ;; (declare)
+;;  (let* ((region-data (when (and  (number-or-marker-p beg)
+;;                                  (number-or-marker-p end) )
+;;                        (get-region-plist)))
+;;         (beg (if (plistp region-data)
+;;                  (plist-get region-data :beg)
+;;                beg))
+;;         (end (if (plistp region-data)
+;;                  (plist-get region-data :end)
+;;                end))
+;;
+;;         (trailing-char (if (stringp trailing-char) trailing-char ""))
+;;         (quote-char (cond ((and (stringp quote-type) (length> quote-type 0))
+;;                            (format "%s" quote-type))
+;;
+;;                           ((or (equal quote-type 'single)
+;;                               (equal quote-type :single))
+;;                           "'")
+;;                           ((or (equal quote-type 'double)
+;;                                (equal quote-type :double))
+;;                            "\"")
+;;                           (t "\"")))
+;;
+;;         (sol quote-char)
+;;         (eol (format "%s%s" quote-char trailing-char))
+;;         )
+;;
+;;    (save-match-data
+;;      (save-mark-and-excursion
+;;        (while (re-search-forward "^\\(\\s-*\\)\\(.*\\)$" end t count)
+;;          (replace-match (format "%s%s%s%s"  (match-string 1) sol (match-string 2) eol)))))
+;;    )
+;;
+;;  )
+;;
+;;
+;;(defun wrap-lines-in-quotes-guess-trailing-char-from-mode-name ()
+;;  (cond ((seq-contains-p (list "py-mode" "python-mode"  "typescript-mode" "javascript-mode")
+;;                         (Ox33b4O/$/mode-name))
+;;         ",")
+;;        (t "")))
+;;
+;;
+;;
+;;(defun wrap-lines-in-double-quotes-region (beg end)
+;;  (interactive "*r")
+;;  (let ((trailing-char (wrap-lines-in-quotes-guess-trailing-char-from-mode-name)))
+;;    (wrap-lines-in-quotes-buffer beg end :double trailing-char)))
+;;
+;;(defun wrap-lines-in-single-quotes-region (beg end)
+;;  (interactive "*r")
+;;  (let ((trailing-char (wrap-lines-in-quotes-guess-trailing-char-from-mode-name)))
+;;    (wrap-lines-in-quotes-buffer beg end :single trailing-char)))
+;;
 
 
 (defun python-path-to-current-file-mod ()
