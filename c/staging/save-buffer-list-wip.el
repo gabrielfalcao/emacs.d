@@ -42,17 +42,17 @@
                       ) ;; end (with-current-buffer (let* ...) varlist )
                  ;; <seq-map-indexed lambda body>
                  (list
-                  :index      index
-                  :number      number
-                  :total      buffer-count
-                  :name       bufname
+                  :index          index
+                  :number         number
+                  :total          buffer-count
+                  :name           bufname
                   :filename       filename
-                  :wip_filename       wip-filename
-                  :pos        pos
-                  :name_raw   buffer-name-raw
-                  :is_file    (if is-file "true" "false")
-                  :contents   bufcontents
-                  :size       (length bufcontents)
+                  :wip_filename   wip-filename
+                  :pos            pos
+                  :name_raw       buffer-name-raw
+                  :is_file        (if is-file "true" "false")
+                  :contents       bufcontents
+                  :size           (length bufcontents)
                   )
                  ;; </seq-map-indexed lambda body>
                  );; end (let* ...)
