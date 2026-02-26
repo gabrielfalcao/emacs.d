@@ -30,8 +30,9 @@
 		      (buffer-name-raw (buffer-name buf))
 		      (filename (buffer-file-name buf))
 		      (is-file (not (null filename)))
-		      (buffer-name-fallback (replace-regexp-in-string "[[:space:]]+" "-" (string-trim (replace-regexp-in-string "[^a-zA-Z0-9_./-]+" " " (buffer-name)))))
-		      (wip-filename (format "%s.bkp" buffer-name-fallback))
+		      (buffer-name-fallback (string-to-kebab buffer-name-raw))
+		      (wip-filename (format "%s.bkp" (string-to-kebab (or filename buffer-name-raw))))
+                      (wip-full-path (file-name-concat workbench-wip-buffers-path wip-filename))
 		      (bufname (if is-file (file-name-nondirectory filename)  buffer-name-fallback))
 		      (bufcontents (save-match-data (save-mark-and-excursion (widen) (buffer-substring-no-properties (point-min) (point-max)))))
 		      (buf-plist-to-json-object
@@ -50,7 +51,7 @@
 			))
                       ) ;; end (with-current-buffer (let* ...) varlist )
                  ;; <seq-map-indexed lambda body>
-                 (write-region bufcontents         nil wip-filename nil nil nil nil)
+                 (write-region bufcontents         nil wip-full-path nil nil nil nil)
                  ;; </seq-map-indexed lambda body>
                  );; end (let* ...)
                );; end (with-current-buffer ...)
@@ -62,12 +63,12 @@
          )
     ;; <defun body>
 
-    (progn
-      ;; <write index file>
-      (let ((index-file-path workbench-wip-buffers-index-file-path))
-        (write-region index-file-contents nil index-file-path t nil nil nil))
-      ;; </write index file>
-      )
+    ;; <write index file>
+    (condition-case err
+        (write-region index-file-contents nil workbench-wip-buffers-index-file-path t nil nil nil)
+      (error
+       (user-error "failed to write index file to %S: %s" workbench-wip-buffers-index-file-path err)_))
+    ;; </write index file>
 
 
     );; end (defun ... (let* ... ))
