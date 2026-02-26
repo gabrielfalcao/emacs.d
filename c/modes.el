@@ -62,6 +62,7 @@
       web-mode-content-types-alist
       '(("json" . "\\.jsonp?'")
         ("html"  . "html'")
+        ("html"  . "astro'")
         ("jsx"  . "\\.[tj]sx\\'"))
       )
 ; (add-to-list 'magic-mode-alist '("^#!/usr/bin/\\(env\\s-+.*\\)?\\(python\\)" . python-mode))
@@ -129,6 +130,7 @@
 (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.astro\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.c?j$" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.er$" . erlang-mode))
