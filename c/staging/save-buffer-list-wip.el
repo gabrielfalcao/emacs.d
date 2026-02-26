@@ -19,6 +19,11 @@
      (lambda (buf index)
        (with-current-buffer buf
          (let* (
+                (json-false "false")
+                (json-null "null")
+                (json-object-type 'plist)
+                (json-array-type 'vector)
+                (json-key-type 'string)
                 (number (1+ index))
                 (pos (format "%d of %d" number buffer-count))
                 (buffer-name-raw (buffer-name buf))
@@ -33,21 +38,86 @@
                      (widen)
                      (buffer-substring-no-properties (point-min) (point-max))
                      )))
-                (index-file-data (string-join (list
-                                               (format "[buffer %s]{" pos)
-                                               (format "    \"index\": %S," index)
-                                               (format "    \"total\": %S," buffer-count)
-                                               (format "    \"name\": %S," bufname)
-                                               (format "    \"pos\": %S," pos)
-                                               (format "    \"name_raw\": %S," buffer-name-raw)
-                                               (format "    \"is_file\": %s," (if is-file "true" "false"))
-                                               (format "    \"contents\": %S," bufcontents)
-                                               (format "}")
-                                               )
-                                              "\n"))
+                (index-file-vector-json-array (make-vector buffer-count nil))
                 ) ;; end (with-current-buffer (let* ...) varlist )
            ;; <seq-do-index lambda body>
            (push index-file-data  index-file-lines)
+
+           (let (
+                 (buffer-info-plist-json-object
+                  (list
+                   :index      index
+                   :number      number
+                   :total      buffer-count
+                   :name       bufname
+                   :filename       filename
+                   :pos        pos
+                   :name_raw   buffer-name-raw
+                   :is_file    (if is-file "true" "false")
+                   :contents   bufcontents
+                   :size       (length bufcontents)
+                   ))
+                 )
+
+             (mapc (lambda (item)
+                     (let* ((key (string-to-snake (format "%s" (car item))))
+                            (value (cadr item))
+                            (value-as-string (substring-no-properties (format "%s" value)))
+                            (ty (cond ((member value-as-string '("true" "false"))
+                                       "boolean")
+                                      ((or (null value)
+                                           (string= value-as-string "null"))
+                                       "null")
+                                      ((numberp value)
+                                       "number")
+                                      ((stringp value)
+                                       "string")
+
+
+
+  (type-of value))
+                            (item-obj (json-new-object))
+                            )
+                       (setq item-obj
+                             (json-add-to-object
+                              item-obj          ;; object
+                              "key"             ;; key
+                              (format "%s" key) ;; value
+                              ))
+                       (setq item-obj
+                             (json-add-to-object
+                              item-obj          ;; object
+                              "value"           ;; key
+                              value             ;; value
+                              ))
+                       (setq item-obj
+                             (json-add-to-object
+                              item-obj          ;; object
+                              "type"            ;; key
+                              ty                ;; value
+                              ))
+
+                       (setq index-file-vector-json-array
+                             (json-add-to-object
+                              index-file-vector-json-array
+                              (format "%s" key)
+                              item-obj))
+                       )
+
+           (setq total-file-json-object (json-add-to-object total-file-json-object "total" buffer-substring-no-properties))
+
+                               (string-join (list
+                                          (format "[buffer %s]{" pos)
+                                          (format "    \"index\": %S," index)
+                                          (format "    \"total\": %S," buffer-count)
+                                          (format "    \"name\": %S," bufname)
+                                          (format "    \"pos\": %S," pos)
+                                          (format "    \"name_raw\": %S," buffer-name-raw)
+                                          (format "    \"is_file\": %s," (if is-file "true" "false"))
+                                          (format "    \"contents\": %S," bufcontents)
+                                          (format "}")
+                                          )
+                                         "\n"))
 
            ;; </seq-do-index lambda body>
 
