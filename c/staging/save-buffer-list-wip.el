@@ -65,9 +65,9 @@
 
     ;; <write index file>
     (condition-case err
-        (write-region index-file-contents nil workbench-wip-buffers-index-file-path t nil nil nil)
+        (write-region index-file-contents nil workbench-wip-buffers-index-file-path nil nil nil nil)
       (error
-       (user-error "failed to write index file to %S: %s" workbench-wip-buffers-index-file-path err)_))
+       (user-error "failed to write index file to %S: %s" workbench-wip-buffers-index-file-path err) ))
     ;; </write index file>
 
 
