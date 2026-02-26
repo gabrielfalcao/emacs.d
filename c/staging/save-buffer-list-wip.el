@@ -24,16 +24,16 @@
            (lambda (buf index)
              (with-current-buffer buf
                (let* (
-(number (1+ index))
-(pos (format "%d of %d" number buffer-count))
-(buffer-name-raw (buffer-name buf))
-(filename (buffer-file-name buf))
-(is-file (not (null filename)))
-(buffer-name-fallback (replace-regexp-in-string "[[:space:]]+" "-" (string-trim (replace-regexp-in-string "[^a-zA-Z0-9_./-]+" " " (buffer-name)))))
-(wip-filename (format "%s.bkp" buffer-name-fallback))
-(bufname (if is-file (file-name-nondirectory filename)  buffer-name-fallback))
-(bufcontents (save-match-data (save-mark-and-excursion (widen) (buffer-substring-no-properties (point-min) (point-max)))))
-(buf-plist-to-json-object
+		      (number (1+ index))
+		      (pos (format "%d of %d" number buffer-count))
+		      (buffer-name-raw (buffer-name buf))
+		      (filename (buffer-file-name buf))
+		      (is-file (not (null filename)))
+		      (buffer-name-fallback (replace-regexp-in-string "[[:space:]]+" "-" (string-trim (replace-regexp-in-string "[^a-zA-Z0-9_./-]+" " " (buffer-name)))))
+		      (wip-filename (format "%s.bkp" buffer-name-fallback))
+		      (bufname (if is-file (file-name-nondirectory filename)  buffer-name-fallback))
+		      (bufcontents (save-match-data (save-mark-and-excursion (widen) (buffer-substring-no-properties (point-min) (point-max)))))
+		      (buf-plist-to-json-object
                        (list
 			:index          index
 			:number         number
