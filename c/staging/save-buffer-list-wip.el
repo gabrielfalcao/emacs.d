@@ -17,7 +17,7 @@
           (progn
             (mkdir workbench-wip-buffers-path t)
             (file-name-concat workbench-wip-buffers-path
-                              "index.txt")))
+                              "index.json")))
          (buffers (buffer-list))
          (buffer-count (length buffers))
          (index-file-json-array-items
