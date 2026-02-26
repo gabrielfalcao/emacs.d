@@ -23,7 +23,7 @@ on_exit() {
     stty sane
 }
 on_ctrlc() {
-    1>&2 echo -e "\rAborted with Ctrl-C"
+    1>&2 echo -e "\x1b[1;38;2;253;67;83m\rAborted with Ctrl-C\x1b[0m"
     exit 1
 }
 trap on_exit exit

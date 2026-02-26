@@ -42,7 +42,7 @@ on_exit() {
     2>/dev/random 1>/dev/random stty sane
 }
 on_ctrlc() {
-    echo -e "\x1b[1;38;2;${error_color_rgb}m\rAborted with Ctrl-C\x1b[0m"
+    1>&2 echo -e "\x1b[1;38;2;253;67;83m\rAborted with Ctrl-C\x1b[0m"
     exit 1
 }
 trap on_exit exit

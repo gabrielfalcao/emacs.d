@@ -38,9 +38,7 @@ on_exit() {
     repl sane
 }
 on_ctrlc() {
-    repl no echo
-    1>&2 echo -e "\x1b[1;38;2;${error_color_rgb}m\rAborted with Ctrl-C\x1b[0m"
-    repl sane
+    1>&2 echo -e "\x1b[1;38;2;253;67;83m\rAborted with Ctrl-C\x1b[0m"
     exit 1
 }
 trap on_exit exit
