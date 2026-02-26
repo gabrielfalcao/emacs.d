@@ -11,8 +11,7 @@
          (today (format-time-string "%Y-%m-%d" nil t))
          (workbench-path (file-name-concat workbench-root today))
          (workbench-wip-buffers-path (file-name-concat workbench-path
-                                                       (format "emacs-buffers-%s"
-                                                               (format-time-string "%s" nil t))))
+                                                       (format "emacs-buffers.%s" (emacs-pid))))
          (workbench-wip-buffers-index-file-path
           (progn
             (mkdir workbench-wip-buffers-path t)
