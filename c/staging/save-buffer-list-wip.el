@@ -1,4 +1,5 @@
 (defun save-open-buffers-as-wip-in-workbench ()
+  (interactive)
   (let* (
          (json-false "false")
          (json-null "null")
@@ -54,6 +55,7 @@
                  );; end (let* ...)
                );; end (with-current-buffer ...)
              ) ;; end (lambda (buf index)
+           buffers
            ) ;; end (seq-map-indexed
           )
          (index-file-contents (json-encode index-file-json-array-items))
