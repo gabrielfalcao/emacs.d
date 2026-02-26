@@ -62,11 +62,11 @@
          (index-file-contents (json-encode index-file-json-array-items))
          )
     ;; <defun body>
-    (let ;; <write index file>
-        (
-         (index-file-path workbench-wip-buffers-index-file-path)
-         )
-      (write-region index-file-contents nil index-file-path t nil nil nil)
+
+    (progn
+      ;; <write index file>
+      (let ((index-file-path workbench-wip-buffers-index-file-path))
+        (write-region index-file-contents nil index-file-path t nil nil nil))
       ;; </write index file>
       )
 
