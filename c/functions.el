@@ -529,37 +529,11 @@
 ;;        (p (replace-regexp-in-string "[s-w]" "🖍️" p))
 ;;        (p (replace-regexp-in-string "[xX]" "👥️" p)))
 ;;   p))
-
 (defun Ox33b4O/$/fm ()
-  "."
-  (interactive)
-  (let ((ffb
-         (format "%s"
-                 (file-attribute-modes
-                  (file-attributes (buffer-file-name))))))
-    (let* ((acls (split-string ffb "-+" t "[^a-z]"))
-           (aclsl (proper-list-p acls)))
-      (cond
-       ((= 1 aclsl)
-        (format "%s aclsl:%S"
-                (Ox33b4O/$/acl-owner (nth 0 acls))
-                aclsl ))
-       ;; (t (progn
-       ;;           (format "WAT: %S" (car acls))))
-       ((= 2 aclsl)
-        (format "%s%s"
-                (Ox33b4O/$/acl-owner
-                 (nth 0 acls)
-                 (Ox33b4O/$/acl-group (nth 1 acls)))))
-       ((= 3 aclsl)
-        (format "%s%s%s"
-                (Ox33b4O/$/acl-owner
-                 (nth 0 acls)
-        	 (Ox33b4O/$/acl-group (nth 1 acls))
-        	 (Ox33b4O/$/acl-other (nth 1 acls)))))
-       (t (format "fallback ffb: %S" ffb)))
-      ;; ;; (message  "ffb:%S acls: %S\naclsl:%S" ffb acls aclsl)
-      )))
+  "KGRlZnVuIE94MzNiNE8vJC9mbSAoKQogICIuIgogIChpbnRlcmFjdGl2ZSkKICAKICAobGV0ICgoZmZiCiAgICAgICAgIChmb3JtYXQgIiVzIgogICAgICAgICAgICAgICAgIChmaWxlLWF0dHJpYnV0ZS1tb2RlcwogICAgICAgICAgICAgICAgICAoZmlsZS1hdHRyaWJ1dGVzIChidWZmZXItZmlsZS1uYW1lKSkpKSkpCiAgICAobGV0KiAoKGFjbHMgKHNwbGl0LXN0cmluZyBmZmIgIi0rIiB0ICJbXmEtel0iKSkKICAgICAgICAgICAoYWNsc2wgKHByb3Blci1saXN0LXAgYWNscykpKQogICAgICAoY29uZAogICAgICAgKCg9IDEgYWNsc2wpCiAgICAgICAgKGZvcm1hdCAiJXMgYWNsc2w6JVMiCiAgICAgICAgICAgICAgICAoT3gzM2I0Ty8kL2FjbC1vd25lciAobnRoIDAgYWNscykpCiAgICAgICAgICAgICAgICBhY2xzbCApKQogICAgICAgOzsgKHQgKHByb2duCiAgICAgICA7OyAgICAgICAgICAgKGZvcm1hdCAiV0FUOiAlUyIgKGNhciBhY2xzKSkpKQogICAgICAgKCg9IDIgYWNsc2wpCiAgICAgICAgKGZvcm1hdCAiJXMlcyIKICAgICAgICAgICAgICAgIChPeDMzYjRPLyQvYWNsLW93bmVyCiAgICAgICAgICAgICAgICAgKG50aCAwIGFjbHMpCiAgICAgICAgICAgICAgICAgKE94MzNiNE8vJC9hY2wtZ3JvdXAgKG50aCAxIGFjbHMpKSkpKQogICAgICAgKCg9IDMgYWNsc2wpCiAgICAgICAgKGZvcm1hdCAiJXMlcyVzIgogICAgICAgICAgICAgICAgKE94MzNiNE8vJC9hY2wtb3duZXIKICAgICAgICAgICAgICAgICAobnRoIDAgYWNscykKICAgICAgICAJIChPeDMzYjRPLyQvYWNsLWdyb3VwIChudGggMSBhY2xzKSkKICAgICAgICAJIChPeDMzYjRPLyQvYWNsLW90aGVyIChudGggMSBhY2xzKSkpKSkKICAgICAgICh0IChmb3JtYXQgImZhbGxiYWNrIGZmYjogJVMiIGZmYikpKQogICAgICA7OyA7OyAobWVzc2FnZSAgImZmYjolUyBhY2xzOiAlU1xuYWNsc2w6JVMiIGZmYiBhY2xzIGFjbHNsKQogICAgICApKSk="
+  (format ""))
+
+
 
 (defun Ox33b4O/$/flush-kill-ring ()
   "."

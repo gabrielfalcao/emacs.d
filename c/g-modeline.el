@@ -136,8 +136,8 @@
    '(:eval (format "W:%s H:%s" (frame-width) (frame-height) ))
    " "
    '(:eval (Ox33b4O/$/paint-mode-name))
-   " "
-   '(:eval (Ox33b4O/$/fm))
+   ;; " "
+   ;; '(:eval (Ox33b4O/$/fm))
    " "
    '(:eval (Ox33b4O/$/bchs))
    " " "   𝐗%l 𝐘%c %I ⊲ %i bytes " "%e" "%t"))
