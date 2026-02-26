@@ -59,13 +59,16 @@
              ) ;; end (lambda (buf index)
            ) ;; end (seq-map-indexed
           )
+         (index-file-contents (json-encode index-file-json-array-items))
          )
-    ;; </defun body>
-    (let (
-          (index-file-contents (format "\n%s\n" (string-join index-file-lines "\n")))
-          (index-file-path workbench-wip-buffers-index-file-path)
-          )
-      (write-region index-file-contents nil index-file-path t nil nil nil))
+    ;; <defun body>
+    (let ;; <write index file>
+        (
+         (index-file-path workbench-wip-buffers-index-file-path)
+         )
+      (write-region index-file-contents nil index-file-path t nil nil nil)
+      ;; </write index file>
+      )
 
 
     );; end (defun ... (let* ... ))
