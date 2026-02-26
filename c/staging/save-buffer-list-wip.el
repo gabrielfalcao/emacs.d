@@ -43,11 +43,11 @@
                                                (format "}")
                                                )
                                               "\n"))
-                )
+                ) ;; end (with-current-buffer (let* ...) varlist )
            (push index-file-data  index-file-lines)
-
-
-         )
-    )
-
-  )
+           );; end (let* ...)
+         );; end (with-current-buffer ...)
+       ) ;; end (lambda (buf index)
+     ) ;; end (seq-do-indexed
+    );; end (defun ... (let* ... ))
+  );; end (defun save-open-buffers-as-wip-in-workbench)
