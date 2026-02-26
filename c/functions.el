@@ -3371,6 +3371,51 @@ BEG END."
       (user-error
        (format "command failed with status %d: heck-string --to=%s '%s'"  case input-string)))))
 
+(defun heck-string-to-case (input-string case)
+  (unless (or (stringp input-string) (null input-string))
+    (signal 'type-error
+            (format  "argument `input-string' must be string but instead received `%s': %s"
+                     (type-of input-string)
+                     input-string)))
+
+  (let* ((tmp-buffer-name (format "*string-to-%s*" case))
+         (tmp-buffer (get-buffer-create tmp-buffer-name))
+         (exit-code
+          (call-process "heck-string" nil tmp-buffer nil
+                        (format "--to=%s" case)
+                        input-string))
+         (output
+	          (with-current-buffer tmp-buffer
+		    (widen)
+		    (string-trim (buffer-string))))
+         (error-messages (list))
+         )
+    (condition-case kill-buf-err
+        (kill-buffer tmp-buffer)
+      (error
+       (push (format "failed to kill tmp-buffer %S: %s" tmp-buffer kill-buf-err)  error-messages)))
+
+    (unless (eq 0 exit-code)
+      (push (format "command failed with status %d: heck-string --to=%s '%s'"  exit-code case input-string)
+            error-messages))
+
+    (if (length> error-messages 0)
+        (signal 'io-error
+                (format  "%d errors while trying to convert string %s to %s case:\n%s"
+                         (length error-messages)
+                         (format "%S" input-string)
+                         case
+                         (string-join (seq-map-indexed
+                                       (lambda (err index) (format "\t%d: %s\n" (1+ index) err))
+                                       error-messages)
+                                      ""))))
+    output))
+
+
+
+
+
+
 (defun string-to-train-region (beg end)
   "BEG END."
   (interactive "*r")
