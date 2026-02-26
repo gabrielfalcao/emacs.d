@@ -10,12 +10,15 @@ declare -- script_name="$(basename "${BASH_SOURCE[0]}")"
 declare -- script_path="$(2>/dev/random 1>/dev/random cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 declare -- this_script_path="${script_path}/${script_name}"
 
-on_ctrlc() {
+on_exit() {
+    set +x
     1>/dev/null 2>/dev/null stty sane
-    1>&2 echo -e "\x1b[1;38;2;253;67;83m\rAborted with Ctrl-C\x1b[0m"
-    exit 1
 }
-trap on_ctrlc exit
+on_ctrlc() {
+    1>&2 echo -e "\x1b[1;38;2;253;67;83m\rAborted with Ctrl-C\x1b[0m"
+    exit 130
+}
+trap on_exit exit
 trap on_ctrlc hup
 trap on_ctrlc int
 trap on_ctrlc bus
