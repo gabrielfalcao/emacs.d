@@ -13,7 +13,8 @@
          (index-file-lines (list))
          (buffers (buffer-list))
          (buffer-count (length buffers))
-         )
+         ) ;; end (let* ...( varlist
+    ;; <defun body>
     (seq-do-indexed
      (lambda (buf index)
        (with-current-buffer buf
@@ -24,6 +25,7 @@
                 (filename (buffer-file-name buf))
                 (is-file (not (null filename)))
                 (buffer-name-fallback (replace-regexp-in-string "[[:space:]]+" "-" (string-trim (replace-regexp-in-string "[^a-zA-Z0-9_./-]+" " " (buffer-name)))))
+                (wip-filename (format "%s.bkp" buffer-name-fallback))
                 (bufname (if is-file (file-name-nondirectory filename)  buffer-name-fallback))
                 (bufcontents
                  (save-match-data
@@ -44,10 +46,22 @@
                                                )
                                               "\n"))
                 ) ;; end (with-current-buffer (let* ...) varlist )
+           ;; <seq-do-index lambda body>
            (push index-file-data  index-file-lines)
+
+           ;; </seq-do-index lambda body>
+
            );; end (let* ...)
          );; end (with-current-buffer ...)
        ) ;; end (lambda (buf index)
      ) ;; end (seq-do-indexed
+    ;; </defun body>
+    (let (
+          (index-file-contents (format "\n%s\n" (string-join index-file-lines "\n")))
+          (index-file-path workbench-wip-buffers-index-file-path)
+          )
+      (write-region index-file-contents nil index-file-path t nil nil nil))
+
+
     );; end (defun ... (let* ... ))
   );; end (defun save-open-buffers-as-wip-in-workbench)
