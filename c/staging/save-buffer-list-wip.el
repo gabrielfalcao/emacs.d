@@ -10,7 +10,7 @@
          (workbench-root (file-name-canonicalize "~/workbench"))
          (today (format-time-string "%Y-%m-%d" nil t))
          (workbench-path (file-name-concat workbench-root today))
-         (workbench-wip-buffers-path (file-name-concat workbench-root
+         (workbench-wip-buffers-path (file-name-concat workbench-path
                                                        (format "emacs-buffers-%s"
                                                                (format-time-string "%s" nil t))))
          (workbench-wip-buffers-index-file-path
