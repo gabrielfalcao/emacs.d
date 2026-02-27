@@ -5882,10 +5882,15 @@ interactive command `replace-regexp' like so:
                            (- (/ (length (match-data)) 2) 1))  ;; mapcar `sequence' argument #1
           ) ;; string-join `strings' argument   #0
          ))
-    (format "\n%s\n" (string-join regexp-groups "\n\n" ;; string-join `separator' argument #1
+    (format "%s\n\n" (string-join regexp-groups "\n" ;; string-join `separator' argument #1
                                   )))
 
   ) ;; end defun debug-regexp-subexpressions
+(defalias '~dbg-regex #'debug-regexp-subexpressions)
+(defalias '~dbg-regexp #'debug-regexp-subexpressions)
+(defalias 'dbg-regex #'debug-regexp-subexpressions)
+(defalias 'dbg-regexp #'debug-regexp-subexpressions)
+(defalias 'regex! #'debug-regexp-subexpressions)
 
 
 
