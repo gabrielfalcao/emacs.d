@@ -7,6 +7,7 @@
       (all-hash-tables-list (list))
       (all-lists-list (list))
       (all-sequences-list (list))
+      (all-uncategorized-list (list))
       (gathering-index 0)
       )
 
@@ -32,14 +33,14 @@
 			       :repr repr
 			       )))
 		    (push info all-atoms-list)
-                    (cond nil
-                          ((functionp val)      (push info all-functions-list))
+                    (cond ((functionp val)      (push info all-functions-list))
                           ((symbolp val)        (push info  all-symbols-list))
                           ((stringp val)        (push info  all-strings-list))
                           ((vectorp val)        (push info  all-vectors-list))
                           ((hash-table-p val)   (push info  all-hash-tables-list))
                           ((listp val)          (push info  all-lists-list))
                           ((sequencep val)      (push info  all-sequences-list))
+                          (t (push info all-uncategorized-list))
 			  )
 		    )
                   )
