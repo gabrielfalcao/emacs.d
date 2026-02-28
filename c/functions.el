@@ -398,9 +398,12 @@
   "."
   (interactive)
   (cond
-   ((file-exists-p (buffer-file-name))
-    (file-name-directory (buffer-file-name)))
-   (t (expand-file-name "~/.emacs.d"))); end cond
+
+   ((file-exists-p (buffer-file-name)) (file-name-directory (buffer-file-name)))
+   (t default-directory)
+   ;; (t (expand-file-name "~/.emacs.d"))
+
+   ); end cond
   )
 
 
@@ -1362,7 +1365,9 @@ shortcut to calling \\[git-add] and \\[git-commit]
           (read-string "Commit Message: " (format "saves %s" filename)))
          (git-repo-path
           (shell-command-to-string "git rev-parse --show-toplevel"))
-         (git-commit-output-buf (get-buffer-create "*git-commit*"))
+         (git-commit-stdout-buf (get-buffer-create "*git-commit:stdout*"))
+         (git-commit-stderr-buf (get-buffer-create "*git-commit:stderr*"))
+         (call-process-destination (cons git-commit-stdout-buf git-commit-stderr-buf))
          (filename-absolute
           (ensure-filename-child-of-directory filename git-repo-path))
          commit-buffer-string
@@ -1372,10 +1377,10 @@ shortcut to calling \\[git-add] and \\[git-commit]
     (when (zerop (length commit-message))
       (user-error "aborted due to empty commit message"))
     (setq exit-code
-          (call-process "git" nil git-commit-output-buf nil "commit" "-m"
+          (call-process "git" nil call-process-destination nil "commit" "-m"
                         (format "%s" commit-message))
           commit-buffer-string
-          (with-current-buffer git-commit-output-buf
+          (with-current-buffer git-commit-stdout-buf
 	    (widen)
 	    (buffer-string))
           error-msg
@@ -1384,7 +1389,7 @@ shortcut to calling \\[git-add] and \\[git-commit]
 
           );end setq
     (condition-case err
-        (kill-buffer git-commit-output-buf)
+        (kill-buffer git-commit-stdout-buf)
       (error
        (setq internal-error-msg
              (format "failed to kill buffer: %s" err))))
@@ -1395,16 +1400,17 @@ shortcut to calling \\[git-add] and \\[git-commit]
       ;; else
       (unless (not internal-error-msg)
         (user-error internal-error-msg))
-      (user-error error-msg)); end (if (= 0
+      (user-error (format "%s with code %d" error-msg exit-code))); end (if (= 0
     );; end (defun (let*
   );;end defun
+
 
 
 
 (defun git-commit-staged ()
   "."
   (interactive)
-  (let* ((git-commit-output-buf (get-buffer-create "*git-commit*"))
+  (let* ((git-commit-stdout-buf (get-buffer-create "*git-commit*"))
          (current-working-dir
           (file-name-directory (expand-file-name (buffer-file-name))))
          (commit-message
@@ -1415,20 +1421,20 @@ shortcut to calling \\[git-add] and \\[git-commit]
        (user-error "aborted due to empty commit message"))
      (if (eq 0
              (let* ((exitcode
-                     (call-process "git" nil git-commit-output-buf nil "commit"
+                     (call-process "git" nil git-commit-stdout-buf nil "commit"
                                    "-m"
                                    (format "%s" commit-message))))
 	       exitcode))
 	 (progn
            (message "commited '%s'" commit-message)
-           (kill-buffer git-commit-output-buf))
+           (kill-buffer git-commit-stdout-buf))
        (progn
          (user-error
           (format "failed to commit '%s': %s" commit-message
-                  (with-current-buffer git-commit-output-buf
+                  (with-current-buffer git-commit-stdout-buf
 		    (widen)
 		    (buffer-string)))
-          (kill-buffer git-commit-output-buf)))))))
+          (kill-buffer git-commit-stdout-buf)))))))
 
 
 (defun get-regexp-github-remote-url ()
