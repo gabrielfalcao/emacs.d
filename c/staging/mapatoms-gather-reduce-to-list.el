@@ -47,5 +47,25 @@
                     )
 		  )
 	      ); end mapatoms
+    (erase-c-messages)
+    (c-message-open)
+
+    (seq-do-indexed
+     (lambda (container index)
+       (let* ((name (symbol-name container))
+              (value (symbol-value container))
+              (kind (save-match-data
+                      (string-match "^\\(all-\\([a-z-]+\\)-list\\)$" name)
+                      (match-string 2)))
+              ); end (let* (...)) varlist
+         (c-message "<%s count=\\"%d\\">" kind (length value))
+         (c-message "%s" (string-join
+                          (seq-map-indexed (lambda (item index)
+                                             (format "    %d: %S" index (plist-get :repr item)))
+                                           value)
+                          "\n"))
+         (c-message "<%s>" kind)))
+     (list 'all-atoms-list 'all-strings-list 'all-symbols-list 'all-functions-list 'all-vectors-list 'all-hash-tables-list 'all-lists-list 'all-sequences-list 'all-uncategorized-list)
+     )
     );; end (let ...)  "defun body"
   );end defun gather-atoms
