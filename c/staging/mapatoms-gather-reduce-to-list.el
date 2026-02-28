@@ -58,10 +58,10 @@
                       (string-match "^\\(all-\\([a-z-]+\\)-list\\)$" name)
                       (match-string 2)))
               ); end (let* (...)) varlist
-         (c-message "<%s count=\\"%d\\">" kind (length value))
+         (c-message "<%s count=\"%d\">" kind (length value))
          (c-message "%s" (string-join
                           (seq-map-indexed (lambda (item index)
-                                             (format "    %d: %S" index (plist-get :repr item)))
+                                             (format "    %d: %S" index item))
                                            value)
                           "\n"))
          (c-message "<%s>" kind)))
