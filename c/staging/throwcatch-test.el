@@ -23,6 +23,7 @@
                      teens)
                     )
                   (number-sequence 1 40))
+                 (list :not-caught t)
                  )
                )
               )
