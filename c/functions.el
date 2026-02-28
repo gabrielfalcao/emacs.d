@@ -4027,9 +4027,12 @@ cursor position in buffer."
   (erase-buffer-by-name  "*C-Messages*")
   (unless (not (null dont-erase-minibuffer)) (erase-minibuffer)))
 
-(defun c-message-open (fmt &rest args)
+(defun c-message-open (&optional fmt &rest args)
   "drop-in replacement for `c-message' opens the `*C-Messages*' buffer after outputing the message"
   (interactive "*s")
+  (when (null fmt)
+    (setq fmt ""))
+
   (delete-other-windows (frame-first-window))
   ;;(erase-c-messages)
   (let ((output (funcall #'c-message fmt args)))
