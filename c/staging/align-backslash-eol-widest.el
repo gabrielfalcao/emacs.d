@@ -1,56 +1,56 @@
-(defun align-backslash-eol-widest-region(beg end)
-  (interactive "*r")
+(defun align-backslash-eol-widest-region-internal(beg end)
+  (unless (number-or-marker-p beg)
+    (signal 'type-error
+            (format  "argument `beg' must be either a number or marker but instead received `%s': %s"
+                     (type-of beg)
+                     beg)))
+  (unless (number-or-marker-p end)
+    (signal 'type-error
+            (format  "argument `end' must be either a number or marker but instead received `%s': %s"
+                     (type-of end)
+                     end)))
+
   (erase-c-messages)
   (c-message-open)
-  (let ((furthest-backslash-col 0) (outer-action nil))
+  (let ((furthest-backslash-col 0))
     (save-match-data
       (save-mark-and-excursion
         (goto-char beg)
         (beginning-of-line)
-        (setq outer-action
-              (catch 'read-break
-                (while (re-search-forward "^.*?[^\\]+\\s-+\\([\\]\\)\\s-*$" end t)
-                  (goto-char (match-beginning 1))
-                  (let* (
-                         (action nil)
-                         (tmp nil)
-                         (pos-beg (point))
-                         (pos-end (progn (end-of-line) (point)))
-                         (text  (buffer-substring-no-properties pos-beg pos-end))
-                         (attempts (list))
-                         )
-                    (c-message "pos-beg: %S" pos-beg)
-                    (c-message "pos-end: %S" pos-end)
-                    (c-message "text: %S" text)
-                    (c-message "action: %S" action)
-                    (c-message "attempts: %S" attempts)
-                    (c-message "outer-action: %S" outer-action)
-                    (c-message "")
+        (while (re-search-forward "^.*?[^\\]+\\s-+\\([\\]\\)\\s-*$" end t)
+          (let* (
+                 (pos-line-beg (progn (beginning-of-line) (point)))
+                 (pos-beg (progn (match-beginning 1) (point)))
+                 (pos-end (progn (end-of-line) (point)))
+                 (lineno (line-number-at-pos pos-beg))
+                 (text  (buffer-substring-no-properties pos-beg pos-end))
+                 (width  (length text))
+                 )
+              (c-message "pos-beg: %S" pos-beg)
+              (c-message "pos-end: %S" pos-end)
+              (c-message "width: %S" width)
+              (c-message "text: %S" text)
+              (c-message "action: %S" action)
+              (c-message "")
 
-                    (while (null action)
-                      (setq tmp (downcase (string-trim (read-string "[b]reak/[n]ext/[c]ontinue: "))))
-                      (push tmp attempts)
-                      (cond nil
-                            ((or (string= tmp "break")
-                                 (string= tmp "b"))
-                             (throw 'read-break tmp))
-
-                            ((or (string= tmp "continue")
-                                 (string= tmp "c")
-                                 (string= tmp "next")
-                                 (string= tmp "n")
-                                 )
-                             ;; (throw 'read-break tmp))
-                             (setq action "continue"))
-                            )
-                      )
-                    (forward-line)
-                    (beginning-of-line)
-                    )
-                  )
-                ); end (catch ...)
-              ); end (setq action (catch ...))
+              (forward-line)
+              (beginning-of-line)
+              )
+          ); end (while ...)
         ) ;; ends (save-mark-and-excursion ...)
       ) ;; ends (save-match-data ...)
     )
   )
+
+
+(defun align-backslash-eol-widest-region(beg end)
+  (interactive "*r")
+  (align-backslash-eol-widest-region beg end))
+
+
+(defun align-backslash-eol-widest-buffer ()
+  (interactive)
+  (save-mark-and-excursion
+    (widen)
+    (beginning-of-buffer)
+    (align-backslash-eol-widest-region (point-min) (point-max))))
