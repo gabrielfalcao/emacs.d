@@ -52,17 +52,17 @@
 
     (seq-do-indexed
      (lambda (container index)
-       (let* ((name (symbol-name container))
-              (value (symbol-value container))
+       (let* ((ext-name (symbol-name container))
+              (ext-value (symbol-value container))
               (kind (save-match-data
-                      (string-match "^\\(all-\\([a-z-]+\\)-list\\)$" name)
-                      (match-string 2)))
+                      (string-match "^\\(?:all-\\([a-z-]+\\)-list\\)$" ext-name)
+                      (match-string 1)))
               ); end (let* (...)) varlist
-         (c-message "<%s count=\"%d\">" kind (length value))
+         (c-message "<%s count=\"%d\">" kind (length ext-value))
          (c-message "%s" (string-join
                           (seq-map-indexed (lambda (item index)
                                              (format "    %d: %S" index item))
-                                           value)
+                                           ext-value)
                           "\n"))
          (c-message "<%s>" kind)))
      (list 'all-atoms-list 'all-strings-list 'all-symbols-list 'all-functions-list 'all-vectors-list 'all-hash-tables-list 'all-lists-list 'all-sequences-list 'all-uncategorized-list)
