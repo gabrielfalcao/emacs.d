@@ -69,7 +69,5 @@
       (error
        (user-error "failed to write index file to %S: %s" workbench-wip-buffers-index-file-path err) ))
     ;; </write index file>
-
-
     );; end (defun ... (let* ... ))
   );; end (defun save-open-buffers-as-wip-in-workbench)

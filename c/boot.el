@@ -182,6 +182,7 @@
 ;; (ensure-server-ready)
 
 ;; (load-library "c-staging-after-save-hooks")
+(load-file (expand-file-name "~/.emacs.d/c/staging/save-buffer-list-wip.el"))
 (load-library "regexp")
 (load-library "modes")
 (load-library "hooks")
