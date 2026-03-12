@@ -16,13 +16,19 @@
    "C-S-r"
    "C-S-d"
    "C-S-i"
-   "C-q"
    "C-s"
    "C-c C-x"
    ;; "C-c C-u"
    "C-x C-e"
    "C-x C-d"
    ;; "C-x C-p"
+
+   "C-q"
+   ;; <former #'keyboard-quit>
+   ;; "M-q"
+   "C-x C-q" "C-c M-y" "C-γ"
+   ;; </former #'keyboard-quit>
+
    "M-j"
    "M-t"
    "M-k"
@@ -173,7 +179,7 @@
 (Ox33b4O/$/set-key   '("C-x C-g C-s") #'git-save)
 (Ox33b4O/$/set-key   '("C-x C-g C-d") #'git-diff)
 
-(Ox33b4O/$/set-key   '("C-g" "C-q") 'keyboard-quit   )
+(Ox33b4O/$/set-key   '("C-g") 'keyboard-quit   )
 
 (Ox33b4O/$/set-key "M-s" 'isearch-forward-input-regexp)
 (Ox33b4O/$/set-key "M-r" 'isearch-backward-regexp)

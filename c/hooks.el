@@ -27,6 +27,14 @@
 (require 'company-box)
 (add-hook 'company-mode-hook 'company-box-mode)
 
+(defun gdscript-mode-hook-bind-custom-keys()
+  (interactive)
+  (define-key gdscript-mode-map (kbd "C-c C-f") #'g/format/prettify)
+)
+(defun awk-mode-hook-bind-custom-keys()
+  (interactive)
+  (define-key awk-mode-map (kbd "C-c C-f") #'g/format/prettify)
+)
 (defun python-mode-hook-bind-custom-keys()
   (interactive)
   (define-key python-mode-map (kbd "C-c C-f") #'g/format/prettify)
@@ -39,6 +47,10 @@
               'python-insert-members-from-file)
 
   )
+(add-hook 'gdscript-mode-hook
+          #'gdscript-mode-hook-bind-custom-keys)
+(add-hook 'awk-mode-hook
+          #'awk-mode-hook-bind-custom-keys)
 (add-hook 'python-mode-hook
           #'python-mode-hook-bind-custom-keys)
 

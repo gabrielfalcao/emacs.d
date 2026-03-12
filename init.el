@@ -114,3 +114,5 @@
 (set-frame-parameter nil 'fullscreen 'maximized)
 (setq debug-on-error nil)
 (put 'downcase-region 'disabled nil)
+
+(disable-bars)

@@ -399,7 +399,8 @@
   (interactive)
   (cond
 
-   ((file-exists-p (buffer-file-name)) (file-name-directory (buffer-file-name)))
+   ((file-exists-p (buffer-file-name))
+    (file-name-directory (buffer-file-name)))
    (t default-directory)
    ;; (t (expand-file-name "~/.emacs.d"))
 
@@ -1365,9 +1366,12 @@ shortcut to calling \\[git-add] and \\[git-commit]
           (read-string "Commit Message: " (format "saves %s" filename)))
          (git-repo-path
           (shell-command-to-string "git rev-parse --show-toplevel"))
-         (git-commit-stdout-buf (get-buffer-create "*git-commit:stdout*"))
-         (git-commit-stderr-buf (get-buffer-create "*git-commit:stderr*"))
-         (call-process-destination (cons git-commit-stdout-buf git-commit-stderr-buf))
+         (git-commit-stdout-buf
+          (get-buffer-create "*git-commit:stdout*"))
+         (git-commit-stderr-buf
+          (get-buffer-create "*git-commit:stderr*"))
+         (call-process-destination
+          (cons git-commit-stdout-buf git-commit-stderr-buf))
          (filename-absolute
           (ensure-filename-child-of-directory filename git-repo-path))
          commit-buffer-string
@@ -2170,6 +2174,10 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
     (cond
      ((string= "rust-mode" name-of-current-mode)
       #'rustfmt)
+     ((string= "awk-mode" name-of-current-mode)
+      #'gawkfmt)
+     ((string= "gdscript-mode" name-of-current-mode)
+      #'gdscript-format-buffer)
      ((string= "lua-mode" name-of-current-mode)
       #'stylua)
      ((string= "typescript-mode" name-of-current-mode)
@@ -2990,29 +2998,28 @@ The `:background' property is computed in contrast with its
 
 (defun rename-symbols-via-replace-regexp-buffer ()
   (interactive)
-  (let ((from-to-list (list
-                       (list  'Ox33b4O/$/reload-all-c #'c/reload-boot-el)
-                       (list 'Ox33b4O/$/reload-init  #'c/reload-init))))
-    (seq-do-indexed (lambda (pair index)
-                      (let* (
-                             (current (1+ index))
-                             (from-sym (car pair))
-                             (to-sym (cadr pair))
+  (let ((from-to-list
+         (list
+          (list  'Ox33b4O/$/reload-all-c #'c/reload-boot-el)
+          (list 'Ox33b4O/$/reload-init  #'c/reload-init))))
+    (seq-do-indexed
+     (lambda (pair index)
+       (let* ((current (1+ index))
+              (from-sym (car pair))
+              (to-sym (cadr pair))
 
-                             (from-name (symbol-name from-sym))
-                             (from-regex (regexp-quote from-name))
-                             (to-name (symbol-name to-sym))
-                             )
-			(save-restriction
-                          (save-mark-and-excursion
-                            (widen)
-                            (replace-regexp from-regex to-name nil (point-min) (point-max))
-                            ))
-			))
-                    from-to-list
-                    )
-    )
-  )
+              (from-name (symbol-name from-sym))
+              (from-regex (regexp-quote from-name))
+              (to-name (symbol-name to-sym)))
+	 (save-restriction
+           (save-mark-and-excursion
+             (widen)
+             (replace-regexp from-regex to-name nil
+                             (point-min)
+                             (point-max))))
+	 ))
+     from-to-list)
+    ))
 
 
 
@@ -3330,10 +3337,8 @@ BEG END."
 (defun heck-string-to-case-buffer (case beg end)
   "depends on cargo crate heck-string-cli: `cargo install heck-string-cli'
 BEG END."
-  (let* (
-         (input-string (buffer-substring-no-properties beg end))
-         (output (heck-string-to-case input-string case))
-         )
+  (let* ((input-string (buffer-substring-no-properties beg end))
+         (output (heck-string-to-case input-string case)))
 
     (save-mark-and-excursion
       (save-match-data
@@ -3357,16 +3362,18 @@ BEG END."
 	  (with-current-buffer tmp-buffer
 	    (widen)
 	    (string-trim (buffer-string))))
-         (error-messages (list))
-         )
+         (error-messages (list)))
     (condition-case kill-buf-err
         (kill-buffer tmp-buffer)
       (error
-       (push (format "failed to kill tmp-buffer %S: %s" tmp-buffer kill-buf-err)  error-messages)))
+       (push
+        (format "failed to kill tmp-buffer %S: %s" tmp-buffer kill-buf-err)
+        error-messages)))
 
     (unless (eq 0 exit-code)
-      (push (format "command failed with status %d: heck-string --to=%s '%s'"  exit-code case input-string)
-            error-messages))
+      (push
+       (format "command failed with status %d: heck-string --to=%s '%s'"  exit-code case input-string)
+       error-messages))
 
     (if (length> error-messages 0)
         (signal 'io-error
@@ -3374,10 +3381,12 @@ BEG END."
                          (length error-messages)
                          (format "%S" input-string)
                          case
-                         (string-join (seq-map-indexed
-                                       (lambda (err index) (format "\t%d: %s\n" (1+ index) err))
-                                       error-messages)
-                                      ""))))
+                         (string-join
+                          (seq-map-indexed
+                           (lambda (err index)
+                             (format "\t%d: %s\n" (1+ index) err))
+                           error-messages)
+                          ""))))
     output))
 
 
@@ -4030,8 +4039,7 @@ cursor position in buffer."
 (defun c-message-open (&optional fmt &rest args)
   "drop-in replacement for `c-message' opens the `*C-Messages*' buffer after outputing the message"
   (interactive "*s")
-  (when (null fmt)
-    (setq fmt ""))
+  (when (null fmt) (setq fmt ""))
 
   (delete-other-windows (frame-first-window))
   ;;(erase-c-messages)
@@ -5541,12 +5549,20 @@ element to string like `princ' would.
              (equal local :declare))
             "declare")
            ("declare")))
-         (default-log-prefix
+
+         (current-stack-callee
           (cond
-           ((string= "declare" declare-stmt)
-            "[${BASH_SOURCE[0]} error]")
-           ((string= "local" declare-stmt)
-            "[${FUNCNAME[0]} error]")))
+           (
+            (string= "declare" declare-stmt)
+            "$(basename \"${BASH_SOURCE[0]}\")")
+           (
+            (string= "local" declare-stmt)
+            "${FUNCNAME[0]}")
+           )
+          )
+
+         (default-log-prefix
+          (format "[%s error]" current-stack-callee))
 
          (log-prefix (or log-prefix default-log-prefix))
          (arg-prefix
@@ -5563,6 +5579,8 @@ element to string like `princ' would.
          (replacements
           (list
            (cons "%declare%" declare-stmt)
+           (cons "%current_stack_callee%" current-stack-callee )
+           (cons "%default_log_prefix%" default-log-prefix )
            (cons "%arg_prefix%" arg-prefix )
            (cons "%log_prefix%" log-prefix )
            (cons "%exit_stmt%" exit-stmt )
@@ -5580,11 +5598,17 @@ element to string like `princ' would.
                       ;; (c-message "<%s>\nfrom: %s\nto: %s\nstring: %s\n</%s>" dbgs (auto-propertize-string from) (auto-propertize-string to) (auto-propertize-string string) dbgs)
                       (replace-regexp-in-string from to string t)))
                 replacements stmt))
+;;;;           ;for index in ${!argv[@]}; do
+;;;;           ;    current=$(($index + 1))
+;;;;           ;    arg="${argv[$index]}"
+;;;;           ;    pos=$(printf '%*s of %s' ${#argc} ${current} ${argc})
+;;;;           ;done
            '("%declare% -a %arg_prefix%argv=($@)"
              "%declare% -i %arg_prefix%argc=${#%arg_prefix%argv[@]}"
              "%declare% -i index=0"
              "%declare% -i current=0"
              "%declare% -- arg=\"\""
+             "%declare% -- pos=\"\""
              ""
              "if [ ${%arg_prefix%argc} -eq 0 ]; then"
              "    1>&2 echo -e \"%log_prefix%\" \"missing arguments\""
@@ -5594,11 +5618,14 @@ element to string like `princ' would.
              "for index in ${!%arg_prefix%argv[@]}; do"
              "    current=$(($index + 1))"
              "    arg=\"${%arg_prefix%argv[$index]}\""
+             "    pos=\"$(printf '%*s of %s' ${#%arg_prefix%argc} ${current} ${%arg_prefix%argc})\""
+             ""
              "    case \"${arg}\" in"
              "        -h|--help)"
              "            1>&2 echo -e \"HELP\""
              "            ;;"
              "        *)"
+             "            1>&2 echo -e \"[%current_stack_callee% argument ${pos}]\" \"${arg@Q}\""
              "            ;;"
              "    esac"
              "done"
