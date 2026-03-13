@@ -34,8 +34,7 @@ if [ -z "${PWD}" ]; then
 fi
 
 
-
-
+# ^declare\s-+[-][-]\s-+\([a-z]+\)\([_]\(prefix\)\)?\([_]\(color\)\)\([_]rgb\)=\("\(\([0-9]\{1,3\}\);\([0-9]\{1,3\}\);\([0-9]\{1,3\}\)[m;]?\)"\)\s-*$ → declare -- \1\2_fg_\5\6="\\x1b[1;38;2;\,(match-string 9);\,(match-string 10);\,(match-string 11)m"[\n]declare -- \1\2_bg_\5\6="\\x1b[1;48;2;\,(match-string 9);\,(match-string 10);\,(match-string 11)m"
 
 declare -- error_prefix_color_rgb="239;41;41"
 declare -- error_color_rgb="204;0;0"
@@ -58,9 +57,26 @@ declare -- display_color_rgb="211;215;207"
 declare -- debug_prefix_color_rgb="138;226;52"
 declare -- debug_color_rgb="115;210;22"
 
+declare -- stderr="${script_path}/${script_name}.$$.stderr.log"
+declare -- stdout="${script_path}/${script_name}.$$.stdout.log"
+
 on_exit() {
+    2>/dev/null bash -c "exec 2>${stdout}
+set -umeTE; set +f; set -o pipefail;
+declare -gi subpid=-1
+rm -rfv ${stderr@Q} &
+subpid=\$!
+disown -a
+
+(sleep 5 && rm -rfv ${stdout@Q}) &
+disown -a
+(sleep 7 && kill -9 $$) &
+disown -a
+"
     2>/dev/random 1>/dev/random stty sane
+    exit 1
 }
+
 on_ctrlc() {
     1>&2 echo -e "\x1b[1;38;2;253;67;83m\rAborted with Ctrl-C\x1b[0m"
     exit 1
