@@ -53,25 +53,25 @@ declare -i code=0
 declare -i current=0
 
 declare -i index=0
-declare -- arg=''
-declare -- param=''
+declare -- arg=""
+declare -- param=""
 
 declare -i next_index=0
-declare -- next_arg=''
-declare -- next_param=''
+declare -- next_arg=""
+declare -- next_param=""
 
 declare -i skip_next=0
 
 declare -i lineno=0
 declare -i line_number=0
-declare -- line=''
+declare -- line=""
 
-declare -- argument=''
-declare -- field=''
-declare -- key=''
-declare -- name=''
-declare -- path=''
-declare -- value=''
+declare -- argument=""
+declare -- field=""
+declare -- key=""
+declare -- name=""
+declare -- path=""
+declare -- value=""
 
 # <STDIN>
 declare -a stdin_lines=()
