@@ -1,17 +1,3 @@
-(defun read-string-from-buffer (buffer)
-  (with-current-buffer buffer
-    (save-mark-and-excursion
-      (widen)
-      (beginning-of-buffer)
-      (buffer-substring-no-properties (point-min) (point-max)))))
-
-(defun read-string-from-file (filename)
-  (with-temp-buffer
-    (insert-file-contents filename)
-    (widen)
-    (beginning-of-buffer)
-    (buffer-substring-no-properties (point-min) (point-max))))
-
 (defun gawkfmt ()
   "."
   (interactive)
