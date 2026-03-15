@@ -175,6 +175,7 @@
 (Ox33b4O/$/set-key   '("C-c M-s") #'replace-string    )
 (Ox33b4O/$/set-key   '("M-a") 'ignore                )
 (Ox33b4O/$/set-key   '("M-c") 'ignore                )
+(Ox33b4O/$/set-key   '("M-D") #'describe-symbol)
 (Ox33b4O/$/set-key   '("C-M-S" "C-x C-g C-a") #'git-add)
 (Ox33b4O/$/set-key   '("C-x C-g C-s") #'git-save)
 (Ox33b4O/$/set-key   '("C-x C-g C-d") #'git-diff)
