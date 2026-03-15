@@ -124,7 +124,8 @@
   "."
   (interactive "*")
   (uniquify-all-lines-region (point-min) (point-max)))
-(defun uniquify-all-lines-region (start end)
+
+(defun uniquify-all-lines-region-old (start end)
   "."
   (interactive "*r")
   (save-excursion
@@ -134,6 +135,40 @@
                (re-search-forward
                 "^\\(.*\\)\n\\(\\(.*\n\\)*\\)\\1\n" end t))
         (replace-match "\\1\n\\2")))))
+
+(defun uniquify-all-lines-buffer ()
+  "."
+  (interactive "*")
+  (uniquify-all-lines-region (point-min) (point-max)))
+
+(defun uniquify-all-lines-region (start end)
+  "."
+  (interactive "*r")
+  (let* (
+         (iterations 0)
+         (lines-removed 0)
+         (line-count-start (count-lines start end))
+         (line-count-end 0)
+         (ref-end end)
+         (end (copy-marker end))
+         (tmp nil)
+         )
+
+    (save-excursion
+      (goto-char start)
+      (while (re-search-forward "^\\(.*\\)\n\\(\\(.*\n\\)*\\)\\1\n" end t)
+	(setq tmp (replace-match "\\1\n\\2"))
+	(message "tmp: %s (ref-end: %s) (end: %s)" tmp ref-end end)
+	(goto-char start)
+	(setq iterations (1+ iterations))
+	)
+      (setq line-count-end (count-lines start end))
+      (setq lines-removed (- line-count-end line-count-start))
+      )
+    (message "removed %d lines" lines-removed)
+    )
+  )
+
 
 
 (defun disable-auto-save-list ()
