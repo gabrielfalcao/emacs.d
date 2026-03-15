@@ -1,3 +1,17 @@
+(defun read-string-from-buffer (buffer)
+  (with-current-buffer buffer
+    (save-mark-and-excursion
+      (widen)
+      (beginning-of-buffer)
+      (buffer-substring-no-properties (point-min) (point-max)))))
+
+(defun read-string-from-file (filename)
+  (with-temp-buffer
+    (insert-file-contents filename)
+    (widen)
+    (beginning-of-buffer)
+    (buffer-substring-no-properties (point-min) (point-max))))
+
 (defun gawkfmt ()
   "."
   (interactive)
@@ -5,21 +19,21 @@
   (let* ((current-filename (expand-file-name (buffer-file-name)))
          (tmp-stdout-buffer-name
           (format "*gawkfmt:stdout:%s*" current-filename))
-         (tmp-stderr-buffer-name
-          (format "*gawkfmt:stderr:%s*" current-filename))
-         (tmp-buffer-stdout (get-buffer-create tmp-stdout-buffer-name))
-         (tmp-buffer-stderr (get-buffer-create tmp-stderr-buffer-name))
+         (tmp-stderr-file (make-temp-file "gawkfmt-stderr"))
+         (tmp-stdout-buffer (get-buffer-create tmp-stdout-buffer-name))
          (exit-code
           (call-process "gawk" current-filename
-                        '(tmp-buffer-stdout tmp-buffer-stderr)
+                        (list tmp-stdout-buffer tmp-stderr-file)
                         nil "-f" "-" "-o-" ))
          (stderr
-          (with-current-buffer tmp-buffer-stderr
-	    (widen)
+          (with-temp-buffer
+            (insert-file-contents tmp-stderr-file)
+            (widen)
             (beginning-of-buffer)
             (buffer-substring-no-properties (point-min) (point-max))))
+
          (stdout
-          (with-current-buffer tmp-buffer-stdout
+          (with-current-buffer tmp-stdout-buffer
 	    (widen)
             (beginning-of-buffer)
             (buffer-substring-no-properties (point-min) (point-max)))))
@@ -34,26 +48,23 @@
                 (beginning-of-buffer)
                 (buffer-substring-no-properties
                  (point-min)
-                 (point-max))))
-             )
+                 (point-max)))))
         (widen)
         (beginning-of-buffer)
         (kill-region (point-min) (point-max))
         (beginning-of-buffer)
         (insert stdout)
 
-        (kill-buffer tmp-buffer-stdout)
-        (kill-buffer tmp-buffer-stderr)
+        (kill-buffer tmp-stdout-buffer)
+        (delete-file tmp-stderr-file)
         (message
 	 "%s formatted with gawkfmt"
-         (abbreviate-file-name current-filename)))
-      )
+         (abbreviate-file-name current-filename))))
      (t
-      (kill-buffer tmp-buffer-stdout)
+      (kill-buffer tmp-stdout-buffer)
       (message
        (format "gawkfmt %s failed with code: %s"
                (abbreviate-file-name current-filename)
                exit-code))
 
-      (pop-to-buffer-same-window tmp-buffer-stderr nil))))
-  )
+      (pop-to-buffer-same-window tmp-buffer-stderr nil)))))
