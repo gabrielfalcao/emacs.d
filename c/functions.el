@@ -1636,17 +1636,20 @@ shortcut to calling \\[git-add] and \\[git-commit]
   (interactive)
   (delete-comments-region (point-min) (point-max)))
 
-(defun flush-empty-lines-region (beg end)
+(defun drop-empty-lines-region (beg end)
   "."
   (interactive "*r")
   (flush-lines "^$" beg end nil))
 
-(defun flush-empty-lines-buffer ()
+(defun drop-empty-lines-buffer ()
   "."
   (interactive)
   (save-excursion
     (widen)
-    (flush-empty-lines-region (point-min) (point-max))))
+    (drop-empty-lines-region (point-min) (point-max))))
+
+(defalias 'empty-lines-flush-in-region #'drop-empty-lines-region)
+(defalias 'empty-lines-flush-in-buffer #'drop-empty-lines-buffer)
 
 (defun decr-next-number ()
   "."
