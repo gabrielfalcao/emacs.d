@@ -1,6 +1,8 @@
-(setq force-load-messages t)
-(setq debug-on-error t)
-(setq $font-name$ "JetBrains Mono-16")
+(setq-default force-load-messages t)
+(setq-default debug-on-error t)
+(setq-default $font-name$ "JetBrains Mono-16")
+(setq-default warning-minimum-level (setq-default warning-minimum-log-level :debug))
+
 
 (defalias 'describe #'describe-symbol)
 
@@ -42,8 +44,7 @@
     (mapcar callback (list-dir-path path))))
 
 
-(setq server-name "server" server-socket-dir "~/.emacs.d/socket" server-log t)
-
+(setq-default server-name "server" server-socket-dir "~/.emacs.d/socket" server-log t)
 
 
 (let ((foreground "#A79C83")
@@ -112,7 +113,7 @@
   (autoload 'disable-bars "~/.emacs.d/c/boot.el")
   (disable-bars))
 (set-frame-parameter nil 'fullscreen 'maximized)
-(setq debug-on-error nil)
+(setq-default debug-on-error nil)
 (put 'downcase-region 'disabled nil)
 
 (disable-bars)
