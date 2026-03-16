@@ -47,6 +47,63 @@
                     var-value))))
 
 
+(defun wezterm-get-default-home-path()
+  (expand-file-name "~/.local/share/wezterm"))
+
+
+(defun wezterm-get-unix-socket()
+  (expand-file-name "~/.local/share/wezterm/gui-sock-92909
+  (validate-argument-is-of-expected-type-or-nil "wezterm-spawn" "working-dir" working-dir)
+
+
+
+(defun wezterm-cli(args &optional working-dir pane-id unix-socket-path)
+  (validate-argument-is-of-expected-type-or-nil "wezterm-spawn" "working-dir" working-dir)
+
+  (let* (
+         (env-wezterm-pane (getenv "WEZTERM_PANE"))
+         (env-wezterm-unix-socket (getenv "WEZTERM_UNIX_SOCKET"))
+         (wezterm-pane (and (stringp env-wezterm-pane) (string-to-number env-wezterm-pane)))
+         (wezterm-unix-socket (and (stringp env-wezterm-unix-socket) (expand-file-name env-wezterm-unix-socket)))
+         (wezterm-unix-socket (if
+                                  (and (stringp wezterm-unix-socket)
+                                          (file-exists-p wezterm-unix-socket)
+                                          (file-readable-p wezterm-unix-socket)
+                                          (file-writable-p wezterm-unix-socket))
+                                  wezterm-unix-socket
+                                ;; else
+                                    (
+                                     (and (or (not (stringp wezterm-unix-socket))
+                                              (not (file-exists-p wezterm-unix-socket))))
+
+
+                                      )
+                                     )
+                                    )
+                              )
+
+
+         (working-dir (cond
+                       ((stringp working-dir)
+                        (expand-file-name working-dir))
+
+                       ((null working-dir)
+                        default-directory))
+                      ); end let* working-dir
+         (wezterm-spawn-cwd (substring-no-properties (format "%s" working-dir)))
+
+         (call-process-args
+          (append (list "cli" "spawn" "--new-window" "--cwd" wezterm-spawn-cwd  "--") args))
+         (tmp-buffer-prefix (secure-hash "sha512" (string-join))
+         (stdout-buffer (create-fresh-buffer (format "")))
+         )
+    (condition-case err
+        (call-process "/opt/homebrew/bin/wezterm" nil nil nil call-process-args)
+      )
+
+    )); end (defun wezterm-spawn ...)
+
+
 
 (defun wezterm-spawn(&optional working-dir &rest args)
   (validate-argument-is-of-expected-type-or-nil "wezterm-spawn" "working-dir" working-dir)
