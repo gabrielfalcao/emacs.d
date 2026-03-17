@@ -1312,7 +1312,9 @@
   `(let ((filename (expand-file-name (buffer-file-name))))
      (if (string-match-p ,regexp filename)
          (progn ,@body))))
+
 (load-file "~/.emacs.d/c/staging/gitfun.el")
+
 (defmacro set-region-contents-with-fn
     (beg end fn)
   "BEG END FN."
