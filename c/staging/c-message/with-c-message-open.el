@@ -18,17 +18,14 @@
              ;;            (format "%S" (cl-type-of body))
              ;;            body)
              default-window-location
-
-             )
-            )
+             ))
           )
          (existing-buffer (get-buffer c-message-buffer))
          (existing-window
           (and  existing-buffer (get-buffer-window existing-buffer)))
          (current-windows (window-list nil :minibuf-never)))
 
-    `(progn ,@body))
-  )
+    `(progn ,@body)))
 
 ;; TESTING:
 ;; ;;
