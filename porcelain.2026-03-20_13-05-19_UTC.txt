@@ -1,0 +1,26 @@
+ M c/advices.el
+ M c/boot.el
+ M c/functions.el
+A  c/staging/buffer-predicates.el
+A  c/staging/buffer-stuff.el
+A  c/staging/buffer-variables-plist.el
+A  c/staging/c-message/with-c-message-open.el
+M  c/staging/debug-fonts.el
+M  c/staging/debug-fonts2.el
+A  c/staging/fs-stuff.el
+A  c/staging/mkscript.el
+M  c/staging/nice-errors.el
+M  c/staging/save-buffer-list-wip.el
+A  c/staging/server-status.el
+A  c/staging/string-fun.el
+M  c/staging/string-functions-clipboard-prefix-and-stuff.el
+M  c/staging/throwcatch-test.el
+A  c/staging/throwcatch-test2.el
+A  c/staging/wat.el
+M  c/staging/wezterm.el
+ M init.el
+?? commit.py
+?? modified.status.txt
+?? porcelain.2026-03-20_13-05-19_UTC.txt
+?? sandbox/emacs_desktop.eval_expression.pid@22044__@2026-03-16.17-21-03.el
+?? untracked.status.txt
