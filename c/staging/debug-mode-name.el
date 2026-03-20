@@ -62,12 +62,6 @@
           ); end (setq meta-result)
     (setq result (string-join meta-result "\n")) ;end (setq result)
 
-    (erase-c-messages)
-    (c-message-open)
-    (c-message "\n(list 'mode-name 'mode-name-len 'items)\n%s\n"
-               (seq-map-indexed (lambda (line index) (format "%4s%s" " " (1+ index) line))
-                                meta-result))
-
     (let* (
            (total-pairs (/ flattened-len 2))
            (flattened-key-values (mapcar (lambda (n)
@@ -96,17 +90,20 @@
            (flattened-string-output (string-join flattened-string-lines "\n"))
            )
 
-      (c-message "\n(list 'mode-name 'mode-name-len 'items)\n%s\n"
-		 (seq-map-indexed (lambda (line index) (format "%4s%s" " " (1+ index) line))
-                                  meta-result))
-
       (let* (
-             (sym-list (list 'flattened
-                             'flattened-len
-                             'flattened-items
-                             'flattened-key-values))
-             (flattened-meta-result (seq-map-indexed #'debug-sym-indexed sym-list))
+             (flattened-sym-list (list 'flattened
+                                       'flattened-len
+                                       'flattened-items
+                                       'flattened-key-values))
+             (flattened-meta-result (seq-map-indexed #'debug-sym-indexed flattened-sym-list))
              )
+        (erase-c-messages)
+        (c-message-open)
+        (c-message "\n(list 'mode-name 'mode-name-len 'items)\n%s\n"
+                   (seq-map-indexed (lambda (line index) (format "%4s%s" " " (1+ index) line))
+                                    meta-result))
+
+
 	(c-message "\n(list 'flattened-len 'flattened-items 'flattened-key-values)\n%s\n"
                    (seq-map-indexed (lambda (line index) (format "%4s%s" " " (1+ index) line))
                                     flattened-meta-result))
