@@ -1,0 +1,168 @@
+- path: c/advices.el
+  created: 1771903957
+  modified: 1774003249
+  size_bytes: 1329
+
+
+- path: c/boot.el
+  created: 1771817031
+  modified: 1774002986
+  size_bytes: 8642
+
+
+- path: c/functions.el
+  created: 1773722217
+  modified: 1773996223
+  size_bytes: 244724
+
+
+- path: c/staging/buffer-predicates.el
+  created: 1773611303
+  modified: 1773611831
+  size_bytes: 2187
+
+
+- path: c/staging/buffer-stuff.el
+  created: 1773608465
+  modified: 1773611275
+  size_bytes: 231
+
+
+- path: c/staging/buffer-variables-plist.el
+  created: 1773990355
+  modified: 1773990360
+  size_bytes: 1194
+
+
+- path: c/staging/c-message/with-c-message-open.el
+  created: 1773715168
+  modified: 1773722044
+  size_bytes: 1617
+
+
+- path: c/staging/debug-fonts.el
+  created: 1774003637
+  modified: 1774010223
+  size_bytes: 4693
+
+
+- path: c/staging/debug-fonts2.el
+  created: 1774008410
+  modified: 1774009643
+  size_bytes: 1319
+
+
+- path: c/staging/fs-stuff.el
+  created: 1773681449
+  modified: 1773681496
+  size_bytes: 220
+
+
+- path: c/staging/mkscript.el
+  created: 1773607762
+  modified: 1773608431
+  size_bytes: 441
+
+
+- path: c/staging/nice-errors.el
+  created: 1773566793
+  modified: 1773722229
+  size_bytes: 1693
+
+
+- path: c/staging/save-buffer-list-wip.el
+  created: 1773590930
+  modified: 1773990701
+  size_bytes: 4121
+
+
+- path: c/staging/server-status.el
+  created: 1773989675
+  modified: 1773990033
+  size_bytes: 297
+
+
+- path: c/staging/string-fun.el
+  created: 1773990737
+  modified: 1773990737
+  size_bytes: 662
+
+
+- path: c/staging/string-functions-clipboard-prefix-and-stuff.el
+  created: 1771164416
+  modified: 1773681653
+  size_bytes: 3256
+
+
+- path: c/staging/throwcatch-test.el
+  created: 1772308905
+  modified: 1773612865
+  size_bytes: 1209
+
+
+- path: c/staging/throwcatch-test2.el
+  created: 1773612751
+  modified: 1773612751
+  size_bytes: 1122
+
+
+- path: c/staging/wat.el
+  created: 1773613395
+  modified: 1773617628
+  size_bytes: 943
+
+
+- path: c/staging/wezterm.el
+  created: 1771178203
+  modified: 1773990871
+  size_bytes: 7749
+
+
+- path: init.el
+  created: 1771817031
+  modified: 1774003429
+  size_bytes: 3181
+
+
+- path: commit.py
+  created: 1773970914
+  modified: 1773971011
+  size_bytes: 2204
+
+
+- path: modified.status.txt
+  created: 1773970874
+  modified: 1773970874
+  size_bytes: 849
+
+
+- path: porcelain.2026-03-20_13-05-19_UTC.json
+  created: 1774012596
+  modified: 1774012596
+  size_bytes: 17418
+
+
+- path: porcelain.2026-03-20_13-05-19_UTC.txt
+  created: 1774011919
+  modified: 1774011919
+  size_bytes: 781
+
+
+- path: porcelain.2026-03-20_13-05-19_UTC.yaml
+  created: 1774012716
+  modified: 1774012717
+  size_bytes: 2493
+
+
+- path: sandbox/emacs_desktop.eval_expression.pid@22044__@2026-03-16.17-21-03.el
+  created: 1773681695
+  modified: 1773990861
+  size_bytes: 628
+
+
+- path: untracked.status.txt
+  created: 1773970874
+  modified: 1773970884
+  size_bytes: 1615
+
+
