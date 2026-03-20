@@ -1,0 +1,600 @@
+[
+  {
+    "NonDirectory": {
+      "path": "/Users/gabrielfalcao/.emacs.d/c/advices.el",
+      "timestamps": {
+        "accessed": {
+          "rfc3339": "2026-03-20T10:41:02.547265243Z",
+          "timestamp": 1774003262,
+          "timestamp_subsec_nanos": 547265243
+        },
+        "modified": {
+          "rfc3339": "2026-03-20T10:40:49.876706326Z",
+          "timestamp": 1774003249,
+          "timestamp_subsec_nanos": 876706326
+        },
+        "created": {
+          "rfc3339": "2026-02-24T03:32:37.119428711Z",
+          "timestamp": 1771903957,
+          "timestamp_subsec_nanos": 119428711
+        }
+      },
+      "status": "file"
+    }
+  },
+  {
+    "NonDirectory": {
+      "path": "/Users/gabrielfalcao/.emacs.d/c/boot.el",
+      "timestamps": {
+        "accessed": {
+          "rfc3339": "2026-03-20T10:38:38.875586132Z",
+          "timestamp": 1774003118,
+          "timestamp_subsec_nanos": 875586132
+        },
+        "modified": {
+          "rfc3339": "2026-03-20T10:36:26.498641494Z",
+          "timestamp": 1774002986,
+          "timestamp_subsec_nanos": 498641494
+        },
+        "created": {
+          "rfc3339": "2026-02-23T03:23:51.123102241Z",
+          "timestamp": 1771817031,
+          "timestamp_subsec_nanos": 123102241
+        }
+      },
+      "status": "file"
+    }
+  },
+  {
+    "NonDirectory": {
+      "path": "/Users/gabrielfalcao/.emacs.d/c/functions.el",
+      "timestamps": {
+        "accessed": {
+          "rfc3339": "2026-03-20T08:48:54.985027097Z",
+          "timestamp": 1773996534,
+          "timestamp_subsec_nanos": 985027097
+        },
+        "modified": {
+          "rfc3339": "2026-03-20T08:43:43.977716259Z",
+          "timestamp": 1773996223,
+          "timestamp_subsec_nanos": 977716259
+        },
+        "created": {
+          "rfc3339": "2026-03-17T04:36:57.306217106Z",
+          "timestamp": 1773722217,
+          "timestamp_subsec_nanos": 306217106
+        }
+      },
+      "status": "file"
+    }
+  },
+  {
+    "NonDirectory": {
+      "path": "/Users/gabrielfalcao/.emacs.d/c/staging/buffer-predicates.el",
+      "timestamps": {
+        "accessed": {
+          "rfc3339": "2026-03-15T22:09:53.090852931Z",
+          "timestamp": 1773612593,
+          "timestamp_subsec_nanos": 90852931
+        },
+        "modified": {
+          "rfc3339": "2026-03-15T21:57:11.253106171Z",
+          "timestamp": 1773611831,
+          "timestamp_subsec_nanos": 253106171
+        },
+        "created": {
+          "rfc3339": "2026-03-15T21:48:23.940036208Z",
+          "timestamp": 1773611303,
+          "timestamp_subsec_nanos": 940036208
+        }
+      },
+      "status": "file"
+    }
+  },
+  {
+    "NonDirectory": {
+      "path": "/Users/gabrielfalcao/.emacs.d/c/staging/buffer-stuff.el",
+      "timestamps": {
+        "accessed": {
+          "rfc3339": "2026-03-15T22:09:53.090704969Z",
+          "timestamp": 1773612593,
+          "timestamp_subsec_nanos": 90704969
+        },
+        "modified": {
+          "rfc3339": "2026-03-15T21:47:55.823279595Z",
+          "timestamp": 1773611275,
+          "timestamp_subsec_nanos": 823279595
+        },
+        "created": {
+          "rfc3339": "2026-03-15T21:01:05.755764946Z",
+          "timestamp": 1773608465,
+          "timestamp_subsec_nanos": 755764946
+        }
+      },
+      "status": "file"
+    }
+  },
+  {
+    "NonDirectory": {
+      "path": "/Users/gabrielfalcao/.emacs.d/c/staging/buffer-variables-plist.el",
+      "timestamps": {
+        "accessed": {
+          "rfc3339": "2026-03-20T10:32:14.931583785Z",
+          "timestamp": 1774002734,
+          "timestamp_subsec_nanos": 931583785
+        },
+        "modified": {
+          "rfc3339": "2026-03-20T07:06:00.229696089Z",
+          "timestamp": 1773990360,
+          "timestamp_subsec_nanos": 229696089
+        },
+        "created": {
+          "rfc3339": "2026-03-20T07:05:55.091600168Z",
+          "timestamp": 1773990355,
+          "timestamp_subsec_nanos": 91600168
+        }
+      },
+      "status": "file"
+    }
+  },
+  {
+    "NonDirectory": {
+      "path": "/Users/gabrielfalcao/.emacs.d/c/staging/c-message/with-c-message-open.el",
+      "timestamps": {
+        "accessed": {
+          "rfc3339": "2026-03-17T04:38:32.865443543Z",
+          "timestamp": 1773722312,
+          "timestamp_subsec_nanos": 865443543
+        },
+        "modified": {
+          "rfc3339": "2026-03-17T04:34:04.544153538Z",
+          "timestamp": 1773722044,
+          "timestamp_subsec_nanos": 544153538
+        },
+        "created": {
+          "rfc3339": "2026-03-17T02:39:28.803940347Z",
+          "timestamp": 1773715168,
+          "timestamp_subsec_nanos": 803940347
+        }
+      },
+      "status": "file"
+    }
+  },
+  {
+    "NonDirectory": {
+      "path": "/Users/gabrielfalcao/.emacs.d/c/staging/debug-fonts.el",
+      "timestamps": {
+        "accessed": {
+          "rfc3339": "2026-03-20T12:38:00.788566765Z",
+          "timestamp": 1774010280,
+          "timestamp_subsec_nanos": 788566765
+        },
+        "modified": {
+          "rfc3339": "2026-03-20T12:37:03.654733422Z",
+          "timestamp": 1774010223,
+          "timestamp_subsec_nanos": 654733422
+        },
+        "created": {
+          "rfc3339": "2026-03-20T10:47:17.189348828Z",
+          "timestamp": 1774003637,
+          "timestamp_subsec_nanos": 189348828
+        }
+      },
+      "status": "file"
+    }
+  },
+  {
+    "NonDirectory": {
+      "path": "/Users/gabrielfalcao/.emacs.d/c/staging/debug-fonts2.el",
+      "timestamps": {
+        "accessed": {
+          "rfc3339": "2026-03-20T12:34:33.639488034Z",
+          "timestamp": 1774010073,
+          "timestamp_subsec_nanos": 639488034
+        },
+        "modified": {
+          "rfc3339": "2026-03-20T12:27:23.288124577Z",
+          "timestamp": 1774009643,
+          "timestamp_subsec_nanos": 288124577
+        },
+        "created": {
+          "rfc3339": "2026-03-20T12:06:50.787785842Z",
+          "timestamp": 1774008410,
+          "timestamp_subsec_nanos": 787785842
+        }
+      },
+      "status": "file"
+    }
+  },
+  {
+    "NonDirectory": {
+      "path": "/Users/gabrielfalcao/.emacs.d/c/staging/fs-stuff.el",
+      "timestamps": {
+        "accessed": {
+          "rfc3339": "2026-03-17T04:38:32.873516183Z",
+          "timestamp": 1773722312,
+          "timestamp_subsec_nanos": 873516183
+        },
+        "modified": {
+          "rfc3339": "2026-03-16T17:18:16.350070922Z",
+          "timestamp": 1773681496,
+          "timestamp_subsec_nanos": 350070922
+        },
+        "created": {
+          "rfc3339": "2026-03-16T17:17:29.159029182Z",
+          "timestamp": 1773681449,
+          "timestamp_subsec_nanos": 159029182
+        }
+      },
+      "status": "file"
+    }
+  },
+  {
+    "NonDirectory": {
+      "path": "/Users/gabrielfalcao/.emacs.d/c/staging/mkscript.el",
+      "timestamps": {
+        "accessed": {
+          "rfc3339": "2026-03-15T22:09:53.090811389Z",
+          "timestamp": 1773612593,
+          "timestamp_subsec_nanos": 90811389
+        },
+        "modified": {
+          "rfc3339": "2026-03-15T21:00:31.934391471Z",
+          "timestamp": 1773608431,
+          "timestamp_subsec_nanos": 934391471
+        },
+        "created": {
+          "rfc3339": "2026-03-15T20:49:22.559389303Z",
+          "timestamp": 1773607762,
+          "timestamp_subsec_nanos": 559389303
+        }
+      },
+      "status": "file"
+    }
+  },
+  {
+    "NonDirectory": {
+      "path": "/Users/gabrielfalcao/.emacs.d/c/staging/nice-errors.el",
+      "timestamps": {
+        "accessed": {
+          "rfc3339": "2026-03-17T04:38:32.869527093Z",
+          "timestamp": 1773722312,
+          "timestamp_subsec_nanos": 869527093
+        },
+        "modified": {
+          "rfc3339": "2026-03-17T04:37:09.701383689Z",
+          "timestamp": 1773722229,
+          "timestamp_subsec_nanos": 701383689
+        },
+        "created": {
+          "rfc3339": "2026-03-15T09:26:33.434908093Z",
+          "timestamp": 1773566793,
+          "timestamp_subsec_nanos": 434908093
+        }
+      },
+      "status": "file"
+    }
+  },
+  {
+    "NonDirectory": {
+      "path": "/Users/gabrielfalcao/.emacs.d/c/staging/save-buffer-list-wip.el",
+      "timestamps": {
+        "accessed": {
+          "rfc3339": "2026-03-20T07:15:25.309768550Z",
+          "timestamp": 1773990925,
+          "timestamp_subsec_nanos": 309768550
+        },
+        "modified": {
+          "rfc3339": "2026-03-20T07:11:41.374890746Z",
+          "timestamp": 1773990701,
+          "timestamp_subsec_nanos": 374890746
+        },
+        "created": {
+          "rfc3339": "2026-03-15T16:08:50.256504920Z",
+          "timestamp": 1773590930,
+          "timestamp_subsec_nanos": 256504920
+        }
+      },
+      "status": "file"
+    }
+  },
+  {
+    "NonDirectory": {
+      "path": "/Users/gabrielfalcao/.emacs.d/c/staging/server-status.el",
+      "timestamps": {
+        "accessed": {
+          "rfc3339": "2026-03-20T10:32:14.931855127Z",
+          "timestamp": 1774002734,
+          "timestamp_subsec_nanos": 931855127
+        },
+        "modified": {
+          "rfc3339": "2026-03-20T07:00:33.522002161Z",
+          "timestamp": 1773990033,
+          "timestamp_subsec_nanos": 522002161
+        },
+        "created": {
+          "rfc3339": "2026-03-20T06:54:35.544509158Z",
+          "timestamp": 1773989675,
+          "timestamp_subsec_nanos": 544509158
+        }
+      },
+      "status": "file"
+    }
+  },
+  {
+    "NonDirectory": {
+      "path": "/Users/gabrielfalcao/.emacs.d/c/staging/string-fun.el",
+      "timestamps": {
+        "accessed": {
+          "rfc3339": "2026-03-20T07:12:17.698530975Z",
+          "timestamp": 1773990737,
+          "timestamp_subsec_nanos": 698530975
+        },
+        "modified": {
+          "rfc3339": "2026-03-20T07:12:17.685416734Z",
+          "timestamp": 1773990737,
+          "timestamp_subsec_nanos": 685416734
+        },
+        "created": {
+          "rfc3339": "2026-03-20T07:12:17.546517644Z",
+          "timestamp": 1773990737,
+          "timestamp_subsec_nanos": 546517644
+        }
+      },
+      "status": "file"
+    }
+  },
+  {
+    "NonDirectory": {
+      "path": "/Users/gabrielfalcao/.emacs.d/c/staging/string-functions-clipboard-prefix-and-stuff.el",
+      "timestamps": {
+        "accessed": {
+          "rfc3339": "2026-03-17T04:35:26.416149271Z",
+          "timestamp": 1773722126,
+          "timestamp_subsec_nanos": 416149271
+        },
+        "modified": {
+          "rfc3339": "2026-03-16T17:20:53.934443110Z",
+          "timestamp": 1773681653,
+          "timestamp_subsec_nanos": 934443110
+        },
+        "created": {
+          "rfc3339": "2026-02-15T14:06:56.232050631Z",
+          "timestamp": 1771164416,
+          "timestamp_subsec_nanos": 232050631
+        }
+      },
+      "status": "file"
+    }
+  },
+  {
+    "NonDirectory": {
+      "path": "/Users/gabrielfalcao/.emacs.d/c/staging/throwcatch-test.el",
+      "timestamps": {
+        "accessed": {
+          "rfc3339": "2026-03-17T04:35:26.416969081Z",
+          "timestamp": 1773722126,
+          "timestamp_subsec_nanos": 416969081
+        },
+        "modified": {
+          "rfc3339": "2026-03-15T22:14:25.316835080Z",
+          "timestamp": 1773612865,
+          "timestamp_subsec_nanos": 316835080
+        },
+        "created": {
+          "rfc3339": "2026-02-28T20:01:45.241689037Z",
+          "timestamp": 1772308905,
+          "timestamp_subsec_nanos": 241689037
+        }
+      },
+      "status": "file"
+    }
+  },
+  {
+    "NonDirectory": {
+      "path": "/Users/gabrielfalcao/.emacs.d/c/staging/throwcatch-test2.el",
+      "timestamps": {
+        "accessed": {
+          "rfc3339": "2026-03-16T19:19:29.933548171Z",
+          "timestamp": 1773688769,
+          "timestamp_subsec_nanos": 933548171
+        },
+        "modified": {
+          "rfc3339": "2026-03-15T22:12:31.263531325Z",
+          "timestamp": 1773612751,
+          "timestamp_subsec_nanos": 263531325
+        },
+        "created": {
+          "rfc3339": "2026-03-15T22:12:31.263452115Z",
+          "timestamp": 1773612751,
+          "timestamp_subsec_nanos": 263452115
+        }
+      },
+      "status": "file"
+    }
+  },
+  {
+    "NonDirectory": {
+      "path": "/Users/gabrielfalcao/.emacs.d/c/staging/wat.el",
+      "timestamps": {
+        "accessed": {
+          "rfc3339": "2026-03-16T19:19:00.564156682Z",
+          "timestamp": 1773688740,
+          "timestamp_subsec_nanos": 564156682
+        },
+        "modified": {
+          "rfc3339": "2026-03-15T23:33:48.728775265Z",
+          "timestamp": 1773617628,
+          "timestamp_subsec_nanos": 728775265
+        },
+        "created": {
+          "rfc3339": "2026-03-15T22:23:15.397842756Z",
+          "timestamp": 1773613395,
+          "timestamp_subsec_nanos": 397842756
+        }
+      },
+      "status": "file"
+    }
+  },
+  {
+    "NonDirectory": {
+      "path": "/Users/gabrielfalcao/.emacs.d/c/staging/wezterm.el",
+      "timestamps": {
+        "accessed": {
+          "rfc3339": "2026-03-20T10:32:14.931613619Z",
+          "timestamp": 1774002734,
+          "timestamp_subsec_nanos": 931613619
+        },
+        "modified": {
+          "rfc3339": "2026-03-20T07:14:31.919231680Z",
+          "timestamp": 1773990871,
+          "timestamp_subsec_nanos": 919231680
+        },
+        "created": {
+          "rfc3339": "2026-02-15T17:56:43.946727599Z",
+          "timestamp": 1771178203,
+          "timestamp_subsec_nanos": 946727599
+        }
+      },
+      "status": "file"
+    }
+  },
+  {
+    "NonDirectory": {
+      "path": "/Users/gabrielfalcao/.emacs.d/init.el",
+      "timestamps": {
+        "accessed": {
+          "rfc3339": "2026-03-20T12:37:48.533468010Z",
+          "timestamp": 1774010268,
+          "timestamp_subsec_nanos": 533468010
+        },
+        "modified": {
+          "rfc3339": "2026-03-20T10:43:49.489503915Z",
+          "timestamp": 1774003429,
+          "timestamp_subsec_nanos": 489503915
+        },
+        "created": {
+          "rfc3339": "2026-02-23T03:23:51.151118659Z",
+          "timestamp": 1771817031,
+          "timestamp_subsec_nanos": 151118659
+        }
+      },
+      "status": "file"
+    }
+  },
+  {
+    "NonDirectory": {
+      "path": "/Users/gabrielfalcao/.emacs.d/commit.py",
+      "timestamps": {
+        "accessed": {
+          "rfc3339": "2026-03-20T10:32:14.745230986Z",
+          "timestamp": 1774002734,
+          "timestamp_subsec_nanos": 745230986
+        },
+        "modified": {
+          "rfc3339": "2026-03-20T01:43:31.793705975Z",
+          "timestamp": 1773971011,
+          "timestamp_subsec_nanos": 793705975
+        },
+        "created": {
+          "rfc3339": "2026-03-20T01:41:54.744814371Z",
+          "timestamp": 1773970914,
+          "timestamp_subsec_nanos": 744814371
+        }
+      },
+      "status": "file"
+    }
+  },
+  {
+    "NonDirectory": {
+      "path": "/Users/gabrielfalcao/.emacs.d/modified.status.txt",
+      "timestamps": {
+        "accessed": {
+          "rfc3339": "2026-03-20T10:32:14.980776177Z",
+          "timestamp": 1774002734,
+          "timestamp_subsec_nanos": 980776177
+        },
+        "modified": {
+          "rfc3339": "2026-03-20T01:41:14.315670893Z",
+          "timestamp": 1773970874,
+          "timestamp_subsec_nanos": 315670893
+        },
+        "created": {
+          "rfc3339": "2026-03-20T01:41:14.315284665Z",
+          "timestamp": 1773970874,
+          "timestamp_subsec_nanos": 315284665
+        }
+      },
+      "status": "file"
+    }
+  },
+  {
+    "NonDirectory": {
+      "path": "/Users/gabrielfalcao/.emacs.d/porcelain.2026-03-20_13-05-19_UTC.txt",
+      "timestamps": {
+        "accessed": {
+          "rfc3339": "2026-03-20T13:05:52.489389446Z",
+          "timestamp": 1774011952,
+          "timestamp_subsec_nanos": 489389446
+        },
+        "modified": {
+          "rfc3339": "2026-03-20T13:05:19.685980240Z",
+          "timestamp": 1774011919,
+          "timestamp_subsec_nanos": 685980240
+        },
+        "created": {
+          "rfc3339": "2026-03-20T13:05:19.672441917Z",
+          "timestamp": 1774011919,
+          "timestamp_subsec_nanos": 672441917
+        }
+      },
+      "status": "file"
+    }
+  },
+  {
+    "NonDirectory": {
+      "path": "/Users/gabrielfalcao/.emacs.d/sandbox/emacs_desktop.eval_expression.pid@22044__@2026-03-16.17-21-03.el",
+      "timestamps": {
+        "accessed": {
+          "rfc3339": "2026-03-20T10:32:14.794550841Z",
+          "timestamp": 1774002734,
+          "timestamp_subsec_nanos": 794550841
+        },
+        "modified": {
+          "rfc3339": "2026-03-20T07:14:21.201785916Z",
+          "timestamp": 1773990861,
+          "timestamp_subsec_nanos": 201785916
+        },
+        "created": {
+          "rfc3339": "2026-03-16T17:21:35.003055376Z",
+          "timestamp": 1773681695,
+          "timestamp_subsec_nanos": 3055376
+        }
+      },
+      "status": "file"
+    }
+  },
+  {
+    "NonDirectory": {
+      "path": "/Users/gabrielfalcao/.emacs.d/untracked.status.txt",
+      "timestamps": {
+        "accessed": {
+          "rfc3339": "2026-03-20T10:32:14.743275428Z",
+          "timestamp": 1774002734,
+          "timestamp_subsec_nanos": 743275428
+        },
+        "modified": {
+          "rfc3339": "2026-03-20T01:41:24.367149647Z",
+          "timestamp": 1773970884,
+          "timestamp_subsec_nanos": 367149647
+        },
+        "created": {
+          "rfc3339": "2026-03-20T01:41:14.315925766Z",
+          "timestamp": 1773970874,
+          "timestamp_subsec_nanos": 315925766
+        }
+      },
+      "status": "file"
+    }
+  }
+]
