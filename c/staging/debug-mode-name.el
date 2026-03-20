@@ -64,7 +64,9 @@
 
     (erase-c-messages)
     (c-message-open)
-    (c-message "\nresult:\n%s\n" result)
+    (c-message "\n(list 'mode-name 'mode-name-len 'items)\n%s\n"
+               (seq-map-indexed (lambda (line index) (format "%4s%s" " " (1+ index) line))
+                                meta-result))
 
     (let* (
            (total-pairs (/ flattened-len 2))
@@ -75,24 +77,41 @@
                                                   )
                                              (list key value)))
                                          (number-sequence 0 total-pairs 2)))
-           (flattened-string-lines (string-join (seq-map-indexed (lambda (item index)
-                                                                   (let* (
-                                                                          (key (car item))
-                                                                          (value (cadr item))
-                                                                          )
-                                                                     (format "[%4d]  key: %S\nvalue: %S" index key value)
-                                                                     )
-                                                                   )
-                                                                 flattened-key-values)
-                                                "\n"))
+           (flattened-string-lines (seq-map-indexed
+                                    (lambda (item index)
+                                      (let* (
+                                             (key (car item))
+                                             (value (cadr item))
+                                             (line (format "%s [key (%S) => %S] value (%S) => %S"
+                                                           (format "[%d]" index)
+                                                           (cl-type-of key) key
+                                                           (cl-type-of value) value
+                                                           ))
+                                             )
+                                        ;; (c-message "%s" line)
+                                        line
+                                        )
+                                      )
+                                    flattened-key-values))
+           (flattened-string-output (string-join flattened-string-lines "\n"))
            )
 
-      (seq-map-indexed #'debug-sym-indexed
-                       (list 'flattened
-                             'flattened-len
-                             'flattened-items
-                             'flattened-key-values
-                             ))
+      (c-message "\n(list 'mode-name 'mode-name-len 'items)\n%s\n"
+               (seq-map-indexed (lambda (line index) (format "%4s%s" " " (1+ index) line))
+                                meta-result))
+
+      (let* (
+             (sym-list (list 'flattened
+                                                           'flattened-len
+                                                           'flattened-items
+                                                           'flattened-key-values))
+             (flattened-meta-result (seq-map-indexed #'debug-sym-indexed sym-list))
+             )
+      (c-message "\n(list 'flattened-len 'flattened-items 'flattened-key-values)\n%s\n"
+                 (seq-map-indexed (lambda (line index) (format "%4s%s" " " (1+ index) line))
+                                  flattened-meta-result))
+      )
+
       ) ;end (let* )
     ) ;end (let* )
 
