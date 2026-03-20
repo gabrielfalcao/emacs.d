@@ -13,23 +13,22 @@
     )
   )
 
-(defun map-callback-debug-maybe-indexed (elt &optional index)
+(defun map-indexed-callback-debug (elt &optional index)
   (let* (
          (elt-type (cl-type-of elt))
-         (index-type (cl-type-of index))
          )
 
     (pcase index
 
       ((and (pred integerp)
             (pred (>= _ 0)))
-       (format "%4d %S: %S" index (cl-type-of elt) elt))
+       (format "%4d %S: %S" index elt-type elt))
 
       ((pred null)
-       (format "%S: %S" (cl-type-of elt) elt))
+       (format "%S: %S" elt-type elt))
 
       (_ (signal 'type-error
-                 (format  "`map-callback-debug-maybe-indexed' argument `index' must be either `nil' or a non-negative integer, but instead received `%s': %S"
+                 (format  "`map-indexed-callback-debug' argument `index' must be either `nil' or a non-negative integer, but instead received `%s': %S"
 			  (cl-type-of index)
 			  index)))
       )
@@ -45,8 +44,8 @@
          (flattened         (flatten-tree mode-name))
          (flattened-len     (length flattened))
          (mode-name-len     (length mode-name))
-         (items             (seq-map-indexed #'map-callback-debug-maybe-indexed mode-name))
-         (flattened-items   (seq-map-indexed #'map-callback-debug-maybe-indexed flattened))
+         (items             (seq-map-indexed #'map-indexed-callback-debug mode-name))
+         (flattened-items   (seq-map-indexed #'map-indexed-callback-debug flattened))
          (meta-result       (seq-map-indexed #'debug-sym-indexed
 				             (list
 					      'mode-name
