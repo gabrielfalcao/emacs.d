@@ -75,7 +75,16 @@
                                                   )
                                              (list key value)))
                                          (number-sequence 0 total-pairs 2)))
-           (flattened-string-lines (string-join flattened-key-values "\n"))
+           (flattened-string-lines (string-join (seq-map-indexed (lambda (item index)
+                                                                   (let* (
+                                                                          (key (car item))
+                                                                          (value (cadr item))
+                                                                          )
+                                                                     (format "[%4d]  key: %S\nvalue: %S" index key value)
+                                                                     )
+                                                                   )
+                                                                 flattened-key-values)
+                                                "\n"))
            )
 
       (seq-map-indexed #'debug-sym-indexed
@@ -84,8 +93,8 @@
                              'flattened-items
                              'flattened-key-values
                              ))
-      )
-
-
+      ) ;end (let* )
     ) ;end (let* )
-  )
+
+
+  ) ;end (defun debug-mode-name ())
