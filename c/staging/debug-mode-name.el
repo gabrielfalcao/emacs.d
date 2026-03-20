@@ -91,13 +91,17 @@
     (erase-c-messages)
     (c-message-open)
     (c-message "\n(list 'mode-name 'mode-name-len 'items)\n%s\n"
-               (seq-map-indexed (lambda (line index) (format "%4s%s" " " (1+ index) line))
-                                meta-result))
+               (string-join
+                (seq-map-indexed (lambda (line index) (format "%4s%s" " " (1+ index) line))
+                                 meta-result)
+                "\n"
+                ))
 
 
     (c-message "\n(list 'flattened-len 'flattened-items 'flattened-key-values)\n%s\n"
-               (seq-map-indexed (lambda (line index) (format "%4s%s" " " (1+ index) line))
-                                flattened-meta-result)
+               (string-join (seq-map-indexed (lambda (line index) (format "%4s%s" " " (1+ index) line))
+                                             flattened-meta-result)
+                            "\n")
                )
     ; end (let* ) body
     ) ;end (let* )
