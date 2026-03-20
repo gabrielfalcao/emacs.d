@@ -8,7 +8,7 @@
          (ty    (cl-type-of value))
          (line (format "%s%s (%S): %S" idx-display name ty value))
          )
-    ;; (c-message "\n(debug-sym-indexed '%s %d)\n\t%s\n" sym index (string-join (list )
+    ;; (c-message "\n(debug-sym-indexed '%s %d)\n\t%s\n" sym index line)
     line
     )
   )
@@ -47,13 +47,13 @@
          (mode-name-len     (length mode-name))
          (items             (seq-map-indexed #'map-callback-debug-maybe-indexed mode-name))
          (flattened-items   (seq-map-indexed #'map-callback-debug-maybe-indexed flattened))
-         (meta-result (seq-map-indexed #'debug-sym-indexed
-				       (list
-					'mode-name
-					'mode-name-len
-					'items
-					)
-				       ))
+         (meta-result       (seq-map-indexed #'debug-sym-indexed
+				             (list
+					      'mode-name
+					      'mode-name-len
+					      'items
+					      )
+					     ))
          (result (string-join meta-result "\n"))
          (total-flattened-pairs (/ flattened-len 2))
          (flattened-key-values (mapcar (lambda (n)
@@ -87,7 +87,7 @@
          (flattened-meta-result (seq-map-indexed #'debug-sym-indexed flattened-sym-list))
          ) ; end (let* varlist)
 
-    ; start (let* ) body
+					; start (let* ) body
     (erase-c-messages)
     (c-message-open)
     (c-message "\n(list 'mode-name 'mode-name-len 'items)\n%s\n"
@@ -103,6 +103,6 @@
                                              flattened-meta-result)
                             "\n")
                )
-    ; end (let* ) body
+					; end (let* ) body
     ) ;end (let* )
   ) ;end (defun debug-mode-name ())
