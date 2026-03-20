@@ -97,23 +97,21 @@
            )
 
       (c-message "\n(list 'mode-name 'mode-name-len 'items)\n%s\n"
-               (seq-map-indexed (lambda (line index) (format "%4s%s" " " (1+ index) line))
-                                meta-result))
+		 (seq-map-indexed (lambda (line index) (format "%4s%s" " " (1+ index) line))
+                                  meta-result))
 
       (let* (
              (sym-list (list 'flattened
-                                                           'flattened-len
-                                                           'flattened-items
-                                                           'flattened-key-values))
+                             'flattened-len
+                             'flattened-items
+                             'flattened-key-values))
              (flattened-meta-result (seq-map-indexed #'debug-sym-indexed sym-list))
              )
-      (c-message "\n(list 'flattened-len 'flattened-items 'flattened-key-values)\n%s\n"
-                 (seq-map-indexed (lambda (line index) (format "%4s%s" " " (1+ index) line))
-                                  flattened-meta-result))
-      )
+	(c-message "\n(list 'flattened-len 'flattened-items 'flattened-key-values)\n%s\n"
+                   (seq-map-indexed (lambda (line index) (format "%4s%s" " " (1+ index) line))
+                                    flattened-meta-result))
+	)
 
       ) ;end (let* )
     ) ;end (let* )
-
-
   ) ;end (defun debug-mode-name ())
