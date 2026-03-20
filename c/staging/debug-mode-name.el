@@ -47,68 +47,58 @@
          (mode-name-len     (length mode-name))
          (items             (seq-map-indexed #'map-callback-debug-maybe-indexed mode-name))
          (flattened-items   (seq-map-indexed #'map-callback-debug-maybe-indexed flattened))
-         (meta-result (list))
-         (result "")
-         )
-
-    (setq meta-result
-          (seq-map-indexed #'debug-sym-indexed
-                           (list
-                            'mode-name
-	                    'mode-name-len
-	                    'items
-                            )
-                           )
-          ); end (setq meta-result)
-    (setq result (string-join meta-result "\n")) ;end (setq result)
-
-    (let* (
-           (total-pairs (/ flattened-len 2))
-           (flattened-key-values (mapcar (lambda (n)
-                                           (let* (
-                                                  (key   (nth (+ n 0) flattened))
-                                                  (value (nth (+ n 1) flattened))
-                                                  )
-                                             (list key value)))
-                                         (number-sequence 0 total-pairs 2)))
-           (flattened-string-lines (seq-map-indexed
-                                    (lambda (item index)
-                                      (let* (
-                                             (key (car item))
-                                             (value (cadr item))
-                                             (line (format "%s [key (%S) => %S] value (%S) => %S"
-                                                           (format "[%d]" index)
-                                                           (cl-type-of key) key
-                                                           (cl-type-of value) value
-                                                           ))
-                                             )
-                                        ;; (c-message "%s" line)
-                                        line
-                                        )
+         (meta-result (seq-map-indexed #'debug-sym-indexed
+				       (list
+					'mode-name
+					'mode-name-len
+					'items
+					)
+				       ))
+         (result (string-join meta-result "\n"))
+         (total-flattened-pairs (/ flattened-len 2))
+         (flattened-key-values (mapcar (lambda (n)
+                                         (let* (
+                                                (key   (nth (+ n 0) flattened))
+                                                (value (nth (+ n 1) flattened))
+                                                )
+                                           (list key value)))
+                                       (number-sequence 0 total-flattened-pairs 2)))
+         (flattened-string-lines (seq-map-indexed
+                                  (lambda (item index)
+                                    (let* (
+                                           (key (car item))
+                                           (value (cadr item))
+                                           (line (format "%s [key (%S) => %S] value (%S) => %S"
+                                                         (format "[%d]" index)
+                                                         (cl-type-of key) key
+                                                         (cl-type-of value) value
+                                                         ))
+                                           )
+                                      ;; (c-message "%s" line)
+                                      line
                                       )
-                                    flattened-key-values))
-           (flattened-string-output (string-join flattened-string-lines "\n"))
-           )
+                                    )
+                                  flattened-key-values))
+         (flattened-string-output (string-join flattened-string-lines "\n"))
+         (flattened-sym-list (list 'flattened
+                                   'flattened-len
+                                   'flattened-items
+                                   'flattened-key-values))
+         (flattened-meta-result (seq-map-indexed #'debug-sym-indexed flattened-sym-list))
+         ) ; end (let* varlist)
 
-      (let* (
-             (flattened-sym-list (list 'flattened
-                                       'flattened-len
-                                       'flattened-items
-                                       'flattened-key-values))
-             (flattened-meta-result (seq-map-indexed #'debug-sym-indexed flattened-sym-list))
-             )
-        (erase-c-messages)
-        (c-message-open)
-        (c-message "\n(list 'mode-name 'mode-name-len 'items)\n%s\n"
-                   (seq-map-indexed (lambda (line index) (format "%4s%s" " " (1+ index) line))
-                                    meta-result))
+    ; start (let* ) body
+    (erase-c-messages)
+    (c-message-open)
+    (c-message "\n(list 'mode-name 'mode-name-len 'items)\n%s\n"
+               (seq-map-indexed (lambda (line index) (format "%4s%s" " " (1+ index) line))
+                                meta-result))
 
 
-	(c-message "\n(list 'flattened-len 'flattened-items 'flattened-key-values)\n%s\n"
-                   (seq-map-indexed (lambda (line index) (format "%4s%s" " " (1+ index) line))
-                                    flattened-meta-result))
-	)
-
-      ) ;end (let* )
+    (c-message "\n(list 'flattened-len 'flattened-items 'flattened-key-values)\n%s\n"
+               (seq-map-indexed (lambda (line index) (format "%4s%s" " " (1+ index) line))
+                                flattened-meta-result)
+               )
+    ; end (let* ) body
     ) ;end (let* )
   ) ;end (defun debug-mode-name ())
