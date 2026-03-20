@@ -5,7 +5,7 @@
           (seq-map-indexed
            (lambda (item index)
              (let* ((current (1+ index)))
-               (format "  %d of %d (%s): %S" name current len
+               (format "  %d of %d (%s): %S" current len
                        (cl-type-of item)
                        item)))
            items))

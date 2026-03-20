@@ -52,7 +52,7 @@
 
 
 (defun wezterm-get-unix-socket()
-  (expand-file-name "~/.local/share/wezterm/gui-sock-92909
+  (file-name-concat (wezterm-get-default-home-path)
   (validate-argument-is-of-expected-type-or-nil "wezterm-spawn" "working-dir" working-dir)
 
 

@@ -1,8 +1,4 @@
-(let* ((index 0)
-       (count 40)
-       (caught (list))
-       (stream (list)))
-  (while (< index count)
+(let ((final-result
        (let* ((teens (mapcar (lambda (n) (* 10 n)) (number-sequence 1 9)))
               (caught
                (catch 'numba

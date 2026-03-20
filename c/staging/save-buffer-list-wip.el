@@ -1,41 +1,3 @@
-(defun buffer-variables-plist (&optional buffer)
-  (let* ((variables (buffer-local-variables buffer))
-         (varcount (length variables))
-         (variables-plist
-          (seq-map-indexed
-           (lambda (item index)
-             (let* ((key (car item))
-                    (value (cdr item))
-                    (key-ty (cl-type-of key))
-                    (value-ty (cl-type-of value))
-                    (props
-                     (list
-                      :key-ty key-ty
-                      :key key
-                      :index index
-                      :value value
-                      :value-ty value-ty)))
-               props)
-             )
-           variables))
-         (lines
-          (seq-map-indexed
-           (lambda (item idx)
-             (format "%s%d (%s): %S" ( idx (cl-type-of item) item))
-             variables-plist))
-          (output (string-join  lines "\n"))
-          (props-result (list))); end (lines ...)
-         )
-
-
-    (erase-c-messages)
-    (c-message-open "")
-    (c-message "buffer-local-variables (%d):\n\n%s\n" varcount output))
-  )
-
-(with-current-buffer (seq-random-elt (buffer-list))
-  (buffer-variables-plist))
-
 (defun save-open-buffers-as-wip-in-workbench ()
   (interactive)
   (let* ((epoch (string-to-number (format-time-string "%s")))
@@ -70,51 +32,56 @@
          (index-file-json-array-items
           (seq-map-indexed
            (lambda (buf index)
-             (with-current-buffer buf
-	       (let* ((number (1+ index))
-		      (pos (format "%d of %d" number buffer-count))
-		      (buffer-name-raw (buffer-name buf))
-		      (filename (buffer-file-name buf))
-		      (is-file (not (null filename)))
-		      (buffer-name-fallback
-		       (string-to-kebab buffer-name-raw))
-		      (wip-filename
-		       (format "%s.bkp"
-			       (string-to-kebab
-                                (or filename buffer-name-raw))))
-		      (wip-full-path
-		       (file-name-concat workbench-wip-buffers-path wip-filename))
-		      (bufname
-		       (if is-file
-                           (file-name-nondirectory filename)
-                         buffer-name-fallback))
-		      (bufcontents
-		       (save-match-data
-                         (save-mark-and-excursion
-                           (widen)
-                           (buffer-substring-no-properties
-                            (point-min)
-                            (point-max)))))
-		      (buf-plist-to-json-object
-		       (list
-		        :index          index
-		        :number         number
-		        :total          buffer-count
-		        :name           bufname
-		        :filename       filename
-		        :wip_filename   wip-filename
-		        :pos            pos
-		        :name_raw       buffer-name-raw
-		        :is_file (if is-file "true" "false")
-		        :contents       bufcontents
-		        :size (length bufcontents)
-		        ))) ;; end (with-current-buffer (let* ...) varlist )
-                 ;; <seq-map-indexed lambda body>
-                 (write-region bufcontents         nil wip-full-path nil nil nil nil)
-                 ;; </seq-map-indexed lambda body>
-                 );; end (let* ...)
-	       );; end (with-current-buffer ...)
-             ) ;; end (lambda (buf index)
+             (condition-case err
+                 (with-current-buffer buf
+	           (let* ((number (1+ index))
+		          (pos (format "%d of %d" number buffer-count))
+		          (buffer-name-raw (buffer-name buf))
+		          (filename (buffer-file-name buf))
+		          (is-file (not (null filename)))
+		          (buffer-name-fallback
+		           (string-to-kebab buffer-name-raw))
+		          (wip-filename
+		           (format "%s.bkp"
+			           (string-to-kebab
+                                    (or filename buffer-name-raw))))
+		          (wip-full-path
+		           (file-name-concat workbench-wip-buffers-path wip-filename))
+		          (bufname
+		           (if is-file
+                               (file-name-nondirectory filename)
+                             buffer-name-fallback))
+		          (bufcontents
+		           (save-match-data
+                             (save-mark-and-excursion
+                               (widen)
+                               (buffer-substring-no-properties
+                                (point-min)
+                                (point-max)))))
+		          (buf-plist-to-json-object
+		           (list
+		            :index          index
+		            :number         number
+		            :total          buffer-count
+		            :name           bufname
+		            :filename       filename
+		            :wip_filename   wip-filename
+		            :pos            pos
+		            :name_raw       buffer-name-raw
+		            :is_file (if is-file "true" "false")
+		            :contents       bufcontents
+		            :size (length bufcontents)
+		            ))) ;; end (with-current-buffer (let* ...) varlist )
+                     ;; <seq-map-indexed lambda body>
+                     (write-region bufcontents         nil wip-full-path nil nil nil nil)
+                     ;; </seq-map-indexed lambda body>
+                     );; end (let* ...)
+	           );; end (with-current-buffer ...)
+               (error
+                (list :error err)
+                )
+               ) ;; end (condition-case err...)
+               ) ;; end (lambda (buf index)
            buffers) ;; end (seq-map-indexed
           )
          (index-file-contents

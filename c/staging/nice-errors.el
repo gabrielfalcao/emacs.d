@@ -1,4 +1,5 @@
 (define-error 'type-error "Type Error" 'error)
+(define-error 'type-error-internal "Type Error " 'error)
 
 (defun type-error (message &optional expected-types actual-type value)
   (unless (stringp message)

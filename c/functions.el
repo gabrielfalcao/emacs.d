@@ -348,7 +348,11 @@
       (save-mark-and-excursion
         (widen)
         (eval-buffer)
-        (message "%s eval'd " (buffer-name)))
+        (let ((info (format "%s eval'd " (buffer-name))))
+          (unless (string= info (current-message))
+            (message "%s" info))))
+
+
     (progn
       (message "cannot evaluate buffer %s because it is not in %s, trying to run pretty formatter instead"
                (Ox33b4O/$/paint-mode-line-color (buffer-name))
@@ -2250,19 +2254,6 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
     (funcall format-function)))
 
 
-(defun eval-elisp-buffer ()
-  (interactive)
-  "evaluates the entire buffer as emacs-lisp expression so long as calling `buffer-elisp-heuristic' returns non-nil."
-  (if (buffer-elisp-heuristic)
-      (save-mark-and-excursion
-        (widen)
-        (eval-buffer)
-        (message "%s eval'd " (buffer-name)))
-    (progn
-      (message "cannot evaluate buffer %s because it is not in %s, trying to run pretty formatter instead"
-	       (Ox33b4O/$/paint-mode-line-color (buffer-name))
-	       (Ox33b4O/$/paint-mode-line-color "elisp-mode"))
-      (g/format/prettify))))
 
 (defun git-restore ()
   "."
@@ -5913,7 +5904,7 @@ element to string like `princ' would.
     (make-directory full-path t)
     full-path))
 
-(load-file (expand-file-name "~/.emacs.d/c/staging/debug-regexp-subexpressions.el"))
+(safe-load-file (expand-file-name "~/.emacs.d/c/staging/debug-regexp-subexpressions.el"))
 
 (defun set-prop-right-margin-region (beg end)
   "These text properties affect the behavior of the fill commands.  They
