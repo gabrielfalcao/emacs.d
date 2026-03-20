@@ -5913,61 +5913,7 @@ element to string like `princ' would.
     (make-directory full-path t)
     full-path))
 
-(defun debug-regexp-subexpressions (&optional collapse-linebreaks)
-  "this function returns a string with N+1 lines, where every line is
-comprised of the subexp number and subexp contents for each subexp in
-the current `match-data' in order to help debug and visualize matched
-groups in interactive invocations `replace-regexp' involving relatively
-complex regular expressions containing multiple groups.
-
-this function is meant to be used as the `TO-STRING' argument of the
-interactive command `replace-regexp' like so:
-
-\,(debug-regexp-subexpressions)
-"
-  (let ((regexp-groups
-         (mapcar
-          (lambda (g)
-            (let ((subexp-start (format "%d" g)) ;; (subexp-start (format "<%d>" g))
-                  (value-prefix   "=`")
-                  (value (match-string-no-properties g))
-                  (value-suffix   "`")
-                  (subexp-end     "")              ;; (subexp-end (format "</%d>" g))
-                  (item-separator "")) ;; end let varlist
-              (when (stringp value)
-                (let ((items
-                       (list
-                        subexp-start
-                        value-prefix
-                        (if collapse-linebreaks ;; if `cond' argument #0
-                            (save-match-data
-                              (replace-regexp-in-string
-                               "\\(\\s-*\\)\\(\r\n\\|\n\\)+\\(\\s-*\\)" "\\1\\3" value)) ;; if `then' argument #1
-                          value  ;; if `else' argument #2
-                          )
-                        value-suffix
-                        subexp-end)))
-                  ;; (message "items %S" items)
-                  ;; (c-message-open "items %S" items)
-                  (string-join items item-separator) ;; (format "%d=`%s`\n" g value)
-                  ))) ;
-            )         ;; mapcar `function' argument #0
-          (number-sequence 0
-                           (- (/ (length (match-data)) 2) 1))  ;; mapcar `sequence' argument #1
-          ) ;; string-join `strings' argument   #0
-         ))
-    (format "%s\n\n" (string-join regexp-groups "\n" ;; string-join `separator' argument #1
-                                  )))
-
-  ) ;; end defun debug-regexp-subexpressions
-(defalias '~dbg-regex #'debug-regexp-subexpressions)
-(defalias '~dbg-regexp #'debug-regexp-subexpressions)
-(defalias 'dbg-regex #'debug-regexp-subexpressions)
-(defalias 'dbg-regexp #'debug-regexp-subexpressions)
-(defalias 'regex! #'debug-regexp-subexpressions)
-
-
-
+(load-file (expand-file-name "~/.emacs.d/c/staging/debug-regexp-subexpressions.el"))
 
 (defun set-prop-right-margin-region (beg end)
   "These text properties affect the behavior of the fill commands.  They
