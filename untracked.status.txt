@@ -1,0 +1,104 @@
+# <c/staging/buffer-predicates.el>
+regular file
+1773611303 created
+1773611831 modified
+# </c/staging/buffer-predicates.el>
+
+
+
+
+# <c/staging/buffer-stuff.el>
+regular file
+1773608465 created
+1773611275 modified
+# </c/staging/buffer-stuff.el>
+
+
+
+
+# <c/staging/c-message/>
+directory
+1773715168 created
+1773722044 modified
+# </c/staging/c-message/>
+
+
+
+
+# <c/staging/debug-regexp-subexpressions.el>
+regular file
+1773968642 created
+1773968648 modified
+# </c/staging/debug-regexp-subexpressions.el>
+
+
+
+
+# <c/staging/fs-stuff.el>
+regular file
+1773681449 created
+1773681496 modified
+# </c/staging/fs-stuff.el>
+
+
+
+
+# <c/staging/mkscript.el>
+regular file
+1773607762 created
+1773608431 modified
+# </c/staging/mkscript.el>
+
+
+
+
+# <c/staging/string-fun.el>
+regular file
+1773593619 created
+1773593762 modified
+# </c/staging/string-fun.el>
+
+
+
+
+# <c/staging/throwcatch-test2.el>
+regular file
+1773612751 created
+1773612751 modified
+# </c/staging/throwcatch-test2.el>
+
+
+
+
+# <c/staging/wat.el>
+regular file
+1773613395 created
+1773617628 modified
+# </c/staging/wat.el>
+
+
+
+
+# <sandbox/.emacs_desktop.eval_expression.pid@22044__@2026-03-16.17-21-03.el.emacs-auto-save>
+regular file
+1773681706 created
+1773681783 modified
+# </sandbox/.emacs_desktop.eval_expression.pid@22044__@2026-03-16.17-21-03.el.emacs-auto-save>
+
+
+
+
+# <sandbox/emacs_desktop.eval_expression.pid@22044__@2026-03-16.17-21-03.el>
+regular file
+1773681695 created
+1773681695 modified
+# </sandbox/emacs_desktop.eval_expression.pid@22044__@2026-03-16.17-21-03.el>
+
+
+
+
+# <untracked.status.txt>
+regular empty file
+1773970750 created
+1773970798 modified
+# </untracked.status.txt>
