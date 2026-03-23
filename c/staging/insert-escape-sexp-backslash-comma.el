@@ -17,7 +17,11 @@
     )
   )
 
-(with-c-message-open
- (erase-c-messages)
- (c-message "(insert-escape-sexp-backslash-comma)\n\n%s\n"
-            (insert-escape-sexp-backslash-comma)))
+;;;
+;;;
+;;;(with-c-message-open
+;;; (erase-c-messages)
+;;; (c-message "(insert-escape-sexp-backslash-comma)\n\n%s\n"
+;;;            (insert-escape-sexp-backslash-comma)))
+;;;
+;;;
