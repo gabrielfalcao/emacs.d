@@ -51,7 +51,7 @@ interactive command `replace-regexp' like so:
 
 \,(debug-regexp-subexpressions)
 "
-  (let ((regexp-groups
+  (let* ((regexp-groups
          (mapcar
           (lambda (g)
             (let ((subexp-start (format "%d" g)) ;; (subexp-start (format "<%d>" g))
@@ -81,11 +81,20 @@ interactive command `replace-regexp' like so:
           (number-sequence 0
                            (- (/ (length (match-data)) 2) 1))  ;; mapcar `sequence' argument #1
           ) ;; string-join `strings' argument   #0
-         ))
-    (format "\n%s\n\n" (string-join regexp-groups "\n" ;; string-join `separator' argument #1
-                                    )))
+         )
+        (result-string (format "\n%s\n\n" (string-join regexp-groups "\n" ;; string-join `separator' argument #1
+                                                       )))
+        ); end (let* (varlist))
+    (with-c-message-open
+     (erase-c-messages)
+     (c-message "%s" result-string)
+     )
+    (match-string 0)
+
+    )
 
   ) ;; end defun debug-regexp-subexpressions
+
 (defalias '~dbg-regex #'debug-regexp-subexpressions)
 (defalias '~dbg-regexp #'debug-regexp-subexpressions)
 (defalias 'dbg-regex #'debug-regexp-subexpressions)
