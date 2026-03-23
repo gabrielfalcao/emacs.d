@@ -40,13 +40,15 @@
     (car strings))
   )
 
-(defun get-mode-name()
-  (let* (
-         (strings (seq-filter (lambda (s) (and (stringp s) (not (string-match-p "[^a-zA-Z0-9_-]" s )))) (flatten-tree mode-name)))
-         )
-    (and (length> strings 0) (car strings))
+(defun get-mode-name(&optional buffer-or-name)
+  (downcase
+   (substring-no-properties
+    (format "%s-mode"
+            (get-mode-name-neat-only-string buffer-or-name))
     )
+   )
   )
+
 
 
 (defun map-indexed-callback-debug (elt &optional index)
