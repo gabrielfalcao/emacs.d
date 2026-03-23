@@ -1,7 +1,7 @@
 (defvar emacs-lisp-defsymbols
   '( ;;
     'def-edebug-elem-spec
-       'def-edebug-spec
+     'def-edebug-spec
      'defadvice
      'defalias
      'default
@@ -123,7 +123,9 @@
  (c-message-open)
  (c-message "symbols:\n\n%s\n"
             (string-join
-             (mapcar (lambda (sym)) emacs-lisp-defsymbols)
+             (mapcar
+              (lambda (sym) (format "%s: %s" sym (cl-type-of sym)))
+              emacs-lisp-defsymbols)
              "\n"))
 
 
