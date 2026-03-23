@@ -11,13 +11,6 @@
     )
   )
 
-(defmacro with-c-message-open (&rest body)
-    `(progn
-       (erase-c-messages)
-       (c-message-open)
-       ,@body
-       ))
-
 (progn
     (let* ((sexpr
             `(with-c-message-open
