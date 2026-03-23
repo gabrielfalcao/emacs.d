@@ -39,7 +39,7 @@ each match.
   )
 
 
-(defun debug-regexp-subexpressions (&optional collapse-linebreaks)
+(defun debug-regexp-subexpressions (&rest unused-arguments)
   "this function returns a string with N+1 lines, where every line is
 comprised of the subexp number and subexp contents for each subexp in
 the current `match-data' in order to help debug and visualize matched
@@ -54,6 +54,10 @@ interactive command `replace-regexp' like so:
   (let* ((regexp-groups
          (mapcar
           (lambda (g)
+
+            (unless (and (integerp g) (>= g 0))
+              (signal 'type-error (format "argument `g' should be a non-negative integer but %S is a `%s'" g (cl-type-of g ))))
+
             (let ((subexp-start (format "%d" g)) ;; (subexp-start (format "<%d>" g))
                   (value-prefix   "=`")
                   (value (match-string-no-properties g))
@@ -66,13 +70,13 @@ interactive command `replace-regexp' like so:
                         subexp-start
                         value-prefix
 
-                        (if collapse-linebreaks ;; if `cond' argument #0
-                            (save-match-data
-                              (replace-regexp-in-string
-                               "\\(\\s-*\\)\\(\r\n\\|\n\\)+\\(\\s-*\\)" "\\1\\3" value)) ;; if `then' argument #1
-                          value  ;; if `else' argument #2
-                          )
-
+                        ;; (if collapse-linebreaks ;; if `cond' argument #0
+                        ;;     (save-match-data
+                        ;;       (replace-regexp-in-string
+                        ;;        "\\(\\s-*\\)\\(\r\n\\|\n\\)+\\(\\s-*\\)" "\\1\\3" value)) ;; if `then' argument #1
+                        ;;   value  ;; if `else' argument #2
+                        ;;   )
+                        value
 
                         value-suffix
                         subexp-end)))
