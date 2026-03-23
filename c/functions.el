@@ -15,6 +15,9 @@
 ;; 4=`macro`
 ;; 5=`set-region-contents-with-fn`
 
+(load-file (expand-file-name "~/.emacs.d/c/staging/c-message/c-message-suite.el"))
+(load-file (expand-file-name "~/.emacs.d/c/staging/c-message/with-c-message-open.el"))
+
 
 (defun string-shift-right (g) "." (format "\t%s" g))
 
@@ -1359,8 +1362,6 @@
   (interactive)
   (let ((ref (read-string "git diff against ref: " "HEAD")))
     (git-diff-internal ref)))
-
-
 
 (defun git-status ()
   "."
