@@ -6,22 +6,18 @@
          (chars              (mapcar #'char-to-string codepoints))
          (output             (string-join chars ""))
          )
-    (insert output)
-    (backward-char 1)
+    (save-mark-and-excursion
+      (save-restriction
+        (widen)
+        (goto-char (point))
+        (insert output)
+        (backward-char 1)
+        )
+      )
     )
   )
 
-(progn
-    (let* ((sexpr
-            `(with-c-message-open
-              (c-message "retval-of-insert => %S => %S"
-                         (cl-type-of retval-of-insert)
-                         retval-of-insert)))
-           )
-       (erase-c-messages)
-       (c-message-open)
-
-      (c-message "\n%S\n\n;;expands to\n\n%S\n" sexpr (macroexpand sexpr))))
-
-;; (with-c-message-open
-;;     (c-message "\nretval-of-insert => %S => %S\n" (cl-type-of retval-of-insert) retval-of-insert))
+(with-c-message-open
+ (erase-c-messages)
+ (c-message "(insert-escape-sexp-backslash-comma)\n\n%s\n"
+            (insert-escape-sexp-backslash-comma)))
