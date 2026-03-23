@@ -65,12 +65,15 @@ interactive command `replace-regexp' like so:
                        (list
                         subexp-start
                         value-prefix
+
                         (if collapse-linebreaks ;; if `cond' argument #0
                             (save-match-data
                               (replace-regexp-in-string
                                "\\(\\s-*\\)\\(\r\n\\|\n\\)+\\(\\s-*\\)" "\\1\\3" value)) ;; if `then' argument #1
                           value  ;; if `else' argument #2
                           )
+
+
                         value-suffix
                         subexp-end)))
                   ;; (message "items %S" items)
