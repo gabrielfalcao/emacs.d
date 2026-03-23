@@ -5,6 +5,17 @@
 ;;
 ;; # TODO
 ;;
+
+;; 0=`(defmacro
+;;     set-region-contents-with-fn`
+;; 1=``
+;; 2=`(defmacro
+;;     set-region-contents-with-fn`
+;; 3=`defmacro`
+;; 4=`macro`
+;; 5=`set-region-contents-with-fn`
+
+
 (defun string-shift-right (g) "." (format "\t%s" g))
 
 
@@ -1281,21 +1292,18 @@
             "\\1 // \\2"
             region))))))
 
-(defmacro
-    when-buffer-filename-meets
+(defmacro when-buffer-filename-meets
     (cond &rest body)
   "REGEXP FN."
   `(let ((filename (expand-file-name (buffer-file-name))))
      (if ,cond (progn ,@body))))
 
-(defmacro
-    when-buffer-meets
+(defmacro when-buffer-meets
     (cond &rest body)
   "REGEXP FN."
   `(if ,cond (progn ,@body)))
 
-(defmacro
-    when-buffer-filename-matches
+(defmacro when-buffer-filename-matches
     (regexp &rest body)
   "REGEXP FN."
   `(let ((filename (expand-file-name (buffer-file-name))))
@@ -1621,8 +1629,7 @@ shortcut to calling \\[git-add] and \\[git-commit]
    (git-autocommit-current-file-buffer)
    (message "auto-commited emacs file %s" filename)))
 
-(defmacro
-    set-region-contents-with-fn
+(defmacro set-region-contents-with-fn
     (beg end fn)
   "BEG END FN."
   `(save-excursion
