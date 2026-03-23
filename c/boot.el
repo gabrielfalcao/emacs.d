@@ -17,12 +17,13 @@
 (define-error 'filesystem-error "File-System Error" 'c-el-internal-error)
 (define-error 'io-error "I/O Error" 'c-el-internal-error)
 
+
 (defconst set-bar-modes-mode-names
   (list
-    #'scroll-bar-mode
-    #'menu-bar-mode
-    #'tool-bar-mode
-    )
+   #'scroll-bar-mode
+   #'menu-bar-mode
+   #'tool-bar-mode
+   )
   )
 
 (defconst set-bar-modes-disable
@@ -41,7 +42,7 @@
     (mapcar
      (lambda (minor-mode-func)
        (funcall minor-mode-func arg)
-       (setq current (1+ (setq index (1+ index))))
+       (setq-default current (1+ (setq-default index (1+ index))))
        ) ; end (lambda ...)
      ;; start (mapcar ... SEQUENCE)
      set-bar-modes-mode-names ;; end (mapcar ... SEQUENCE)
@@ -77,13 +78,13 @@
 	     (c-message "ERROR: %s" err)))))
 
 (line-number-mode t)
-(setq global-package-online nil) ;; set to non-nil to enable
-(setq global-flycheck-mode t)
-(setq debug-on-error nil)
-(setq initial-scratch-message nil)
-(setq auto-save-interval 137)
-(setq save-interprogram-paste-before-kill t)
-;; (setq case-fold-search t)
+(setq-default global-package-online nil) ;; set to non-nil to enable
+(setq-default global-flycheck-mode t)
+(setq-default debug-on-error nil)
+(setq-default initial-scratch-message nil)
+(setq-default auto-save-interval 137)
+(setq-default save-interprogram-paste-before-kill t)
+(setq-default case-fold-search nil)
 (defalias 'yes-or-no-p #'y-or-n-p)
 (defalias '~libexec #'Ox33b4O/find-file/~/opt/libexec)
 (defalias '~opt/libexec #'Ox33b4O/find-file/~/opt/libexec)
@@ -100,12 +101,12 @@
 (defalias '~emacs.d #'Ox33b4O/find-file/~/.emacs.d)
 (defalias '~/emacs.d #'Ox33b4O/find-file/~/.emacs.d)
 
-(setq gdscript-use-tab-indents nil)
-(setq binary-as-unsigned t)
+(setq-default gdscript-use-tab-indents nil)
+(setq-default binary-as-unsigned t)
 (defalias 'file-name-canonicalize #'expand-file-name)
 (defalias 'file-name-full-path #'expand-file-name)
 (add-to-list 'custom-safe-themes "5bd001a0f95d54174370e9275b1f594829930a1a95ed82741a5492facb7415e7")
-(setq find-function-C-source-directory (expand-file-name "~/projects/third_party/emacs/src"))
+(setq-default find-function-C-source-directory (expand-file-name "~/projects/third_party/emacs/src"))
 (set-face-attribute 'default nil :font "JetBrains Mono-13")
 
 ;; from commit d1deee94c7099cd0c79bd7c9d5716397e847a325: OzsKOzsgZ2l2ZW4gdGhlIHJlZ2lvbjoKOzsKOzsgYGBgZW1hY3MtbGlzcAo7OyAoa2VybmVsLW5hbWUgOzsgTGludXgKOzsgIChzaGVsbC1jb21tYW5kLXRvLXN0cmluZyAidW5hbWUgLXMiKSkKOzsgKG9wZXJhdGluZy1zeXN0ZW0tbmFtZSA7OyBHTlUvTGludXgKOzsgIChzaGVsbC1jb21tYW5kLXRvLXN0cmluZyAidW5hbWUgLW8iKSkKOzsgKGhhcmR3YXJlLXBsYXRmb3JtLW5hbWUgOzsgeDg2XzY0Cjs7ICAoc2hlbGwtY29tbWFuZC10by1zdHJpbmcgInVuYW1lIC1tIikpCjs7IDs7YGBgCjs7Cjs7IHJ1biBgcmVwbGFjZS1yZWdleHAtaW4tcmVnaW9uJyB3aXRoIHJlZ2V4cCBpbnB1dCBhbmQgcmVwbGFjZW1lbnQKOzsKOzsgYGBgcmVwbGFjZS1yZWdleHAgaW5wdXQKOzsgXihcKFwoW2Etei1dK1wpLW5hbWVcKVs7WzpzcGFjZTpdXStcKFteWzpzcGFjZTpdXStcKVtbOnNwYWNlOl1dKlxuK1tbOnNwYWNlOl1dKlwoKHNoZWxsLWNvbW1hbmQtdG8tc3RyaW5nXHMtKyJcKFteIl0rXCkiKVwpKSQKOzsgYGBgCjs7Cjs7IGBgYHJlcGxhY2UtcmVnZXhwIHJlcGxhY2VtZW50Cjs7IChkZWZjb25zdCAnXDEgOzsgXFwxID0+IFwxXG4gICAgICAgIFw0IDs7IGluaXQgdmFsdWUgXFw0ID0+IFw0XG4gICAgICAgICJzdHJpbmcgd2l0aCBcMiBuYW1lIG9idGFpbmVkIHZpYSBcXCJcNVxcIiBkdXJpbmcgZW1hY3MgaW5pdGlhbGl6YXRpb24iXG4gICAgICAgIDs7IGV4YW1wbGUgdmFsdWU6IFxcIlwyXFwiXG4pXG4KOzsgYGBgCjs7Cg==
@@ -149,8 +150,8 @@
   "retrieve font-size based on `kernel-name'"
   (let ((fallback-font-size 16))
     (cond
-     ((string= kernel-name "Darwin") 21)
-     ((string= kernel-name "Linux")  13)
+     ((string= kernel-name "Darwin") 13)
+     ((string= kernel-name "Linux")  16)
      (t ;; fallback
       (message "fallback warning (font-size-for-system) size %S because kernel-name is %S" fallback-font-size kernel-name)
       fallback-font-size))))
@@ -174,10 +175,10 @@
 
 (load-library "ui")
 (load-library "functions")
-(load-library "advices")
 (load-library "debug-et-diagnostics")
 (load-library "g-modeline")
 (load-library "keys")
+(load-file "~/.emacs.d/c/advices.el")
 ;; (load-library "server-setup") ;; not ready
 ;; (ensure-server-ready)
 
@@ -185,6 +186,10 @@
 (load-file (expand-file-name "~/.emacs.d/c/staging/save-buffer-list-wip.el"))
 (load-file (expand-file-name "~/.emacs.d/c/staging/string-io-simple.el"))
 (load-file (expand-file-name "~/.emacs.d/c/staging/fmtfun.el"))
+(load-file (expand-file-name "~/.emacs.d/c/staging/get-mode-name.el"))
+(load-file (expand-file-name "~/.emacs.d/c/staging/insert-escape-sexp-backslash-comma.el"))
+(load-file (expand-file-name "~/.emacs.d/c/staging/c-message/c-message-suite.el"))
+(load-file (expand-file-name "~/.emacs.d/c/staging/c-message/with-c-message-open.el"))
 (load-library "regexp")
 (load-library "modes")
 (load-library "hooks")
@@ -213,12 +218,15 @@
 
 (line-number-mode 1) ;; enable display of line number in the mode line
 
-(setq debug-on-error nil)
+(setq-default debug-on-error nil)
 
-(setq history-length 1000)
-(setq history-delete-duplicates t)
+(setq-default history-length 1000)
+(setq-default history-delete-duplicates t)
+(setq-default display-line-numbers t)
 
 ;; (set-window-buffer (split-window-right) "*Messages*")
 ;; (erase-messages)
 ;; (enable-debug-on-error)
-(erase-c-messages)
+(ignore-errors
+  (erase-messages)
+  (erase-c-messages))
