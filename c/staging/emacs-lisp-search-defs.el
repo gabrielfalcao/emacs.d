@@ -147,6 +147,8 @@
        (format "%s (%s): %S" name (cl-type-of value) value)))
    emacs-lisp-defsymbols))
 
+(c-message "%S" (emacs-lisp-defun-and-defmacro-symbols))
+
 ;;(with-c-message-open
 ;; (erase-c-messages)
 ;; (c-message-open)
