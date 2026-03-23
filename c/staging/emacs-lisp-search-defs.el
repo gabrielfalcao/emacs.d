@@ -118,42 +118,41 @@
      )
   "list of symbols which define types in emacs lisp")
 
+(defun emacs-lisp-defun-and-defmacro-symbols ()
+  (mapcar
+   (lambda (input-sym)
+     (let* ((sym
+             (pcase input-sym
+
+               ((and (pred symbolp) sym)
+                sym)
+               ((and
+                 (pred stringp)
+                 (app (intern-soft input-sym) sym)
+                 sym)
+                sym)
+               ;; ((and
+               ;;   (pred consp)
+               ;;   (app (cadr input-sym) sym)
+               ;;   sym)
+               ;;  sym)
+               ((and (pred listp) (app (car) sym) sym)
+                sym)
+               (_
+                (signal 'type-error
+                        (format "value argument `input-sym' `%S' is of invalid type: \"%s\"" input-sym
+                                (cl-type-of input-sym))))))
+            (name (symbol-name sym))
+            (value (symbol-value sym)))
+       (format "%s (%s): %S" name (cl-type-of value) value)))
+   emacs-lisp-defsymbols))
+
 (with-c-message-open
  (erase-c-messages)
  (c-message-open)
  (c-message "symbols:\n\n%s\n"
             (string-join
              (mapcar
-              (lambda (input-sym)
-                (let* ((sym
-                        (pcase input-sym
-
-                          ((and (pred symbolp) sym)
-                           sym)
-                          ((and
-                            (pred stringp)
-                            (app (intern-soft input-sym) sym)
-                            sym)
-                           sym)
-                          ((and
-                            (pred consp)
-                            (app (cadr input-sym) sym)
-                            sym)
-                           sym)
-                          ((and
-                            (pred listp)
-                            (app (car input-sym) sym)
-                            sym)
-                           sym)
-                          (_
-                           (signal 'type-error
-                                   (format "value argument `input-sym' `%S' is of invalid type: \"%s\"" input-sym
-                                           (cl-type-of input-sym))))))
-                       (name (symbol-name sym))
-                       (value (symbol-value sym)))
-                  (format "%s (%s): %S"
-                          name
-                          (cl-type-of value)
-                          value)))
-              emacs-lisp-defsymbols)
+              (lambda (sym) (format "%s" sym))
+              (emacs-lisp-defun-and-defmacro-symbols))
              "\n")))
