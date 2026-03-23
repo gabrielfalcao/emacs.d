@@ -85,10 +85,12 @@ interactive command `replace-regexp' like so:
         (result-string (format "\n%s\n\n" (string-join regexp-groups "\n" ;; string-join `separator' argument #1
                                                        )))
         ); end (let* (varlist))
-    (with-c-message-open
-     (erase-c-messages)
-     (c-message "%s" result-string)
-     )
+    (progn
+      (c-message-open "")
+      (erase-c-messages)
+      (c-message "%s" result-string)
+      )
+
     (match-string 0)
 
     )
