@@ -150,8 +150,8 @@
   "retrieve font-size based on `kernel-name'"
   (let ((fallback-font-size 16))
     (cond
-     ((string= kernel-name "Darwin") 13)
-     ((string= kernel-name "Linux")  16)
+     ((string= kernel-name "Darwin") 16)
+     ((string= kernel-name "Linux")  14)
      (t ;; fallback
       (message "fallback warning (font-size-for-system) size %S because kernel-name is %S" fallback-font-size kernel-name)
       fallback-font-size))))
