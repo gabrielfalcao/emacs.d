@@ -1,10 +1,26 @@
-(defconst c-message-buffer "*C-Messages*"
-  "Name of buffer to use for `c-messages'.")
+(defcustom c-message-buffer
+  "*C-Messages*"
 
-(defvar c-message-write-to-minibuffer
+  "
+Name of buffer to use for `c-message'.
+
+By default, calls to `c-message' write messages to a buffer named
+`\"C-Messages\"'. This setting allows customization of the buffer name.
+"
+  :type 'string
+  :group 'c-message
+  :tag "Name of buffer where all \"C-Messages\" are written to."
+
+  )
+
+(defcustom c-message-write-to-minibuffer
   t
-  "`c-message' will always write to minibuffer unless this var is set to `nil'")
+  "`c-message' will always write to minibuffer unless this var is set to `nil'"
+  :type 'boolean
+  :group 'c-message
+  :tag "always write to minibuffer strings originating from calls to `c-message'"
 
+  )
 
 (defun c-message (fmt &rest args)
   "drop-in replacement for `message' that output colorized messages to a buffer named \"*C-Messages*\""
@@ -25,21 +41,6 @@
     (unless (null c-message-write-to-minibuffer)
       (write-to-minibuffer trimmed-output))
     trimmed-output))
-
-(defun c-message-force-minibuffer (fmt &rest args)
-  (interactive (interactive-read-fmt-and-args))
-  (setq c-message-write-to-minibuffer t)
-  (funcall #'c-message fmt args))
-
-(defun c-message-no-minibuffer (fmt &rest args)
-  (interactive (interactive-read-fmt-and-args))
-  (setq c-message-write-to-minibuffer nil)
-  (funcall #'c-message fmt args))
-
-
-(defun c-message-eval-expression (expression)
-  (interactive "X")
-  (c-message-open "%s" expression))
 
 (defun erase-c-messages (&optional dont-erase-minibuffer)
   "."
@@ -81,3 +82,21 @@
     output))
 
 (defun delete-c-messages() (interactive) (erase-c-messages))
+
+
+;;;
+;;;(defun c-message-force-minibuffer (fmt &rest args)
+;;;  (interactive (interactive-read-fmt-and-args))
+;;;  (setq c-message-write-to-minibuffer t)
+;;;  (funcall #'c-message fmt args))
+;;;
+;;;(defun c-message-no-minibuffer (fmt &rest args)
+;;;  (interactive (interactive-read-fmt-and-args))
+;;;  (setq c-message-write-to-minibuffer nil)
+;;;  (funcall #'c-message fmt args))
+;;;
+;;;
+;;;(defun c-message-eval-expression (expression)
+;;;  (interactive "X")
+;;;  (c-message-open "%s" expression))
+;;;
