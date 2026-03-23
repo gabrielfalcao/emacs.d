@@ -581,9 +581,12 @@
 (defun Ox33b4O/$/flush-kill-ring ()
   "."
   (interactive)
-  (erase-c-messages)
+
+  ;; ICA7OyAoZXJhc2UtYy1tZXNzYWdlcyk=
+
   (erase-messages)
   (setq kill-ring nil file-name-history nil))
+
 (defun Ox33b4O/$/kill-all-buffers-and-flush-kill-ring ()
   "."
   (interactive)
@@ -1935,7 +1938,6 @@ shortcut to calling \\[git-add] and \\[git-commit]
   (interactive)
   (erase-buffer-by-name  "*Scratch*"))
 
-(defun delete-c-messages() (interactive) (erase-c-messages))
 (defun delete-messages() (interactive) (erase-messages))
 (defun delete-scrath() (interactive) (erase-c-scrath))
 
@@ -3926,14 +3928,6 @@ cursor position in buffer."
       (erase-buffer)
       (read-only-mode 1))))
 
-(defconst c-message-buffer "*C-Messages*"
-  "Name of buffer to use for `c-messages'.")
-
-(defvar c-message-write-to-minibuffer
-  t
-  "`c-message' will always write to minibuffer unless this var is set to `nil'")
-
-(defvar interactive-read-fmt-and-args-history nil)
 
 (defun number-to-ordinal (n)
   "Converts an integer N into its ordinal string representation (e.g., \"1st\", \"2nd\")."
@@ -3955,6 +3949,10 @@ cursor position in buffer."
            ;; Default suffix for all others
            (t "th"))))
     (format "%d%s" n suffix)))
+
+(defvar interactive-read-fmt-and-args-history
+  nil
+  )
 
 (defun interactive-read-fmt-and-args ()
   (let* ((args (list))
@@ -4024,79 +4022,6 @@ cursor position in buffer."
 
 
 
-(defun c-message (fmt &rest args)
-  "drop-in replacement for `message' that output colorized messages to a buffer named \"*C-Messages*\""
-  (interactive (interactive-read-fmt-and-args))
-
-  (let* ((output (format "%s\n" (apply #'format fmt args)))
-         (trimmed-output (string-trim output))
-         ;; (output (concat (apply #'format (append (list fmt) args)) "\n"))
-         (buffer (get-buffer-create c-message-buffer)))
-    (with-current-buffer buffer
-      (read-only-mode -1)
-      (widen)
-      (end-of-buffer)
-      (insert output)
-      (end-of-buffer)
-      (goto-char (point-max)))
-
-    (unless (null c-message-write-to-minibuffer)
-      (write-to-minibuffer trimmed-output))
-    trimmed-output))
-
-(defun c-message-force-minibuffer (fmt &rest args)
-  (interactive (interactive-read-fmt-and-args))
-  (setq c-message-write-to-minibuffer t)
-  (funcall #'c-message fmt args))
-
-(defun c-message-no-minibuffer (fmt &rest args)
-  (interactive (interactive-read-fmt-and-args))
-  (setq c-message-write-to-minibuffer nil)
-  (funcall #'c-message fmt args))
-
-
-(defun c-message-eval-expression (expression)
-  (interactive "X")
-  (c-message-open "%s" expression))
-
-(defun erase-c-messages (&optional dont-erase-minibuffer)
-  "."
-  (interactive)
-  (erase-buffer-by-name  "*C-Messages*")
-  (unless (not (null dont-erase-minibuffer)) (erase-minibuffer)))
-
-(defun c-message-open (&optional fmt &rest args)
-  "drop-in replacement for `c-message' opens the `*C-Messages*' buffer after outputing the message"
-  (interactive "*s")
-  (when (null fmt) (setq fmt ""))
-
-  (delete-other-windows (frame-first-window))
-  ;;(erase-c-messages)
-  (let ((output (funcall #'c-message fmt args)))
-    (or
-     (when ;; c-message-buffer is open and is the first active buffer in current frame...
-         (and
-          (not (null (get-buffer-window c-message-buffer)))
-	  (eq
-           (frame-first-window)
-           (get-buffer-window c-message-buffer)))
-       (message "... then split frame horizontally with the c-message-buffer at the right side")
-       ;; ... then split frame horizontally with the c-message-buffer at the right side
-       (set-window-buffer
-        (split-window-right)
-        (get-buffer c-message-buffer))
-       ;; ... and set the previously active buffer (if any) to the left
-       (debug-active-buffers
-        ;; TODO: first lets figure out the most recent buffer before c-message-buffer
-        )) ;; `end' `when' c-message-buffer is open and is the first active buffer in current frame
-     (progn ;; currently active buffer is not c-message-buffer
-       ;; so let's split right and set c-message-buffer to the right
-       (let* ((right-side (split-window-right))
-	      (cmbuffer (get-buffer-create c-message-buffer)))
-
-         (message "(set-window-buffer %S %S)" right-side cmbuffer)
-         (set-window-buffer right-side cmbuffer))));; `end' `or' clause
-    output))
 
 
 (defun display-symbol (sym &optional fallback)
