@@ -6,16 +6,11 @@
          (chars              (mapcar #'char-to-string codepoints))
          (output             (string-join chars ""))
          )
-    (save-mark-and-excursion
-      (save-restriction
-        (widen)
-        (goto-char (point))
-        (insert output)
-        (backward-char 1)
-        )
-      )
+    (insert output)
+    (backward-char 1)
     )
   )
+
 
 ;;;
 ;;;
