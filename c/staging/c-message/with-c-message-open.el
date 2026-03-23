@@ -1,5 +1,6 @@
 (defmacro with-c-message-open (&optional window-position &rest body)
   (let* ((orig-body (copy-sequence body))
+         (default-window-location #'split-window-right)
          (window-location
           (pcase window-position
             ((or "right" :right 'right)
@@ -12,9 +13,14 @@
              #'split-window-below)
             (_
              (setq body `(,window-position ,@body))
-             (c-message "<body type=%S>\n%S\n</body>"
-                        (format "%S" (cl-type-of body))
-                        body)))
+
+             ;; (c-message "<body type=%S>\n%S\n</body>"
+             ;;            (format "%S" (cl-type-of body))
+             ;;            body)
+             default-window-location
+
+             )
+            )
           )
          (existing-buffer (get-buffer c-message-buffer))
          (existing-window
