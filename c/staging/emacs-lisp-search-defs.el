@@ -126,12 +126,13 @@
              (mapcar
               (lambda (input-sym)
                 (let* ((sym
-                        (cl-typecase input-sym
-                          (symbol input-sym)
-                          (string (intern-soft input-sym))
-                          (cons (cadr input-sym))
-                          (list (car input-sym))
-                          (t
+                        (pcase input-sym
+
+                          ((and (pred symbolp) sym) sym)
+                          ((and (pred stringp) (app (intern-soft input-sym) sym) sym) sym)
+                          ((and (pred consp) (app (cadr input-sym) sym) sym) sym)
+                          ((and (pred listp) (car input-sym) sym) sym)
+                          (_
                            (signal 'type-error
                                    (format "value argument `input-sym' `%S' is of invalid type: \"%s\"" input-sym
                                            (cl-type-of input-sym))))))
