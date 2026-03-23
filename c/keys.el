@@ -29,6 +29,7 @@
    "C-x C-q" "C-c M-y" "C-γ"
    ;; </former #'keyboard-quit>
 
+   "C-\\"
    "M-j"
    "M-t"
    "M-k"
