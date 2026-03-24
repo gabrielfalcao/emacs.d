@@ -49,6 +49,14 @@ arg LEVEL is one of:  `:trace', `:debug', `:info', `:warn', `:error', `:critical
 
 args FMT and ARGS are the same form as `c-message'
 "
+  (let* (
+         (prefix (format "%s %s" (string-trim-left (symbol-name level) "^[:]+") (format-time-string "%Y/%m/%d %H:%M:%S %Z")))
+         (message (funcall #'format fmt args))
+         )
+    (c-message-open)
+    (c-message "[%s] %s" prefix message)
+    )
+  )
 
 
 (defun c-message (fmt &rest args)

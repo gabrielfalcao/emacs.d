@@ -5,6 +5,7 @@
 					;(load "subr")
 (require 'subr-x)
 (require 'help-fns)
+(load-file (expand-file-name "~/.emacs.d/c/staging/write-to-minibuffer.el"))
 
 (define-error 'c-el-internal-error (format "Internal Error in elisp files under `default-directory'/`c/*.el'"))
 (define-error 'c-el-server-error "Server Error")
@@ -41,7 +42,8 @@
          )
     (mapcar
      (lambda (minor-mode-func)
-       (message "setting %s to %S" minor-mode-func arg)
+       ;; (c-message-log :trace "setting %s to %S" minor-mode-func arg)
+       (c-message "setting %s to %S" minor-mode-func arg)
        (funcall minor-mode-func arg)
        ) ; end (lambda ...)
      ;; start (mapcar ... SEQUENCE)
@@ -106,7 +108,7 @@
 (defalias 'file-name-full-path #'expand-file-name)
 (add-to-list 'custom-safe-themes "5bd001a0f95d54174370e9275b1f594829930a1a95ed82741a5492facb7415e7")
 (setq-default find-function-C-source-directory (expand-file-name "~/projects/third_party/emacs/src"))
-(set-face-attribute 'default nil :font "JetBrains Mono-13")
+(set-face-attribute 'default nil :font "JetBrains Mono-16")
 
 ;; from commit d1deee94c7099cd0c79bd7c9d5716397e847a325: OzsKOzsgZ2l2ZW4gdGhlIHJlZ2lvbjoKOzsKOzsgYGBgZW1hY3MtbGlzcAo7OyAoa2VybmVsLW5hbWUgOzsgTGludXgKOzsgIChzaGVsbC1jb21tYW5kLXRvLXN0cmluZyAidW5hbWUgLXMiKSkKOzsgKG9wZXJhdGluZy1zeXN0ZW0tbmFtZSA7OyBHTlUvTGludXgKOzsgIChzaGVsbC1jb21tYW5kLXRvLXN0cmluZyAidW5hbWUgLW8iKSkKOzsgKGhhcmR3YXJlLXBsYXRmb3JtLW5hbWUgOzsgeDg2XzY0Cjs7ICAoc2hlbGwtY29tbWFuZC10by1zdHJpbmcgInVuYW1lIC1tIikpCjs7IDs7YGBgCjs7Cjs7IHJ1biBgcmVwbGFjZS1yZWdleHAtaW4tcmVnaW9uJyB3aXRoIHJlZ2V4cCBpbnB1dCBhbmQgcmVwbGFjZW1lbnQKOzsKOzsgYGBgcmVwbGFjZS1yZWdleHAgaW5wdXQKOzsgXihcKFwoW2Etei1dK1wpLW5hbWVcKVs7WzpzcGFjZTpdXStcKFteWzpzcGFjZTpdXStcKVtbOnNwYWNlOl1dKlxuK1tbOnNwYWNlOl1dKlwoKHNoZWxsLWNvbW1hbmQtdG8tc3RyaW5nXHMtKyJcKFteIl0rXCkiKVwpKSQKOzsgYGBgCjs7Cjs7IGBgYHJlcGxhY2UtcmVnZXhwIHJlcGxhY2VtZW50Cjs7IChkZWZjb25zdCAnXDEgOzsgXFwxID0+IFwxXG4gICAgICAgIFw0IDs7IGluaXQgdmFsdWUgXFw0ID0+IFw0XG4gICAgICAgICJzdHJpbmcgd2l0aCBcMiBuYW1lIG9idGFpbmVkIHZpYSBcXCJcNVxcIiBkdXJpbmcgZW1hY3MgaW5pdGlhbGl6YXRpb24iXG4gICAgICAgIDs7IGV4YW1wbGUgdmFsdWU6IFxcIlwyXFwiXG4pXG4KOzsgYGBgCjs7Cg==
 (defconst kernel-name
@@ -182,6 +184,7 @@
 ;; (ensure-server-ready)
 
 ;; (load-library "c-staging-after-save-hooks")
+(load-file (expand-file-name "~/.emacs.d/c/staging/write-to-minibuffer.el"))
 (load-file (expand-file-name "~/.emacs.d/c/staging/save-buffer-list-wip.el"))
 (load-file (expand-file-name "~/.emacs.d/c/staging/string-io-simple.el"))
 (load-file (expand-file-name "~/.emacs.d/c/staging/fmtfun.el"))

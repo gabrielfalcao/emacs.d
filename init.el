@@ -19,11 +19,14 @@
   :tag "default font-size used across `~/.emacs.d/c'"
   )
 
-(progn ; font
-  (setq-default $font-name$ (string-join (mapcar (lambda (item)
-(format "%s" item))
-(list $font-family$ $font-size$) "-"))
-  ))
+;;(setq-default $font-name$
+;;	      (string-join (mapcar (lambda (item)
+;;				     (format "%s" item))
+;;						 (list $font-family$ $font-size$))
+;;					 "-"))
+;;
+(setq-default $font-name$ "JetBrains Mono-16")
+
 
 (setq-default warning-minimum-level
               (setq-default warning-minimum-log-level :debug))
@@ -98,7 +101,7 @@
 (progn
   (add-to-list 'load-path "~/.emacs.d/3pty")
   (add-to-list 'load-path "~/.emacs.d/c")
-  (safe-load-library "boot")
+  (load-file "~/.emacs.d/c/boot.el")
   (safe-load-library "elfmt"))
 
 (custom-set-faces
@@ -115,4 +118,9 @@
 (setq-default debug-on-error nil)
 (put 'downcase-region 'disabled nil)
 
-(disable-bars)
+(load-file (expand-file-name "~/.emacs.d/c/staging/write-to-minibuffer.el"))
+
+(condition-case err
+    (disable-bars)
+  (error
+   (c-message "failed to `disable-bars': %S" err)))

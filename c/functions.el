@@ -3597,30 +3597,6 @@ cursor position in buffer."
   (interactive "*r")
   (string-to-secure-hash-region 'md5 beg end))
 
-(defun write-to-minibuffer (text)
-  "writes to minibuffer"
-  (let ((output
-         (or (when (stringp text) text) (format "%S" text))))
-    (ignore-errors
-      (with-current-buffer (window-buffer (minibuffer-window))
-	(read-only-mode -1)
-	(widen)
-	(erase-buffer)
-	(end-of-buffer)
-	(insert output)
-	(read-only-mode 1)))))
-
-(defun erase-minibuffer ()
-  "erases the minibuffer in the current frame"
-  (interactive)
-
-  (ignore-errors
-    (with-current-buffer (window-buffer (minibuffer-window))
-      (read-only-mode -1)
-      (widen)
-      (erase-buffer)
-      (read-only-mode 1))))
-
 
 (defun number-to-ordinal (n)
   "Converts an integer N into its ordinal string representation (e.g., \"1st\", \"2nd\")."
