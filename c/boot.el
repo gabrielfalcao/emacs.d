@@ -5,9 +5,11 @@
 					;(load "subr")
 (require 'subr-x)
 (require 'help-fns)
-(load-file (expand-file-name "~/.emacs.d/c/staging/write-to-minibuffer.el"))
+(load-file
+ (expand-file-name "~/.emacs.d/c/staging/write-to-minibuffer.el"))
 
-(define-error 'c-el-internal-error (format "Internal Error in elisp files under `default-directory'/`c/*.el'"))
+(define-error 'c-el-internal-error
+              (format "Internal Error in elisp files under `default-directory'/`c/*.el'"))
 (define-error 'c-el-server-error "Server Error")
 (define-error 'server-reboot-error "Server Reboot Error" 'c-el-server-error)
 
@@ -20,31 +22,20 @@
 
 
 (defconst set-bar-modes-mode-names
-  (list
-   'scroll-bar-mode
-   'menu-bar-mode
-   'tool-bar-mode
-   )
-  )
+  (list 'scroll-bar-mode 'menu-bar-mode 'tool-bar-mode))
 
-(defconst set-bar-modes-disable
-  (* -1 #x004E4F))
-(defconst set-bar-modes-enable
-  #x594553)
+(defconst set-bar-modes-disable -1)
+(defconst set-bar-modes-enable   1)
 
 (defun set-bar-modes (&optional arg)
   "."
   (interactive "P")
   (mapcar
    (lambda (minor-mode-sym)
-     (let* (
-            (current-value (symbol-value minor-mode-sym))
-            )
-       (funcall minor-mode-sym arg)
-       ))
+     (let* ((current-value (symbol-value minor-mode-sym)))
+       (funcall minor-mode-sym arg)))
 
-   set-bar-modes-mode-names
-   )
+   set-bar-modes-mode-names)
   )
 
 
@@ -66,13 +57,16 @@
   (interactive)
   (condition-case err
       (eval-buffer)
-    (error (if (string-match "\\([Ii]nvalid.*syntax\\|syntax.*error\\).*\\s-*,\\s-*\\([0-9]+\\)\\s-*,\\s-*\\([0-9]+\\)"  (format "%s" err)
-			     nil t)
-	       (let* ((position (string-to-number (match-string 2)))
-		      (wat (string-to-number (match-string 3))))
-		 (message "going to position %d"  position)
-		 (goto-char position))
-	     (c-message "ERROR: %s" err)))))
+    (error
+     (if (string-match
+          "\\([Ii]nvalid.*syntax\\|syntax.*error\\).*\\s-*,\\s-*\\([0-9]+\\)\\s-*,\\s-*\\([0-9]+\\)"
+          (format "%s" err)
+	  nil t)
+	 (let* ((position (string-to-number (match-string 2)))
+	        (wat (string-to-number (match-string 3))))
+	   (message "going to position %d"  position)
+	   (goto-char position))
+       (c-message "ERROR: %s" err)))))
 
 (line-number-mode t)
 (setq-default global-package-online nil) ;; set to non-nil to enable
@@ -103,34 +97,28 @@
 (defalias 'file-name-canonicalize #'expand-file-name)
 (defalias 'file-name-full-path #'expand-file-name)
 (add-to-list 'custom-safe-themes "5bd001a0f95d54174370e9275b1f594829930a1a95ed82741a5492facb7415e7")
-(setq-default find-function-C-source-directory (expand-file-name "~/projects/third_party/emacs/src"))
+(setq-default find-function-C-source-directory
+              (expand-file-name "~/projects/third_party/emacs/src"))
 (set-face-attribute 'default nil :font "JetBrains Mono-16")
 
 ;; from commit d1deee94c7099cd0c79bd7c9d5716397e847a325: OzsKOzsgZ2l2ZW4gdGhlIHJlZ2lvbjoKOzsKOzsgYGBgZW1hY3MtbGlzcAo7OyAoa2VybmVsLW5hbWUgOzsgTGludXgKOzsgIChzaGVsbC1jb21tYW5kLXRvLXN0cmluZyAidW5hbWUgLXMiKSkKOzsgKG9wZXJhdGluZy1zeXN0ZW0tbmFtZSA7OyBHTlUvTGludXgKOzsgIChzaGVsbC1jb21tYW5kLXRvLXN0cmluZyAidW5hbWUgLW8iKSkKOzsgKGhhcmR3YXJlLXBsYXRmb3JtLW5hbWUgOzsgeDg2XzY0Cjs7ICAoc2hlbGwtY29tbWFuZC10by1zdHJpbmcgInVuYW1lIC1tIikpCjs7IDs7YGBgCjs7Cjs7IHJ1biBgcmVwbGFjZS1yZWdleHAtaW4tcmVnaW9uJyB3aXRoIHJlZ2V4cCBpbnB1dCBhbmQgcmVwbGFjZW1lbnQKOzsKOzsgYGBgcmVwbGFjZS1yZWdleHAgaW5wdXQKOzsgXihcKFwoW2Etei1dK1wpLW5hbWVcKVs7WzpzcGFjZTpdXStcKFteWzpzcGFjZTpdXStcKVtbOnNwYWNlOl1dKlxuK1tbOnNwYWNlOl1dKlwoKHNoZWxsLWNvbW1hbmQtdG8tc3RyaW5nXHMtKyJcKFteIl0rXCkiKVwpKSQKOzsgYGBgCjs7Cjs7IGBgYHJlcGxhY2UtcmVnZXhwIHJlcGxhY2VtZW50Cjs7IChkZWZjb25zdCAnXDEgOzsgXFwxID0+IFwxXG4gICAgICAgIFw0IDs7IGluaXQgdmFsdWUgXFw0ID0+IFw0XG4gICAgICAgICJzdHJpbmcgd2l0aCBcMiBuYW1lIG9idGFpbmVkIHZpYSBcXCJcNVxcIiBkdXJpbmcgZW1hY3MgaW5pdGlhbGl6YXRpb24iXG4gICAgICAgIDs7IGV4YW1wbGUgdmFsdWU6IFxcIlwyXFwiXG4pXG4KOzsgYGBgCjs7Cg==
 (defconst kernel-name
   (string-trim (shell-command-to-string "uname -s"))
-  "string with kernel name obtained via \"uname -s\" during emacs initialization"
-  )
+  "string with kernel name obtained via \"uname -s\" during emacs initialization")
 (defconst operating-system-name
   (string-trim (shell-command-to-string "uname -o"))
-  "string with operating-system name obtained via \"uname -o\" during emacs initialization"
-  )
+  "string with operating-system name obtained via \"uname -o\" during emacs initialization")
 (defconst hardware-platform-name
   (string-trim (shell-command-to-string "uname -m"))
-  "string with hardware-platform name obtained via \"uname -m\" during emacs initialization"
-  )
+  "string with hardware-platform name obtained via \"uname -m\" during emacs initialization")
 
 (defun runtime-is-linux()
   "returns `t' if emacs is currently running in GNU/Linux"
-  (if (string= kernel-name "Linux")
-      t
-    nil))
+  (if (string= kernel-name "Linux") t nil))
 
 (defun runtime-is-darwin()
   "returns `t' if emacs is currently running in Apple/Darwin"
-  (if (string= kernel-name "Darwin")
-      t
-    nil))
+  (if (string= kernel-name "Darwin") t nil))
 
 (defconst kernel-is-linux
   (runtime-is-linux)
@@ -147,8 +135,10 @@
   "retrieve font-size based on `kernel-name'"
   (let ((fallback-font-size 16))
     (cond
-     ((string= kernel-name "Darwin") 16)
-     ((string= kernel-name "Linux")  14)
+     ((string= kernel-name "Darwin")
+      16)
+     ((string= kernel-name "Linux")
+      14)
      (t ;; fallback
       (message "fallback warning (font-size-for-system) size %S because kernel-name is %S" fallback-font-size kernel-name)
       fallback-font-size))))
@@ -160,13 +150,13 @@
 
 (defun cursor-type-for-system()
   "retrieve `cursor-type' based on `kernel-name'"
-  (let (
-	(cursor-type-macos '( bar . 3))
-	(cursor-type-linux '( bar . 4))
-	)
+  (let ((cursor-type-macos '( bar . 3))
+        (cursor-type-linux '( bar . 4)))
     (cond
-     ((string= kernel-name "Darwin") cursor-type-macos)
-     ((string= kernel-name "Linux")  cursor-type-linux)
+     ((string= kernel-name "Darwin")
+      cursor-type-macos)
+     ((string= kernel-name "Linux")
+      cursor-type-linux)
      (t cursor-type-macos))))
 
 
@@ -180,14 +170,21 @@
 ;; (ensure-server-ready)
 
 ;; (load-library "c-staging-after-save-hooks")
-(load-file (expand-file-name "~/.emacs.d/c/staging/write-to-minibuffer.el"))
-(load-file (expand-file-name "~/.emacs.d/c/staging/save-buffer-list-wip.el"))
-(load-file (expand-file-name "~/.emacs.d/c/staging/string-io-simple.el"))
+(load-file
+ (expand-file-name "~/.emacs.d/c/staging/write-to-minibuffer.el"))
+(load-file
+ (expand-file-name "~/.emacs.d/c/staging/save-buffer-list-wip.el"))
+(load-file
+ (expand-file-name "~/.emacs.d/c/staging/string-io-simple.el"))
 (load-file (expand-file-name "~/.emacs.d/c/staging/fmtfun.el"))
-(load-file (expand-file-name "~/.emacs.d/c/staging/get-mode-name.el"))
-(load-file (expand-file-name "~/.emacs.d/c/staging/insert-escape-sexp-backslash-comma.el"))
-(load-file (expand-file-name "~/.emacs.d/c/staging/c-message/c-message-suite.el"))
-(load-file (expand-file-name "~/.emacs.d/c/staging/c-message/with-c-message-open.el"))
+(load-file
+ (expand-file-name "~/.emacs.d/c/staging/get-mode-name.el"))
+(load-file
+ (expand-file-name "~/.emacs.d/c/staging/insert-escape-sexp-backslash-comma.el"))
+(load-file
+ (expand-file-name "~/.emacs.d/c/staging/c-message/c-message-suite.el"))
+(load-file
+ (expand-file-name "~/.emacs.d/c/staging/c-message/with-c-message-open.el"))
 (load-library "regexp")
 (load-library "modes")
 (load-library "hooks")
@@ -199,7 +196,10 @@
 ;; (load-library "cobol-mode")
 ;; (load-library "cmake-mode")
 ;; (load-library "visual-basic-mode")
-(defun Ox33b4O/$/load-library () "." (interactive) (load-library "k"))
+(defun Ox33b4O/$/load-library ()
+  "."
+  (interactive)
+  (load-library "k"))
 (defun Ox33b4O/$/load-init ()
   "."
   (interactive)
@@ -225,6 +225,4 @@
 ;; (set-window-buffer (split-window-right) "*Messages*")
 ;; (erase-messages)
 ;; (enable-debug-on-error)
-(ignore-errors
-  (erase-messages)
-  (erase-c-messages))
+(ignore-errors (erase-messages) (erase-c-messages))
