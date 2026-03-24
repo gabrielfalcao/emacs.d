@@ -21,9 +21,9 @@
 
 (defconst set-bar-modes-mode-names
   (list
-   #'scroll-bar-mode
-   #'menu-bar-mode
-   #'tool-bar-mode
+   'scroll-bar-mode
+   'menu-bar-mode
+   'tool-bar-mode
    )
   )
 
@@ -35,22 +35,18 @@
 (defun set-bar-modes (&optional arg)
   "."
   (interactive "P")
-  (let* (
-         (total   (length set-bar-modes-mode-names))
-         (index 0)
-         (current 1)
-         )
-    (mapcar
-     (lambda (minor-mode-func)
-       ;; (c-message-log :trace "setting %s to %S" minor-mode-func arg)
-       (c-message "setting %s to %S" minor-mode-func arg)
-       (funcall minor-mode-func arg)
-       ) ; end (lambda ...)
-     ;; start (mapcar ... SEQUENCE)
-     set-bar-modes-mode-names ;; end (mapcar ... SEQUENCE)
-     ) ;; end (defun ... (let* ...) varlist )
-    ) ;; end (defun ... (let* ...) )
-  ) ;; end (defun set-bar-modes)
+  (mapcar
+   (lambda (minor-mode-sym)
+     (let* (
+            (current-value (symbol-value minor-mode-sym))
+            )
+       (funcall minor-mode-sym arg)
+       ))
+
+   set-bar-modes-mode-names
+   )
+  )
+
 
 (defun disable-bars ()
   (interactive)
