@@ -20,12 +20,10 @@
   )
 
 (progn ; font
-  (setq-default $font-family$ "JetBrains Mono")
-  (setq-default $font-size$ "16")
-  (setq-default $font-name$ (string-join (list $font-family$ $font-size$) "-"))
-  ;; (setq-default $font-name$ "JetBrains Mono-16")
-
-  )
+  (setq-default $font-name$ (string-join (mapcar (lambda (item)
+(format "%s" item))
+(list $font-family$ $font-size$) "-"))
+  ))
 
 (setq-default warning-minimum-level
               (setq-default warning-minimum-log-level :debug))

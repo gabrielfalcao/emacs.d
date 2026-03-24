@@ -22,6 +22,35 @@ By default, calls to `c-message' write messages to a buffer named
 
   )
 
+(defun c-message-get-logging-path-to-workbench ()
+  (let* ((log-file-path
+  (expand-file-name (format "~/workbench/%s/logs/pid.%d.tty.%s.log"
+          (format-time-string "%Y-%m-%d")
+          (emacs-pid)
+          (process-tty-name server-process))))
+         (log-dir-path (file-name-directory log-file-path))
+         )
+    (make-directory log-dir-path)
+    log-file-path))
+
+(defcustom c-message-logging-path
+  #'c-message-get-logging-path-to-workbench
+
+  "function which dynamically returns a valid path to which logging messages sent via `c-message-log' are written to."
+
+  :type 'function
+  :group 'c-message
+  )
+
+(defun c-message-log (level fmt &rest args)
+  "logging facility writes to `c-message-logging-path'
+
+arg LEVEL is one of:  `:trace', `:debug', `:info', `:warn', `:error', `:critical', `:emergency'
+
+args FMT and ARGS are the same form as `c-message'
+"
+
+
 (defun c-message (fmt &rest args)
   "drop-in replacement for `message' that output colorized messages to a buffer named \"*C-Messages*\""
   (interactive (interactive-read-fmt-and-args))
