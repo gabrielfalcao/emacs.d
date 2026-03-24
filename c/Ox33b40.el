@@ -1,4 +1,4 @@
-(load-library "workbench")
+(load-file "~/.emacs.d/c/workbench.el")
 
 
 (defun Ox33b4O/find-file/~/workbench/today(filename)
