@@ -41,8 +41,8 @@
          )
     (mapcar
      (lambda (minor-mode-func)
+       (message "setting %s to %S" minor-mode-func arg)
        (funcall minor-mode-func arg)
-       (setq-default current (1+ (setq-default index (1+ index))))
        ) ; end (lambda ...)
      ;; start (mapcar ... SEQUENCE)
      set-bar-modes-mode-names ;; end (mapcar ... SEQUENCE)
@@ -59,7 +59,6 @@
 ;;   - exclude from empty files from completion
 ;;   - exclude the same file as the (buffer-file-name) from which find-file was called
 ;;   - sort filenames by their modified-at timestamp
-
 
 (defconst user-emacs-d-c-directory
   "path to ~/.emacs.d/c/"
