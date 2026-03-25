@@ -22,26 +22,64 @@
 
 
 (defconst set-bar-modes-mode-names
-  (list 'scroll-bar-mode 'menu-bar-mode 'tool-bar-mode))
-
-(defconst set-bar-modes-disable -1)
-(defconst set-bar-modes-enable   1)
-
-(defun set-bar-modes (&optional arg)
-  "."
-  (interactive "P")
-  (mapcar
-   (lambda (minor-mode-sym)
-     (let* ((current-value (symbol-value minor-mode-sym)))
-       (funcall minor-mode-sym arg)))
-
-   set-bar-modes-mode-names)
+  (list 'menu-bar-mode    ;
+        'tool-bar-mode    ;
+        'scroll-bar-mode  ;
+        )
   )
 
 
-(defun disable-bars ()
-  (interactive)
-  (set-bar-modes set-bar-modes-disable))
+(defun set-bar-modes (&optional orig-arg)
+  "."
+  (interactive "P")
+  (let* ((arg
+          (pcase orig-arg
+
+            ('enable    1)
+            (:enable    1)
+
+            ('disable  -1)
+            (:disable  -1)
+
+
+            ((or
+              (pred integerp)
+              (pred null)
+              (pred (eq t)))
+             arg)
+
+
+            (_
+             (display-warning :warning
+                              (format "defaulting to disable bar modes %S due to unexpected raw argument of type %S: %S "
+                                      (format
+                                       "(%s)"
+                                       (string-join
+                                        (mapcar #'symbol-name set-bar-modes-mode-names)
+                                        ", "))
+                                      (cl-type-of orig-arg)
+                                      orig-arg)
+                              :warning "*Messages*")
+             -1) ; disable mode by default
+            )))
+
+    (mapcar
+     (lambda (minor-mode-sym)
+       (let* ((current-value (symbol-value minor-mode-sym))
+              (result (list)))
+
+         (plist-put result :func-name (symbol-name minor-mode-sym))
+
+         (condition-case err
+             (plist-put result :func-call-return
+                        (funcall minor-mode-sym arg))
+           (error (plist-put result :func-call-error err)))
+         (setq-default minor-mode-sym arg)))
+
+     set-bar-modes-mode-names)))
+
+
+(defun disable-bars () (interactive) (set-bar-modes :disable))
 
 
 ;; TODO: defadvice for auto-complete of `find-file' to:
