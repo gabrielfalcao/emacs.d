@@ -56,8 +56,13 @@ declare -- value=""
 
 # <GIT>
 declare -- git_repo_path=""
-if ! git_repo_path=$(2>${stderr} git rev-parse --show-toplevel); then
+if git_repo_path=$(2>${stderr} git rev-parse --show-toplevel); then
+    code=0
+else
     code=$?
+fi
+if [ ${code} -ne 0 ]; then
+    1>&2 echo -e "\x1b[0m\x1b[1;48;2;253;67;83m[${script_name} warning]\x1b[7m $(pwd) is not under git version control\x1b[0m"
 fi
 # </GIT>
 export IFS=$'\n'
