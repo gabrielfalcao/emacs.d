@@ -20,3 +20,8 @@
 
 (defun color-rgb-minor-mode-disable()
   (remove-hook 'after-change-functions #'color-rgb-colorize-buffer t))
+
+
+(defun color-rgb-colorize-buffer()
+
+  )
