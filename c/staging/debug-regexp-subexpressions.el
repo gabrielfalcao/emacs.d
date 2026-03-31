@@ -29,18 +29,10 @@ interactive command `replace-regexp' like so:
                         subexp-start
                         value-prefix
 
-                        ;; (if collapse-linebreaks ;; if `cond' argument #0
-                        ;;     (save-match-data
-                        ;;       (replace-regexp-in-string
-                        ;;        "\\(\\s-*\\)\\(\r\n\\|\n\\)+\\(\\s-*\\)" "\\1\\3" value)) ;; if `then' argument #1
-                        ;;   value  ;; if `else' argument #2
-                        ;;   )
                         value
 
                         value-suffix
                         subexp-end)))
-                  ;; (message "items %S" items)
-                  ;; (c-message-open "items %S" items)
                   (string-join items item-separator) ;; (format "%d=`%s`\n" g value)
                   ))) ;
             )         ;; mapcar `function' argument #0
@@ -68,5 +60,3 @@ interactive command `replace-regexp' like so:
 (defalias 'dbg-regex #'debug-regexp-subexpressions)
 (defalias 'dbg-regexp #'debug-regexp-subexpressions)
 (defalias 'regex! #'debug-regexp-subexpressions)
-
-;; 2026/03/20 07:16:33 (1773990993)
