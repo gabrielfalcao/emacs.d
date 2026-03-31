@@ -31,35 +31,80 @@ trap on_ctrlc bus
 trap on_ctrlc segv
 trap on_ctrlc sys
 
+declare -gr long_description=$'
+this is a
+quite long
+
+description: "double-quotes" inside *"single-quotes"*
+'
+
+declare -gr short_description="
+this is a short description
+"
 declare -a argv=(${@})
 declare -i argc=${#argv[@]}
 
-declare -i code=0
-
-declare -i current=0
 declare -- arg=""
-declare -- pos=""
-
-declare -i index=0
-declare -- arg=""
-declare -- param=""
-
-declare -i next_index=0
-declare -- next_arg=""
-declare -- next_param=""
-
-declare -i skip_next=0
-
-declare -i lineno=0
-declare -i line_number=0
-declare -- line=""
-
 declare -- argument=""
 declare -- field=""
 declare -- key=""
+declare -- line=""
 declare -- name=""
+declare -- filename=""
+declare -- filename_extension=""
+declare -- filename_base=""
+declare -- param=""
 declare -- path=""
+declare -- pos=""
 declare -- value=""
+declare -i code=0
+declare -i current=0
+declare -i index=0
+declare -i line_number=0
+declare -i lineno=0
+declare -i skip=0
+
+declare -- prev_arg=""
+declare -- prev_argument=""
+declare -- prev_field=""
+declare -- prev_key=""
+declare -- prev_line=""
+declare -- prev_name=""
+declare -- prev_filename=""
+declare -- prev_filename_extension=""
+declare -- prev_filename_base=""
+declare -- prev_param=""
+declare -- prev_path=""
+declare -- prev_pos=""
+declare -- prev_value=""
+declare -i prev_code=0
+declare -i prev_current=0
+declare -i prev_index=0
+declare -i prev_line_number=0
+declare -i prev_lineno=0
+declare -i prev_skip=0
+
+declare -- next_arg=""
+declare -- next_argument=""
+declare -- next_field=""
+declare -- next_key=""
+declare -- next_line=""
+declare -- next_name=""
+declare -- next_filename=""
+declare -- next_filename_extension=""
+declare -- next_filename_base=""
+declare -- next_param=""
+declare -- next_path=""
+declare -- next_pos=""
+declare -- next_value=""
+declare -i next_code=0
+declare -i next_current=0
+declare -i next_index=0
+declare -i next_line_number=0
+declare -i next_lineno=0
+declare -i next_skip=0
+
+declare -gA path_map=()
 
 # <GIT>
 declare -- git_repo_path=""
@@ -103,3 +148,4 @@ if [ "${0}" == "${BASH_SOURCE[0]}" ]; then
 else
     1>&2 echo -e "${BASH_SOURCE[0]} appears to being used as a library by ${0@Q}"
 fi
+exit 0
