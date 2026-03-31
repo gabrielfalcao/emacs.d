@@ -106,7 +106,8 @@
 	   (goto-char position))
        (c-message "ERROR: %s" err)))))
 
-(line-number-mode t)
+(setq-default line-number-mode t)
+(setq-default indent-tabs-mode nil)
 (setq-default global-package-online nil) ;; set to non-nil to enable
 (setq-default global-flycheck-mode t)
 (setq-default debug-on-error nil)
