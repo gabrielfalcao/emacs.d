@@ -28,22 +28,97 @@
 (setq-default $font-name$ "JetBrains Mono-16")
 
 
-(setq-default warning-minimum-level
-              (setq-default warning-minimum-log-level :debug))
+(setq-default warning-minimum-level :debug)
+(setq-default warning-minimum-log-level :debug)
 
 
 (defalias 'describe #'describe-symbol)
 
-(defun safe-load-file (file-name)
-  (condition-case err
-      (load-file file-name)
-    (error
-     (display-warning 'emacs
-                      (format "failed to load-file `%s': %s" file-name err)
-                      ;; :debug / :warning / :error / :emergency
-                      :error)
-     ); end (display-warning ...)
-    ))
+(defun unix-time-secs-nanos (&optional time zone)
+  "Returns a list with 2 items, both natural numbers, respectively
+`seconds' and `nanoseconds' relative to the `current-time' and universal
+timezone (UTC) when called without arguments.
+
+The optional arguments TIME and ZONE, follow the same logic and
+semantics of the arguments of `format-time-string'.
+"
+  (let* (
+         (time          (or time (current-time)))
+         (unix-seconds  (format-time-string "%s"  time zone))
+         (nano-seconds  (format-time-string "%N"  time zone))
+         ;; (micro-seconds (format-time-string "%6N" time zone))
+         ;; (milli-seconds (format-time-string "%3N" time zone))
+         )
+    (list unix-seconds nano-seconds)
+    )
+  )
+
+(defun safe-load-file (file-name &optional default-directory)
+  (unless (stringp file-name)
+    (signal 'type-error (format "argument `file-name' should be a string but is `%s': %S"
+                                (cl-type-of file-name)
+                                file-name)))
+
+  (let* (
+         (resolved-file-name    (expand-file-name file-name default-directory))
+         (started-at            nil)
+         (finished-at           nil)
+         (error-caught-at       nil)
+         (error-caught-obj      nil)
+         (error-caught-msg      nil)
+         (result                nil)
+         (makeprops             (lambda (&rest extra-props)
+                                  (unless extra-props
+                                    (setq extra-props (list)))
+                                  (unless (or (null extra-props) (plistp extra-props))
+                                    (signal 'type-error
+                                            (format "`makeprops' argument `extra-props' must be a plist but instead got `%s': %S"
+                                                    (cl-type-of extra-props)
+                                                    extra-props)))
+
+                                  (append extra-props
+                                          (list :filename                  file-name
+                                                :resolved-filename         resolved-file-name
+                                                :started-at                started-at
+                                                :finished-at               finished-at
+                                                :loaded                    loaded
+                                                :result                    result
+                                                )
+                                          )))
+         (loaded                (condition-case err
+                                    (progn
+                                      (setq started-at (unix-time-secs-nanos))
+                                      (setq result (load-file resolved-file-name))
+                                      (setq finished-at (unix-time-secs-nanos))
+                                      t)
+                                  (error
+                                   (setq error-caught-at (unix-time-secs-nanos))
+                                   (setq error-caught-obj err)
+                                   (let* (
+                                          (err-msg   (error-message-string err))
+                                          (user-msg  (format "failed to load-file `%s': %S" resolved-file-name err-msg))
+
+                                          (final-msg (propertize user-msg (makeprops :error-object    err
+										     :error-caught-at error-caught-at)))
+                                          )
+                                     (display-warning 'emacs final-msg :error) ;; :debug / :warning / :error / :emergency
+                                     (setq error-caught-msg final-msg)
+                                     nil
+                                     )
+                                   )
+                                  )
+				)
+         (dbg-display (format "(safe-load-file %s)" (string-join
+                                                     (seq-filter #'stringp
+                                                                 (list (format "%S" file-name)
+                                                                       (and default-directory (format "%S" default-directory))))
+                               " ")))
+         ); end let* varlist
+    result
+    )
+  )
+
+
 
 (defun safe-load-library (library-name)
   (condition-case err
