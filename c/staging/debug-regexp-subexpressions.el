@@ -81,10 +81,8 @@ interactive command `replace-regexp' like so:
 
     (c-message "%s" result-string)
     (match-string 0)
-
     )
   )
-
 
 
 (defalias '~dbg-regex #'debug-regexp-subexpressions)
