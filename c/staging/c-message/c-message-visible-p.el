@@ -50,27 +50,40 @@
     )
   )
 
+(defun c-message-buffer-in-frame (frame)
+  (unless (framep frame)
+    (signal 'type-error (format "argument FRAME must be a `frame' but is `%s': %S" (cl-type-of frame) frame)))
+  (let* (
+         ;
+         (frame-params (get-frame-params-plist frame))
+         (frame-buffers (plist-get frame-params 'buffer-list))
+         (response (seq-reduce (lambda (name buf)
+                                 (and (string= name "*C-Messages*") name)
+                                 )
+                               frame-buffers ""))
+         ;
+         )
+    response
+    )
+  )
+
+
 (defun c-message-visible-p ()
   (let* (;;
          (vis-frames (visible-frame-list))
          (total-items (length vis-frames))
-         (item-frame (nth 0 vis-frames))
+         ;; (item-frame (nth 0 vis-frames))
          ;;
+         (result (mapcar (lambda (item-frame)
+                           (c-message-buffer-in-frame item-frame))
+
+                           vis-frames))
          )
     (c-message-open)
     (erase-c-messages)
-    (c-message-debug-frame item-frame)
-    ;; (seq-do-indexed (lambda (item-frame item-index)
-    ;;                   (let* (
-    ;;                          ;;
-    ;;                          (item-no (1+ item-index))
-    ;;                          (pos     (format "%-4s of %s" item-no total-items))
-    ;;                          ;;
-    ;;                          )
-    ;;                     (c-message "[%s] title => %s" pos (get item-frame 'title))
-    ;;                     )
-    ;;                   )
-    ;;                 vis-frames
-    ;;                 )
+    ;; (c-message-debug-frame item-frame)
+    (erase-messages)
+    (message "message: %S" result)
+    ;; (c-message-buffer-in-frame item-frame)
     ))
 (c-message-visible-p)
