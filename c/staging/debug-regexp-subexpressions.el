@@ -51,37 +51,38 @@ interactive command `replace-regexp' like so:
 \,(debug-regexp-subexpressions)
 "
   (let* ( ;;
-         (md                 (match-data))
-         (md-len             (length md))
-         (pairs              (/ md-len 2))
-         (subexp-count       (- pairs 1))
-         (subexp-range-seq   (number-sequence 0 subexp-count))
-         (subexp-dbg-strings (seq-map-indexed #'debug-regexp-subexpressions/seq-map-indexed-function subexp-range-seq))
-         (result-string      (format "\n%s\n\n" (string-join subexp-dbg-strings "\n")))
-         (buf                (seq-reduce (lambda (buf next-buf)
-                             (cond
-                             ((and (bufferp buf)
-                                   (string= (buffer-name buf) "*C-Messages*"))
-                              buf)
+         (md                                        (match-data))
+         (md-len                                    (length md))
+         (pairs                                     (/ md-len 2))
+         (subexp-count                              (- pairs 1))
+         (subexp-range-seq                          (number-sequence 0 subexp-count))
+         (subexp-dbg-strings                        (seq-map-indexed #'debug-regexp-subexpressions/seq-map-indexed-function subexp-range-seq))
+         (result-string                             (format "\n%s\n\n" (string-join subexp-dbg-strings "\n")))
+         (existing-c-messages-buffer                (seq-reduce (lambda (buf next-buf)
+					                          (cond
+					                           ((and (bufferp buf)
+						                         (string= (buffer-name buf) "*C-Messages*"))
+					                            buf)
 
-                             ((and (bufferp next-buf)
-                                   (string= (buffer-name next-buf) "*C-Messages*"))
-                              next-buf))
-                            )
-                          (buffer-list) (current-buffer)))
+					                           ((and (bufferp next-buf)
+						                         (string= (buffer-name next-buf) "*C-Messages*"))
+					                            next-buf))
+					                          )
+					                        (buffer-list) (current-buffer)))
 
-         ;;
          )
         ;;;      (unless (c-message-visible-p (current-buffer))
         ;;;        (c-message-open))
         ;;;
         ;;;      (erase-c-messages)
-      (c-message-open)
-      (c-message "%s" result-string)
+    (unless (and (bufferp       existing-c-messages-buffer)
+                 (buffer-live-p existing-c-messages-buffer))
+      (c-message-open))
 
-      (match-string 0)
+    (c-message "%s" result-string)
+    (match-string 0)
 
-      )
+    )
   )
 
 
