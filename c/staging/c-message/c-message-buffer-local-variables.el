@@ -89,5 +89,7 @@
                 :value value
                 :item item
                 :parts parts))
-             var-list))))
+             )
+           var-list)
+          ))
   )
