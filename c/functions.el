@@ -625,12 +625,14 @@
 
     (seq-map-indexed
      (lambda (reboot-step step-index)
-       (let* ((fun (car reboot-step))
-              (args (cdr reboot-step))
+       (let* ((fun              (car reboot-step))
+              (reboot-step-tail (or (cdr reboot-step) (list)))
+              (args             (or (and (listp reboot-step-tail) reboot-step-tail)
+                                    (list reboot-step-tail)))
               (step-name (symbol-name fun))
               (step-number (1+ step-index)))
          (condition-case err
-             (funcall fun args)
+             (apply fun args)
            (error
             (signal 'server-reboot-error
                     (format  "server-reboot failed to execute step `%s' [%d of %d]: %S"
@@ -639,8 +641,12 @@
                              step-count
                              err))))))
      reboot-fun-sequence)))
+
 (unless (and (server-running-p server-name) (not server-process))
   (server-reboot))
+
+(defalias 'reboot-server #'server-reboot)
+(defalias 'restart-server #'server-reboot)
 
 
 (defun Ox33b4O/$/hash (algo)
