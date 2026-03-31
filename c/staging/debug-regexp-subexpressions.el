@@ -7,7 +7,7 @@
                     (cl-type-of subexp))))
 
   (let (
-        ;
+					;
         (subexp-start (format "%s" subexp)) ;; (subexp-start (format "<%d>" subexp))
         (value-prefix   "=`")
         (value (condition-case err
@@ -21,8 +21,8 @@
                )
         (value-suffix   "`")
         (subexp-end     "")              ;; (subexp-end (format "</%d>" subexp))
-        (item-separator "")
-        ;
+        (item-separator " => ")
+					;
         )
     (when (stringp value)
       (let ((items
@@ -34,7 +34,7 @@
 
               value-suffix
               subexp-end)))
-        (string-join items item-separator) ;; (format "%d=`%s`\n" subexp value)
+        (format "%s\n" (string-join items item-separator)) ;; (format "%d=`%s`\n" subexp value)
         ))) ;
   )
 
@@ -51,23 +51,37 @@ interactive command `replace-regexp' like so:
 \,(debug-regexp-subexpressions)
 "
   (let* ( ;;
-         (md (match-data))
-         (md-len (length md))
-         (pairs (/ md-len 2))
-         (subexp-count (- pairs 1))
-         (subexp-range-seq (number-sequence 0 subexp-count))
+         (md                 (match-data))
+         (md-len             (length md))
+         (pairs              (/ md-len 2))
+         (subexp-count       (- pairs 1))
+         (subexp-range-seq   (number-sequence 0 subexp-count))
          (subexp-dbg-strings (seq-map-indexed #'debug-regexp-subexpressions/seq-map-indexed-function subexp-range-seq))
-         (result-string (format "\n%s\n\n" (string-join subexp-dbg-strings "\n")))
+         (result-string      (format "\n%s\n\n" (string-join subexp-dbg-strings "\n")))
+         (buf                (seq-reduce (lambda (buf next-buf)
+                             (cond
+                             ((and (bufferp buf)
+                                   (string= (buffer-name buf) "*C-Messages*"))
+                              buf)
+
+                             ((and (bufferp next-buf)
+                                   (string= (buffer-name next-buf) "*C-Messages*"))
+                              next-buf))
+                            )
+                          (buffer-list) (current-buffer)))
 
          ;;
          )
-    (progn
-;;;      (unless (c-message-visible-p (current-buffer))
-;;;        (c-message-open))
-;;;
-;;;      (erase-c-messages)
-     (c-message "%s" result-string))
-    )
+        ;;;      (unless (c-message-visible-p (current-buffer))
+        ;;;        (c-message-open))
+        ;;;
+        ;;;      (erase-c-messages)
+      (c-message-open)
+      (c-message "%s" result-string)
+
+      (match-string 0)
+
+      )
   )
 
 
