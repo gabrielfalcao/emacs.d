@@ -350,18 +350,23 @@
 
   (interactive)
   (if (buffer-elisp-heuristic)
+      (save-match-data
       (save-mark-and-excursion
+        (save-restriction
         (widen)
         (eval-buffer)
-        (let ((info (format "%s eval'd " (buffer-name))))
-          (unless (string= info (current-message))
-            (message "%s" info))))
 
+        ;;OzsgKGxldCAoKGluZm8gKGZvcm1hdCAiJXMgZXZhbCdkICIgKGJ1ZmZlci1uYW1lKSkpKQogICAgICAgIDs7ICAgKHVubGVzcyAoc3RyaW5nPSBpbmZvIChjdXJyZW50LW1lc3NhZ2UpKQogICAgICAgIDs7ICAgICAobWVzc2FnZSAiJXMiIGluZm8pKSk=
+
+        )
+        )
+        )
 
     (progn
-      (message "cannot evaluate buffer %s because it is not in %s, trying to run pretty formatter instead"
+      (warn "cannot evaluate buffer %s because it is not in %s, trying to run pretty formatter instead"
                (Ox33b4O/$/paint-mode-line-color (buffer-name))
 	       (Ox33b4O/$/paint-mode-line-color "elisp-mode"))
+
       (g/format/prettify))))
 
 

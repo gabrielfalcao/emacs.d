@@ -28,9 +28,13 @@
                     (var-prefix (format "[buffer-local var %s]" pos)))
 
                (format "%s is a %S of length %d and value %S"
-                       var-prefix var-type var-len var-value))
+                       var-prefix var-type var-len var-value)
+               )
              )
-           vars))
+
+           vars
+           )
+          )
          (result-string (string-join result-items "\n")))
 
     result-string)
@@ -39,5 +43,7 @@
 (progn
   (erase-c-messages)
   (c-message-open)
+  (setq debug-on-error t))
+
   (c-message "shebang.sh:\n\n%s\n"
              (display-buffer-local-vars "shebang.sh")))

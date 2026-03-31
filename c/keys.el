@@ -100,18 +100,7 @@
 
 (Ox33b4O/$/set-key "C-x C-d C-s" 'describe-symbol)
 (Ox33b4O/$/set-key "C-x C-d C-g" 'shortdoc-display-group)
-(Ox33b4O/$/set-key "C-x C-d C-X"
-		   #'(lambda (beg end) (interactive "r")
-		       (save-buffer
-			(let ((tgtcode (replace-regexp-in-string "\\(\\s-\\|\\)+" " " (buffer-substring beg end))))
-			  (with-current-buffer "*Messages*"
-			    (read-only-mode -1)
-			    (erase-buffer)
-			    (read-only-mode 4))
-			  (if (eval-region beg end)
-			      (message "(%s) eval'd: \n```%s``` " (secure-hash 'sha256 tgtcode) tgtcode)
-			    (warn "(%s) nil in evalin': \n```%s``` " (secure-hash 'sha256 tgtcode) tgtcode))
-			  ))))
+(Ox33b4O/$/set-key "C-x C-d C-X" #'eval-elisp-buffer)
 
 (Ox33b4O/$/set-key '("C-p" "M-p") #'(lambda () (interactive) (scroll-up 1)))
 (Ox33b4O/$/set-key '("C-n" "M-n") #'(lambda () (interactive) (scroll-down 1)))
