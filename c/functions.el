@@ -200,15 +200,6 @@
                              (reverse
                               (buffer-substring-no-properties beg end)))))
 
-(defun $$$$$ ()
-  "."
-  (interactive)
-  (global-company-mode)
-  (disable-auto-save-list)
-  (disable-bars)
-  (set-frame-parameter nil 'fullscreen 'maximized)
-  ($$$$$$$$))
-
 (defun Ox33b4O/$/ep ()
   "."
   (interactive)
@@ -2096,15 +2087,30 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
   (while (> (point-max) (point))
     (format-peg-once column)))
 
+(defun $$$$$ ()
+  "."
+  (interactive)
+  (global-company-mode)
+  (disable-auto-save-list)
+  (disable-bars)
+  (set-frame-parameter nil 'fullscreen 'maximized)
+  ($$$$$$$$))
+
 (defun c$dg$ (&rest substrate)
   (interactive)
-  (progn
-    (colorize-ansi-truecolor-triple-text)
-    (colorize-hexadecimal-text)
-    (Ox33b4O/$/paint-mode-line)
-    (disable-auto-save-list)
-    (disable-bars)
-    ($$$$$)))
+  (colorize-ansi-truecolor-triple-text)
+  (colorize-hexadecimal-text)
+  (Ox33b4O/$/paint-mode-line)
+  (disable-auto-save-list)
+  (disable-bars)
+  (global-company-mode)
+  (disable-auto-save-list)
+  (disable-bars)
+  (set-frame-parameter nil 'fullscreen 'maximized)
+  ($$$$$$$$)
+
+; ack --el '([$][$][$][$][$][$][$][$])'
+  )
 
 (defun enable-debug-on-error ()
   (interactive)
