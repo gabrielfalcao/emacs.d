@@ -1,28 +1,31 @@
-(defun c-message-visible-p (&optional buffer)
-  (unless buffer
-    (setq buffer (current-buffer)))
-
-  (unless (bufferp buffer)
-    (signal 'type-error (format "argument BUFFER should be a `buffer' but instead is `%s': %S" (cl-type-of buffer) buffer)))
-
+(defun c-message-visible-p ()
   (let* (
          ;;
-         (buf buffer)
-         (buf-frame (selected-frame))
-         (buf-window (selected-window))
+         (vis-frames                (visible-frame-list))
+         (total-items               (length vis-frames))
+         (tmp-frame                 (nth 0 vis-frames))
          ;;
          )
-    (walk-windows (lambda (win)
+    (c-message-open)
+    (erase-c-messages)
 
-
-
-                    ;; <lambda (win)>
-
-                    ;; </lambda (win)>
-
+    (seq-do-indexed (lambda (item-frame item-index)
+                      (let* (
+                             ;;
+                             (item-no (1+ item-index))
+                             (pos     (format "%-4s of %s" item-no total-items))
+                             ;;
+                             )
+                        (c-message "[%s] title => %s" pos (get tmp-frame 'title))
+                        )
+                      )
+                    vis-frames
                     )
-                  nil
-                  nil
-                  )
     )
   )
+
+
+(defun get-window-list()
+  (let* ((result-windows (list)))
+    (walk-windows (lambda (win) (push win result-windows)))
+    result-windows))
