@@ -21,8 +21,7 @@
     (signal 'type-error
             (format "argument ITEMS is not a list `%s': %S"
                     (cl-type-of items)
-                    items))
-    )
+                    items)))
   (mapcar #'repr-value items))
 
 
@@ -71,21 +70,11 @@
     (erase-all-non-file-buffers)
     ;; (c-message "which-a-bash: %S" which-a-bash)
     (c-message "which-a-lines:\n%s"
-               (string-join
-                (mapcar
-                 (lambda (val) (format "%S" val))
-                 which-a-lines)
-                "\n"))
-    (c-message "canonical-paths: %s"
-               (string-join
-                (mapcar
-                 (lambda (val) (format "%S" val))
-                 canonical-paths)
-                "\n"))
-    (c-message "result: %s"
-               (string-join
-                (mapcar (lambda (val) (format "%S" val)) result)
-                "\n"))))
+               (indented-list-items which-a-lines))
+    (c-message "canonical-paths:\n%s"
+               (indented-list-items canonical-paths))
+    (c-message "result:\n%s" (indented-list-items result)))
+  )
 
 
 (which-bin "bash")
