@@ -16,4 +16,7 @@
 
 
 (defun wezterm-get-newest-cwd()
-  (car (wezterm-list-active-cwds-by-ctime)))
+  (let* (
+         (items (wezterm-list-active-cwds-by-ctime))
+         )
+    (and (length> items 0) (car items))))
