@@ -1,9 +1,19 @@
 (defun wezterm-list-active-cwds-by-ctime()
   (let* (
-         (commands (list
-                    "wezterm cli list  --format=json | jq -r '.[].cwd | match(\"^(file://)(.*?)[/]?$\") | .captures[-1].string' | xargs -Ieachpath gstat -c '%W %Y eachpath' 'eachpath' | sort -nr | gawk '{ path=\"\"; last=\"\"; for (i=3;i<=NF;i++) { if ((i+2) == NF) { last=\"\n\"; }; path=sprintf(\"%s%s%s\", path, $i, last); }; if (!printed_paths[path]) { printed_paths[path]=NR; print(path);} }' | head -1")
-                   )
-         (stdout (shell-command-to-string (string-join commands " | ")))
+         (shell-pipe-command-list (list "wezterm cli list  --format=json"
+                                        "jq -r '.[].cwd | match(\"^(file://)(.*?)[/]?$\") | .captures[-1].string'"
+                                        "xargs -Ieachpath gstat -c '%W %Y eachpath' 'eachpath'"
+                                        "sort -nr"
+                                        "gawk '{ path=\"\"; last=\"\"; for (i=3;i<=NF;i++) { if ((i+2) == NF) { last=\"\n\"; }; path=sprintf(\"%s%s%s\", path, $i, last); }; if (!printed_paths[path]) { printed_paths[path]=NR; print(path);} }'"
+                                        ))
+         (command (string-join shell-pipe-command-list " | "))
+         (stdout (shell-command-to-string command))
+         (lines (mapcar #'string-trim (string-split stdout "\n" t)))
          )
+    lines
     )
   )
+
+
+(defun wezterm-get-newest-cwd()
+  (car (wezterm-list-active-cwds-by-ctime)))
