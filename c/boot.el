@@ -106,6 +106,11 @@
 	   (goto-char position))
        (c-message "ERROR: %s" err)))))
 
+(setq-default shell-command-dont-erase-buffer t)
+(setq-default shell-command-dont-erase-buffer 'save-point)
+(setq-default shell-command-default-error-buffer "*shell-command-stderr*" )
+(setq-default shell-command-buffer-name          "*shell-command-stdout*" )
+(setq-default current-time-list nil)
 (setq-default line-number-mode t)
 (setq-default indent-tabs-mode nil)
 (setq-default global-package-online nil) ;; set to non-nil to enable
