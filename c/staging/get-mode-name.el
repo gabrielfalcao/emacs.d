@@ -26,10 +26,17 @@
   )
 
 (defun get-mode-name(&optional buffer-or-name)
-  (downcase
-   (substring-no-properties
+  (let* (
+         (buf (or (and buffer-or-name (get-buffer buffer-or-name)) (current-buffer)))
+         )
+  (with-current-buffer buf
     (format "%s-mode"
-            (get-mode-name-neat-only-string buffer-or-name))
-    )
-   )
-  )
+            (replace-regexp-in-string
+             "^\\([a-z0-9-]+\\)[^A-Za-z0-9-]+.*$" "\\1"
+             (downcase
+              (cond
+               ((listp mode-name)
+                (car mode-name))
+               ((stringp mode-name)
+                mode-name)
+               ((t (format "%S" mode-name))))))))))

@@ -176,30 +176,7 @@
     (force-mode-line-update)
     wide))
 
-(defun Ox33b4O/$/mode-name()
-  (format "%s-mode"
-          (replace-regexp-in-string
-           "^\\([a-z0-9-]+\\)[^A-Za-z0-9-]+.*$" "\\1"
-           (downcase
-            (cond
-             ((listp mode-name)
-              (car mode-name))
-             ((stringp mode-name)
-              (substring-no-properties mode-name))
-             ((t (format "%S" mode-name))))))))
-
-
-(defun Ox33b4O/$/mode-name()
-  (format "%s-mode"
-          (replace-regexp-in-string
-           "^\\([a-z0-9-]+\\)[^A-Za-z0-9-]+.*$" "\\1"
-           (downcase
-            (cond
-             ((listp mode-name)
-              (car mode-name))
-             ((stringp mode-name)
-              mode-name)
-             ((t (format "%S" mode-name))))))))
+(defalias 'Ox33b4O/$/mode-name #'get-mode-name)
 
 (defun Ox33b4O/$/mark-indicator/active()
   "."
