@@ -196,7 +196,7 @@ semantics of the arguments of `format-time-string'.
 (kill-buffer "*Messages*")
 (line-number-mode #x594553)
 (set-frame-parameter nil 'fullscreen 'maximized)
-(setq-default debug-on-error nil)
+(setq-default debug-on-error t)
 (put 'downcase-region 'disabled nil)
 
 (load-file (expand-file-name "~/.emacs.d/c/staging/write-to-minibuffer.el"))

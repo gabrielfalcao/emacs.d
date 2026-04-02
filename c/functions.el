@@ -1551,6 +1551,25 @@
            ("close-count" . close-count)
            ("end-pos" . end-pos)))))))
 
+
+;WIP
+;(defmacro with-buffer-writable (buffer-or-name &rest body)
+;  "Execute the forms in BODY with BUFFER-OR-NAME temporarily current and
+;writable. This is morally equivalent to using `with-current-buffer',
+;setting `buffer-read-only' to nil, executing the forms in BODY then
+;restoring `buffer-read-only' to whatever value it had before."
+;  (declare (indent 1) (debug t))
+;  `(let* ((buffer (get-buffer ,buffer-or-name))
+;          (buffer-read-only-state (make-symbol "buffer-read-only-state
+;
+;
+;(with-current-buffer ,
+;     (set-buffer ,buffer-or-name)
+;
+;     ,@body))
+
+
+
 (defun find-next-close-parens ()
   "."
   (interactive)
@@ -1578,14 +1597,6 @@
     (goto-next-close-parenthesis open-char close-char open-count close-count)
 
     ))
-
-(defun disable-read-only-mode ()
-  "shortcut to (read-only-mode -1)"
-  (read-only-mode -1))
-
-(defun enable-read-only-mode ()
-  "shortcut to (read-only-mode 1)"
-  (read-only-mode 1))
 
 (defun erase-all-non-file-buffers ()
   "."
@@ -1619,22 +1630,21 @@
          funcall-results))
   )
 
-
-(defun erase-buffer-by-name (buffer-name)
+(defun erase-buffer-by-name (buffer-or-name &optional error-if-buffer-not-found)
   "."
-  (let ((buffer-to-erase (get-buffer  buffer-name)))
-    (if (bufferp buffer-to-erase)
-        (with-current-buffer buffer-to-erase
-          (let ((buffer-was-read-only
-                 (when (and
-                        (numberp buffer-read-only)
-                        (< buffer-read-only 0)))))
-            (read-only-mode -1)
-            (widen)
-            (erase-buffer)
-            (if buffer-was-read-only (read-only-mode 1)))) ;; end inner let
-      ) ;;end if
-    ) ;; end outer let
+  (let* (
+         (buffer-to-erase           (or (get-buffer  buffer-or-name) (and error-if-buffer-not-found (signal 'type-error (format "no buffer found for name `%S'" buffer-or-name)))))
+         (buffer-to-erase-readonly-state (and buffer-to-erase (buffer-local-value 'buffer-read-only buffer-to-erase)))
+         )
+    (and buffer-to-erase
+    (with-current-buffer buffer-to-erase
+      (when buffer-to-erase-readonly-state
+        (setq buffer-read-only nil))
+      (erase-buffer)
+      (setq buffer-read-only buffer-to-erase-readonly-state)
+      )
+    )
+    )
   )
 
 (defun erase-messages ()
@@ -1650,35 +1660,6 @@
 (defun delete-messages() (interactive) (erase-messages))
 (defun delete-scrath() (interactive) (erase-c-scrath))
 
-(defun git-add ()
-  "."
-  (interactive)
-  (shell-command-to-string
-   (format "git add --renormalize -f %s"
-           (expand-file-name (buffer-file-name)))))
-
-(defun git-rm-force ()
-  "."
-  (interactive)
-  (shell-command-to-string
-   (format "git rm --force %s" (expand-file-name (buffer-file-name)))))
-
-(defun git-rm-cached ()
-  "."
-  (interactive)
-  (shell-command-to-string
-   (format "git rm --cached %s"
-           (expand-file-name (buffer-file-name)))))
-
-(defun git-restore-staged ()
-  "."
-  (interactive)
-  (shell-command-to-string
-   (format "git restore --staged %s"
-           (expand-file-name (buffer-file-name))))
-  (shell-command-to-string
-   (format "git restore %s" (expand-file-name (buffer-file-name))))
-  (revert-buffer t t t))
 
 (defun create-fresh-buffer (new-buffer-name &optional inhibit-buffer-hooks)
   (let ((existing-buffer (get-buffer new-buffer-name)))
@@ -1976,7 +1957,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
   (revert-buffer t t t))
 
 (defun buffer-list-builtin-only ()
-  "returns all open emacs-only buffers, i.e: starting and ending in `*'."
+  "returns all open emacs-only buffers, i.e: starting and ending in \"*\"."
   (seq-filter
    (apply-partially #'string-match-p "^[*].*[*]$")
    (mapcar 'buffer-name (buffer-list))))

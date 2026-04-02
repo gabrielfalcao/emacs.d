@@ -85,6 +85,35 @@
    (seq-filter
     (apply-partially #'string-match-p "[*]\s-\\(\\)")
     (string-lines (shell-command-to-string "git branch")))))
+(defun git-add ()
+  "."
+  (interactive)
+  (shell-command-to-string
+   (format "git add --renormalize -f %s"
+           (expand-file-name (buffer-file-name)))))
+
+(defun git-rm-force ()
+  "."
+  (interactive)
+  (shell-command-to-string
+   (format "git rm --force %s" (expand-file-name (buffer-file-name)))))
+
+(defun git-rm-cached ()
+  "."
+  (interactive)
+  (shell-command-to-string
+   (format "git rm --cached %s"
+           (expand-file-name (buffer-file-name)))))
+
+(defun git-restore-staged ()
+  "."
+  (interactive)
+  (shell-command-to-string
+   (format "git restore --staged %s"
+           (expand-file-name (buffer-file-name))))
+  (shell-command-to-string
+   (format "git restore %s" (expand-file-name (buffer-file-name))))
+  (revert-buffer t t t))
 
 (defun git-save ()
   "
