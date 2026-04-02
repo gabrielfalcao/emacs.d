@@ -1,6 +1,3 @@
-(load-file "~/.emacs.d/c/workbench.el")
-
-
 (defun Ox33b4O/find-file/~/workbench/today(filename)
   "bound to `C-x' 'M-f'"
   (interactive

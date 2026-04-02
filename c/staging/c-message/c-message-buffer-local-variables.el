@@ -20,6 +20,16 @@
     (unless (c-message-visible-p)
       (c-message-open)
       (erase-c-messages))
+    (condition-case err
+        (progn
+          (erase-c-messages)
+          (erase-messages)
+          (erase-minibuffer))
+      (error
+       (let* (
+              (msg (format "caught error when erasing read-only buffers: %S" (error-message-string err)))
+              )
+         (warn "%s" msg))))
 
     (setq result
           (seq-map-indexed
@@ -32,6 +42,9 @@
                     (head (car pair))
                     (tail (cdr pair))
                     (tail-head (car tail))
+                    (repr-tail  (format "%S" tail))
+                    (repr-lines (string-split repr-tail "\n"))
+                    (repr-size  (length repr-lines))
                     (key                 head)
                     (values
                      (or
@@ -43,10 +56,14 @@
                              (format indexfmt current)
                              total))
                     (item-end (format "</%s>"                 key))
+
+                    ;; (item-tail
+                    ;;  (format "<tail type={%s}>%S</tail>"
+                    ;;          (cl-type-of tail)
+                    ;;          tail))
                     (item-tail
-                     (format "<tail type={%s}>%S</tail>"
-                             (cl-type-of tail)
-                             tail))
+                     (format "<tail-size>%S</tail-size>" repr-size))
+
                     (item-tail-head
                      (format "<tail-head type={%s}>%S</tail-head>"
                              (cl-type-of tail-head)

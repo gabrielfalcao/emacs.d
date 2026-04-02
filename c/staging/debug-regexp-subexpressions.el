@@ -14,8 +14,7 @@
          (condition-case err
              (match-string-no-properties subexp)
            (error
-            (erase-messages)
-            (message "error getting subexp index %S %S: %s" idx subexp err)
+            (c-message "error getting subexp index %S %S: %s" idx subexp err)
             "")
            ))
         (value-suffix   "`")
@@ -49,6 +48,7 @@ interactive command `replace-regexp' like so:
 
 \,(debug-regexp-subexpressions)
 "
+  (enable-debug-on-error)
   (let* ( ;;
          (md (match-data))
          (md-len (length md))
@@ -61,7 +61,10 @@ interactive command `replace-regexp' like so:
           (format "\n%s\n\n" (string-join subexp-dbg-strings "\n"))))
     (unless (c-message-visible-p)
       (c-message-open)
-      (and (eq erase-messages-on :open) (erase-c-messages)))
+      (and erase-messages-on (erase-c-messages)))
+
+    (when (eq erase-messages-on :each)
+      (erase-c-messages))
 
     (c-message "%s" result-string)
     (match-string 0))

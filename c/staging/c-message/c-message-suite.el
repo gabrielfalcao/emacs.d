@@ -1,4 +1,5 @@
-(safe-load-file (expand-file-name "~/.emacs.d/c/staging/c-message/c-message-visible-p.el"))
+(safe-load-file "~/.emacs.d/c/staging/c-message/c-message-visible-p.el")
+(safe-load-file "~/.emacs.d/c/staging/c-message/with-c-message-open.el")
 
 (defcustom c-messages-buffer-name
   "*C-Messages*"

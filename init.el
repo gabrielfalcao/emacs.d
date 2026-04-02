@@ -81,7 +81,6 @@ semantics of the arguments of `format-time-string'.
                                                 :resolved-filename         resolved-file-name
                                                 :started-at                started-at
                                                 :finished-at               finished-at
-                                                :loaded                    loaded
                                                 :result                    result
                                                 )
                                           )))
@@ -98,8 +97,9 @@ semantics of the arguments of `format-time-string'.
                                           (err-msg   (error-message-string err))
                                           (user-msg  (format "failed to load-file `%s': %S" resolved-file-name err-msg))
 
-                                          (final-msg (propertize user-msg (makeprops :error-object    err
-										     :error-caught-at error-caught-at)))
+                                          (final-msg (apply #'propertize user-msg (funcall makeprops
+                                                                                   :error-object    err
+										   :error-caught-at error-caught-at)))
                                           )
                                      (display-warning 'emacs final-msg :error) ;; :debug / :warning / :error / :emergency
                                      (setq error-caught-msg final-msg)
@@ -112,7 +112,7 @@ semantics of the arguments of `format-time-string'.
                                                      (seq-filter #'stringp
                                                                  (list (format "%S" file-name)
                                                                        (and default-directory (format "%S" default-directory))))
-                               " ")))
+                                                     " ")))
          ); end let* varlist
     result
     )
@@ -137,6 +137,12 @@ semantics of the arguments of `format-time-string'.
   (condition-case err
       (apply #'load (append (list file) load-optional-args))
     (error (message "failed to load `%s':\n%s" file err))))
+
+
+(safe-load-file "~/.emacs.d/c/workbench.el")
+(safe-load-file "~/.emacs.d/c/staging/debug-regexp-subexpressions.el")
+(safe-load-file "~/.emacs.d/c/staging/gitfun.el")
+(safe-load-file "~/.emacs.d/c/staging/c-message/c-message-suite.el")
 
 (safe-load "server")
 
@@ -196,6 +202,12 @@ semantics of the arguments of `format-time-string'.
 (load-file (expand-file-name "~/.emacs.d/c/staging/write-to-minibuffer.el"))
 
 (condition-case err
-    (disable-bars)
+    (progn
+      (disable-bars)
+      (erase-all-non-file-buffers)
+      (mapc (lambda (buf) (when (string-match-p "[*]" (buffer-name buf))
+                            (kill-buffer buf)))
+            (buffer-list))
+      )
   (error
    (c-message "failed to `disable-bars': %S" err)))

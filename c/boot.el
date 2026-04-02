@@ -25,8 +25,7 @@
   (list 'menu-bar-mode    ;
         'tool-bar-mode    ;
         'scroll-bar-mode  ;
-        )
-  )
+        ))
 
 
 (defun set-bar-modes (&optional orig-arg)
@@ -106,10 +105,32 @@
 	   (goto-char position))
        (c-message "ERROR: %s" err)))))
 
+(defconst workbench-root-path
+  (expand-file-name "~/workbench")
+  "root path of workbench, this var will be DEPRECATED by the future emacs/rust extension `workbench-el' with RPC calls to the **workbench-server**")
+
+(defun workbench-today-string (&optional time zone)
+  "returns a datetime with the correct format for daily workbench paths.
+  See variable `workbench-path' which uses this function."
+  (format-time-string "%Y-%m-%d" time zone))
+
+
+(defvar workbench-path
+  (file-name-concat workbench-root-path (workbench-today-string))
+  "path to the current day's workbench path within the `workbench-root-path' constant.")
+
+;; ;; ..TK
+;; (setq-default default-directory           (wezterm-get-newest-cwd))
+;; (setq-default shell-file-name                    (car (which-bin "bash")))
+;; ;;
+
 (setq-default shell-command-dont-erase-buffer t)
 (setq-default shell-command-dont-erase-buffer 'save-point)
 (setq-default shell-command-default-error-buffer "*shell-command-stderr*" )
 (setq-default shell-command-buffer-name          "*shell-command-stdout*" )
+(setq-default shell-file-name                    "/opt/homebrew/Cellar/bash/5.2.26/bin/bash")
+
+
 (setq-default current-time-list nil)
 (setq-default line-number-mode t)
 (setq-default indent-tabs-mode nil)
@@ -119,7 +140,7 @@
 (setq-default initial-scratch-message nil)
 (setq-default auto-save-interval 137)
 (setq-default save-interprogram-paste-before-kill t)
-(setq-default case-fold-search nil)
+(setq-default case-fold-search t)
 (defalias 'yes-or-no-p #'y-or-n-p)
 (defalias '~libexec #'Ox33b4O/find-file/~/opt/libexec)
 (defalias '~opt/libexec #'Ox33b4O/find-file/~/opt/libexec)
@@ -212,7 +233,9 @@
 (load-file "~/.emacs.d/c/advices.el")
 ;; (load-library "server-setup") ;; not ready
 ;; (ensure-server-ready)
-
+(load-file
+ (expand-file-name "~/.emacs.d/c/staging/wezterm-list-cwds.el"))
+(load-file (expand-file-name "~/.emacs.d/c/staging/which-bin.el"))
 ;; (load-library "c-staging-after-save-hooks")
 (load-file
  (expand-file-name "~/.emacs.d/c/staging/write-to-minibuffer.el"))

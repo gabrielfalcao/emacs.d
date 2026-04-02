@@ -1,19 +1,22 @@
-(defun repr-value (value) (format "%S" item))
+(defun repr-value (item) (format "%S" item))
 
-(defun make-indent-function (&optional level indentation-string)
-  (let* ((default-level                4)
-         (default-indentation-string " ")
-         (level (or (and (natnump level) level) default-level))
-         (indentation-string
-          (or
-           (and
-            (stringp indentation-string)
-            (length> indentation-string 0))
-           default-indentation-string)))
-    (lambda (value)
-      (let* ((indentation
-              (string-join (make-list level indentation-string) "")))
-        (format "%s%s" indentation value)))))
+;; (defun make-indent-function (&optional level indentation-string)
+;;   (let* ((default-level                4)
+;;          (default-indentation-string " ")
+;;          (level (or (and (natnump level) level) default-level))
+;;          (indentation-string
+;;           (or
+;;            (and
+;;             (stringp indentation-string)
+;;             (length> indentation-string 0))
+;;            default-indentation-string)))
+;;     (lambda (value)
+;;       (let* ((indentation
+;;               (string-join (make-list level indentation-string) "")))
+;;         (format "%s%s" indentation value)))))
+
+(defun indent-value (value)
+  (format "%s%s" (string-join (make-list 4 " ") "") value))
 
 
 (defun list-items-to-string-values (items)
@@ -28,7 +31,7 @@
 (defun indented-list-items (items)
   (string-join
    (mapcar
-    (make-indent-function 4 " ")
+    #'indent-value
     (list-items-to-string-values items))
    "\n"))
 
@@ -76,5 +79,5 @@
     (c-message "result:\n%s" (indented-list-items result)))
   )
 
-
+(enable-debug-on-error)
 (which-bin "bash")

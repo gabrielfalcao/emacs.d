@@ -15,7 +15,8 @@
 ;; 4=`macro`
 ;; 5=`set-region-contents-with-fn`
 
-
+(load-file (expand-file-name "~/.emacs.d/c/staging/c-message/c-message-suite.el"))
+(load-file (expand-file-name "~/.emacs.d/c/staging/c-message/with-c-message-open.el"))
 
 
 (defun string-shift-right (g) "." (format "\t%s" g))
@@ -56,8 +57,7 @@
 
 
 ;; (defun debug-symbol-props-format (sym)
-;;   "4b484279623264754943686a4c57316c63334e685a3255746233426c6269416963484a7663484d67623259674a564d364943567a4969416f63484a765a3234674b47567959584e6c4c574d746257567a6332466e5a584d704943686c636d467a5a5331745a584e7a5957646c63796b674b484e30636d6c755a79317162326c75494368745958426a595849674979636f62474674596d5268494368774b53416f6432686c6269416f62476c7a6448416763436b674b475a76636d3168644341694a564d69494841704b53416f63336c74596d39734c58427361584e3049434d6e633352796157356e4c584e6f61575a304c584a705a3268304b536b67496c787549696b704b513d3d"
-;; )
+;;   (progn (c-message-open "props of %S: %s" (progn (erase-c-messages) (erase-messages) (string-join (mapcar #'(lambda (p) (when (listp p) (format "%S" p)) (symbol-plist #'string-shift-right)) "\n")))
 
 (progn ;; runtime/platform dependent defun
   (unless (functionp 'scratch-buffer)
@@ -158,13 +158,15 @@
 (defun uniquify-all-lines-region (start end)
   "."
   (interactive "*r")
-  (let* ((iterations 0)
+  (let* (
+         (iterations 0)
          (lines-removed 0)
          (line-count-start (count-lines start end))
          (line-count-end 0)
          (ref-end end)
          (end (copy-marker end))
-         (tmp nil))
+         (tmp nil)
+         )
 
     (save-excursion
       (goto-char start)
@@ -172,10 +174,13 @@
 	(setq tmp (replace-match "\\1\n\\2"))
 	(message "tmp: %s (ref-end: %s) (end: %s)" tmp ref-end end)
 	(goto-char start)
-	(setq iterations (1+ iterations)))
+	(setq iterations (1+ iterations))
+	)
       (setq line-count-end (count-lines start end))
-      (setq lines-removed (- line-count-end line-count-start)))
-    (message "removed %d lines" lines-removed))
+      (setq lines-removed (- line-count-end line-count-start))
+      )
+    (message "removed %d lines" lines-removed)
+    )
   )
 
 
@@ -346,18 +351,21 @@
   (interactive)
   (if (buffer-elisp-heuristic)
       (save-match-data
-        (save-mark-and-excursion
-          (save-restriction (widen) (eval-buffer)
+      (save-mark-and-excursion
+        (save-restriction
+        (widen)
+        (eval-buffer)
 
-                            ;;OzsgKGxldCAoKGluZm8gKGZvcm1hdCAiJXMgZXZhbCdkICIgKGJ1ZmZlci1uYW1lKSkpKQogICAgICAgIDs7ICAgKHVubGVzcyAoc3RyaW5nPSBpbmZvIChjdXJyZW50LW1lc3NhZ2UpKQogICAgICAgIDs7ICAgICAobWVzc2FnZSAiJXMiIGluZm8pKSk=
+        ;;OzsgKGxldCAoKGluZm8gKGZvcm1hdCAiJXMgZXZhbCdkICIgKGJ1ZmZlci1uYW1lKSkpKQogICAgICAgIDs7ICAgKHVubGVzcyAoc3RyaW5nPSBpbmZvIChjdXJyZW50LW1lc3NhZ2UpKQogICAgICAgIDs7ICAgICAobWVzc2FnZSAiJXMiIGluZm8pKSk=
 
-                            ))
+        )
+        )
         )
 
     (progn
       (warn "cannot evaluate buffer %s because it is not in %s, trying to run pretty formatter instead"
-            (Ox33b4O/$/paint-mode-line-color (buffer-name))
-	    (Ox33b4O/$/paint-mode-line-color "elisp-mode"))
+               (Ox33b4O/$/paint-mode-line-color (buffer-name))
+	       (Ox33b4O/$/paint-mode-line-color "elisp-mode"))
 
       (g/format/prettify))))
 
@@ -617,12 +625,10 @@
 
     (seq-map-indexed
      (lambda (reboot-step step-index)
-       (let* ((fun (car reboot-step))
+       (let* ((fun              (car reboot-step))
               (reboot-step-tail (or (cdr reboot-step) (list)))
-              (args
-               (or
-                (and (listp reboot-step-tail) reboot-step-tail)
-                (list reboot-step-tail)))
+              (args             (or (and (listp reboot-step-tail) reboot-step-tail)
+                                    (list reboot-step-tail)))
               (step-name (symbol-name fun))
               (step-number (1+ step-index)))
          (condition-case err
@@ -1291,23 +1297,28 @@
             "\\1 // \\2"
             region))))))
 
-(defmacro when-buffer-filename-meets (cond &rest body)
+(defmacro when-buffer-filename-meets
+    (cond &rest body)
   "REGEXP FN."
   `(let ((filename (expand-file-name (buffer-file-name))))
      (if ,cond (progn ,@body))))
 
-(defmacro when-buffer-meets (cond &rest body)
+(defmacro when-buffer-meets
+    (cond &rest body)
   "REGEXP FN."
   `(if ,cond (progn ,@body)))
 
-(defmacro when-buffer-filename-matches (regexp &rest body)
+(defmacro when-buffer-filename-matches
+    (regexp &rest body)
   "REGEXP FN."
   `(let ((filename (expand-file-name (buffer-file-name))))
      (if (string-match-p ,regexp filename)
          (progn ,@body))))
 
+(load-file "~/.emacs.d/c/staging/gitfun.el")
 
-(defmacro set-region-contents-with-fn (beg end fn)
+(defmacro set-region-contents-with-fn
+    (beg end fn)
   "BEG END FN."
   `(save-excursion
      (let ((region (buffer-substring-no-properties beg end))
@@ -1590,35 +1601,10 @@
 (defun erase-all-non-file-buffers ()
   "."
   (interactive)
-  (let* ((funcall-list
-          (list #'erase-scratch
-                #'erase-minibuffer
-                #'erase-c-messages
-                #'erase-messages
-                #'(lambda ()
-                    (mapcar #'erase-buffer-by-name
-                            (buffer-list-builtin-only)))))
-         (total-fun (length funcall-list))
-         (funcall-results
-          (seq-map-indexed
-           (lambda (fun idx)
-             (let* ((current (1+ idx))
-                    (retval  nil)
-                    (name (symbol-name fun))
-                    (result
-                     (list :name name
-                           :index idx
-                           :position current
-                           :total total-fun
-                           :return-value retval)))
-               (condition-case err
-                   (plist-put result :return-value (funcall fun))
-                 (error (plist-put result :error err)))
-               result))
-           funcall-list))
-         funcall-results))
-  )
-
+  (ignore-errors
+    (erase-scratch)
+    (erase-messages)
+    (mapcar #'erase-buffer-by-name (buffer-list-builtin-only))))
 
 (defun erase-buffer-by-name (buffer-name)
   "."
@@ -1930,7 +1916,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
      ((string= "lua-mode" name-of-current-mode)
       #'luafmt)
      ((string= "awk-mode" name-of-current-mode)
-      #'gawkfmt)
+      #'gawkt)
      ((string= "gdscript-mode" name-of-current-mode)
       #'gdscript-format-buffer)
      ((string= "lua-mode" name-of-current-mode)
@@ -2136,7 +2122,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
   (set-frame-parameter nil 'fullscreen 'maximized)
   ($$$$$$$$)
 
-  ;; ack --el '([$][$][$][$][$][$][$][$])'
+; ack --el '([$][$][$][$][$][$][$][$])'
   )
 
 (defun enable-debug-on-error ()
@@ -2773,8 +2759,10 @@ The `:background' property is computed in contrast with its
              (widen)
              (replace-regexp from-regex to-name nil
                              (point-min)
-                             (point-max))))))
-     from-to-list)))
+                             (point-max))))
+	 ))
+     from-to-list)
+    ))
 
 
 
@@ -3020,23 +3008,23 @@ which returns the exit-status and the string output.
   "BEG END."
   (interactive "*r")
   (save-mark-excursion-and-match-data
-    (goto-char beg)
-    (while (re-search-forward
-            "\\(^\\|\\b\\)[a-fA-F0-9]+\\(\\b\\|$\\)" end t)
-      (let* ((val (format "%s" (string-to-number (match-string) 16)))
-             ;; (hexa (or (and (length= val 1) (format "0%s" val))
-             ;;           val))
-             )
-        (replace-match val)))))
+   (goto-char beg)
+   (while (re-search-forward
+           "\\(^\\|\\b\\)[a-fA-F0-9]+\\(\\b\\|$\\)" end t)
+     (let* ((val (format "%s" (string-to-number (match-string) 16)))
+            ;; (hexa (or (and (length= val 1) (format "0%s" val))
+            ;;           val))
+            )
+       (replace-match val)))))
 
 (defun decimal-to-hex-region (beg end)
   "BEG END."
   (interactive "*r")
   (save-mark-excursion-and-match-data
-    (goto-char beg)
-    (while (re-search-forward "\\(^\\|\\b\\)[0-9]+\\(\\b\\|$\\)" end t)
-      (replace-match
-       (format "%02x" (string-to-number (match-string 0)))))))
+   (goto-char beg)
+   (while (re-search-forward "\\(^\\|\\b\\)[0-9]+\\(\\b\\|$\\)" end t)
+     (replace-match
+      (format "%02x" (string-to-number (match-string 0)))))))
 
 ;; WIP/TODO: replace with rgb-parser.el
 ;; (defun hex-rgb-to-ansi-region (beg end)
@@ -3650,7 +3638,9 @@ cursor position in buffer."
            (t "th"))))
     (format "%d%s" n suffix)))
 
-(defvar interactive-read-fmt-and-args-history nil)
+(defvar interactive-read-fmt-and-args-history
+  nil
+  )
 
 (defun interactive-read-fmt-and-args ()
   (let* ((args (list))
@@ -5204,9 +5194,13 @@ element to string like `princ' would.
 
          (current-stack-callee
           (cond
-           ((string= "declare" declare-stmt)
+           (
+            (string= "declare" declare-stmt)
             "$(basename \"${BASH_SOURCE[0]}\")")
-           ((string= "local" declare-stmt) "${FUNCNAME[0]}"))
+           (
+            (string= "local" declare-stmt)
+            "${FUNCNAME[0]}")
+           )
           )
 
          (default-log-prefix
@@ -5342,20 +5336,20 @@ element to string like `princ' would.
   (let* ((new-end (copy-marker end))
          (last-pos (copy-marker end)))
     (save-mark-excursion-and-match-data
-      (widen)
-      (replace-regexp-in-region
-       "\\(do\\|;\\)\\s-+\\b\\(if\\|then\\|else\\|fi\\|done\\)\\b"
-       "\\1\n\\2\n" beg end)
-      (setq last-pos (point) new-end (point)))
+     (widen)
+     (replace-regexp-in-region
+      "\\(do\\|;\\)\\s-+\\b\\(if\\|then\\|else\\|fi\\|done\\)\\b"
+      "\\1\n\\2\n" beg end)
+     (setq last-pos (point) new-end (point)))
 
     (save-mark-excursion-and-match-data
-      (replace-regexp-in-region
-       "\\(if\\|then\\)[\n[:space:]]+"
-       "\\1 " beg new-end)
-      (replace-regexp-in-region
-       "\\(;\\)\\(\\s-*\\)\n\\(\\s-*\\)\\(then\\)\\s-+"
-       "\\1 \\2 \\3\\4\n\\2\\3"
-       beg new-end)) ;; save-mark-excursion-and-match-data
+     (replace-regexp-in-region
+      "\\(if\\|then\\)[\n[:space:]]+"
+      "\\1 " beg new-end)
+     (replace-regexp-in-region
+      "\\(;\\)\\(\\s-*\\)\n\\(\\s-*\\)\\(then\\)\\s-+"
+      "\\1 \\2 \\3\\4\n\\2\\3"
+      beg new-end)) ;; save-mark-excursion-and-match-data
     (save-mark-and-excursion
       (widen)
       (goto-char beg)
@@ -5523,6 +5517,8 @@ element to string like `princ' would.
     (make-directory full-path t)
     full-path))
 
+(safe-load-file (expand-file-name "~/.emacs.d/c/staging/debug-regexp-subexpressions.el"))
+
 (defun set-prop-right-margin-region (beg end)
   "These text properties affect the behavior of the fill commands.  They
 are used for representing formatted text.  *Note Filling::, and *Note
@@ -5549,11 +5545,12 @@ Margins::.
 
 
 "
-     (interactive "*r")
-     (add-text-properties beg end (list 'right-margin 10)))
+  (interactive "*r")
+  (add-text-properties beg end (list 'right-margin 10)))
 
 
 
+(load-library "workbench")
 (load-library "Ox33b40")
 
 
@@ -5570,31 +5567,31 @@ Margins::.
 ;; MMMMMMMMMMM
 
 (defclass search-info ()
-  ((beginning :initarg :beginning
-	      :type (or integer marker)
-	      :documentation "the `point' within the searched `buffer' (integer or marker) to the beginning of a successful search result"
-	      :writer search-info-set-beginning
-	      :reader search-info-get-beginning)
-   (end :initarg :end
-	:type (or integer marker)
-	:documentation "the `point' within the searched `buffer' (integer or marker) to the end of a successful search result"
-	:writer search-info-set-end
-	:reader search-info-get-end)
-   (direction :initarg :direction
-	      :type (member :forward :backward)
-	      :documentation "the direction of a successful search (either :forward or :backward)"
-	      :writer search-info-set-direction
-	      :reader search-info-get-direction)
-   (query :initarg :query
-	  :type string
-	  :documentation "the \"string\" used in the search. if `:type' is `'regexp' then `:query' is a regular-expression written in the \"string\" syntax since that's the format used in `isearch-regexp-forward' and `isearch-regexp-forward'"
-	  :writer search-info-set-query
-	  :reader search-info-get-query)
-   (type :initarg :type
-	 :type (member :regexp :string 'regexp 'string)
-	 :documentation "the type of a search-info (either `'regexp' or `'string'"
-	 :writer search-info-set-type
-	 :reader search-info-get-type)))
+	  ((beginning :initarg :beginning
+		      :type (or integer marker)
+		      :documentation "the `point' within the searched `buffer' (integer or marker) to the beginning of a successful search result"
+		      :writer search-info-set-beginning
+		      :reader search-info-get-beginning)
+	   (end :initarg :end
+		:type (or integer marker)
+		:documentation "the `point' within the searched `buffer' (integer or marker) to the end of a successful search result"
+		:writer search-info-set-end
+		:reader search-info-get-end)
+	   (direction :initarg :direction
+		      :type (member :forward :backward)
+		      :documentation "the direction of a successful search (either :forward or :backward)"
+		      :writer search-info-set-direction
+		      :reader search-info-get-direction)
+	   (query :initarg :query
+		  :type string
+		  :documentation "the \"string\" used in the search. if `:type' is `'regexp' then `:query' is a regular-expression written in the \"string\" syntax since that's the format used in `isearch-regexp-forward' and `isearch-regexp-forward'"
+		  :writer search-info-set-query
+		  :reader search-info-get-query)
+	   (type :initarg :type
+		 :type (member :regexp :string 'regexp 'string)
+		 :documentation "the type of a search-info (either `'regexp' or `'string'"
+		 :writer search-info-set-type
+		 :reader search-info-get-type)))
 
 
 (defun make-search-info (beg end direction query type)

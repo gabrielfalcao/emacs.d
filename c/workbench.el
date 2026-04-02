@@ -4,37 +4,6 @@
 (define-error 'workbench-timestamp-too-small "Unix Timestamp is too small or too early" 'workbench-timestamp-invalid)
 
 
-(defun workbench-unix-timestamp(&optional time zone)
-  "returns the natural number of seconds since epoch."
-  (string-to-number (format-time-string "%s" time zone)))
-
-(defun workbench-unix-timestamp-now()
-  "returns the current `workbench-unix-timestamp'"
-  (workbench-unix-timestamp nil nil))
-
-(defun workbench-today-refresh ()
-  (let* ((last-refresh (car workbench-refresh-history))
-         (today
-          (workbench-get-day-string (workbench-unix-timestamp-now))))
-    (setq-default workbench-today-string today)))
-
-
-
-(defvar workbench-refresh-history
-  (list)
-  "history of every refresh kept by `workbench-today-refresh', elements are
-cons cells whose head is the natural number of unix timestamp seconds
-and the tail is the number of nanoseconds taken in the same moment")
-
-
-(defun workbench-last-refresh() (car workbench-refresh-history))
-
-
-(defvar workbench-today-string
-  (workbench-today-refresh)
-  "today's \"workbench\" day string")
-
-
 (defun workbench-get-day-string (time)
   "returns a day-string used in workbench-related filesystem paths based on the value of `TIME'.
 
@@ -54,6 +23,56 @@ and the tail is the number of nanoseconds taken in the same moment")
              (list :time time :type (cl-type-of time)))))
 
   (format-time-string "%Y-%m-%d" time))
+
+
+(defun workbench-unix-timestamp-nanos(&optional time zone)
+  "returns the natural number of seconds since epoch."
+  (let* (
+         (unix-and-nanos-string (format-time-string "%s %N" time zone))
+         (unix-and-nanos        (mapcar (lambda (n) (string-to-number n)) (split-string unix-and-nanos-string "[[:space:] \t\n]+" t )))
+         (timestamp             (car unix-and-nanos))
+         (nanosecs              (cadr unix-and-nanos))
+         )
+    (list :timestamp timestamp
+          :nanosecs  nanosecs)
+    )
+  )
+
+(defun workbench-unix-timestamp(&optional time zone)
+  "returns the natural number of seconds since epoch."
+  (string-to-number (format-time-string "%s" time zone)))
+
+(defun workbench-unix-timestamp-now()
+  "returns the current `workbench-unix-timestamp'"
+  (workbench-unix-timestamp nil nil))
+
+(defun workbench-today-refresh ()
+  (let* (
+         (now (workbench-unix-timestamp-nanos))
+         (last-refresh (car workbench-refresh-history))
+         (today (workbench-get-day-string (workbench-unix-timestamp-now)))
+         )
+    (setq-default workbench-today-string today)
+    )
+  )
+
+
+
+(defvar workbench-refresh-history
+  (list)
+  "history of every refresh kept by `workbench-today-refresh', elements are
+natural numbers of unix timestamp seconds")
+
+
+
+(defun workbench-last-refresh() (car workbench-refresh-history))
+
+
+(defvar workbench-today-string
+  (workbench-today-refresh)
+  "today's \"workbench\" day string")
+
+
 
 (defun workbench-refresh (&optional zone)
   "checks the date and updates internal workbench variables accordingly"
