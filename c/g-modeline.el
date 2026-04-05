@@ -3,6 +3,48 @@
 ;; when mark is active, begin modeline with (line number and line
 ;; length of shortest and widest selected line)
 
+(defun Ox33b4O/$/open-buffers-stats()
+  ""
+  (let* (;; started-at
+         (started-at (format-time-string "%s.%N"))
+
+         (open-buffers (buffer-list))
+         (file-buffers (list))
+         (non-file-buffers (list))
+
+         (total-open (length open-buffers))
+         (total-file (length file-buffers))
+         (total-non-file (length non-file-buffers))
+
+         (finished-at (format-time-string "%s.%N"))
+         ;; finished-at
+         )
+
+
+
+    (mapc
+     (lambda (buf)
+       (let* ((name (buffer-name buf))
+              (file-name (buffer-file-name buf)))
+         (when (stringp file-name) (push buf file-buffers))
+         (unless file-name (push buf non-file-buffers))))
+     open-buffers)
+
+    (list :types
+          (list :open :file :non-file)
+          :buffers (list :open open-buffers
+                         :file file-buffers
+                         :non-file non-file-buffers)
+          :totals (list :open
+                        (length open-buffers)
+                        :file (length file-buffers)
+                        :non-file (length non-file-buffers))
+          )
+    )
+  )
+
+
+
 (defun Ox33b4O/$/bfan ()
   "."
   (or
@@ -32,8 +74,7 @@
                   'face
                   (list :background
                         (Ox33b4O/$/mode-line-background)
-                        :foreground "#F5BF08")
-                  )
+                        :foreground "#F5BF08"))
                  (propertize
                   (format "%s" (marker-begin))
                   'face
@@ -59,16 +100,15 @@
                   'face
                   (list :background
                         (Ox33b4O/$/mode-line-background)
-                        :foreground "#F5BF08")
-                  )
-                 )
+                        :foreground "#F5BF08")))
 
          )
        "")))))
 
 (defun Ox33b4O/$/paint-mode-line-colorize (c contents)
   (let* ((foreground
-          (format "#%s" (Ox33b4O/$/hash-take-first-n-chars 'sha512 6 c)))
+          (format "#%s"
+                  (Ox33b4O/$/hash-take-first-n-chars 'sha512 6 c)))
          (background
           (compute-bright-dark-from-color-value foreground
                                                 (Ox33b4O/$/mode-line-foreground)
@@ -109,15 +149,16 @@
 
 (defun Ox33b4O/$/display-mode-name()
   (interactive "*")
-  (message (Ox33b4O/$/paint-mode-name))
-  )
+  (message (Ox33b4O/$/paint-mode-name)))
 (defun Ox33b4O/$/paint-mode-name()
-  (Ox33b4O/$/paint-mode-line-color (Ox33b4O/$/paint-mode-name-string)))
+  (Ox33b4O/$/paint-mode-line-color
+   (Ox33b4O/$/paint-mode-name-string)))
 
 
 (defun Ox33b4O/$/paint-file-buffer()
   "."
-  (if (null (file-attribute-modes (file-attributes (buffer-file-name))))
+  (if (null
+       (file-attribute-modes (file-attributes (buffer-file-name))))
       (Ox33b4O/$/paint-file-buffer-nil)
     (Ox33b4O/$/paint-file-buffer-existing-file)))
 
@@ -133,7 +174,7 @@
     'face
     (list :foreground (Ox33b4O/$/mark-indicator-color)))
    " "
-   '(:eval (format "W:%s H:%s" (frame-width) (frame-height) ))
+   '(:eval (format "W:%s H:%s" (frame-width) (frame-height)))
    " "
    '(:eval (Ox33b4O/$/paint-mode-name))
    ;; " "
@@ -142,8 +183,7 @@
    '(:eval (Ox33b4O/$/bchs))
    " " "   𝐗%l 𝐘%c %I ⊲ %i bytes " "%e" "%t"))
 
-(defun Ox33b4O/$/paint-file-buffer-nil
-    ()
+(defun Ox33b4O/$/paint-file-buffer-nil ()
   "."
   (list
    '(:eval (Ox33b4O/$/mark-indicator))
@@ -186,8 +226,7 @@
            'face
            (list :background
                  (Ox33b4O/$/mode-line-background)
-                 :foreground "#F5BF08")
-           )
+                 :foreground "#F5BF08"))
           (propertize
            (format "%s" (marker-begin))
            'face
@@ -213,9 +252,7 @@
            'face
            (list :background
                  (Ox33b4O/$/mode-line-background)
-                 :foreground "#F5BF08")
-           ))
-  )
+                 :foreground "#F5BF08"))))
 
 (defun Ox33b4O/$/mark-indicator/inactive()
   "."
