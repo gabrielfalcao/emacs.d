@@ -1,3 +1,4 @@
+
 ;;
 ;; # TODO
 ;;
@@ -587,15 +588,18 @@
   ;; ICA7OyAoZXJhc2UtYy1tZXNzYWdlcyk=
 
   (erase-messages)
-  (setq kill-ring nil file-name-history nil))
+  (setq kill-ring nil file-name-history nil)
+  (setq-default kill-ring nil file-name-history nil)
+
+  )
 
 (defun Ox33b4O/$/kill-all-buffers-and-flush-kill-ring ()
   "."
   (interactive)
   (progn
-    (kill-bufs)
     (Ox33b4O/$/flush-kill-ring)
-    (erase-messages)
+    (erase-all-non-file-buffers)
+    (kill-bufs)
     (while (> (get-window-count) 1) (delete-window))))
 
 (defun Ox33b4O/$/string-hash-take-last-n-chars (algo hwm contents)
@@ -1552,24 +1556,6 @@
            ("end-pos" . end-pos)))))))
 
 
-;WIP
-;(defmacro with-buffer-writable (buffer-or-name &rest body)
-;  "Execute the forms in BODY with BUFFER-OR-NAME temporarily current and
-;writable. This is morally equivalent to using `with-current-buffer',
-;setting `buffer-read-only' to nil, executing the forms in BODY then
-;restoring `buffer-read-only' to whatever value it had before."
-;  (declare (indent 1) (debug t))
-;  `(let* ((buffer (get-buffer ,buffer-or-name))
-;          (buffer-read-only-state (make-symbol "buffer-read-only-state
-;
-;
-;(with-current-buffer ,
-;     (set-buffer ,buffer-or-name)
-;
-;     ,@body))
-
-
-
 (defun find-next-close-parens ()
   "."
   (interactive)
@@ -1598,7 +1584,7 @@
 
     ))
 
-(defun erase-all-non-file-buffers ()
+(defun erase-all-non-file-buffers (&optional then-kill)
   "."
   (interactive)
   (let* ((funcall-list
@@ -1606,9 +1592,11 @@
                 #'erase-minibuffer
                 #'erase-c-messages
                 #'erase-messages
-                #'(lambda ()
-                    (mapcar #'erase-buffer-by-name
-                            (buffer-list-builtin-only)))))
+                ;; #'(lambda ()
+                ;;     (mapcar #'erase-buffer-by-name
+                ;;             (buffer-list-builtin-only)))
+                )
+          )
          (total-fun (length funcall-list))
          (funcall-results
           (seq-map-indexed
@@ -1627,7 +1615,28 @@
                  (error (plist-put result :error err)))
                result))
            funcall-list))
-         funcall-results))
+         (builtin-bufs (buffer-list-builtin-only))
+         (total-builtin-bufs (length builtin-bufs))
+         (erase-builtin-bufs-result (seq-map-indexed
+                                     (lambda (buf idx)
+                                       (let* ((current (1+ idx))
+                                              (retval  nil)
+                                              (name (buffer-name buf))
+                                              (result
+                                               (list :name name
+                                                     :index idx
+                                                     :position current
+                                                     :total total-builtin-bufs
+                                                     :return-value retval)))
+                                         (condition-case err
+                                             (plist-put result :return-value (erase-buffer-by-name buf))
+                                           (error (plist-put result :error err)))
+                                         result))
+                                     builtin-bufs)
+				    )
+         )
+    (list :funcall-results funcall-results :erase-builtin-bufs-result erase-builtin-bufs-result  )
+    )
   )
 
 (defun erase-buffer-by-name (buffer-or-name &optional error-if-buffer-not-found)
@@ -1637,13 +1646,13 @@
          (buffer-to-erase-readonly-state (and buffer-to-erase (buffer-local-value 'buffer-read-only buffer-to-erase)))
          )
     (and buffer-to-erase
-    (with-current-buffer buffer-to-erase
-      (when buffer-to-erase-readonly-state
-        (setq buffer-read-only nil))
-      (erase-buffer)
-      (setq buffer-read-only buffer-to-erase-readonly-state)
-      )
-    )
+	 (with-current-buffer buffer-to-erase
+	   (when buffer-to-erase-readonly-state
+             (setq buffer-read-only nil))
+	   (erase-buffer)
+	   (setq buffer-read-only buffer-to-erase-readonly-state)
+	   )
+	 )
     )
   )
 
@@ -3001,23 +3010,23 @@ which returns the exit-status and the string output.
   "BEG END."
   (interactive "*r")
   (save-mark-excursion-and-match-data
-    (goto-char beg)
-    (while (re-search-forward
-            "\\(^\\|\\b\\)[a-fA-F0-9]+\\(\\b\\|$\\)" end t)
-      (let* ((val (format "%s" (string-to-number (match-string) 16)))
-             ;; (hexa (or (and (length= val 1) (format "0%s" val))
-             ;;           val))
-             )
-        (replace-match val)))))
+   (goto-char beg)
+   (while (re-search-forward
+           "\\(^\\|\\b\\)[a-fA-F0-9]+\\(\\b\\|$\\)" end t)
+     (let* ((val (format "%s" (string-to-number (match-string) 16)))
+            ;; (hexa (or (and (length= val 1) (format "0%s" val))
+            ;;           val))
+            )
+       (replace-match val)))))
 
 (defun decimal-to-hex-region (beg end)
   "BEG END."
   (interactive "*r")
   (save-mark-excursion-and-match-data
-    (goto-char beg)
-    (while (re-search-forward "\\(^\\|\\b\\)[0-9]+\\(\\b\\|$\\)" end t)
-      (replace-match
-       (format "%02x" (string-to-number (match-string 0)))))))
+   (goto-char beg)
+   (while (re-search-forward "\\(^\\|\\b\\)[0-9]+\\(\\b\\|$\\)" end t)
+     (replace-match
+      (format "%02x" (string-to-number (match-string 0)))))))
 
 ;; WIP/TODO: replace with rgb-parser.el
 ;; (defun hex-rgb-to-ansi-region (beg end)
@@ -5323,20 +5332,20 @@ element to string like `princ' would.
   (let* ((new-end (copy-marker end))
          (last-pos (copy-marker end)))
     (save-mark-excursion-and-match-data
-      (widen)
-      (replace-regexp-in-region
-       "\\(do\\|;\\)\\s-+\\b\\(if\\|then\\|else\\|fi\\|done\\)\\b"
-       "\\1\n\\2\n" beg end)
-      (setq last-pos (point) new-end (point)))
+     (widen)
+     (replace-regexp-in-region
+      "\\(do\\|;\\)\\s-+\\b\\(if\\|then\\|else\\|fi\\|done\\)\\b"
+      "\\1\n\\2\n" beg end)
+     (setq last-pos (point) new-end (point)))
 
     (save-mark-excursion-and-match-data
-      (replace-regexp-in-region
-       "\\(if\\|then\\)[\n[:space:]]+"
-       "\\1 " beg new-end)
-      (replace-regexp-in-region
-       "\\(;\\)\\(\\s-*\\)\n\\(\\s-*\\)\\(then\\)\\s-+"
-       "\\1 \\2 \\3\\4\n\\2\\3"
-       beg new-end)) ;; save-mark-excursion-and-match-data
+     (replace-regexp-in-region
+      "\\(if\\|then\\)[\n[:space:]]+"
+      "\\1 " beg new-end)
+     (replace-regexp-in-region
+      "\\(;\\)\\(\\s-*\\)\n\\(\\s-*\\)\\(then\\)\\s-+"
+      "\\1 \\2 \\3\\4\n\\2\\3"
+      beg new-end)) ;; save-mark-excursion-and-match-data
     (save-mark-and-excursion
       (widen)
       (goto-char beg)
@@ -5530,8 +5539,8 @@ Margins::.
 
 
 "
-     (interactive "*r")
-     (add-text-properties beg end (list 'right-margin 10)))
+  (interactive "*r")
+  (add-text-properties beg end (list 'right-margin 10)))
 
 
 
@@ -5551,31 +5560,31 @@ Margins::.
 ;; MMMMMMMMMMM
 
 (defclass search-info ()
-  ((beginning :initarg :beginning
-	      :type (or integer marker)
-	      :documentation "the `point' within the searched `buffer' (integer or marker) to the beginning of a successful search result"
-	      :writer search-info-set-beginning
-	      :reader search-info-get-beginning)
-   (end :initarg :end
-	:type (or integer marker)
-	:documentation "the `point' within the searched `buffer' (integer or marker) to the end of a successful search result"
-	:writer search-info-set-end
-	:reader search-info-get-end)
-   (direction :initarg :direction
-	      :type (member :forward :backward)
-	      :documentation "the direction of a successful search (either :forward or :backward)"
-	      :writer search-info-set-direction
-	      :reader search-info-get-direction)
-   (query :initarg :query
-	  :type string
-	  :documentation "the \"string\" used in the search. if `:type' is `'regexp' then `:query' is a regular-expression written in the \"string\" syntax since that's the format used in `isearch-regexp-forward' and `isearch-regexp-forward'"
-	  :writer search-info-set-query
-	  :reader search-info-get-query)
-   (type :initarg :type
-	 :type (member :regexp :string 'regexp 'string)
-	 :documentation "the type of a search-info (either `'regexp' or `'string'"
-	 :writer search-info-set-type
-	 :reader search-info-get-type)))
+	  ((beginning :initarg :beginning
+		      :type (or integer marker)
+		      :documentation "the `point' within the searched `buffer' (integer or marker) to the beginning of a successful search result"
+		      :writer search-info-set-beginning
+		      :reader search-info-get-beginning)
+	   (end :initarg :end
+		:type (or integer marker)
+		:documentation "the `point' within the searched `buffer' (integer or marker) to the end of a successful search result"
+		:writer search-info-set-end
+		:reader search-info-get-end)
+	   (direction :initarg :direction
+		      :type (member :forward :backward)
+		      :documentation "the direction of a successful search (either :forward or :backward)"
+		      :writer search-info-set-direction
+		      :reader search-info-get-direction)
+	   (query :initarg :query
+		  :type string
+		  :documentation "the \"string\" used in the search. if `:type' is `'regexp' then `:query' is a regular-expression written in the \"string\" syntax since that's the format used in `isearch-regexp-forward' and `isearch-regexp-forward'"
+		  :writer search-info-set-query
+		  :reader search-info-get-query)
+	   (type :initarg :type
+		 :type (member :regexp :string 'regexp 'string)
+		 :documentation "the type of a search-info (either `'regexp' or `'string'"
+		 :writer search-info-set-type
+		 :reader search-info-get-type)))
 
 
 (defun make-search-info (beg end direction query type)
