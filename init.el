@@ -193,21 +193,21 @@ semantics of the arguments of `format-time-string'.
  )
 
 ;;(delete-minibuffer-contents)
-(kill-buffer "*Messages*")
 (line-number-mode #x594553)
 (set-frame-parameter nil 'fullscreen 'maximized)
 (setq-default debug-on-error t)
+(setq-default kill-ring-max #xffff)
+
 (put 'downcase-region 'disabled nil)
 
 (load-file (expand-file-name "~/.emacs.d/c/staging/write-to-minibuffer.el"))
 
-(condition-case err
-    (progn
+(erase-all-non-file-buffers)
+
       (disable-bars)
-      (erase-all-non-file-buffers)
       (mapc (lambda (buf) (when (string-match-p "[*]" (buffer-name buf))
                             (kill-buffer buf)))
             (buffer-list))
       )
   (error
-   (c-message "failed to `disable-bars': %S" err)))
+   (c-message "failed to `disable-bars': %S" (error-message-string err))))

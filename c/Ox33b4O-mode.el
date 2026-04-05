@@ -1,4 +1,4 @@
-;;; cia-mode.el --- SpeCIAl Features; -*- lexical-binding: t -*-
+;;; Ox33b4O-mode.el --- Special Features; -*- lexical-binding: t -*-
 ;;
 ;; Author: Gabriel DeMoura <gabrielteratos@gmail.com>
 ;; URL: ...TK
@@ -10,9 +10,10 @@
 ;;
 ;;; Commentary:
 ;;
-;; SpeCIAl Mode
+;; Special Mode
 ;;
 ;;; Code:
 
 
-(provide 'cia-mode)
+
+(provide 'Ox33b4O-mode)

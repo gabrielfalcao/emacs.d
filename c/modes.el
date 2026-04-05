@@ -51,22 +51,22 @@
 (eval-after-load "vc" '(remove-hook 'find-file-hook 'vc-find-file-hook))
 
 
-(setq kill-ring-max #xffffff
-      company-tooltip-align-annotations t
-      rust-cargo-default-arguments " --offline "
-      web-mode-engines-alist '(("jsx"  . "\\.[tj]sx?"))
-      typescript-indent-level 2
-      web-mode-part-padding 0
-      web-mode-enable-auto-quoting 'nil
-      web-mode-auto-quote-style 3
-      web-mode-content-types-alist
-      '(("json" . "\\.jsonp?'")
-        ("html"  . "html'")
-        ("html"  . "astro'")
-        ("jsx"  . "\\.[tj]sx\\'"))
-      )
-; (add-to-list 'magic-mode-alist '("^#!/usr/bin/\\(env\\s-+.*\\)?\\(python\\)" . python-mode))
-; (add-to-list 'magic-mode-alist '("^#!/usr/bin/\\(env\\s-+.*\\)?\\(ba\\)?sh\\)" . shell-script-mode))
+(setq
+ company-tooltip-align-annotations t
+ rust-cargo-default-arguments " --offline "
+ web-mode-engines-alist '(("jsx"  . "\\.[tj]sx?"))
+ typescript-indent-level 2
+ web-mode-part-padding 0
+ web-mode-enable-auto-quoting 'nil
+ web-mode-auto-quote-style 3
+ web-mode-content-types-alist
+ '(("json" . "\\.jsonp?'")
+   ("html"  . "html'")
+   ("html"  . "astro'")
+   ("jsx"  . "\\.[tj]sx\\'"))
+ )
+					; (add-to-list 'magic-mode-alist '("^#!/usr/bin/\\(env\\s-+.*\\)?\\(python\\)" . python-mode))
+					; (add-to-list 'magic-mode-alist '("^#!/usr/bin/\\(env\\s-+.*\\)?\\(ba\\)?sh\\)" . shell-script-mode))
 
 (setq whitespace-style 'empty)
 (setq web-mode-content-types-alist

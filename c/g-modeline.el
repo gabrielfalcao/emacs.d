@@ -15,12 +15,11 @@
          (total-open (length open-buffers))
          (total-file (length file-buffers))
          (total-non-file (length non-file-buffers))
-
-         (finished-at (format-time-string "%s.%N"))
+         (finished-at nil)
+         (let*-finished-at (format-time-string "%s.%N"))
+         (return-value nil)
          ;; finished-at
          )
-
-
 
     (mapc
      (lambda (buf)
@@ -30,18 +29,26 @@
          (unless file-name (push buf non-file-buffers))))
      open-buffers)
 
-    (list :types
-          (list :open :file :non-file)
-          :buffers (list :open open-buffers
-                         :file file-buffers
-                         :non-file non-file-buffers)
-          :totals (list :open
-                        (length open-buffers)
-                        :file (length file-buffers)
-                        :non-file (length non-file-buffers))
+    (setq total-open (length open-buffers))
+    (setq total-file (length file-buffers))
+    (setq total-non-file (length non-file-buffers))
+    (setq finished-at (format-time-string "%s.%N"))
+
+    (setq return-value
+          (list :types
+                (list :open :file :non-file)
+                :buffers (list :open open-buffers
+                               :file file-buffers
+                               :non-file non-file-buffers)
+                :totals (list :open total-open
+                              :file total-file
+                              :non-file total-non-file))
           )
-    )
+
+    return-value); end let*
   )
+
+
 
 
 

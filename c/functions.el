@@ -1619,7 +1619,9 @@
          (total-builtin-bufs (length builtin-bufs))
          (erase-builtin-bufs-result (seq-map-indexed
                                      (lambda (buf idx)
-                                       (let* ((current (1+ idx))
+
+                                       (let* ((buf (get-buffer buf))
+                                              (current (1+ idx))
                                               (retval  nil)
                                               (name (buffer-name buf))
                                               (result
@@ -1968,8 +1970,9 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
 (defun buffer-list-builtin-only ()
   "returns all open emacs-only buffers, i.e: starting and ending in \"*\"."
   (seq-filter
-   (apply-partially #'string-match-p "^[*].*[*]$")
-   (mapcar 'buffer-name (buffer-list))))
+   (lambda (buf)
+     (and (bufferp buf) (string-match-p "^[*].*[*]$" (buffer-name buf)))
+     (buffer-list))))
 
 (defun only-builtin-buffers-open-p ()
   "returns `t' if all open buffers are only emacs buffers as determined by `buffer-list-builtin-only'"

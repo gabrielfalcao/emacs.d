@@ -131,6 +131,7 @@
 (setq-default shell-file-name                    "/opt/homebrew/Cellar/bash/5.2.26/bin/bash")
 
 
+(setq-default kill-ring-max #xfffff)
 (setq-default current-time-list nil)
 (setq-default line-number-mode t)
 (setq-default indent-tabs-mode nil)
