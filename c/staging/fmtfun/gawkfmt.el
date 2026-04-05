@@ -1,56 +1,74 @@
-(defun gawkfmt ()
+(defun gawkfmt (&optional save-upon-success)
   "."
   (interactive)
   (enable-debug-on-error)
-  (let* ((current-filename (expand-file-name (buffer-file-name)))
-         (tmp-stdout-buffer-name
-          (format "*gawkfmt:stdout:%s*" current-filename))
-         (tmp-stderr-file (make-temp-file "gawkfmt-stderr"))
-         (tmp-stdout-buffer (get-buffer-create tmp-stdout-buffer-name))
-         (exit-code
-          (call-process "gawk" current-filename
-                        (list tmp-stdout-buffer tmp-stderr-file)
-                        nil "-f" "-" "-o-" ))
-         (stderr
-          (with-temp-buffer
-            (insert-file-contents tmp-stderr-file)
-            (widen)
-            (beginning-of-buffer)
-            (buffer-substring-no-properties (point-min) (point-max))))
+  (let* ((result
+          (catch 'fmt-failed
+            (let* (
+                   (required-mode-name "awk-mode")
+                   (fmt-tool-prog-name "gawk")
+                   (fmt-tool-args      "-f" "-" "-o-")
+                   (fmt-tool-inputfile current-filename)
 
-         (stdout
-          (with-current-buffer tmp-stdout-buffer
-	    (widen)
-            (beginning-of-buffer)
-            (buffer-substring-no-properties (point-min) (point-max)))))
+                   (buf-filename       (buffer-file-name))
+                   (current-filename (progn
+                                       (unless (string= required-mode-name (get-mode-name))
+                                         (throw  'fmt-failed (c-message "%S is not in `%s'" (buffer-name) required-mode-name)))
+                                       (unless buf-filename
+                                         (throw  'fmt-failed (c-message "%S is not a file buffer" (buffer-name))))
 
-    (message
-     (format "gawkfmt %s exitted with code: %s" current-filename exit-code))
-    (cond
-     ((eq exit-code 0)
-      (let* ((previous-buffer-contents
-              (save-mark-and-excursion
-                (widen)
-                (beginning-of-buffer)
-                (buffer-substring-no-properties
-                 (point-min)
-                 (point-max)))))
-        (widen)
-        (beginning-of-buffer)
-        (kill-region (point-min) (point-max))
-        (beginning-of-buffer)
-        (insert stdout)
+                                       (expand-file-name buf-filename)))
+                   (current-filename-display (abbreviate-file-name current-filename))
+                   (current-buffer-contents (save-mark-and-excursion
+                                              (widen)
+                                              (beginning-of-buffer)
+                                              (buffer-substring-no-properties
+                                               (point-min)
+                                               (point-max))))
+                   (tmp-buffer-prefix (format "*%s*:%s" (c-defun-name) current-filename))
 
-        (kill-buffer tmp-stdout-buffer)
-        (delete-file tmp-stderr-file)
-        (message
-	 "%s formatted with gawkfmt"
-         (abbreviate-file-name current-filename))))
-     (t
-      (kill-buffer tmp-stdout-buffer)
-      (message
-       (format "gawkfmt %s failed with code: %s"
-               (abbreviate-file-name current-filename)
-               exit-code))
+                   (tmp-stdout-buffer-name (format "%s:%s" tmp-buffer-prefix "stdout"))
+                   (tmp-stderr-buffer-name (format "%s:%s" tmp-buffer-prefix "stderr"))
 
-      (pop-to-buffer-same-window tmp-buffer-stderr nil)))))
+                   (tmp-stdout-buffer      (get-buffer-create tmp-stdout-buffer-name))
+                   (fmt-tool-call-process-args (append fmt-tool-args (list fmt-tool-prog-name fmt-tool-inputfile (list tmp-stdout-buffer tmp-stderr-file) nil)))
+                   (exit-code (apply #'call-process fmt-tool-call-process-args))
+                   (fmt-succeeded   (equal exit-code ))
+                   (stderr
+                    (with-temp-buffer
+                      (insert-file-contents tmp-stderr-file)
+                      (widen)
+                      (beginning-of-buffer)
+                      (buffer-substring-no-properties (point-min) (point-max))))
+
+                   (stdout
+                    (with-current-buffer tmp-stdout-buffer
+	              (widen)
+                      (beginning-of-buffer)
+                      (buffer-substring-no-properties (point-min) (point-max))))
+                   )
+
+              (c-message "gawkfmt %s exitted with code: %s" current-filename-display exit-code)
+              (unwind-protect
+                  (progn
+                    (unless fmt-succeeded
+                      (c-message "gawkfmt %s failed with code: %s"
+                                 current-filename-display
+                                 exit-code)
+                      (throw 'fmt-failed (pop-to-buffer-same-window tmp-buffer-stderr nil)
+
+                             (save-mark-and-excursion
+                               (erase-buffer)
+                               (insert stdout)
+                               (and save-upon-success (basic-save-buffer nil)))
+                             (c-message "%s formatted with gawkfmt"current-filename-display)))
+
+                    (kill-buffer tmp-stdout-buffer)
+
+                    )))))
+         )
+    (kill-buffer tmp-stdout-buffer)
+    (delete-file tmp-stderr-file)
+    )
+  )
+)
