@@ -1565,59 +1565,14 @@
     ))
 
 (defun erase-all-non-file-buffers (&optional then-kill)
-  "."
+  "erases all non-file buffers, optionally kills every buffer when argument THEN-KILL is non0nil."
   (interactive)
-  (let* ((funcall-list
-          (list #'erase-scratch
-                #'erase-minibuffer
-                #'erase-c-messages
-                #'erase-messages
-                ;; #'(lambda ()
-                ;;     (mapcar #'erase-buffer-by-name
-                ;;             (buffer-list-builtin-only)))
-                )
-          )
-         (total-fun (length funcall-list))
-         (funcall-results
-          (seq-map-indexed
-           (lambda (fun idx)
-             (let* ((current (1+ idx))
-                    (retval  nil)
-                    (name (symbol-name fun))
-                    (result
-                     (list :name name
-                           :index idx
-                           :position current
-                           :total total-fun
-                           :return-value retval)))
-               (condition-case err
-                   (plist-put result :return-value (funcall fun))
-                 (error (plist-put result :error err)))
-               result))
-           funcall-list))
-         (builtin-bufs (buffer-list-builtin-only))
-         (total-builtin-bufs (length builtin-bufs))
-         (erase-builtin-bufs-result (seq-map-indexed
-                                     (lambda (buf idx)
-
-                                       (let* ((buf (get-buffer buf))
-                                              (current (1+ idx))
-                                              (retval  nil)
-                                              (name (buffer-name buf))
-                                              (result
-                                               (list :name name
-                                                     :index idx
-                                                     :position current
-                                                     :total total-builtin-bufs
-                                                     :return-value retval)))
-                                         (condition-case err
-                                             (plist-put result :return-value (erase-buffer-by-name buf))
-                                           (error (plist-put result :error err)))
-                                         result))
-                                     builtin-bufs)
-				    )
+  (let* (
+         (non-file-bufs (buffer-list-nonfile-only))
+         (total-nonfile-bufs (length builtin-bufs))
+         (erase-nonfile-bufs-result (mapcar #'erase-buffer-by-name non-file-bufs))
          )
-    (list :funcall-results funcall-results :erase-builtin-bufs-result erase-builtin-bufs-result  )
+    erase-nonfile-bufs-result
     )
   )
 
@@ -1947,11 +1902,18 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
    (format "git restore %s" (expand-file-name (buffer-file-name))))
   (revert-buffer t t t))
 
+(defun buffer-list-nonfile-only ()
+  "returns all buffers that whose call to `buffer-file-name' returns `nil'."
+  (seq-filter (lambda (buf) (and (bufferp buf)
+                                 (null (buffer-file-name buf ))
+                                 (not (file-exists-p (buffer-name buf)))))
+              (buffer-list)))
+
 (defun buffer-list-builtin-only ()
   "returns all open emacs-only buffers, i.e: starting and ending in \"*\"."
   (seq-filter
    (lambda (buf)
-     (and (bufferp buf) (string-match-p "^[*].*[*]$" (buffer-name buf)))
+     (and (bufferp buf) (string-match-p "^[*].*[*]$" (buffer-name buf)) (not (file-exists-p (buffer-name buf))))
      (buffer-list))))
 
 (defun only-builtin-buffers-open-p ()
