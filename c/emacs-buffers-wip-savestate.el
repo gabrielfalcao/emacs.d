@@ -1,5 +1,5 @@
 ;;(load-file "~/.emacs.d/c/workbench.el")
-(load-library "workbench")
+(safe-load-file "~/.emacs.d/c/workbench.el")
 (let ((info (get-all-buffers-info)))
   (erase-c-messages)
   (c-message-open "")

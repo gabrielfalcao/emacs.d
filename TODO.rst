@@ -1,11 +1,20 @@
 TODO
 ^^^^
 
+
 TODO 2026-04-05
 ~~~~~~~~~~~~~~~
 
 - [ ] apply commit ``8399e50c981ad44eda1876212a9f187fafbf3c3a`` and fix emacs initialization thereafter
   - [ ] apply and merge branch ``lotza-fixes-2026-04-05`` whose head is the above
+
+
+TODO 2026-02-15
+~~~~~~~~~~~~~~~
+
+
+- [ ] write function to perform `isearch-forward-regexp' within region (.e.g.: function body)
+
 
 
 TODO 2025-12-19

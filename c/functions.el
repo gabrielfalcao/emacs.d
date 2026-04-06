@@ -1,24 +1,4 @@
 
-;;
-;; # TODO
-;;
-;; - write function to perform `isearch-forward-regexp' within region (.e.g.: function body)
-;;
-;; # TODO
-;;
-
-;; 0=`(defmacro
-;;     set-region-contents-with-fn`
-;; 1=``
-;; 2=`(defmacro
-;;     set-region-contents-with-fn`
-;; 3=`defmacro`
-;; 4=`macro`
-;; 5=`set-region-contents-with-fn`
-
-
-
-
 (defun string-shift-right (g) "." (format "\t%s" g))
 
 

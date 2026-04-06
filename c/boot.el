@@ -5,8 +5,7 @@
 					;(load "subr")
 (require 'subr-x)
 (require 'help-fns)
-(load-file
- (expand-file-name "~/.emacs.d/c/staging/write-to-minibuffer.el"))
+(safe-load-file "~/.emacs.d/c/staging/write-to-minibuffer.el")
 
 (define-error 'c-el-internal-error
               (format "Internal Error in elisp files under `default-directory'/`c/*.el'"))
@@ -234,25 +233,17 @@
 (load-file "~/.emacs.d/c/advices.el")
 ;; (load-library "server-setup") ;; not ready
 ;; (ensure-server-ready)
-(load-file
- (expand-file-name "~/.emacs.d/c/staging/wezterm-list-cwds.el"))
-(load-file (expand-file-name "~/.emacs.d/c/staging/which-bin.el"))
+(safe-load-file "~/.emacs.d/c/staging/wezterm-list-cwds.el")
+(safe-load-file "~/.emacs.d/c/staging/which-bin.el")
 ;; (load-library "c-staging-after-save-hooks")
-(load-file
- (expand-file-name "~/.emacs.d/c/staging/write-to-minibuffer.el"))
-(load-file
- (expand-file-name "~/.emacs.d/c/staging/save-buffer-list-wip.el"))
-(load-file
- (expand-file-name "~/.emacs.d/c/staging/string-io-simple.el"))
-(load-file (expand-file-name "~/.emacs.d/c/staging/fmtfun.el"))
-(load-file
- (expand-file-name "~/.emacs.d/c/staging/get-mode-name.el"))
-(load-file
- (expand-file-name "~/.emacs.d/c/staging/insert-escape-sexp-backslash-comma.el"))
-(load-file
- (expand-file-name "~/.emacs.d/c/staging/c-message/c-message-suite.el"))
-(load-file
- (expand-file-name "~/.emacs.d/c/staging/c-message/with-c-message-open.el"))
+(safe-load-file "~/.emacs.d/c/staging/write-to-minibuffer.el")
+(safe-load-file "~/.emacs.d/c/staging/save-buffer-list-wip.el")
+(safe-load-file "~/.emacs.d/c/staging/string-io-simple.el")
+(safe-load-file "~/.emacs.d/c/staging/fmtfun.el")
+(safe-load-file "~/.emacs.d/c/staging/get-mode-name.el")
+(safe-load-file "~/.emacs.d/c/staging/insert-escape-sexp-backslash-comma.el")
+(safe-load-file "~/.emacs.d/c/staging/c-message/c-message-suite.el")
+(safe-load-file "~/.emacs.d/c/staging/c-message/with-c-message-open.el")
 (load-library "regexp")
 (load-library "modes")
 (load-library "hooks")

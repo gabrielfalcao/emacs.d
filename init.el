@@ -200,14 +200,8 @@ semantics of the arguments of `format-time-string'.
 
 (put 'downcase-region 'disabled nil)
 
-(load-file (expand-file-name "~/.emacs.d/c/staging/write-to-minibuffer.el"))
+(safe-load-file "~/.emacs.d/c/staging/write-to-minibuffer.el")
 
-(erase-all-non-file-buffers)
+;(erase-all-non-file-buffers)
 
-      (disable-bars)
-      (mapc (lambda (buf) (when (string-match-p "[*]" (buffer-name buf))
-                            (kill-buffer buf)))
-            (buffer-list))
-      )
-  (error
-   (c-message "failed to `disable-bars': %S" (error-message-string err))))
+(disable-bars)

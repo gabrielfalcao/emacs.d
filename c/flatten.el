@@ -1,4 +1,4 @@
-(erase-messages)
+(erase-all-non-file-buffers)
 (defun flatten (lst)
   (if (null lst)
       nil
