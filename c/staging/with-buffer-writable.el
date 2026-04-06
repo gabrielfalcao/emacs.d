@@ -11,12 +11,12 @@ restoring `buffer-read-only' to whatever value it had before."
          )
     `(let* (
             (,buffer-to-erase (get-buffer ,buffer-or-name))
-            (,buffer-to-erase-readonly-state (buffer-local-value 'buffer-read-only ,buffer-to-erase))
+            (,buffer-to-erase-readonly-state (buffer-local-value buffer-read-only ,buffer-to-erase))
             (,with-current-buffer-result ,with-current-buffer-result
                                          (with-current-buffer ,buffer-to-erase
                                            ,@body))
             )
-       (with-current-buffer ,buffer-to-erase (setq 'buffer-read-only ,buffer-to-erase-readonly-state))
+       (with-current-buffer ,buffer-to-erase (setq buffer-read-only ,buffer-to-erase-readonly-state))
        ,with-current-buffer-result
        )
     )
