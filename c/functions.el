@@ -1,4 +1,3 @@
-
 (defun string-shift-right (g) "." (format "\t%s" g))
 
 
@@ -1569,7 +1568,6 @@
   (interactive)
   (let* (
          (non-file-bufs (buffer-list-nonfile-only))
-         (total-nonfile-bufs (length builtin-bufs))
          (erase-nonfile-bufs-result (mapcar #'erase-buffer-by-name non-file-bufs))
          )
     erase-nonfile-bufs-result
@@ -2852,6 +2850,17 @@ which returns the exit-status and the string output.
       (user-error
        (format "ack `%s' failed with status %d" regexp exit-status)))))
 
+(defun flush-empty-lines-region (beg end)
+  "."
+  (interactive "*r")
+  (flush-lines "^$" beg end nil))
+
+(defun flush-empty-lines-buffer ()
+  "."
+  (interactive)
+  (save-excursion
+    (widen)
+    (flush-empty-lines-region (point-min) (point-max))))
 (defun rustfmt ()
   "."
   (interactive)
