@@ -1365,7 +1365,7 @@
   (when-buffer-meets
    (string= major-mode "toml-mode")
 
-   (flush-empty-lines)
+   (flush-lines)
    (save-excursion
      (let* ((beg
              (progn
@@ -2850,17 +2850,6 @@ which returns the exit-status and the string output.
       (user-error
        (format "ack `%s' failed with status %d" regexp exit-status)))))
 
-(defun flush-empty-lines-region (beg end)
-  "."
-  (interactive "*r")
-  (flush-lines "^$" beg end nil))
-
-(defun flush-empty-lines-buffer ()
-  "."
-  (interactive)
-  (save-excursion
-    (widen)
-    (flush-empty-lines-region (point-min) (point-max))))
 (defun rustfmt ()
   "."
   (interactive)
@@ -2884,7 +2873,7 @@ which returns the exit-status and the string output.
 	 (message
           "flushing empty lines in %s"
           (abbreviate-file-name current-filename))
-	 (flush-empty-lines-buffer))
+	 (drop-empty-lines-buffer))
 
        (progn
 	 (message
