@@ -47,6 +47,7 @@ interactive command `replace-regexp' like so:
 
 \,(debug-regexp-subexpressions)
 "
+  (enable-debug-on-error)
   (let* (;;
          (md (match-data))
          (md-len (length md))
@@ -81,3 +82,18 @@ interactive command `replace-regexp' like so:
 (defalias 'dbg-regex #'debug-regexp-subexpressions)
 (defalias 'dbg-regexp #'debug-regexp-subexpressions)
 (defalias 'regex! #'debug-regexp-subexpressions)
+
+(defun test-debug-regexp-subexpressions()
+  (let* (;; ~/projects/work/poems.codes/tools/workbench/poc/Cargo.toml
+         (ref-file
+          (expand-file-name "~/projects/work/poems.codes/tools/workbench/poc/Cargo.toml"))
+         (regexp
+          "^\\s-*\\([a-zA-Z0]+?[a-zA-Z0-9_-]*\\)\\s-*=\\s-*\\\"\\([0-9.]+\\)\\\"\\s-*$"))
+    (with-temp-buffer
+      (widen)
+      (insert-file-contents ref-file nil)
+      (widen)
+      (beginning-of-buffer)
+      (replace-regexp regexp "\,(regex! :each)"))))
+
+(test-debug-regexp-subexpressions)

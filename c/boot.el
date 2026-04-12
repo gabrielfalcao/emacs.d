@@ -140,7 +140,7 @@
 (setq-default initial-scratch-message nil)
 (setq-default auto-save-interval 137)
 (setq-default save-interprogram-paste-before-kill t)
-(setq-default case-fold-search t)
+(setq-default case-fold-search nil)
 (defalias 'yes-or-no-p #'y-or-n-p)
 (defalias '~libexec #'Ox33b4O/find-file/~/opt/libexec)
 (defalias '~opt/libexec #'Ox33b4O/find-file/~/opt/libexec)
