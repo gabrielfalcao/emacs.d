@@ -308,22 +308,22 @@
   "evaluates the entire buffer as emacs-lisp expression so long as calling `buffer-elisp-heuristic' returns non-nil."
 
   (interactive)
-  (if (buffer-elisp-heuristic)
-      (save-match-data
-        (save-mark-and-excursion
-          (save-restriction (widen) (eval-buffer)
-
-                            ;;OzsgKGxldCAoKGluZm8gKGZvcm1hdCAiJXMgZXZhbCdkICIgKGJ1ZmZlci1uYW1lKSkpKQogICAgICAgIDs7ICAgKHVubGVzcyAoc3RyaW5nPSBpbmZvIChjdXJyZW50LW1lc3NhZ2UpKQogICAgICAgIDs7ICAgICAobWVzc2FnZSAiJXMiIGluZm8pKSk=
-
-                            ))
-        )
-
-    (progn
-      (warn "cannot evaluate buffer %s because it is not in %s, trying to run pretty formatter instead"
-            (Ox33b4O/$/paint-mode-line-color (buffer-name))
-	    (Ox33b4O/$/paint-mode-line-color "elisp-mode"))
-
-      (g/format/prettify))))
+  (cond
+   ((buffer-elisp-heuristic)
+    (save-mark-excursion-and-match-data
+      (widen)
+      (beginning-of-buffer)
+      (eval-buffer)
+      (erase-messages)
+      (message "buffer %S evaluated" (buffer-name))
+      ;;OzsgKGxldCAoKGluZm8gKGZvcm1hdCAiJXMgZXZhbCdkICIgKGJ1ZmZlci1uYW1lKSkpKQogICAgICAgIDs7ICAgKHVubGVzcyAoc3RyaW5nPSBpbmZvIChjdXJyZW50LW1lc3NhZ2UpKQogICAgICAgIDs7ICAgICAobWVzc2FnZSAiJXMiIGluZm8pKSk=
+      ))
+   (t (progn (warn "cannot evaluate buffer %s because it is not in %s, trying to run pretty formatter instead"
+                   (Ox33b4O/$/paint-mode-line-color (buffer-name))
+	           (Ox33b4O/$/paint-mode-line-color "elisp-mode"))
+             (g/format/prettify)))
+   )
+  )
 
 
 (defun Ox33b4O/$/undefine-key (key)
@@ -566,6 +566,26 @@
   )
 
 (defun Ox33b4O/$/kill-all-buffers-and-flush-kill-ring (&optional no-kill-bufs no-flush-kill-ring no-delete-windows)
+  "."
+  (interactive)
+  (let* (
+         (then-kill (not no-flush-kill-ring))
+         (names (append (erase-all-non-file-buffers then-kill)
+                        (unless no-kill-bufs (kill-all-file-buffers t))
+                        (unless no-kill-bufs (kill-all-buffers t))
+                        ))
+         (total (length names))
+         (action-participle (if then-kill "killed" "erased"))
+         )
+    (unless no-flush-kill-ring
+      (Ox33b4O/$/flush-kill-ring))
+    (unless no-delete-windows
+      (delete-other-windows))
+
+    (message "%s %d buffers: %s" action-participle total (string-join names ", "))
+    )
+  )
+(defun Ox33b4O/$/erase-and-kill-all-non-file-buffers (&optional no-kill-bufs no-flush-kill-ring no-delete-windows)
   "."
   (interactive)
   (let* (
@@ -1590,6 +1610,46 @@
     name
     )
   )
+
+
+(defun kill-all-file-buffers (&optional only-names)
+  "kills all file buffers, returns list of cons cells whose car is the
+buffer name and the cdr is either t or nil indicating whether the buffer
+was actually killed. The optional argument ONLY-NAMES changes this
+behavior, making the function return a list of strings with the buffer
+names without discriminating whether that was killed or not.
+
+this function does not erase file buffers, unlike its non-file buffer
+counterpart `erase-all-non-file-buffers'.
+"
+  (mapcar (lambda (buf)
+            (with-current-buffer buf
+              (let* (
+                     (name (buffer-name buf))
+                     (killed (progn
+                               (c-message-debug-buffer-local-vars buf)
+                               (kill-buffer buf)))
+                     )
+                (or (and only-names name) (list name killed)))))
+          (seq-filter #'buffer-file-name (buffer-list))))
+
+(defun kill-all-buffers (&optional only-names)
+  "this function is morally similar to `kill-all-file-buffers' except that it kills all buffers.
+
+keep in mind whether you want non-file buffers to be previously erased,
+before killed, which is most likely the case. In that case simply call
+`erase-all-non-file-buffers' with the argument `then-kill' set to
+non-nil.
+"
+  (mapcar (lambda (buf)
+            (with-current-buffer buf
+              (let* (
+                     (name (buffer-name buf))
+                     (killed (kill-buffer buf))
+                     )
+                (or (and only-names name) (list name killed)))))
+          (buffer-list)))
+
 
 
 
@@ -5274,9 +5334,9 @@ element to string like `princ' would.
   (shell-script-insert-argv-skel t arg-prefix))
 
 (defmacro save-mark-excursion-and-match-data (&rest body)
-  "shortcut to nesting macro calls to `save-match-data' and `save-mark-and-excursion'."
+  "shortcut to nesting macro calls to `save-match-data', `save-mark-and-excursion' and `save-restriction'."
   (declare (indent 0) (debug t))
-  `(save-match-data (save-mark-and-excursion ,@body)))
+  `(save-match-data (save-mark-and-excursion (save-restriction ,@body))))
 
 (defun interactive-read-region-enabling-prompt ()
   (unless (region-active-p)

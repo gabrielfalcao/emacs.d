@@ -1,30 +1,35 @@
+(require 'company-box)
+
 (add-hook 'after-init-hook 'c$dg$)
 (add-hook 'after-revert-hook 'c$dg$)
 (add-hook 'after-save-hook 'c$dg$)
 (add-hook 'after-change-functions 'c$dg$)
-;; (add-hook 'after-insert-file-functions 'c$dg$)
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+(add-hook 'after-save-hook '$$$$$)
+(add-hook 'after-init-hook '$$$$$)
+(add-hook 'after-init-hook #'(lambda () (interactive) (ignore-errors (delete-minibuffer-contents) (message "emacs init took %s to initialize" (emacs-init-time)))))
+
 (add-hook 'write-files-hook 'c$dg$)
 (add-hook 'after-find-file 'c$dg$)
 (add-hook 'after-change-major-mode-hook 'c$dg$)
 (add-hook 'after-set-visited-file-name-hook 'c$dg$)
+(add-hook 'after-change-major-mode-hook #'(lambda () (prettify-symbols-mode)))
+
+
+;; (add-hook 'after-insert-file-functions 'c$dg$)
 ;; (add-hook 'after-save-hook 'git-autocommit-opt-libexec)
 ;; (add-hook 'after-save-hook 'git-autocommit-emacs-d-c-sources)
-(add-hook 'after-change-major-mode-hook
-          #'(lambda () (prettify-symbols-mode)))
 ;; (add-hook 'web-mode-hook 'prettier-js-mode)
 ;; (add-hook 'web-mode-hook 'prettier-js-mode)
-
-
-;; <TODO>
+;; ;; <TODO>
 ;; (add-hook 'after-save-hook #'shebang-file-make-executable)
 ;; (load-staging "buffer-shebang.el")
 ;; (load-staging "string-functions-clipboard-prefix-and-stuff.el")
-;; </TODO>
+;; ;; </TODO>
 
 
 
 
-(require 'company-box)
 (add-hook 'company-mode-hook 'company-box-mode)
 
 (defun gdscript-mode-hook-bind-custom-keys()
