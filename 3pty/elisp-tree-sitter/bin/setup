@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+here=$(cd "$(dirname "$BASH_SOURCE")"; pwd)
+source "$here/env.bash"
+
+(
+    cd "$PROJECT_ROOT"
+    # XXX: Create the directory because `eask link` doesn't.
+    #mkdir -p "$(eask package-directory)"
+    eask link add tsc core
+    eask install
+)

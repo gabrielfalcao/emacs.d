@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+      - github-actions          # To test changes related to GitHub Actions.
+      - ci                      # To test all CI changes.
+    paths-ignore:
+      - '*.md'
+      - doc/**
+  pull_request:
+    branches:
+      - master
+    paths-ignore:
+      - '*.md'
+      - doc/**
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-15
+          - ubuntu-20.04
+          - windows-2019
+        emacs-version:
+          - '28.2'
+          - '29.4'
+        include:
+          # XXX: The (os, emacs-version) combination must be different from those from those above,
+          # otherwise GitHub Actions modifies the existing combinations, instead of adding new.
+          - os: macos-15
+            emacs-version: '28.2'
+            # Cross build
+            target: aarch64-apple-darwin
+          - os: macos-15
+            emacs-version: '29.4'
+            # Cross build
+            target: aarch64-apple-darwin
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Set up Rust
+        run: |
+          rustup install stable
+          rustc -Vv
+          cargo -V
+      - name: Set up Rust's cross-build target
+        if: matrix.target
+        run: |
+          rustup target add ${{ matrix.target }}
+
+      - uses: jcs090218/setup-emacs@master
+        with:
+          version: ${{ matrix.emacs-version }}
+
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - uses: emacs-eask/setup-eask@master
+        with:
+          version: 'snapshot'
+
+      - run: bin/setup
+      - run: bin/build -target "${{ matrix.target }}"
+
+      - run: bin/inspect-binaries
+        continue-on-error: true
+
+      - name: Install tree-sitter CLI
+        if: ${{ !matrix.target }}
+        run: npm install -g tree-sitter-cli@0.19.3
+      - run: eask install-deps --dev
+      - run: bin/test
+        if: ${{ !matrix.target }}
+      - run: bin/test bench
+        if: ${{ !matrix.target }}

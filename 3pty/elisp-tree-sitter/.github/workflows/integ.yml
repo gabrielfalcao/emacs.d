@@ -1,0 +1,42 @@
+name: Integ
+
+on:
+  workflow_dispatch:
+    inputs:
+      revision:
+        required: true
+        default: 'master'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  integ:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-15
+          - ubuntu-18.04
+          - windows-2019
+        emacs-version:
+          - '27.2'
+          - '28.1'
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: jcs090218/setup-emacs@master
+        with:
+          version: ${{ matrix.emacs-version }}
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.revision }}
+
+      - uses: emacs-eask/setup-eask@master
+        with:
+          version: 'snapshot'
+
+      - run: bin/setup
+
+      - run: bin/test integ
