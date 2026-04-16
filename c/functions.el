@@ -1,3 +1,4 @@
+(safe-load-file "~/.emacs.d/c/staging/c-message/c-message-debug-buffer-local-vars.el")
 (defun string-shift-right (g) "." (format "\t%s" g))
 
 
@@ -311,13 +312,13 @@
   (cond
    ((buffer-elisp-heuristic)
     (save-mark-excursion-and-match-data
-      (widen)
-      (beginning-of-buffer)
-      (eval-buffer)
-      (erase-messages)
-      (message "buffer %S evaluated" (buffer-name))
-      ;;OzsgKGxldCAoKGluZm8gKGZvcm1hdCAiJXMgZXZhbCdkICIgKGJ1ZmZlci1uYW1lKSkpKQogICAgICAgIDs7ICAgKHVubGVzcyAoc3RyaW5nPSBpbmZvIChjdXJyZW50LW1lc3NhZ2UpKQogICAgICAgIDs7ICAgICAobWVzc2FnZSAiJXMiIGluZm8pKSk=
-      ))
+     (widen)
+     (beginning-of-buffer)
+     (eval-buffer)
+     (erase-messages)
+     (message "buffer %S evaluated" (buffer-name))
+     ;;OzsgKGxldCAoKGluZm8gKGZvcm1hdCAiJXMgZXZhbCdkICIgKGJ1ZmZlci1uYW1lKSkpKQogICAgICAgIDs7ICAgKHVubGVzcyAoc3RyaW5nPSBpbmZvIChjdXJyZW50LW1lc3NhZ2UpKQogICAgICAgIDs7ICAgICAobWVzc2FnZSAiJXMiIGluZm8pKSk=
+     ))
    (t (progn (warn "cannot evaluate buffer %s because it is not in %s, trying to run pretty formatter instead"
                    (Ox33b4O/$/paint-mode-line-color (buffer-name))
 	           (Ox33b4O/$/paint-mode-line-color "elisp-mode"))
@@ -1626,9 +1627,7 @@ counterpart `erase-all-non-file-buffers'.
             (with-current-buffer buf
               (let* (
                      (name (buffer-name buf))
-                     (killed (progn
-                               (c-message-debug-buffer-local-vars buf)
-                               (kill-buffer buf)))
+                     (killed (kill-buffer buf))
                      )
                 (or (and only-names name) (list name killed)))))
           (seq-filter #'buffer-file-name (buffer-list))))
@@ -6201,3 +6200,18 @@ Margins::.
 (defun replace-regexp-interactive-arrow-right ()
   "returns the unicode string \" → \""
   (let ((arrow-right " → ")) arrow-right))
+
+
+(defun debug-buffer-local-vars-functions-el()
+  (interactive)
+  (let* (
+					;
+         (functions-el (find-file-noselect "~/.emacs.d/c/functions.el"))
+					;
+         )
+    (with-current-buffer functions-el
+      (c-message-debug-buffer-local-vars functions-el)
+      )
+    )
+					;
+  )

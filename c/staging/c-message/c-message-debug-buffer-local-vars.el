@@ -25,19 +25,27 @@
                     (key   (or (and (symbolp head) (symbol-name head)) (format "%s (%s) %S" "head" (cl-type-of head) head)))
                     (value (or (and (or (listp tail) (consp tail)) (car tail)) (format "%s (%s) %S" "tail" (cl-type-of tail) tail)))
 
-                    (dbg-hdr-fmt "<%sbuffer %S var %d of %d>")
+                    (dbg-hdr-attrs (string-join (mapcar (lambda (item) (format "%s" item))
+                                                        (list
+                                                         ;; (format "head-type=\"%S\"" (cl-type-of head) )
+                                                         ;; (format "tail-type=\"%S\"" (cl-type-of tail) )
+
+                                                         (format "key-type=\"%S\"" (cl-type-of key) )
+                                                         (format "value-type=\"%S\"" (cl-type-of value) )
+                                                         )
+                                                        )
+                                                " "))
+                    (dbg-hdr-fmt (format "<%%sbuffer %%S var={%%d} of={%%d} %s>" dbg-hdr-attrs))
                     (dbg-tag-open (format dbg-hdr-fmt "" buf-name current total))
                     (dbg-tag-close (format dbg-hdr-fmt "/" buf-name current total))
 
-                    (dbg-msg (string-join (append (list dbg-tag-open) (mapcar (lambda (item) (format "\t%s" item))
-                                                                              (list
-                                                                               (format "head (%s): %S" (cl-type-of head) head)
-                                                                               (format "tail (%s): %S" (cl-type-of tail) tail)
-
-                                                                               (format "key (%s): %S" (cl-type-of key) key)
-                                                                               (format "value (%s): %S" (cl-type-of value) value)
-                                                                               )
-                                                                              )
+                    (dbg-msg (string-join (append (list dbg-tag-open)
+                                                  (mapcar (lambda (item) (format "\t%s" item))
+                                                          (list
+                                                           (format "<key>\n%S\n</key>" key)
+                                                           (format "<value type=\"%s\">\n%S\n</value>" (cl-type-of value) value)
+                                                           )
+                                                          )
                                                   (list dbg-tag-close))
                                           "\n"))
                     ;;
