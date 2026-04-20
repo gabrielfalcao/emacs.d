@@ -140,3 +140,10 @@ args FMT and ARGS are the same form as `c-message'
 ;;;  (interactive "X")
 ;;;  (c-message-open "%s" expression))
 ;;;
+
+(defun c-message-ensure-visible()
+  (interactive)
+  (unless (c-message-visible-p)
+    (c-message-open)
+    (erase-c-messages))
+  )

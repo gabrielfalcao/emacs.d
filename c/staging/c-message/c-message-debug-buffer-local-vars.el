@@ -8,9 +8,8 @@
             (with-current-buffer buf (buffer-local-variables buf))))
          (total (length vars))
          (result nil))
-    (unless (c-message-visible-p)
-      (c-message-open)
-      (erase-c-messages))
+
+    (c-message-ensure-visible)
 
     (setq result
           (seq-map-indexed
