@@ -1,0 +1,1 @@
+(insert (file-name-concat (file-name-directory (buffer-file-name)) (format "%s" (string-join (list (file-name-base (buffer-file-name-relative)) (format-time-string "%s") (file-name-extension (buffer-file-name-relative))  ) "." ))))
