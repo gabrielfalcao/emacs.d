@@ -38,6 +38,7 @@
                                               "nginx-mode"
                                               ;; ov
                                               "pcre2el"
+                                              ;; peg
                                               "php-mode"
                                               "pkg-info"
                                               "protobuf-mode"
