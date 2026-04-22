@@ -4263,7 +4263,7 @@ and minor modes. To be precise, no `auto-mode' changes happen.
 
 (defun shell-script-insert-ansi-clear()
   (interactive)
-  (insert "\necho -en \"\\x1b[2J\\x1b[3J\\x1b[H\""))
+  (insert "\n1>&2 echo -en \"\\x1b[2J\\x1b[3J\\x1b[H\""))
 
 (defun shell-script-single-quote-string(string)
   "returns single-quoted `string' unless already single-quoted or double-quoted"
