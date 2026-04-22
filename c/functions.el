@@ -1961,7 +1961,7 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
      ((string= "sh-mode" name-of-current-mode)
       #'shfmt)
      ((string= "elisp-mode" name-of-current-mode)
-      #'elfmt)
+      #'schematfmt)
      ((string= "py-mode" name-of-current-mode)
       #'blackpy)
      ((string= "awk-mode" name-of-current-mode)

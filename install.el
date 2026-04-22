@@ -56,31 +56,30 @@
                                               "toml-mode"
                                               "typescript-mode"
                                               "web-mode"
-                                              "yaml-mode"
-
-                                              ))
+                                              "yaml-mode"))
          (already-installed (list))
          (install-succeeded (list))
          (install-failed (list)))
     (mapc (lambda (name)
-            (if (package-installed-p name)
-                (push name already-installed)
-              (condition-case err
-                  (progn
-                    (package-install name)
-                    (push name install-succeeded))
-                (error
-                 (push name (list 'package-name install-failed 'installation-error err))))))
-          packages-to-install-if-not-already)
+           (if (package-installed-p name)
+             (push name already-installed)
+             (condition-case err
+               (progn
+                 (package-install name)
+                 (push name install-succeeded))
+               (error
+                 (put name 'installation-error err)
+                 (push name install-failed)))))
+      (mapcar #'intern packages-to-install-if-not-already))
     (message "<package-installation-result>\n\n%s\n\n<package-installation-result>"
-             (string-join (list
-                           (format "<failed>\n%s\n</failed>\n" (string-join (mapcar (lambda (props)
-                                                                                      (let* (
-                                                                                             (package-name (plist-get 'package-name props))
-                                                                                             (error-object (plist-get 'installation-error props)))
-                                                                                        (format "    %S: %s" package-name (error-message-string error-object))))
-                                                                                    install-failed)
-                                                                            "\n"))
-                           (format "<succeeded>\n%s\n</succeeded>\n" (string-join install-succeeded "\n"))
-                           (format "<already-installed-previously>\n%s\n</already-installed-previously>\n" (string-join install-succeeded "\n")))
-                          "\n"))))
+      (string-join (list
+                    (format "<failed>\n%s\n</failed>\n" (string-join (mapcar (lambda (props)
+                                                                              (let* (
+                                                                                     (package-name (plist-get 'package-name props))
+                                                                                     (error-object (plist-get 'installation-error props)))
+                                                                                (format "    %S: %s" package-name (error-message-string error-object))))
+                                                                      install-failed)
+                                                         "\n"))
+                    (format "<succeeded>\n%s\n</succeeded>\n" (string-join install-succeeded "\n"))
+                    (format "<already-installed-previously>\n%s\n</already-installed-previously>\n" (string-join install-succeeded "\n")))
+        "\n"))))
