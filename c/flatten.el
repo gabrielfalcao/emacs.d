@@ -1,11 +1,11 @@
 (erase-all-non-file-buffers)
 (defun flatten (lst)
   (if (null lst)
-      nil
+    nil
     (if (listp (car lst))
-        (append
-         (flatten (car lst))
-         (flatten (cdr lst)))
+      (append
+        (flatten (car lst))
+        (flatten (cdr lst)))
       (cons (car lst) (flatten (cdr lst))))))
 
 (defun test-flatten(lst)

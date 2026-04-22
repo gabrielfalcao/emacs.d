@@ -10,21 +10,20 @@
   (let* ((trim-regexp "[ \t\n\r[:space:]]+")
          (which-a-bash (shell-command-to-string "which -a bash"))
          (which-a-lines
-          (save-match-data
-            (split-string which-a-bash "\n" t trim-regexp)))
+           (save-match-data
+             (split-string which-a-bash "\n" t trim-regexp)))
          (canonical-paths
-          (mapcar
-           (lambda (path)
-             (string-trim
-              (shell-command-to-string
-               (format "path canon %S" (string-trim path)))))
-           which-a-lines))
+           (mapcar
+             (lambda (path)
+               (string-trim
+                 (shell-command-to-string
+                   (format "path canon %S" (string-trim path)))))
+             which-a-lines))
          (result (list)))
     (seq-do-indexed
-     (lambda (item idx)
-       (unless (member item result)
-         (when (and (stringp item) (file-exists-p item))
-           (push item result))))
-     (append  which-a-lines canonical-paths))
-    result)
-  )
+      (lambda (item idx)
+        (unless (member item result)
+          (when (and (stringp item) (file-exists-p item))
+            (push item result))))
+      (append which-a-lines canonical-paths))
+    result))

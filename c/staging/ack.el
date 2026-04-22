@@ -7,7 +7,7 @@
 
   (save-mark-excursion-and-match-data
     (let* ((region (region-bounds))
-           (beg (car  region))
+           (beg (car region))
            (end (cdr region))
            ;; (input  (buffer-substring-no-properties beg end))
            ;; (tmp-buffer-name (format "*ack:%s*" (downcase (replace-regexp-in-string "[^a-zA-Z0-9-]+" "-" input))))
@@ -20,8 +20,7 @@
       (c-message "beg: %S" beg)
       (c-message "end: %S" end)
       ;; (pop-to-buffer tmp-buffer)
-      ))
-  )
+      )))
 
 ;; (progn
 ;;   (unless (and  mark-active (region-active-p))

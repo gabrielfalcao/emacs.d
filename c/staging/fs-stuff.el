@@ -1,5 +1,4 @@
 (defun file-name-emacs-pid-strftime(&optional strftime)
   (unless (stringp strftime)
     (setq strftime "@%Y-%m-%d.%H-%M-%S"))
-  (string-join (list (format "pid@%s" (emacs-pid)) (format-time-string strftime) ) "__")
-  )
+  (string-join (list (format "pid@%s" (emacs-pid)) (format-time-string strftime)) "__"))

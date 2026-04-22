@@ -3,17 +3,16 @@
   (let ((cur-point (point))
         (point-min-narrow (point-min))
         (point-max-narrow (point-max))
-        beg-buffer end-buffer
-        )
+        beg-buffer
+        end-buffer)
 
     (save-restriction
-        (widen)
-        (setq beg-buffer (point-min))
-        (setq end-buffer (point-max)))
+      (widen)
+      (setq beg-buffer (point-min))
+      (setq end-buffer (point-max)))
     (save-mark-and-excursion
       (delete-region (point) (progn (end-of-line 1) (point)))
       (delete-char 1))))
-
 
 ;; (defun my-delete-line ()
 ;;   "Delete text from current position to end of line char.

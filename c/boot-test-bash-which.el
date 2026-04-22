@@ -18,24 +18,20 @@
 (defun indent-value (value)
   (format "%s%s" (string-join (make-list 4 " ") "") value))
 
-
 (defun list-items-to-string-values (items)
   (unless (or (listp items) (consp items))
     (signal 'type-error
-            (format "argument ITEMS is not a list `%s': %S"
-                    (cl-type-of items)
-                    items)))
+      (format "argument ITEMS is not a list `%s': %S"
+        (cl-type-of items)
+        items)))
   (mapcar #'repr-value items))
-
 
 (defun indented-list-items (items)
   (string-join
-   (mapcar
-    #'indent-value
-    (list-items-to-string-values items))
-   "\n"))
-
-
+    (mapcar
+      #'indent-value
+      (list-items-to-string-values items))
+    "\n"))
 
 (defun which-bin (name)
   "Returns a list of all executable files and symlinks in all of the paths returned by `exec-path' matching NAME.
@@ -49,22 +45,22 @@
   (let* ((trim-regexp "[ \t\n\r[:space:]]+")
          (which-a-bash (shell-command-to-string "which -a bash"))
          (which-a-lines
-          (save-match-data
-            (split-string which-a-bash "\n" t trim-regexp)))
+           (save-match-data
+             (split-string which-a-bash "\n" t trim-regexp)))
          (canonical-paths
-          (mapcar
-           (lambda (path)
-             (string-trim
-              (shell-command-to-string
-               (format "path canon %S" (string-trim path)))))
-           which-a-lines))
+           (mapcar
+             (lambda (path)
+               (string-trim
+                 (shell-command-to-string
+                   (format "path canon %S" (string-trim path)))))
+             which-a-lines))
          (result (list)))
     (seq-do-indexed
-     (lambda (item idx)
-       (unless (member item result)
-         (when (and (stringp item) (file-exists-p item))
-           (push item result))))
-     (append  which-a-lines canonical-paths))
+      (lambda (item idx)
+        (unless (member item result)
+          (when (and (stringp item) (file-exists-p item))
+            (push item result))))
+      (append which-a-lines canonical-paths))
 
     (unless (c-message-visible-p)
       (c-message-open)
@@ -73,11 +69,10 @@
     (erase-all-non-file-buffers)
     ;; (c-message "which-a-bash: %S" which-a-bash)
     (c-message "which-a-lines:\n%s"
-               (indented-list-items which-a-lines))
+      (indented-list-items which-a-lines))
     (c-message "canonical-paths:\n%s"
-               (indented-list-items canonical-paths))
-    (c-message "result:\n%s" (indented-list-items result)))
-  )
+      (indented-list-items canonical-paths))
+    (c-message "result:\n%s" (indented-list-items result))))
 
 (enable-debug-on-error)
 (which-bin "bash")

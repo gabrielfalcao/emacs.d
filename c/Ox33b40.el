@@ -1,10 +1,9 @@
 (defun Ox33b4O/find-file/~/workbench/today(filename)
   "bound to `C-x' 'M-f'"
   (interactive
-   (find-file-open-minibuffer-at-directory-interactive
-    (workbench/path)))
+    (find-file-open-minibuffer-at-directory-interactive
+      (workbench/path)))
   (find-file-open-minibuffer-at-directory-body filename))
-
 
 (defun Ox33b4O/open-boot-el()
   (interactive)
@@ -73,19 +72,19 @@
 (defun find-file-open-minibuffer-at-directory-interactive(initial-directory)
   (let* ((~/opt/libexec/path (expand-file-name initial-directory))
          (result
-          (list
-           (read-file-name "Find file: " ~/opt/libexec/path "confirm-after-completion" nil nil ))))
+           (list
+             (read-file-name "Find file: " ~/opt/libexec/path "confirm-after-completion" nil nil))))
     (with-minibuffer-selected-window
       (minibuffer-complete)
       (minibuffer-complete))
-    result));; end defun closure
+    result)) ;; end defun closure
 
 (defun find-file-open-minibuffer-at-directory-body (filename)
   (let* ((value (find-file-noselect filename nil nil t))
          (result
-          (if (listp value)
-	      (mapcar 'pop-to-buffer-same-window (nreverse value))
-	    (pop-to-buffer-same-window value))))
+           (if (listp value)
+             (mapcar 'pop-to-buffer-same-window (nreverse value))
+             (pop-to-buffer-same-window value))))
     (with-minibuffer-selected-window
       (minibuffer-complete)
       (minibuffer-complete))
@@ -94,18 +93,17 @@
 (defun Ox33b4O/find-file/~/opt/libexec(filename)
   "bound to `C-x' 'M-f'"
   (interactive
-   (find-file-open-minibuffer-at-directory-interactive "~/opt/libexec/"))
+    (find-file-open-minibuffer-at-directory-interactive "~/opt/libexec/"))
   (find-file-open-minibuffer-at-directory-body filename))
-
 
 (defun Ox33b4O/find-file/~/.shell.d(filename)
   "bound to `C-x' 'M-s'"
   (interactive
-   (find-file-open-minibuffer-at-directory-interactive "~/.shell.d/"))
+    (find-file-open-minibuffer-at-directory-interactive "~/.shell.d/"))
   (find-file-open-minibuffer-at-directory-body filename))
 
 (defun Ox33b4O/find-file/~/.emacs.d(filename)
   "bound to `C-x' 'M-s'"
   (interactive
-   (find-file-open-minibuffer-at-directory-interactive "~/.emacs.d/"))
+    (find-file-open-minibuffer-at-directory-interactive "~/.emacs.d/"))
   (find-file-open-minibuffer-at-directory-body filename))

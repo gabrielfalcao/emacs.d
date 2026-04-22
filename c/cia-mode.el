@@ -14,5 +14,4 @@
 ;;
 ;;; Code:
 
-
 (provide 'cia-mode)

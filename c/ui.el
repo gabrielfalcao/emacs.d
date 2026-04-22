@@ -1,4 +1,4 @@
-(defun Ox33b4O/$/mode-line-foreground ()  "#FF1978") ;; #F13976
+(defun Ox33b4O/$/mode-line-foreground () "#FF1978") ;; #F13976
 (defun Ox33b4O/$/mode-line-background () "#3d3d3d")
 (defun Ox33b4O/$/mark-indicator-color() "#cad79d")
 (defun Ox33b4O/$/mode-line-arrow-right() " ⇒ ")
@@ -8,39 +8,39 @@
   "."
   (interactive)
 
-  (let* (($font-name$               (font-name-for-system))
-         ($sel$                     "#C6DCFC")
-	 ($sel$                     "#CFC6A6")
-         ($background$              "#1C1C1C")
-         ($variable$                "#F49101")
-         ($string$                  "#DCDC88")
-         ($regexp$                  "#C63367")
-         ($admonition$              "#F80101")
-         ($admonition$              "#F937B9")
-         ($warning$                 "#F80101")
-         ($error$                   "#DB5045")
-         ($operators$               "#F682FF")
-         ($number$                  "#FC580C")
-         ($normal$                  "#DEDEDE")
-         ($mode-line-inactive-bg$   "#211F17")
-         ($mode-line-inactive-bg$   "#312F27")
-         ($mode-line-inactive-fg$   "#A66A00")
-         ($method-declaration$      "#A6E22E")
-         ($type-face$               "#36F6E9")
-         ($type-face$               "#1996C9")
-         ($line-fg$                 "#919588")
-         ($line-number$             "#161A1F")
-         ($current-line-number$     "#A66A00")
-         ($current-line-number$     "#F6CA51")
-         ($keywords$                "#F13976")
-         ($current-line$            "#151515")
-         ($operators$               "#F479C4")
-         ($operators$               "#79B9FF")
-         ($operators$               "#EF5AAA")
-         ($constant$                "#FF79C6")
-         ($comments$                "#A79C83")
-	 ($sel$                     "#F5BF08")
-         ($cursor$                  $sel$))
+  (let* (($font-name$ (font-name-for-system))
+         ($sel$ "#C6DCFC")
+         ($sel$ "#CFC6A6")
+         ($background$ "#1C1C1C")
+         ($variable$ "#F49101")
+         ($string$ "#DCDC88")
+         ($regexp$ "#C63367")
+         ($admonition$ "#F80101")
+         ($admonition$ "#F937B9")
+         ($warning$ "#F80101")
+         ($error$ "#DB5045")
+         ($operators$ "#F682FF")
+         ($number$ "#FC580C")
+         ($normal$ "#DEDEDE")
+         ($mode-line-inactive-bg$ "#211F17")
+         ($mode-line-inactive-bg$ "#312F27")
+         ($mode-line-inactive-fg$ "#A66A00")
+         ($method-declaration$ "#A6E22E")
+         ($type-face$ "#36F6E9")
+         ($type-face$ "#1996C9")
+         ($line-fg$ "#919588")
+         ($line-number$ "#161A1F")
+         ($current-line-number$ "#A66A00")
+         ($current-line-number$ "#F6CA51")
+         ($keywords$ "#F13976")
+         ($current-line$ "#151515")
+         ($operators$ "#F479C4")
+         ($operators$ "#79B9FF")
+         ($operators$ "#EF5AAA")
+         ($constant$ "#FF79C6")
+         ($comments$ "#A79C83")
+         ($sel$ "#F5BF08")
+         ($cursor$ $sel$))
 
     (line-number-mode nil)
     (require 'make-mode)
@@ -70,8 +70,8 @@
     ;; (setq display-line-numbers-minor-tick 0)
     (set-face-attribute 'cursor nil :background $cursor$ :foreground $cursor$)
     (setq-default cursor-type (cursor-type-for-system))
-    (set-face-attribute 'Info-quoted nil :bold nil :background $background$ :foreground $normal$ )
-    (set-face-attribute 'bold nil        :bold t :background $background$ :foreground $normal$ )
+    (set-face-attribute 'Info-quoted nil :bold nil :background $background$ :foreground $normal$)
+    (set-face-attribute 'bold nil :bold t :background $background$ :foreground $normal$)
     (set-face-attribute 'default nil :foreground $normal$ :background $background$)
     (set-face-attribute 'button nil :foreground $keywords$ :underline t)
     (set-face-attribute 'default nil :background $background$ :foreground $normal$)
@@ -79,20 +79,24 @@
     (set-face-attribute 'highlight nil :background $current-line$ :foreground (Ox33b4O/$/mode-line-foreground))
     (set-face-attribute 'info-xref nil :foreground "#27CE79" :underline nil :bold nil)
     (set-face-attribute 'info-xref-visited nil
-                        :foreground "#787878"
-                        :overline nil
-                        :underline "#D87101"
-                        :bold t)
+      :foreground
+      "#787878"
+      :overline
+      nil
+      :underline
+      "#D87101"
+      :bold
+      t)
 
     (set-face-attribute 'info-menu-star nil :foreground (Ox33b4O/$/mode-line-foreground) :underline nil :bold t)
-    (set-face-attribute 'info-header-xref nil  :foreground $keywords$ :underline t)
+    (set-face-attribute 'info-header-xref nil :foreground $keywords$ :underline t)
     (set-face-attribute 'show-paren-match nil :background (Ox33b4O/$/mode-line-foreground) :foreground $background$ :weight 'bold)
-    (set-face-attribute 'show-paren-match-expression nil :background $type-face$  :weight 'bold)
-    (set-face-attribute 'show-paren-mismatch nil :background $error$  :foreground $normal$ :weight 'bold)
+    (set-face-attribute 'show-paren-match-expression nil :background $type-face$ :weight 'bold)
+    (set-face-attribute 'show-paren-mismatch nil :background $error$ :foreground $normal$ :weight 'bold)
     (set-face-attribute 'region nil :background $sel$ :foreground $background$)
     (set-face-attribute 'makefile-space nil :background $background$ :foreground $error$)
     (set-face-attribute 'ibuffer-locked-buffer nil :background $warning$ :foreground $background$)
-    (set-face-attribute 'separator-line nil :background $background$ :foreground $keywords$ )
+    (set-face-attribute 'separator-line nil :background $background$ :foreground $keywords$)
     (set-face-attribute 'font-lock-builtin-face nil :foreground $operators$)
     (set-face-attribute 'font-lock-comment-delimiter-face nil :foreground $comments$)
     (set-face-attribute 'font-lock-comment-face nil :foreground $comments$)
@@ -145,31 +149,29 @@
         (set-face-attribute 'fill-column-indicator nil :background $background$)))
 
     (when
-        (require 'web-mode)
+      (require 'web-mode)
       (progn
         (set-face-attribute 'web-mode-json-key-face nil :foreground $keywords$)
         (set-face-attribute 'web-mode-json-string-face nil :foreground $variable$)
         (set-face-attribute 'web-mode-json-context-face nil :foreground "#79B9FF")))
 
     (when
-        (require 'markdown-mode)
+      (require 'markdown-mode)
       (progn
         (set-face-attribute 'markdown-markup-face nil :foreground $variable$))
-      (set-face-attribute 'markdown-link-face nil :foreground "#79B9FF")
-      )
+      (set-face-attribute 'markdown-link-face nil :foreground "#79B9FF"))
 
     (mapc #'(lambda (s)
-              (set-face-attribute s nil :background "#000" :foreground "#000"))
-          (list
-           'border
-           'child-frame-border
-           'header-line-highlight
-           'internal-border
-           'window-divider
-           'window-divider-first-pixel
-           'window-divider-last-pixel
-           'mode-line-highlight))))
-
+             (set-face-attribute s nil :background "#000" :foreground "#000"))
+      (list
+        'border
+        'child-frame-border
+        'header-line-highlight
+        'internal-border
+        'window-divider
+        'window-divider-first-pixel
+        'window-divider-last-pixel
+        'mode-line-highlight))))
 
 (add-hook 'after-init-hook '$$$$$$$$)
 (add-hook 'after-save-hook '$$$$$$$$)

@@ -14,6 +14,4 @@
 ;;
 ;;; Code:
 
-
-
 (provide 'Ox33b4O-mode)

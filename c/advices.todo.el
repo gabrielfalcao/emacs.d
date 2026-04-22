@@ -50,7 +50,6 @@
 ;;
 ;; - [ ] #'self-insert-command
 
-
 ;;;;; ;;;;; ;;;;; ;;;;; ;;;;; ;;;;; TODO ;;;;; ;;;;; ;;;;;  ;;;;; ;;;;;
 ;;;;;
 ;;;;; (progn ;; isearch-printing-char

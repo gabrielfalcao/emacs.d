@@ -16,24 +16,25 @@ each match.
                    (lambda (num index)
                      (let* (
                             (beginning (match-beginning num))
-                            (end       (match-end num))
-                            (string    (match-string num))
-                            )
+                            (end (match-end num))
+                            (string (match-string num)))
                        (list
-                        :index      index
-                        :num        num
-                        :beginning (match-beginning num)
-                        :end       (match-end num)
-                        :string    (match-string num)
-                        ))
-                     )
-                   subexp-seq))
-         ) ; end (let* (...varlist...))
+                         :index
+                         index
+                         :num
+                         num
+                         :beginning
+                         (match-beginning num)
+                         :end
+                         (match-end num)
+                         :string
+                         (match-string num))))
+                   subexp-seq))) ; end (let* (...varlist...))
     (list :subexps subexps
-          :pairs total-pairs
-          :total-subexps total-subexps
-          :match-data md
-          :match-data-info  ;; end (let* ...)
-          )
-    ) ;; end (defun get-debug-info-regexp-subexpressions ...)
-  )
+      :pairs
+      total-pairs
+      :total-subexps
+      total-subexps
+      :match-data
+      md
+      :match-data-info))) ;; end (let* ...) ;; end (defun get-debug-info-regexp-subexpressions ...)

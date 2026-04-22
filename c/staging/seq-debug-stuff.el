@@ -19,19 +19,17 @@
 (defun indent-value (value)
   (format "%s%s" (string-join (make-list 4 " ") "") value))
 
-
 (defun list-items-to-string-values (items)
   (unless (or (listp items) (consp items))
     (signal 'type-error
-            (format "argument ITEMS is not a list `%s': %S"
-                    (cl-type-of items)
-                    items)))
+      (format "argument ITEMS is not a list `%s': %S"
+        (cl-type-of items)
+        items)))
   (mapcar #'repr-value items))
-
 
 (defun indented-list-items (items)
   (string-join
-   (mapcar
-    #'indent-value
-    (list-items-to-string-values items))
-   "\n"))
+    (mapcar
+      #'indent-value
+      (list-items-to-string-values items))
+    "\n"))

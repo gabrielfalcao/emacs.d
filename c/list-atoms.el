@@ -7,20 +7,17 @@
   (defun erase-c-messages (&optional dont-erase-minibuffer)
     "."
     (interactive)
-    (erase-buffer-by-name  "*C-Messages*")
+    (erase-buffer-by-name "*C-Messages*")
     (unless (not (null dont-erase-minibuffer)) (erase-minibuffer)))
 
   (defun erase-c-messages ()
     (apply #'message (append (list fmt) args))))
 
-
-
 (defun formwat (sym)
   (format "type of %s: %s (type of type %s)" sym
-          (type-of sym)
-          (type-of (type-of sym))))
+    (type-of sym)
+    (type-of (type-of sym))))
 (defun wat (sym) (message "<wat>\n%s\n</wat>\n" (formwat sym)))
-
 
 (defun list-atoms ()
   (let ((atoms-list (list)))
@@ -30,7 +27,6 @@
 (defvar list-atoms-cache (list-atoms))
 
 (wat (car list-atoms-cache))
-
 
 ;;; (defun atoms-list ()
 ;;;   (let ((atoms-list (list)))
@@ -47,7 +43,6 @@
 ;;;        (push sym atoms-list)))
 ;;;     atoms-list))
 ;;;
-
 
 ;;; ;; (defun atoms-list ())
 ;;;

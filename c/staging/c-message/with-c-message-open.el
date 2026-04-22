@@ -2,27 +2,25 @@
   (let* ((orig-body (copy-sequence body))
          (default-window-location #'split-window-right)
          (window-location
-          (pcase window-position
-            ((or "right" :right 'right)
-             #'split-window-right)
-            ((or "left" :left 'left)
-             #'split-window-horizontally)
-            ((or "above" :above 'above)
-             #'split-window-vertically)
-            ((or "below" :below 'below)
-             #'split-window-below)
-            (_
-             (setq body `(,window-position ,@body))
+           (pcase window-position
+             ((or "right" :right 'right)
+               #'split-window-right)
+             ((or "left" :left 'left)
+               #'split-window-horizontally)
+             ((or "above" :above 'above)
+               #'split-window-vertically)
+             ((or "below" :below 'below)
+               #'split-window-below)
+             (_
+               (setq body `(,window-position ,@body))
 
-             ;; (c-message "<body type=%S>\n%S\n</body>"
-             ;;            (format "%S" (cl-type-of body))
-             ;;            body)
-             default-window-location
-             ))
-          )
+               ;; (c-message "<body type=%S>\n%S\n</body>"
+               ;;            (format "%S" (cl-type-of body))
+               ;;            body)
+               default-window-location)))
          (existing-buffer (get-buffer c-message-buffer))
          (existing-window
-          (and  existing-buffer (get-buffer-window existing-buffer)))
+           (and existing-buffer (get-buffer-window existing-buffer)))
          (current-windows (window-list nil :minibuf-never)))
 
     `(progn ,@body)))

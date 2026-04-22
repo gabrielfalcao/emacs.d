@@ -3,7 +3,6 @@
 (define-error 'workbench-timestamp-null "Null Unix Timestamp" 'workbench-timestamp-invalid)
 (define-error 'workbench-timestamp-too-small "Unix Timestamp is too small or too early" 'workbench-timestamp-invalid)
 
-
 (defun workbench-get-day-string (time)
   "returns a day-string used in workbench-related filesystem paths based on the value of `TIME'.
 
@@ -11,32 +10,29 @@
 "
   (when (null time)
     (signal 'invalid-unix-timestamp-error
-            (propertize "`TIME' cannot be null"
-                        (list :time time :type (cl-type-of time)))))
+      (propertize "`TIME' cannot be null"
+        (list :time time :type (cl-type-of time)))))
 
   (unless (natnump time)
     (signal 'invalid-unix-timestamp-error
-            (propertize
-             (format "`TIME' must be a natural number but instead got `%s': %S"
-                     (cl-type-of time)
-                     time)
-             (list :time time :type (cl-type-of time)))))
+      (propertize
+        (format "`TIME' must be a natural number but instead got `%s': %S"
+          (cl-type-of time)
+          time)
+        (list :time time :type (cl-type-of time)))))
 
   (format-time-string "%Y-%m-%d" time))
-
 
 (defun workbench-unix-timestamp-nanos(&optional time zone)
   "returns the natural number of seconds since epoch."
   (let* (
          (unix-and-nanos-string (format-time-string "%s %N" time zone))
-         (unix-and-nanos        (mapcar (lambda (n) (string-to-number n)) (split-string unix-and-nanos-string "[[:space:] \t\n]+" t )))
-         (timestamp             (car unix-and-nanos))
-         (nanosecs              (cadr unix-and-nanos))
-         )
+         (unix-and-nanos (mapcar (lambda (n) (string-to-number n)) (split-string unix-and-nanos-string "[[:space:] \t\n]+" t)))
+         (timestamp (car unix-and-nanos))
+         (nanosecs (cadr unix-and-nanos)))
     (list :timestamp timestamp
-          :nanosecs  nanosecs)
-    )
-  )
+      :nanosecs
+      nanosecs)))
 
 (defun workbench-unix-timestamp(&optional time zone)
   "returns the natural number of seconds since epoch."
@@ -50,29 +46,19 @@
   (let* (
          (now (workbench-unix-timestamp-nanos))
          (last-refresh (car workbench-refresh-history))
-         (today (workbench-get-day-string (workbench-unix-timestamp-now)))
-         )
-    (setq-default workbench-today-string today)
-    )
-  )
-
-
+         (today (workbench-get-day-string (workbench-unix-timestamp-now))))
+    (setq-default workbench-today-string today)))
 
 (defvar workbench-refresh-history
   (list)
   "history of every refresh kept by `workbench-today-refresh', elements are
 natural numbers of unix timestamp seconds")
 
-
-
 (defun workbench-last-refresh() (car workbench-refresh-history))
-
 
 (defvar workbench-today-string
   (workbench-today-refresh)
   "today's \"workbench\" day string")
-
-
 
 (defun workbench-refresh (&optional zone)
   "checks the date and updates internal workbench variables accordingly"
@@ -82,10 +68,6 @@ natural numbers of unix timestamp seconds")
     (unless (member today workbench-days)
       (push workbench-days today))
     today))
-
-
-
-
 
 (defvar workbench-days (list 'workbench-today) "list with ")
 (defun workbench-suffix-today (&optional zone)
@@ -115,79 +97,85 @@ is `nil' then the current timezone is assumed.
 This function automatically creates the workbench before returning its path.
 "
   (let ((workbench-path
-         (file-name-concat "~/workbench/"
-                           (format-time-string "%Y-%m-%d" time zone))))
+          (file-name-concat "~/workbench/"
+            (format-time-string "%Y-%m-%d" time zone))))
     (unless (file-directory-p workbench-path)
       (make-directory workbench-path t))
     workbench-path))
 
-
 (defun save-session-info-get-each-buffer-info-callback (buffer)
   (unless (bufferp buffer)
     (error "`buffer' is not a `bufferp' but rather `%s': %S"
-           (cl-type-of buffer)
-           buffer))
+      (cl-type-of buffer)
+      buffer))
 
   (let* ((start-cons (now-sexp))
          (contents
-          (save-mark-and-excursion
-            (widen)
-            (buffer-substring-no-properties (point-min) (point-max))))
+           (save-mark-and-excursion
+             (widen)
+             (buffer-substring-no-properties (point-min) (point-max))))
          (end-cons (now-sexp))
          (start (car start-cons))
          (end (car end-cons))
-         (elapsed-seconds (- end start)));;let
+         (elapsed-seconds (- end start))) ;;let
     ;; <body>
     (list
-     :read-start start
-     :read-end end
-     :contents contents
-     :name (buffer-name buffer)
-     :slug (shell-script-gen-safe-variable-name-from-string
-            (buffer-name buffer))
-     :filename (buffer-file-name buffer)
-     :filename-relatice (buffer-file-name buffer)
-     :cwd (getcwd)
-     :read-start-sec-and-nanos start-cons
-     :read-end-sec-and-nanos end-cons
-     ;;      :buffer buffer
-     )
+      :read-start
+      start
+      :read-end
+      end
+      :contents
+      contents
+      :name
+      (buffer-name buffer)
+      :slug
+      (shell-script-gen-safe-variable-name-from-string
+        (buffer-name buffer))
+      :filename
+      (buffer-file-name buffer)
+      :filename-relatice
+      (buffer-file-name buffer)
+      :cwd
+      (getcwd)
+      :read-start-sec-and-nanos
+      start-cons
+      :read-end-sec-and-nanos
+      end-cons
+      ;;      :buffer buffer
+      )
     ;; </body>
-    );; let* (after body)
-  ); defun save-session-info-get-buffer-contents-timed
+    )) ;; let* (after body) ; defun save-session-info-get-buffer-contents-timed
 (defun get-all-buffers-info()
   "returns list with information of each open buffer"
   (and
-   (unless (or (null dir-path) (stringp dir-path))
-     (signal 'type-error
-             (format "dir-path is not a string but rather %s: %S"
-                     (cl-type-of dir-path)
-                     dir-path)));; end unless
-   (unless (file-directory-p dir-path)
-     (signal 'type-error
-             (format "dir-path is not a directory: %S" dir-path)));; end unless
-   (unless (file-exists-p dir-path) (make-directory dir-path t) t);; end unless
-   );; end and
+    (unless (or (null dir-path) (stringp dir-path))
+      (signal 'type-error
+        (format "dir-path is not a string but rather %s: %S"
+          (cl-type-of dir-path)
+          dir-path))) ;; end unless
+    (unless (file-directory-p dir-path)
+      (signal 'type-error
+        (format "dir-path is not a directory: %S" dir-path))) ;; end unless
+    (unless (file-exists-p dir-path) (make-directory dir-path t) t)) ;; end unless ;; end and
   (mapcar #'save-session-info-get-each-buffer-info-callback
-          (buffer-list))) ;; end defun get-all-buffers-info
+    (buffer-list))) ;; end defun get-all-buffers-info
 
 (defun workbench/save-session-info(&optional dir-path)
   (interactive)
   (when (null dir-path) (setq-local dir-path (workbench-path)))
 
-
   (let* ((date-fs (format-time-string "%Y-%m-%d-%z"))
          (timestamp-fs (slugify-string (now)))
          (target-dir (file-name-concat (format "emacs-%s" date-fs)))
          (target-file-buffers-content-backup-dir
-          (file-name-concat target-dir
-                            (format "open-files-%s" timestamp-fs)))
+           (file-name-concat target-dir
+             (format "open-files-%s" timestamp-fs)))
          (target-open-buffers-list-filename
-          (format "emacs-open-buffers-%s" timestamp-fs))
+           (format "emacs-open-buffers-%s" timestamp-fs))
          (target-open-files-list-filename
-          (format "emacs-open-files-%s" timestamp-fs))
+           (format "emacs-open-files-%s" timestamp-fs))
          (target-filename-buffer-list
-          (format "emacs-open-buffers-%s" human-ts))
+           (format "emacs-open-buffers-%s" human-ts))
          (buffers (get-all-buffers-info))
          (lock-filename (file-name-concat target-dir "write.lock")))
     (make-directory target-file-buffers-content-backup-dir t)
@@ -203,40 +191,46 @@ This function automatically creates the workbench before returning its path.
     ;; :read-end-sec-and-nanos end-cons
     ;; :buffer buffer
     (mapc
-     #'(lambda (info)
+      #'(lambda (info)
          (let-alist
-             (seq-partition info 2)
-           (let* ((target-filename
-                   (file-name-concat
-                    target-file-buffers-content-backup-dir
-                    (string-trim-left .filename "^/+")))
-                  (target-dir (file-name-directory target-filename)))
-             (make-directory target-dir t)
-             (with-temp-buffer
-	       (insert .contents)
-	       (widen)
-	       (beginning-of-buffer)
-	       (write-region
-                (point-min)
-                (point-max)
-                .filename nil nil lock-filename))
-             (with-temp-buffer
-	       (insert (json-encode-plist info))
-	       (widen)
-	       (write-region
-                (point-min)
-                (point-max)
-                (format "%s.info.json" .filename)
-                nil nil lock-filename)))))
-     buffers) ;;end mapc #'(lambda (info))
+          (seq-partition info 2)
+          (let* ((target-filename
+                  (file-name-concat
+                   target-file-buffers-content-backup-dir
+                   (string-trim-left .filename "^/+")))
+                 (target-dir (file-name-directory target-filename)))
+           (make-directory target-dir t)
+           (with-temp-buffer
+            (insert .contents)
+            (widen)
+            (beginning-of-buffer)
+            (write-region
+             (point-min)
+             (point-max)
+             .filename
+             nil
+             nil
+             lock-filename))
+           (with-temp-buffer
+            (insert (json-encode-plist info))
+            (widen)
+            (write-region
+             (point-min)
+             (point-max)
+             (format "%s.info.json" .filename)
+             nil
+             nil
+             lock-filename)))))
+      buffers) ;;end mapc #'(lambda (info))
     (with-temp-buffer
       (insert (json-encode buffers))
       (widen)
       (beginning-of-buffer)
       (write-region
-       (point-min)
-       (point-max)
-       (file-name-concat target-dir
-                         (format "all-buffers-%s.json" timestamp-fs)
-                         nil nil lock-filename)))); end let of defun
-  );defun workbench/save-session-info
+        (point-min)
+        (point-max)
+        (file-name-concat target-dir
+          (format "all-buffers-%s.json" timestamp-fs)
+          nil ; end let of defun
+          nil
+          lock-filename))))) ;defun workbench/save-session-info

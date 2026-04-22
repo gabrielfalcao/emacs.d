@@ -5,39 +5,83 @@
 ;;
 ;;
 (Ox33b4O/$/undefine-key
- '(
-   "C-x C-z"
-   "C-c C-d"
-   "C-c C-r"
-   "C-c C-x"
-   ;; "M-o M-g"
-   "C-g"
-   "C-S"
-   "C-S-r"
-   "C-S-d"
-   "C-S-i"
-   "C-s"
-   "C-c C-x"
-   ;; "C-c C-u"
-   "C-x C-e"
-   "C-x C-d"
-   ;; "C-x C-p"
+  '(
+    "C-x C-z"
+    "C-c C-d"
+    "C-c C-r"
+    "C-c C-x"
+    ;; "M-o M-g"
+    "C-g"
+    "C-S"
+    "C-S-r"
+    "C-S-d"
+    "C-S-i"
+    "C-s"
+    "C-c C-x"
+    ;; "C-c C-u"
+    "C-x C-e"
+    "C-x C-d"
+    ;; "C-x C-p"
 
-   "C-q"
-   ;; <former #'keyboard-quit>
-   ;; "M-q"
-   "C-x C-q" "C-c M-y" "C-γ"
-   ;; </former #'keyboard-quit>
+    "C-q"
+    ;; <former #'keyboard-quit>
+    ;; "M-q"
+    "C-x C-q"
+    "C-c M-y"
+    "C-γ"
+    ;; </former #'keyboard-quit>
 
-   "C-\\"
-   "M-j"
-   "M-t"
-   "M-k"
-   "M-," "M-;"
-   "s-&" "s-'" "s-+" "s-," "s--" "s-0" "s-:" "s-=" "s-?" "s-C" "s-D" "s-E" "s-F" "s-H" "s-L" "s-M" "s-S" "s-^" "s-`" "s-a" "s-c" "s-d" "s-e" "s-f" "s-g" "s-h" "s-j" "s-k" "s-l" "s-m" "s-n" "s-o" "s-p" "s-q" "s-s" "s-t" "s-u" "s-v" "s-w" "s-x" "s-y" "s-z" "s-|" "s-~" "M-r"
-   )
- )
-
+    "C-\\"
+    "M-j"
+    "M-t"
+    "M-k"
+    "M-,"
+    "M-;"
+    "s-&"
+    "s-'"
+    "s-+"
+    "s-,"
+    "s--"
+    "s-0"
+    "s-:"
+    "s-="
+    "s-?"
+    "s-C"
+    "s-D"
+    "s-E"
+    "s-F"
+    "s-H"
+    "s-L"
+    "s-M"
+    "s-S"
+    "s-^"
+    "s-`"
+    "s-a"
+    "s-c"
+    "s-d"
+    "s-e"
+    "s-f"
+    "s-g"
+    "s-h"
+    "s-j"
+    "s-k"
+    "s-l"
+    "s-m"
+    "s-n"
+    "s-o"
+    "s-p"
+    "s-q"
+    "s-s"
+    "s-t"
+    "s-u"
+    "s-v"
+    "s-w"
+    "s-x"
+    "s-y"
+    "s-z"
+    "s-|"
+    "s-~"
+    "M-r"))
 
 (Ox33b4O/$/set-key (meta-comma ",") #'(lambda () (interactive) (find-file "~/.emacs.d/t/k.el")))
 (Ox33b4O/$/set-key (meta-comma "f") #'(lambda () (interactive) (find-file "~/.emacs.d/t/f.el")))
@@ -58,7 +102,7 @@
 (Ox33b4O/$/set-key '("C-x C-M-c TAB") #'insert-control-character-tab)
 (Ox33b4O/$/set-key '("C-x C-M-c n") #'insert-control-character-newline)
 (Ox33b4O/$/set-key '("C-x C-M-i n") #'insert-control-character-newline)
-(Ox33b4O/$/set-key '("C-\\")        #'insert-escape-sexp-backslash-comma)
+(Ox33b4O/$/set-key '("C-\\") #'insert-escape-sexp-backslash-comma)
 (Ox33b4O/$/set-key '("C-x C-M-c RET") #'insert-control-character-newline)
 (Ox33b4O/$/set-key '("C-x C-M-c DEL") #'insert-control-character-carriage-return)
 (Ox33b4O/$/set-key '("C-x C-M-i TAB") #'insert-control-character-tab)
@@ -67,7 +111,6 @@
 (Ox33b4O/$/set-key '("C-x C-M-e") #'Ox33b4O/$/reload-init)
 ;; (Ox33b4O/$/set-key '("C-x C-M-g a") 'git-add)
 ;; (Ox33b4O/$/set-key '("C-x C-M-g s") 'git-save)
-
 
 ;; (Ox33b4O/$/set-key '("C-x M-t") #')
 (Ox33b4O/$/set-key '("C-x C-a") #'eval-elisp-buffer)
@@ -87,12 +130,13 @@
 
 (Ox33b4O/$/set-key '("C-M-v" "M-V") 'clipboard-yank)
 (Ox33b4O/$/set-key '("C-M-c" "M-c") 'clipboard-kill-ring-save)
-(Ox33b4O/$/set-key '("C-M-x" "M-X" ) 'clipboard-kill-region)
+(Ox33b4O/$/set-key '("C-M-x" "M-X") 'clipboard-kill-region)
 (Ox33b4O/$/set-key '("C-x C-q" "C-c M-y" "C-γ") 'keyboard-quit)
 (Ox33b4O/$/set-key '("C-x C-d C-h") 'info)
 ;; (Ox33b4O/$/set-key "C-c C-u C-d C-a" #'(lambda () (interactive) (when (read-only-mode -8) (message "%s unlocked" (buffer-name)))))
 
-(Ox33b4O/$/set-key '("C-x M-k") 'Ox33b4O/$/load-library)(Ox33b4O/$/set-key '("C-x M-,") 'Ox33b4O/$/load-init)
+(Ox33b4O/$/set-key '("C-x M-k") 'Ox33b4O/$/load-library)
+(Ox33b4O/$/set-key '("C-x M-,") 'Ox33b4O/$/load-init)
 
 (global-set-key (kbd "C-c C-c C-r") 'collapse-lines-region)
 
@@ -123,8 +167,7 @@
   (Ox33b4O/$/set-key '("C-x M-e") #'Ox33b4O/find-file/~/opt/libexec)
   (Ox33b4O/$/set-key '("C-x M-l") #'Ox33b4O/find-file/~/opt/libexec)
   (Ox33b4O/$/set-key '("C-x M-f") #'Ox33b4O/open-functions-el)
-  (Ox33b4O/$/set-key '("C-x M-x") #'Ox33b4O/find-file/~/.emacs.d)
-  ) ;; end progn 2025-12-17
+  (Ox33b4O/$/set-key '("C-x M-x") #'Ox33b4O/find-file/~/.emacs.d)) ;; end progn 2025-12-17
 
 (Ox33b4O/$/set-key '("C-x C-SPC" "C-c C-SPC") 'rectangle-mark-mode)
 (Ox33b4O/$/set-key "C-x C-e e" 'g/ep)
@@ -147,41 +190,42 @@
 (Ox33b4O/$/set-key '("C-x C-2" "C-x C-e C-g") 'make-frame-command)
 (Ox33b4O/$/set-key '("C-x C-e C-o") 'other-frame)
 (Ox33b4O/$/set-key "<f12>" 'g/format/prettify)
-(Ox33b4O/$/set-key '("M-<f10>" "M-<f11>" "M-<f12>" ) 'revert-buffer)
+(Ox33b4O/$/set-key '("M-<f10>" "M-<f11>" "M-<f12>") 'revert-buffer)
 (Ox33b4O/$/set-key '("C-c C-n" "C-x C-n" "C-c C-M-n") 'uncomment-region)
 (Ox33b4O/$/set-key '("C-c c" "C-#" "C-c C-M-c") 'comment-region)
 (Ox33b4O/$/set-key '("C-c C-x C-e" "C-c C-d C-e"
-		     "C-c C-e C-b" "C-x C-d C-e")
-		   'Ox33b4O/$/base64-encode-region)
+                     "C-c C-e C-b"
+                     "C-x C-d C-e")
+  'Ox33b4O/$/base64-encode-region)
 (Ox33b4O/$/set-key '("C-c C-x C-d" "C-c C-d C-d"
-		     "C-x C-d C-d")
-		   'base64-decode-region)
+                     "C-x C-d C-d")
+  'base64-decode-region)
 
 (Ox33b4O/$/set-key '("C-c C-d C-3" "C-x C-d C-3" "C-c C-e C-3" "C-x C-e C-3") 'rot13-region)
-(Ox33b4O/$/set-key   '("C-z" "M-z" "C-_") 'undo      )
-(Ox33b4O/$/set-key   '("M-ρ" "C-r") #'replace-regexp  )
-(Ox33b4O/$/set-key   '("C-M-s-r") #'replace-regexp-all-buffer  )
-(Ox33b4O/$/set-key   '("C-c M-s") #'replace-string    )
-(Ox33b4O/$/set-key   '("M-a") 'ignore                )
-(Ox33b4O/$/set-key   '("M-c") 'ignore                )
-(Ox33b4O/$/set-key   '("M-D") #'describe-symbol)
-(Ox33b4O/$/set-key   '("C-M-S" "C-x C-g C-a") #'git-add)
-(Ox33b4O/$/set-key   '("C-x C-g C-s") #'git-save)
-(Ox33b4O/$/set-key   '("C-x C-g C-d") #'git-diff)
+(Ox33b4O/$/set-key '("C-z" "M-z" "C-_") 'undo)
+(Ox33b4O/$/set-key '("M-ρ" "C-r") #'replace-regexp)
+(Ox33b4O/$/set-key '("C-M-s-r") #'replace-regexp-all-buffer)
+(Ox33b4O/$/set-key '("C-c M-s") #'replace-string)
+(Ox33b4O/$/set-key '("M-a") 'ignore)
+(Ox33b4O/$/set-key '("M-c") 'ignore)
+(Ox33b4O/$/set-key '("M-D") #'describe-symbol)
+(Ox33b4O/$/set-key '("C-M-S" "C-x C-g C-a") #'git-add)
+(Ox33b4O/$/set-key '("C-x C-g C-s") #'git-save)
+(Ox33b4O/$/set-key '("C-x C-g C-d") #'git-diff)
 
-(Ox33b4O/$/set-key   '("C-g") 'keyboard-quit   )
+(Ox33b4O/$/set-key '("C-g") 'keyboard-quit)
 
 (Ox33b4O/$/set-key "M-s" 'isearch-forward-input-regexp)
 (Ox33b4O/$/set-key "M-r" 'isearch-backward-regexp)
 
-(Ox33b4O/$/set-key   "C-s"   'isearch-forward-regexp )
-(Ox33b4O/$/set-key   "C-S-s" 'isearch-backward-regexp)
-(Ox33b4O/$/set-key   "M-G" #'(lambda () (interactive) (insert "$")))
-(Ox33b4O/$/set-key   '("M-g g" "M-g M-g") 'goto-line)
-(Ox33b4O/$/set-key   "C-x C-z" #'(lambda () (interactive) (insert "\n")))
-(Ox33b4O/$/set-key   "C-x C-j" #'(lambda () (interactive) (insert "\n")))
+(Ox33b4O/$/set-key "C-s" 'isearch-forward-regexp)
+(Ox33b4O/$/set-key "C-S-s" 'isearch-backward-regexp)
+(Ox33b4O/$/set-key "M-G" #'(lambda () (interactive) (insert "$")))
+(Ox33b4O/$/set-key '("M-g g" "M-g M-g") 'goto-line)
+(Ox33b4O/$/set-key "C-x C-z" #'(lambda () (interactive) (insert "\n")))
+(Ox33b4O/$/set-key "C-x C-j" #'(lambda () (interactive) (insert "\n")))
 
-(setq        ring-bell-function               'ignore)
+(setq ring-bell-function 'ignore)
 (global-set-key [kp-delete] 'delete-char)
 (setq select-enable-clipboard nil)
 (setq inhibit-splash-screen t)
@@ -200,7 +244,6 @@
 (setq ns-option-modifier 'meta)
 (setq ns-command-modifier 'meta)
 
-
 (Ox33b4O/$/set-key '("C-x C--") 'text-scale-adjust)
 (Ox33b4O/$/set-key '("C-x C-d C-k") 'describe-key)
 (Ox33b4O/$/set-key '("C-x C-d k") 'describe-keymap)
@@ -208,52 +251,40 @@
 ;; (Ox33b4O/$/set-key '("<tab>") 'indent-for-tab-command)
 (Ox33b4O/$/set-key '("C-x j") #'(lambda () (interactive) (progn (auto-fill-mode -5) (insert "\n"))))
 
+(Ox33b4O/$/set-key '(
+                     "C-f")
+  'forward-char)
+(Ox33b4O/$/set-key '(
+                     "C-b")
+  'backward-char)
 
-(Ox33b4O/$/set-key   '(
-		       "C-f"
-		       )
-		     'forward-char)
-(Ox33b4O/$/set-key   '(
-		       "C-b"
-		       )
-		     'backward-char)
-
-(Ox33b4O/$/set-key   '(
-		       "C-n"
-		       )
-		     'next-line)
-(Ox33b4O/$/set-key   '(
-		       "C-p"
-		       )
-		     'previous-line)
-(Ox33b4O/$/set-key   '(
-		       "M-f"
-		       )
-		     'forward-word)
-(Ox33b4O/$/set-key   '(
-		       "M-b"
-		       )
-		     'backward-word)
-(Ox33b4O/$/set-key   '(
-		       "C-a"
-		       )
-		     'beginning-of-line)
-(Ox33b4O/$/set-key   '(
-		       "C-e"
-		       )
-		     'end-of-line)
-(Ox33b4O/$/set-key   '(
-		       "M-<"
-		       )
-		     'beginning-of-buffer)
-(Ox33b4O/$/set-key   '(
-		       "M->"
-		       )
-		     'end-of-buffer)
-(Ox33b4O/$/set-key   '(
-		       "C-k"
-		       )
-		     'kill-line)
+(Ox33b4O/$/set-key '(
+                     "C-n")
+  'next-line)
+(Ox33b4O/$/set-key '(
+                     "C-p")
+  'previous-line)
+(Ox33b4O/$/set-key '(
+                     "M-f")
+  'forward-word)
+(Ox33b4O/$/set-key '(
+                     "M-b")
+  'backward-word)
+(Ox33b4O/$/set-key '(
+                     "C-a")
+  'beginning-of-line)
+(Ox33b4O/$/set-key '(
+                     "C-e")
+  'end-of-line)
+(Ox33b4O/$/set-key '(
+                     "M-<")
+  'beginning-of-buffer)
+(Ox33b4O/$/set-key '(
+                     "M->")
+  'end-of-buffer)
+(Ox33b4O/$/set-key '(
+                     "C-k")
+  'kill-line)
 
 (progn
   (put 'upcase-region 'disabled nil)

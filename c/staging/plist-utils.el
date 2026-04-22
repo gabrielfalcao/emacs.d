@@ -3,14 +3,13 @@
 
   (unless (plistp props)
     (signal 'type-error
-            (format  "argument `props' must be a but instead received `%s': %s"
-                     (cl-type-of props)
-                     props)))
+      (format "argument `props' must be a but instead received `%s': %s"
+        (cl-type-of props)
+        props)))
   (mapcar
-   (lambda (even odd)
-     (list (nth even props) (nth odd props)))
-   (number-sequence 0 (- (length props) 1))))
-
+    (lambda (even odd)
+      (list (nth even props) (nth odd props)))
+    (number-sequence 0 (- (length props) 1))))
 
 (defun plist-objects (props)
   "returns a list of obarrays containing details about each of the plist
@@ -21,16 +20,13 @@ such as key type, value type and index of prop in plist.
 "
   (unless (plistp props)
     (signal 'type-error
-            (format  "argument `props' must be a but instead received `%s': %s"
-                     (cl-type-of props)
-                     props)))
+      (format "argument `props' must be a but instead received `%s': %s"
+        (cl-type-of props)
+        props)))
   (seq-map-indexed
-   (lambda (even odd)
-     (list (nth even props) (nth odd props)))
-   props))
-
-
-
+    (lambda (even odd)
+      (list (nth even props) (nth odd props)))
+    props))
 
 (defun plist-item-format (key value index key-type value-type)
   "default value of the `format-fn' argument of `plist-format-items' function"
@@ -42,10 +38,10 @@ for debugging plists"
   (unless format-fn (setq format-fn #'plist-item-format))
 
   (seq-map-indexed
-   (lambda (key-value index)
-     (let* ((key (car key-value))
-            (value (cadr key-value))
-            (key-type (cl-type-of key))
-            (value-type (cl-type-of value)))
-       (format-fn key value index key-type value-type))
-     (plist-items props))))
+    (lambda (key-value index)
+      (let* ((key (car key-value))
+             (value (cadr key-value))
+             (key-type (cl-type-of key))
+             (value-type (cl-type-of value)))
+        (format-fn key value index key-type value-type))
+      (plist-items props))))

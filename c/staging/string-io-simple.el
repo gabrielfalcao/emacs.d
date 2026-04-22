@@ -1,15 +1,15 @@
 (defun read-string-from-buffer (buffer-or-name)
   (unless (or (stringp buffer-or-name) (bufferp buffer-or-name))
     (signal 'type-error
-            (format  "argument `buffer-or-name' must be a buffer or the name of an existing buffer but instead received `%s': %s"
-                     (type-of buffer-or-name)
-                     buffer-or-name)))
+      (format "argument `buffer-or-name' must be a buffer or the name of an existing buffer but instead received `%s': %s"
+        (type-of buffer-or-name)
+        buffer-or-name)))
 
   (unless (stringp gawk-code)
     (signal 'type-error
-            (format  "argument `gawk-code' must be string but instead received `%s': %s"
-                     (type-of gawk-code)
-                     gawk-code)))
+      (format "argument `gawk-code' must be string but instead received `%s': %s"
+        (type-of gawk-code)
+        gawk-code)))
 
   (with-current-buffer buffer-or-name
     (save-mark-and-excursion

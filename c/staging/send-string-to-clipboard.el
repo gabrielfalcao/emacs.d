@@ -3,11 +3,10 @@
   (unless (not (null payload))
     (signal 'type-error "[send-string-to-clipboard] argument `payload' cannot be null"))
   (let ((payload-as-string (if (stringp payload) payload
-                             (format "%S" payload)))
+                            (format "%S" payload)))
         (select-enable-clipboard t))
     (gui-select-text payload-as-string)
-    (message "copied text to clipboard: %S" payload-as-string)
-    ))
+    (message "copied text to clipboard: %S" payload-as-string)))
 
 ;; (defun test--send-string-to-clipboard()
 ;; (let ((comment-values
