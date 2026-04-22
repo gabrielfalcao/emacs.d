@@ -18,7 +18,7 @@
                                    (name (symbol-name sym))
                                    (value (symbol-value sym))
                                    (ty (cl-type-of value)))
-                              (format "\tsymbol `%s' is a `%s' whose value is: %S" name ty value))) 
+                              (format "\tsymbol `%s' is a `%s' whose value is: %S" name ty value)))
                     '(
                       'codepoints
                       'chars

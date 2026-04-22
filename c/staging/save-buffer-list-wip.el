@@ -74,7 +74,7 @@
 
 (defun save-open-buffers-as-wip-in-workbench ()
   (interactive)
-  (let* ((epoch (string-to-number (format-time-string "%s"))) 
+  (let* ((epoch (string-to-number (format-time-string "%s")))
          (workbench-wip-buffers-path (get-workbench-wip-save-path epoch))
          (workbench-wip-buffers-index-file-path (file-name-concat workbench-wip-buffers-path "index.json"))
 

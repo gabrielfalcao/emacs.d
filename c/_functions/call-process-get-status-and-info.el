@@ -91,7 +91,7 @@ containing both the stdout and stderr of that process.
                               (propertize
                                 (format "%s" err)
                                 'face
-                                (list :foreground "#F6A3D7" :background "#3d3d3d"))))  ;; #C63367 ;; end let varlist
+                                (list :foreground "#F6A3D7" :background "#3d3d3d")))) ;; #C63367 ;; end let varlist
                        (c-message "%s %s" error-label error-message))))))
         (when (and (numberp display-buffer) (= display-buffer 2))
           (let* ((bottom (split-window-below)))

@@ -1,6 +1,6 @@
 (defun get-mode-name-neat-only-string(&optional buffer-or-name)
   (let* (
-         (buf (cond 
+         (buf (cond
                ((bufferp buffer-or-name)
                  (get-buffer buffer-or-name))
 
