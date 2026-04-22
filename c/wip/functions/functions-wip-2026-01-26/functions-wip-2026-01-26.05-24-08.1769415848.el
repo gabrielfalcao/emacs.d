@@ -1,6 +1,0 @@
-(defun shell-script-replace-negative-integer-assignment-to-variable-declarations-region(beg end)
-  (interactive "*r")
-  (let ((regexp "^\\(\\s-*\\)\\(declare\\|local\\)\\(\\s-+[-][i]\\s-+\\)\\([a-z_]+\\)=-1[;]?\\s-*$")
-        (replacement "\\1\\2\\3\\4=0;"))
-    (replace-regexp-in-region regexp replacement beg end)
-    ))
