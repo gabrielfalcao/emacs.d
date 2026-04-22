@@ -1,3 +1,13 @@
+(require 'package)
+(package-initialize)
+
+(setq package-archives
+  '(
+    ("gnu" . "https://elpa.gnu.org/packages/")
+    ("nongnu" . "https://elpa.nongnu.org/nongnu/")
+    ("melpa" . "https://melpa.org/packages/")
+    ("melpa-stable" . "https://stable.melpa.org/packages/")))
+
 (defun install-missing-packages()
   (interactive)
   (package-refresh-contents)
