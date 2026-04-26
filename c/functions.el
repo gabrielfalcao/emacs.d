@@ -1,4 +1,17 @@
 (safe-load-file "~/.emacs.d/c/staging/c-message/c-message-debug-buffer-local-vars.el")
+(defun eval-rs-modules()
+  (interactive)
+  (let* (
+         (dylib-mod-path (expand-file-name "~/.emacs.d/c/dylibs.el"))
+         (buffer         (find-file-noselect dylib-mod-path))
+         )
+    (with-current-buffer buffer
+     (widen)
+     (beginning-of-buffer)
+     (eval-buffer)
+    )
+    )
+  )
 (defun string-shift-right (g) "." (format "\t%s" g))
 
 
@@ -3016,14 +3029,6 @@ which returns the exit-status and the string output.
                 (abbreviate-file-name current-filename)
                 exit-code))))))
 
-(defun enable-case-fold-search ()
-  (interactive)
-  (setq case-fold-search t))
-
-(defun disable-case-fold-search ()
-  (interactive)
-  (setq case-fold-search nil))
-
 (defun shell-wrap-variables-in-braces-region (beg end)
   "."
   (interactive "*r")
@@ -4140,18 +4145,23 @@ signals error if the `string' argument is not a string"
           (mapcar
            #'(lambda (line)
 	       (save-match-data
-                 (setq case-fold-search nil) ;; case sensitive
-	         (if (string-match git-status-porcelain-regexp line)
-		     (let ((staged (match-string 1 line))   ;; then
-			   (unstaged (match-string 2 line)) ;; then
-			   (path (match-string 3 line)))    ;; then
-		       (list 'staged staged             ;; then
-			     'unstaged unstaged         ;; then
-			     'path path))               ;; end inner let varlist
+                 (unwind-protect
+                     (progn
+                       (setq case-fold-search nil) ;; case sensitive
+	               (if (string-match git-status-porcelain-regexp line)
+		           (let ((staged (match-string 1 line))   ;; then
+			         (unstaged (match-string 2 line)) ;; then
+			         (path (match-string 3 line)))    ;; then
+		             (list 'staged staged             ;; then
+			           'unstaged unstaged         ;; then
+			           'path path))               ;; end inner let varlist
 
-                   ;; else
-                   nil ;; else ;; KGxpc3QgJ3N0YWdlZCBuaWwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICd1bnN0YWdlZCBuaWwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICdwYXRoIG5pbCkpKQ==
-                   ) ;;end if
+                         ;; else
+                         nil ;; else ;; KGxpc3QgJ3N0YWdlZCBuaWwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICd1bnN0YWdlZCBuaWwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICdwYXRoIG5pbCkpKQ==
+                         ) ;;end if
+                       )
+                   (setq case-fold-search t)
+                   ) ;;end unwind-protect
                  ) ;; end save-match-data
 	       ) ;;end lambda
            ;; sequence
