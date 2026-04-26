@@ -7,6 +7,10 @@
 (require 'help-fns)
 (safe-load-file "~/.emacs.d/c/staging/write-to-minibuffer.el")
 (safe-load-file "~/.emacs.d/c/staging/save-match-data-excursion-and-restriction.el")
+(condition-case err
+    (safe-load-file "~/.emacs.d/c/dylibs.el")
+  (error (warn "failed to load dylibs.el: %s" (error-message-string err)))
+  )
 
 (define-error 'c-el-internal-error
   (format "Internal Error in elisp files under `default-directory'/`c/*.el'"))
@@ -134,6 +138,9 @@
 (setq-default auto-save-interval 137)
 (setq-default save-interprogram-paste-before-kill t)
 ;; (setq-default case-fold-search nil)
+(setq-default replace-char-fold t)
+(setq-default case-fold-search t)
+
 (defalias 'yes-or-no-p #'y-or-n-p)
 (defalias '~libexec #'Ox33b4O/find-file/~/opt/libexec)
 (defalias '~opt/libexec #'Ox33b4O/find-file/~/opt/libexec)

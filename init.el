@@ -205,3 +205,18 @@ semantics of the arguments of `format-time-string'.
 ;(erase-all-non-file-buffers)
 
 (disable-bars)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(ansi autothemer blacken brightscript-mode cargo-mode company-box
+          csharp-mode dockerfile-mode elixir-mode exec-path-from-shell
+          expand-region flycheck-rust flymake-shellcheck gdscript-mode
+          go-mode haml-mode highlight-indentation jinja2-mode
+          jsonnet-mode kotlin-mode line-reminder lua-mode
+          markdown-mode nginx-mode pcre2el peg php-mode protobuf-mode
+          python-mode pythonic restclient rust-mode sed-mode slime
+          solidity-flycheck swift-mode terraform-mode toml toml-mode
+          typescript-mode web-mode yaml-mode)))
