@@ -78,8 +78,18 @@ disown -a
 }
 
 on_ctrlc() {
-    1>&2 echo -e "\x1b[1;38;2;253;67;83m\rAborted with Ctrl-C\x1b[0m"
-    exit 1
+    local -- msg="Aborted with Ctrl-C"
+    local -i len=${#msg}
+    local -i screen_width=0
+    if [[ -v COLUMNS ]]; then
+        screen_width=$(( COLUMNS ))
+    else
+        local -- stty_info=$(stty -a | grep -E -i columns)
+        screen_width=$(echo "${stty_info}" | sed -n -E "s,^.*[;]\s+((\s*columns\s+)([0-9]+)|([0-9]+)(\s+columns\s*))[;],\3\4,gp" | grep -E '^[0-9]+$' | sort -un)
+    fi
+
+    1>&2 echo -e "\r$(printf '%*s' ${screen_width} "\r\x1b[1;38;2;253;67;83m${msg}" )\x1b[0m"
+    exit 130
 }
 trap on_exit exit
 trap on_ctrlc hup
