@@ -217,6 +217,8 @@ semantics of the arguments of `format-time-string'.
           go-mode haml-mode highlight-indentation jinja2-mode
           jsonnet-mode kotlin-mode line-reminder lua-mode
           markdown-mode nginx-mode pcre2el peg php-mode protobuf-mode
-          python-mode pythonic restclient rust-mode sed-mode slime
-          solidity-flycheck swift-mode terraform-mode toml toml-mode
-          typescript-mode web-mode yaml-mode)))
+          python-mode pythonic rainbow-blocks rainbow-delimiters
+          rainbow-identifiers rainbow-mode restclient rust-mode
+          sed-mode slime solidity-flycheck ssh-config-mode swift-mode
+          terraform-mode toml toml-mode typescript-mode web-mode
+          yaml-mode)))

@@ -53,7 +53,7 @@ interactive command `replace-regexp' like so:
          (pairs (/ md-len 2))
          (c-messages-is-visible (c-message-visible-p))
          (subexp-count (- pairs 1))
-         (subexp-range-seq (number-sequence 0 subexp-count))
+         (subexp-range-seq (number-sequence 1 subexp-count))
          (subexp-dbg-strings (list))
          (result-string         "")
          ;;

@@ -18,7 +18,7 @@ By default, calls to `c-message' write messages to a buffer named
   "Name of buffer where all \"C-Messages\" are written to.")
 
 (defcustom c-message-write-to-minibuffer
-  t
+  nil
   "`c-message' will always write to minibuffer unless this var is set to `nil'"
   :type
   'boolean
