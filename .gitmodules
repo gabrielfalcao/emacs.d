@@ -1,0 +1,15 @@
+[submodule "thirt_party/pullover"]
+	path = thirt_party/pullover
+	url = https://github.com/ubolonton/pullover.git
+[submodule "thirt_party/emacs-rs-examples"]
+	path = thirt_party/emacs-rs-examples
+	url = git@github.com:ubolonton/emacs-rs-examples.git
+[submodule "thirt_party/magit-git2"]
+	path = thirt_party/magit-git2
+	url = git@github.com:ubolonton/magit-libgit2.git
+[submodule "thirt_party/emacs-module-rs"]
+	path = thirt_party/emacs-module-rs
+	url = git@github.com:ubolonton/emacs-module-rs.git
+[submodule "thirt_party/elisp-tree-sitter"]
+	path = thirt_party/elisp-tree-sitter
+	url = git@github.com:emacs-tree-sitter/elisp-tree-sitter.git
