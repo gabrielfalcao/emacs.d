@@ -212,13 +212,13 @@ semantics of the arguments of `format-time-string'.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    '(ansi autothemer blacken brightscript-mode cargo-mode company-box
-          csharp-mode dockerfile-mode elixir-mode exec-path-from-shell
-          expand-region flycheck-rust flymake-shellcheck gdscript-mode
-          go-mode haml-mode highlight-indentation jinja2-mode
-          jsonnet-mode kotlin-mode line-reminder lua-mode
-          markdown-mode nginx-mode pcre2el peg php-mode protobuf-mode
-          python-mode pythonic rainbow-blocks rainbow-delimiters
-          rainbow-identifiers rainbow-mode restclient rust-mode
-          sed-mode slime solidity-flycheck ssh-config-mode swift-mode
-          terraform-mode toml toml-mode typescript-mode web-mode
-          yaml-mode)))
+          csharp-mode dockerfile-mode elixir-mode ement
+          exec-path-from-shell expand-region flycheck-rust
+          flymake-shellcheck gdscript-mode go-mode haml-mode
+          highlight-indentation jinja2-mode jsonnet-mode kotlin-mode
+          line-reminder lua-mode markdown-mode nginx-mode pcre2el peg
+          php-mode protobuf-mode python-mode pythonic rainbow-blocks
+          rainbow-delimiters rainbow-identifiers rainbow-mode
+          restclient rust-mode sed-mode slime solidity-flycheck
+          ssh-config-mode swift-mode terraform-mode toml toml-mode
+          typescript-mode web-mode yaml-mode)))
