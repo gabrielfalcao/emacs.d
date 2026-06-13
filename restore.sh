@@ -1,10 +1,30 @@
-20257  @1781361278:UTC     cls;for source_file in $(find . -name '*#*'); do source_path=$(path canon "${source_file}"); target_path="c/${source_path}"; echo "${source_path}"; echo "${target_path}"; echo "${source_file}"; echo; done
-20258  @1781361290:UTC     cls;for source_file in $(find . -name '*#*'); do source_path=$(path parent "${source_file}"); target_path="c/${source_path}"; echo "${source_path}"; echo "${target_path}"; echo "${source_file}"; echo; done
-20259  @1781361292:UTC     cls;for source_file in $(find . -name '*#*'); do source_path=$(path canon "${source_file}"); target_path="c/${source_path}"; echo "${source_path}"; echo "${target_path}"; echo "${source_file}"; echo; done
-20260  @1781361294:UTC     cls;for source_file in $(find . -name '*#*'); do source_path=$(path parent "${source_file}"); target_path="c/${source_path}"; echo "${source_path}"; echo "${target_path}"; echo "${source_file}"; echo; done
-20261  @1781361296:UTC     cls;for source_file in $(find . -name '*#*'); do source_path=$(path canon "${source_file}"); target_path="c/${source_path}"; echo "${source_path}"; echo "${target_path}"; echo "${source_file}"; echo; done
-20262  @1781361305:UTC     cls;for source_file in $(find . -name '*#*'); do source_path=$(path parent "${source_file}"); target_path="c/${source_path}"; echo "${source_path}"; echo "${target_path}"; echo "${source_file}"; echo; done
-20263  @1781361315:UTC     cls;for source_file in $(find . -name '*#*'); do source_path=$(path parent "${source_file}"); target_path="c/${source_path}";  filename="${source_file}"; source_parent="$(path parent "${source_file}")"; echo "filename => ${filename}"; echo "source_parent => ${source_parent}"; echo; done
-20264  @1781361366:UTC     cls;for source_file in $(find . -name '*#*'); do source_path=$(path parent "${source_file}"); target_path="c/${source_path}";  filename="${source_file}"; source_parent="$(path parent "${source_file}")"; echo "filename => ${filename}"; echo "source_parent => ${source_parent}"; echo; echo; done
-20265  @1781361383:UTC     cls;for source_file in $(find . -name '*#*'); do source_path=$(path parent "${source_file}"); target_path="c/${source_path}";  filename="${source_file}"; source_parent="$(path parent "${source_file}")";  full_filename=$(path canon "${source_file}"); source_parent=$(path canon "${filename}"); echo "full_filename => ${full_filename}"; echo "source_parent => ${source_parent}"; echo; echo; done
-20266  @1781361445:UTC     cls;for source_file in $(find . -name '*#*'); do source_path=$(path parent "${source_file}"); target_path="c/${source_path}";  filename="${source_file}"; source_parent="$(path parent "${source_file}")";  full_filename=$(path canon "${source_file}"); source_parent=$(path canon "${filename}"); echo "full_filename => ${full_filename}"; echo "source_parent => ${source_parent}"; echo; echo; done
+#!/usr/bin/env bash
+
+
+set -umeTE
+set +f
+set -o pipefail
+unset IFS
+export IFS=$'\n'
+
+declare -- script_name="$(basename "${BASH_SOURCE[0]}")"
+declare -- script_path="$(2>/dev/random 1>/dev/random cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+1>&2 echo -en "\x1b[2J\x1b[3J\x1b[H"
+
+for filename in $(find . -name '*#*'); do
+    source_path="$(path parent "${filename}")"
+    target_path="$(path canon "c/${source_path}")"
+
+    source_parent="$(path parent "${source_path}")"
+
+    full_filename=$(path canon "${source_path}")
+    source_parent=$(path canon "${full_filename}")
+
+    echo "source_path => ${source_path}"
+    echo "target_path => ${target_path}"
+
+    echo "full_filename => ${full_filename}"
+    echo "source_parent => ${source_parent}"
+    echo
+    echo
+done
