@@ -6,10 +6,10 @@
          (buffer         (find-file-noselect dylib-mod-path))
          )
     (with-current-buffer buffer
-     (widen)
-     (beginning-of-buffer)
-     (eval-buffer)
-    )
+      (widen)
+      (beginning-of-buffer)
+      (eval-buffer)
+      )
     )
   )
 (defun string-shift-right (g) "." (format "\t%s" g))
@@ -331,13 +331,13 @@
   (cond
    ((buffer-elisp-heuristic)
     (save-mark-excursion-and-match-data
-     (widen)
-     (beginning-of-buffer)
-     (eval-buffer)
-     (erase-messages)
-     (message "buffer %S evaluated" (buffer-name))
-     ;;OzsgKGxldCAoKGluZm8gKGZvcm1hdCAiJXMgZXZhbCdkICIgKGJ1ZmZlci1uYW1lKSkpKQogICAgICAgIDs7ICAgKHVubGVzcyAoc3RyaW5nPSBpbmZvIChjdXJyZW50LW1lc3NhZ2UpKQogICAgICAgIDs7ICAgICAobWVzc2FnZSAiJXMiIGluZm8pKSk=
-     ))
+      (widen)
+      (beginning-of-buffer)
+      (eval-buffer)
+      (erase-messages)
+      (message "buffer %S evaluated" (buffer-name))
+      ;;OzsgKGxldCAoKGluZm8gKGZvcm1hdCAiJXMgZXZhbCdkICIgKGJ1ZmZlci1uYW1lKSkpKQogICAgICAgIDs7ICAgKHVubGVzcyAoc3RyaW5nPSBpbmZvIChjdXJyZW50LW1lc3NhZ2UpKQogICAgICAgIDs7ICAgICAobWVzc2FnZSAiJXMiIGluZm8pKSk=
+      ))
    (t (progn (warn "cannot evaluate buffer %s because it is not in %s, trying to run pretty formatter instead"
                    (Ox33b4O/$/paint-mode-line-color (buffer-name))
 	           (Ox33b4O/$/paint-mode-line-color "elisp-mode"))
@@ -3055,23 +3055,23 @@ which returns the exit-status and the string output.
   "BEG END."
   (interactive "*r")
   (save-mark-excursion-and-match-data
-   (goto-char beg)
-   (while (re-search-forward
-           "\\(^\\|\\b\\)[a-fA-F0-9]+\\(\\b\\|$\\)" end t)
-     (let* ((val (format "%s" (string-to-number (match-string) 16)))
-            ;; (hexa (or (and (length= val 1) (format "0%s" val))
-            ;;           val))
-            )
-       (replace-match val)))))
+    (goto-char beg)
+    (while (re-search-forward
+            "\\(^\\|\\b\\)[a-fA-F0-9]+\\(\\b\\|$\\)" end t)
+      (let* ((val (format "%s" (string-to-number (match-string) 16)))
+             ;; (hexa (or (and (length= val 1) (format "0%s" val))
+             ;;           val))
+             )
+        (replace-match val)))))
 
 (defun decimal-to-hex-region (beg end)
   "BEG END."
   (interactive "*r")
   (save-mark-excursion-and-match-data
-   (goto-char beg)
-   (while (re-search-forward "\\(^\\|\\b\\)[0-9]+\\(\\b\\|$\\)" end t)
-     (replace-match
-      (format "%02x" (string-to-number (match-string 0)))))))
+    (goto-char beg)
+    (while (re-search-forward "\\(^\\|\\b\\)[0-9]+\\(\\b\\|$\\)" end t)
+      (replace-match
+       (format "%02x" (string-to-number (match-string 0)))))))
 
 
 (defun slugify-string (string)
@@ -5358,20 +5358,20 @@ element to string like `princ' would.
   (let* ((new-end (copy-marker end))
          (last-pos (copy-marker end)))
     (save-mark-excursion-and-match-data
-     (widen)
-     (replace-regexp-in-region
-      "\\(do\\|;\\)\\s-+\\b\\(if\\|then\\|else\\|fi\\|done\\)\\b"
-      "\\1\n\\2\n" beg end)
-     (setq last-pos (point) new-end (point)))
+      (widen)
+      (replace-regexp-in-region
+       "\\(do\\|;\\)\\s-+\\b\\(if\\|then\\|else\\|fi\\|done\\)\\b"
+       "\\1\n\\2\n" beg end)
+      (setq last-pos (point) new-end (point)))
 
     (save-mark-excursion-and-match-data
-     (replace-regexp-in-region
-      "\\(if\\|then\\)[\n[:space:]]+"
-      "\\1 " beg new-end)
-     (replace-regexp-in-region
-      "\\(;\\)\\(\\s-*\\)\n\\(\\s-*\\)\\(then\\)\\s-+"
-      "\\1 \\2 \\3\\4\n\\2\\3"
-      beg new-end)) ;; save-mark-excursion-and-match-data
+      (replace-regexp-in-region
+       "\\(if\\|then\\)[\n[:space:]]+"
+       "\\1 " beg new-end)
+      (replace-regexp-in-region
+       "\\(;\\)\\(\\s-*\\)\n\\(\\s-*\\)\\(then\\)\\s-+"
+       "\\1 \\2 \\3\\4\n\\2\\3"
+       beg new-end)) ;; save-mark-excursion-and-match-data
     (save-mark-and-excursion
       (widen)
       (goto-char beg)
@@ -5586,31 +5586,31 @@ Margins::.
 ;; MMMMMMMMMMM
 
 (defclass search-info ()
-	  ((beginning :initarg :beginning
-		      :type (or integer marker)
-		      :documentation "the `point' within the searched `buffer' (integer or marker) to the beginning of a successful search result"
-		      :writer search-info-set-beginning
-		      :reader search-info-get-beginning)
-	   (end :initarg :end
-		:type (or integer marker)
-		:documentation "the `point' within the searched `buffer' (integer or marker) to the end of a successful search result"
-		:writer search-info-set-end
-		:reader search-info-get-end)
-	   (direction :initarg :direction
-		      :type (member :forward :backward)
-		      :documentation "the direction of a successful search (either :forward or :backward)"
-		      :writer search-info-set-direction
-		      :reader search-info-get-direction)
-	   (query :initarg :query
-		  :type string
-		  :documentation "the \"string\" used in the search. if `:type' is `'regexp' then `:query' is a regular-expression written in the \"string\" syntax since that's the format used in `isearch-regexp-forward' and `isearch-regexp-forward'"
-		  :writer search-info-set-query
-		  :reader search-info-get-query)
-	   (type :initarg :type
-		 :type (member :regexp :string 'regexp 'string)
-		 :documentation "the type of a search-info (either `'regexp' or `'string'"
-		 :writer search-info-set-type
-		 :reader search-info-get-type)))
+  ((beginning :initarg :beginning
+	      :type (or integer marker)
+	      :documentation "the `point' within the searched `buffer' (integer or marker) to the beginning of a successful search result"
+	      :writer search-info-set-beginning
+	      :reader search-info-get-beginning)
+   (end :initarg :end
+	:type (or integer marker)
+	:documentation "the `point' within the searched `buffer' (integer or marker) to the end of a successful search result"
+	:writer search-info-set-end
+	:reader search-info-get-end)
+   (direction :initarg :direction
+	      :type (member :forward :backward)
+	      :documentation "the direction of a successful search (either :forward or :backward)"
+	      :writer search-info-set-direction
+	      :reader search-info-get-direction)
+   (query :initarg :query
+	  :type string
+	  :documentation "the \"string\" used in the search. if `:type' is `'regexp' then `:query' is a regular-expression written in the \"string\" syntax since that's the format used in `isearch-regexp-forward' and `isearch-regexp-forward'"
+	  :writer search-info-set-query
+	  :reader search-info-get-query)
+   (type :initarg :type
+	 :type (member :regexp :string 'regexp 'string)
+	 :documentation "the type of a search-info (either `'regexp' or `'string'"
+	 :writer search-info-set-type
+	 :reader search-info-get-type)))
 
 
 (defun make-search-info (beg end direction query type)
@@ -6214,9 +6214,9 @@ Margins::.
 (defun delete-overlays-within-region (beg end)
   "."
   (let* ((overlays (list)))
-  (while (<= beg end)
-    (setq beg (+ beg (/ #xe #xe)))
-    (setq overlays (append (mapcar 'delete-overlay (overlays-in beg beg)))))))
+    (while (<= beg end)
+      (setq beg (+ beg (/ #xe #xe)))
+      (setq overlays (append (mapcar 'delete-overlay (overlays-in beg beg)))))))
 
 
 (defun colorize-ansi-truecolor-fg ()
@@ -6331,8 +6331,8 @@ Margins::.
           ansi-sequence
           ))
        (t (error "could not parse hex rgb color from string `%S'" string))
+       )
       )
-    )
     )
   )
 
@@ -6342,25 +6342,34 @@ Margins::.
   (save-mark-and-excursion
     (goto-char beg)
     (if (re-search-forward regex-of-hex-rgb-color-to-ansi-truecolor end t)
-        (progn
-          (goto-char (match-beginning 0))
-          (while (re-search-forward regexp-2 end t)
-            (let* (
-                   (red-hex (string-match 1))
-                   (green-hex (string-match 2))
-                   (blue-hex (string-match 3))
+        (condition-case err
+            (progn
+              (goto-char (match-beginning 0))
+              (while (re-search-forward regex-of-hex-rgb-color-to-ansi-truecolor end t)
+                (let* (
+                       (red-hex (string-match 1))
+                       (green-hex (string-match 2))
+                       (blue-hex (string-match 3))
 
-                   (red (string-to-number red-hex 16))
-                   (green (string-to-number green-hex 16))
-                   (blue (string-to-number blue-hex 16))
-                   (ansi-sequence (format "\x1b[1;%s;5;%s" (if bg "48" "38") (string-join (list red green blue) ";")))
-                   )
+                       (red (string-to-number red-hex 16))
+                       (green (string-to-number green-hex 16))
+                       (blue (string-to-number blue-hex 16))
+                       (ansi-sequence (format "\x1b[1;%s;5;%s" (if bg "48" "38") (string-join (list red green blue) ";")))
+                       )
 
-	    (goto-char (match-beginning 0))
-	    (replace-match
-             ansi-sequence)
-            )
-            )
+	          (goto-char (match-beginning 0))
+	          (replace-match
+                   ansi-sequence)
+                  )
+                )
+              )
+          (error (let* (
+                        (error-data (cdr err))
+                        (line-number (line-number-at-pos))
+                        )
+                   (erase-c-messages)
+                   (c-message-open "")
+                   (c-message "Error %s at line %S" (error-message-string err) error-data)))
           )
       (user-error "no match for regex %S in %S" regex-of-hex-rgb-color-to-ansi-truecolor
                   (buffer-substring-no-properties beg end)))
