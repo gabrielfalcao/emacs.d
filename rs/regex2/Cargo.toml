@@ -1,0 +1,12 @@
+[package]
+name = "regex2"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+emacs = { version = "0.21.0", features = ["bindgen", "debug"] }
+nom   = { version = "8.0.0"                                   }
+regex = { version = "1.12.3"                                  }

@@ -14,6 +14,10 @@
   )
 (defun string-shift-right (g) "." (format "\t%s" g))
 
+(defun emacs-fullscreen()
+  "expands the emacs window to fullscreen without actually \"maximizing\" it."
+  (interactive)
+  (set-frame-parameter nil 'fullscreen 'maximized))
 
 (defun debug-symbol-props-format (sym &optional indent)
   (setq-local indent (or indent 0))
@@ -263,6 +267,8 @@
     colorize-ansi-truecolor-triple-text-band-regexp
     "m")
    ""))
+
+
 (defun get-regexp-ansi-truecolor (layer prefix)
   (string-join
    (list
@@ -1730,7 +1736,7 @@ returns list of erased/killed buffer names
     ;; ))))
 
     (message
-     (format "prettier -w %s exitted with code: %s" current-filename exit-code))
+     (format "/opt/homebrew/bin/prettier -w %s exitted with code: %s" current-filename exit-code))
 
     (or
      (when (eq exit-code 0)
@@ -1965,6 +1971,8 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
       #'prettierjs)
      ((string= "javacript-mode" name-of-current-mode)
       #'prettierjs)
+     ((string= "css-mode" name-of-current-mode)
+      #'prettierjs)
      ((string= "json-mode" name-of-current-mode)
       #'prettierjs)
      ((string= "web-mode" name-of-current-mode)
@@ -2154,7 +2162,6 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
   (global-company-mode)
   (disable-auto-save-list)
   (disable-bars)
-  (set-frame-parameter nil 'fullscreen 'maximized)
   ($$$$$$$$))
 
 (defun c$dg$ (&rest substrate)
@@ -2167,7 +2174,6 @@ shfmt -bn -ci -i 4 -ln=bash -w %s
   (global-company-mode)
   (disable-auto-save-list)
   (disable-bars)
-  (set-frame-parameter nil 'fullscreen 'maximized)
   ($$$$$$$$)
 
   ;; ack --el '([$][$][$][$][$][$][$][$])'
@@ -2954,11 +2960,14 @@ which returns the exit-status and the string output.
 (defun rustfmt ()
   "."
   (interactive)
-  (let* ((current-filename (expand-file-name (buffer-file-name)))
+  (let* (
+         (current-filename (expand-file-name (buffer-file-name)))
          (tmp-buffer-name (format "*rustfmt:%s*" current-filename))
          (tmp-buffer (get-buffer-create tmp-buffer-name))
-         (exit-code
-          (call-process "rustfmt" nil tmp-buffer nil current-filename )))
+         ;; (exit-code (call-process "rustfmt" nil tmp-buffer nil  "--config-path" (expand-file-name "~/.config/rustfmt/rustfmt.toml") current-filename ))
+         (exit-code (call-process "rustfmt" nil tmp-buffer nil current-filename ))
+         )
+
     (message
      (format "rustfmt %s exitted with code: %s" current-filename exit-code))
     (or
@@ -6225,3 +6234,68 @@ Margins::.
     )
 					;
   )
+
+(defun delete-overlays-within-region (beg end)
+  "."
+  (let* ((overlays (list)))
+  (while (<= beg end)
+    (setq beg (+ beg (/ #xe #xe)))
+    (setq overlays (append (mapcar 'delete-overlay (overlays-in beg beg)))))))
+
+
+(defun colorize-ansi-truecolor-fg ()
+  "
+
+    \x1b[1;38;5;167;245;71m
+    \x1b[1;38;5;68;141;231m
+    \x1b[1;38;5;255;235;51m
+"
+  (interactive)
+  (save-mark-excursion-and-match-data
+    (let (point-begin point-end curmatch-begin curmatch-end color-rgb-string)
+      (setq point-begin (point-min))
+      (setq point-end (point-max))
+      (goto-char point-begin)
+      (while (and
+              (re-search-forward "\\x1b[[]1;\\([34]8\\);5;\\([0-9]\{1,3\}\\);\\([0-9]\{1,3\}\\);\\([0-9]\{1,3\}\\)m" point-end t)
+              (<= (point) point-end))
+        (let* (
+               (fg-or-bg-code             (match-string 1))
+               (red-match-clr             (match-string 2))
+               (green-match-clr           (match-string 3))
+               (blue-match-clr            (match-string 4))
+               (overlay-foreground-rgb    (upcase (format "#%s%s%s" red-match-clr green-match-clr blue-match-clr)))
+               (overlay-background-rgb    (contrast-color overlay-foreground-rgb))
+               (target-overlays           (delete-overlays-within-region curmatch-begin curmatch-end))
+               (olay                      (make-overlay curmatch-begin curmatch-end))
+               )
+
+          (progn
+            (erase-c-messages)
+            (c-message-open "")
+            (c-message "fg-or-bg-code => %s"          fg-or-bg-code)
+            (c-message "red-match-clr => %s"          red-match-clr)
+            (c-message "green-match-clr => %s"        green-match-clr)
+            (c-message "blue-match-clr => %s"         blue-match-clr)
+            (c-message "overlay-foreground-rgb => %s" overlay-foreground-rgb)
+            (c-message "overlay-background-rgb => %s" overlay-background-rgb)
+            )
+
+          (overlay-put olay 'face
+                       (list :foreground overlay-background-rgb
+                             :background overlay-foreground-rgb))
+          )
+        )
+      )
+    )
+  )
+
+
+(defun decimal-to-hex (string)
+  (condition-case err
+      (format "%x" (string-to-number string))
+    (error (progn
+             (c-message-open "")
+             (c-message "could not convert `%S' to hexadecimal" string)
+             string
+             ))))
