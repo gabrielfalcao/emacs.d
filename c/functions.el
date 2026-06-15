@@ -6326,7 +6326,7 @@ Margins::.
                (red (string-to-number red-hex 16))
                (green (string-to-number green-hex 16))
                (blue (string-to-number blue-hex 16))
-               (ansi-sequence (format "\x1b[1;%s;5;%s" (if bg "48" "38") (string-join (list red green blue) ";")))
+               (ansi-sequence (format "\\x1b[1;38;5;%sm" (string-join (mapcar #'(lambda (num) (format "%s" num) ) (list red green blue)) ";")))
                )
           ansi-sequence
           ))
@@ -6353,7 +6353,7 @@ Margins::.
                    (red (string-to-number red-hex 16))
                    (green (string-to-number green-hex 16))
                    (blue (string-to-number blue-hex 16))
-                   (ansi-sequence (format "\x1b[1;38;5;%s" (string-join (list red green blue) ";")))
+                   (ansi-sequence (format "\\x1b[1;38;5;%sm" (string-join (mapcar #'(lambda (num) (format "%s" num) ) (list red green blue)) ";")))
                    )
 
 	      (goto-char (match-beginning 0))
