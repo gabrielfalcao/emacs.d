@@ -3073,30 +3073,6 @@ which returns the exit-status and the string output.
      (replace-match
       (format "%02x" (string-to-number (match-string 0)))))))
 
-;; WIP/TODO: replace with rgb-parser.el
-;; (defun hex-rgb-to-ansi-region (beg end)
-;;   "BEG END."
-;;   (interactive "*r")
-;;   (let ((regexp-6
-;;          "\\([A-F0-9]\\{2\\}\\|[A-F0-9]\\{4\\}\\|[A-F0-9]\\{6\\}\\)")
-;;         (regexp-2 "[A-F0-9]\\{2\\}"))
-;;     (save-mark-and-excursion
-;;       (goto-char beg)
-;;       (if (re-search-forward regexp-6 end t)
-;;           (progn
-;;             (goto-char (match-beginning 0))
-;;             (while (re-search-forward regexp-2 end t)
-;; 	      (goto-char (match-beginning 0))
-;; 	      (replace-match
-;; 	       (format
-;; 		"$(( 0x%x ));"
-;;                 (string-to-number (match-string 0) 16)))
-;; 	      (setq end (point))
-;; 	      (backward-word 0))
-;;             )
-;; 	(user-error "no match for regex %S in %S" regexp-6
-;;                     (buffer-substring-no-properties beg end)))
-;;       )))
 
 (defun slugify-string (string)
   "depends on cargo crate heck-string-cli: `cargo install heck-string-cli'
@@ -6293,9 +6269,99 @@ Margins::.
 
 (defun decimal-to-hex (string)
   (condition-case err
-      (format "%x" (string-to-number string))
+      (format "%X" (string-to-number (format "%s" string)))
     (error (progn
              (c-message-open "")
              (c-message "could not convert `%S' to hexadecimal" string)
              string
              ))))
+
+(defun anstyle-add-comment-color-hexadecimal-region(beg end)
+  (interactive "*r")
+  (save-mark-excursion-and-match-data
+    (let* (
+           (begmin (point-min))
+           (endmax (point-max))
+           (regex "Style::new().\\(?:[a-zA-Z0-9_]+\\)(Some(RgbColor(\\([0-9]+\\),\\s-*\\([0-9]+\\),\\s-*\\([0-9]+\\)\\s-*).into()))")
+           )
+      (goto-char beg)
+      (while (and
+              (re-search-forward regex end t 1)
+              (<= (point) endmax))
+        (let* (
+               (red_string  (match-string 1))
+               (green_string (match-string 2))
+               (blue_string (match-string 3))
+               (red (decimal-to-hex red_string))
+               (green (decimal-to-hex green_string))
+               (blue (decimal-to-hex blue_string))
+               (comment (format "// #%s%s%s => (%s, %s, %s)" red green blue red_string green_string blue_string))
+               )
+          (replace-match (format "\n%s\n%s" comment (match-string 0)))
+          t)
+        )
+      )
+    )
+  )
+
+
+(defconst regex-of-hex-rgb-color-to-ansi-truecolor
+  "\\(?:\\B[#]\\)?\\b\\([a-fA-F0-9]\\{2\\}\\)\\([a-fA-F0-9]\\{2\\}\\)\\([a-fA-F0-9]\\{2\\}\\)\\b"
+  "regular expression of hex-rgb-color-to-ansi-truecolor and hex-rgb-to-ansi-region"
+  )
+
+(defun hex-rgb-color-to-ansi-truecolor (string bg)
+  "converts a string in the form `#{R}{G}{B}' such as `#FFCC00' to ansi truecolor such as `\x1b[1;38;2;255;204;0m'. The `BG' argument, if non-nil converts the color to BG color, following the same input example, the output would be `\x1b[1;38;2;255;204;0m'"
+  (save-match-data
+    (let* (
+           (found (string-match regex-of-hex-rgb-color-to-ansi-truecolor string))
+           )
+      (cond
+       (found
+        (let* (
+               (red-hex (string-match 1))
+               (green-hex (string-match 2))
+               (blue-hex (string-match 3))
+
+               (red (string-to-number red-hex 16))
+               (green (string-to-number green-hex 16))
+               (blue (string-to-number blue-hex 16))
+               (ansi-sequence (format "\x1b[1;%s;5;%s" (if bg "48" "38") (string-join (list red green blue) ";")))
+               )
+          ansi-sequence
+          ))
+       (t (error "could not parse hex rgb color from string `%S'" string))
+      )
+    )
+    )
+  )
+
+(defun hex-rgb-to-ansi-region (beg end)
+  "BEG END."
+  (interactive "*r")
+  (save-mark-and-excursion
+    (goto-char beg)
+    (if (re-search-forward regex-of-hex-rgb-color-to-ansi-truecolor end t)
+        (progn
+          (goto-char (match-beginning 0))
+          (while (re-search-forward regexp-2 end t)
+            (let* (
+                   (red-hex (string-match 1))
+                   (green-hex (string-match 2))
+                   (blue-hex (string-match 3))
+
+                   (red (string-to-number red-hex 16))
+                   (green (string-to-number green-hex 16))
+                   (blue (string-to-number blue-hex 16))
+                   (ansi-sequence (format "\x1b[1;%s;5;%s" (if bg "48" "38") (string-join (list red green blue) ";")))
+                   )
+
+	    (goto-char (match-beginning 0))
+	    (replace-match
+             ansi-sequence)
+            )
+            )
+          )
+      (user-error "no match for regex %S in %S" regex-of-hex-rgb-color-to-ansi-truecolor
+                  (buffer-substring-no-properties beg end)))
+    ))
