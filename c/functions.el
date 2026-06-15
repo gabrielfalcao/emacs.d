@@ -6319,9 +6319,9 @@ Margins::.
       (cond
        (found
         (let* (
-               (red-hex (string-match 1))
-               (green-hex (string-match 2))
-               (blue-hex (string-match 3))
+               (red-hex (match-string 1))
+               (green-hex (match-string 2))
+               (blue-hex (match-string 3))
 
                (red (string-to-number red-hex 16))
                (green (string-to-number green-hex 16))
@@ -6342,35 +6342,27 @@ Margins::.
   (save-mark-and-excursion
     (goto-char beg)
     (if (re-search-forward regex-of-hex-rgb-color-to-ansi-truecolor end t)
-        (condition-case err
-            (progn
-              (goto-char (match-beginning 0))
-              (while (re-search-forward regex-of-hex-rgb-color-to-ansi-truecolor end t)
-                (let* (
-                       (red-hex (string-match 1))
-                       (green-hex (string-match 2))
-                       (blue-hex (string-match 3))
+        (progn
+          (goto-char (match-beginning 0))
+          (while (re-search-forward regex-of-hex-rgb-color-to-ansi-truecolor end t)
+            (let* (
+                   (red-hex (match-string 1))
+                   (green-hex (match-string 2))
+                   (blue-hex (match-string 3))
 
-                       (red (string-to-number red-hex 16))
-                       (green (string-to-number green-hex 16))
-                       (blue (string-to-number blue-hex 16))
-                       (ansi-sequence (format "\x1b[1;%s;5;%s" (if bg "48" "38") (string-join (list red green blue) ";")))
-                       )
+                   (red (string-to-number red-hex 16))
+                   (green (string-to-number green-hex 16))
+                   (blue (string-to-number blue-hex 16))
+                   (ansi-sequence (format "\x1b[1;38;5;%s" (string-join (list red green blue) ";")))
+                   )
 
-	          (goto-char (match-beginning 0))
-	          (replace-match
-                   ansi-sequence)
-                  )
-                )
+	      (goto-char (match-beginning 0))
+	      (replace-match
+               ansi-sequence)
               )
-          (error (let* (
-                        (error-data (cdr err))
-                        (line-number (line-number-at-pos))
-                        )
-                   (erase-c-messages)
-                   (c-message-open "")
-                   (c-message "Error %s at line %S" (error-message-string err) error-data)))
+            )
           )
+      ;; else user-error
       (user-error "no match for regex %S in %S" regex-of-hex-rgb-color-to-ansi-truecolor
                   (buffer-substring-no-properties beg end)))
-    ))
+  ))
