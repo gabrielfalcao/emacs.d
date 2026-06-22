@@ -21,18 +21,24 @@
         (item-separator " => ")
         ;;
         )
-    (when (stringp value)
-      (let ((items
-             (list
-              subexp-start
-              value-prefix
+    (cond
+     ((when (stringp value)
+        (let ((items
+               (list
+                subexp-start
+                value-prefix
 
-              value
+                value
 
-              value-suffix
-              subexp-end)))
-        (format "%s\n" (string-join items item-separator)) ;; (format "%d=`%s`\n" subexp value)
-        ))) ;
+                value-suffix
+                subexp-end)))
+          (format "%s\n" (string-join items item-separator)) ;; (format "%d=`%s`\n" subexp value)
+          ))
+      )
+     (t
+      (format "WAT"))
+     )
+    )
   )
 
 (defun debug-regexp-subexpressions (&optional erase-messages-on &rest unused-arguments)
@@ -47,33 +53,38 @@ interactive command `replace-regexp' like so:
 
 \,(debug-regexp-subexpressions)
 "
-  (let* (;;
-         (md (match-data))
-         (md-len (length md))
-         (pairs (/ md-len 2))
-         (c-messages-is-visible (c-message-visible-p))
-         (subexp-count (- pairs 1))
-         (subexp-range-seq (number-sequence 1 subexp-count))
-         (subexp-dbg-strings (list))
-         (result-string         "")
-         ;;
-         )
-    (unless c-messages-is-visible (c-message-open))
+  (save-mark-excursion-and-match-data
+    (let* (;;
+           (md (match-data))
+           (md-len (length md))
+           (pairs (/ md-len 2))
+           (c-messages-is-visible (c-message-visible-p))
+           (subexp-count (- pairs 1))
+           (subexp-range-seq (number-sequence 1 subexp-count))
+           (subexp-dbg-strings (list))
+           (result-string         "")
+           ;;
+           )
+      (unless c-messages-is-visible (c-message-open))
 
-    (cond
-     ((equal t     erase-messages-on)
-      (erase-c-messages))
-     ((equal :each erase-messages-on)
-      (erase-c-messages)))
+      ;; ICAgICAgOzsgKGNvbmQKICAgICAgOzsgICgoZXF1YWwgdCAgICAgZXJhc2UtbWVzc2FnZXMtb24pCiAgICAgIDs7ICAgKGVyYXNlLWMtbWVzc2FnZXMpKQogICAgICA7OyAgKChlcXVhbCA6ZWFjaCBlcmFzZS1tZXNzYWdlcy1vbikKICAgICAgOzsgICAoZXJhc2UtYy1tZXNzYWdlcykpKQ==
 
-    (condition-case error
-        (progn
-          (setq subexp-dbg-strings
-                (seq-map-indexed #'debug-regexp-subexpressions/seq-map-indexed-function subexp-range-seq))
-          (setq result-string
-                (format "\n%s\n\n" (string-join subexp-dbg-strings "\n")))))
-    (c-message "%s" result-string)
-    (match-string 0)))
+      (condition-case error
+          (progn
+            (setq subexp-dbg-strings
+                  (seq-map-indexed #'(lambda (subexp idx)
+
+                                       ;; ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgOzsgKHdoZW4gKGFuZCAoZXF1YWwgdCBlcmFzZS1tZXNzYWdlcy1vbikKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgOzsgICAgICAgICAgICAoZXEgaWR4IDApKQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA7OyAgIChlcmFzZS1jLW1lc3NhZ2VzKSkKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgOzsgKHdoZW4gKGVxdWFsIDplYWNoIGVyYXNlLW1lc3NhZ2VzLW9uKQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA7OyAgIChlcmFzZS1jLW1lc3NhZ2VzKSk=
+
+                                       (debug-regexp-subexpressions/seq-map-indexed-function subexp idx)) subexp-range-seq))
+            (setq result-string
+                  (format "\n%s\n\n" (string-join subexp-dbg-strings "\n")))))
+      (c-message "(match-string 0): %s" (match-string 0))
+      (c-message "result-string: %s" result-string)
+      (match-string 0)
+      )
+    )
+  )
 
 
 (defalias '~dbg-regex #'debug-regexp-subexpressions)
