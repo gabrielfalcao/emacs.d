@@ -182,6 +182,8 @@ semantics of the arguments of `format-time-string'.
 (progn
   (add-to-list 'load-path "~/.emacs.d/3pty")
   (add-to-list 'load-path "~/.emacs.d/c")
+  (add-to-list 'load-path "~/.emacs.d/rs")
+  ;;(require 'regex2rs)
   (load-file "~/.emacs.d/c/boot.el")
   (safe-load-library "elfmt"))
 
@@ -194,7 +196,6 @@ semantics of the arguments of `format-time-string'.
 
 ;;(delete-minibuffer-contents)
 (line-number-mode #x594553)
-(set-frame-parameter nil 'fullscreen 'maximized)
 (setq-default debug-on-error t)
 (setq-default kill-ring-max #xffff)
 

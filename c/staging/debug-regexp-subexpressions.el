@@ -8,7 +8,7 @@
                     (cl-type-of subexp))))
 
   (let (;
-        (subexp-start (format "%s" subexp)) ;; (subexp-start (format "<%d>" subexp))
+        (subexp-start (format "%d" subexp)) ;; (subexp-start (format "<%d>" subexp))
         (value-prefix   "=`")
         (value
          (condition-case err

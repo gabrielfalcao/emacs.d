@@ -75,9 +75,24 @@
 ;; (flycheck-define-checker sh-shellcheck :command ("shellcheck" "-x" "-f" "checkstyle" "-s" (eval (symbol-name sh-shell)) source) :modes shell-script-mode :error-parser flycheck-parse-checkstyle)
 
 
+;;
+;; (progn
+;;   (defmacro declare-auto-mode-by-file-extension (extension mode-name)
+;;   (list 'add-to-list '\'auto-mode-alist (quote (list (format "\\.%s$" extension) \. (format "%s" mode-name))))
+;;   )
+;;
+;;   (erase-c-messages)
+;;   (c-message-open "(declare-auto-mode-by-file-extension \"toml\" \"toml-mode\")\n%S\n"
+;;                   '(declare-auto-mode-by-file-extension "toml" "toml-mode"))
+;;
+;;   )
+;;
+
+
 (add-to-list 'auto-mode-alist '("/shell[.]d/" . shell-script-mode))
 (add-to-list 'auto-mode-alist '("/bash_completion\\([.]d\\)?/" . shell-script-mode))
 (add-to-list 'auto-mode-alist '("/opt[\/]libexec/" . shell-script-mode))
+(add-to-list 'auto-mode-alist '("/bin/uv/[^/.]*" . python-mode))
 (add-to-list 'auto-mode-alist '("/bin/py/[^/.]*" . python-mode))
 (add-to-list 'auto-mode-alist '("/bin/sh/[^/.]*" . shell-script-mode))
 (add-to-list 'auto-mode-alist '("/bin/[^/.]*" . shell-script-mode))
@@ -87,8 +102,13 @@
 (add-to-list 'auto-mode-alist '("Pipfile" . toml-mode))
 (add-to-list 'auto-mode-alist '("pyproject.toml" . toml-mode))
 (add-to-list 'auto-mode-alist '("Pipfile.lock" . toml-mode))
+(add-to-list 'auto-mode-alist '("\\.toml$" . toml-mode))
+(add-to-list 'auto-mode-alist '("\\.toml\\.tera$" . toml-mode))
+(add-to-list 'auto-mode-alist '("\\.toml\\.jinja2$" . toml-mode))
+
 (add-to-list 'auto-mode-alist '("\\.babelrc" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.bash$" . shell-script-mode))
+(add-to-list 'auto-mode-alist '("[.]ssh/.*config" . ssh-config-mode))
 (add-to-list 'auto-mode-alist '("/workbench/[0-9-]+/[^/]*bash[^/]*$" . shell-script-mode))
 (add-to-list 'auto-mode-alist '("\\.bashrc$" . shell-script-mode))
 (add-to-list 'auto-mode-alist '("\\.bash.*static$" . shell-script-mode))
@@ -112,7 +132,6 @@
 (add-to-list 'auto-mode-alist '("\\.swift$" . swift-mode))
 (add-to-list 'auto-mode-alist '("\\.reb$" . reb-mode))
 (add-to-list 'auto-mode-alist '("\\.tf$" . terraform-mode))
-(add-to-list 'auto-mode-alist '("\\.toml$" . toml-mode))
 (add-to-list 'auto-mode-alist '("\\.ts$" . typescript-mode))
 (add-to-list 'auto-mode-alist '("\\.brs$" . brightscript-mode))
 (add-to-list 'auto-mode-alist '("\\.sed$" . sed-mode))

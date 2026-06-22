@@ -267,9 +267,9 @@
 (defalias 'quotient #'/)
 (defalias 'times #'*)
 (defalias 'difference #'-)
-(if kernel-is-linux
-  ;; enable display of numbers in the left margin
-  (linum-mode 1))
+;; (if kernel-is-linux
+;;   ;; enable display of numbers in the left margin
+;;   (linum-mode 1))
 
 (line-number-mode 1) ;; enable display of line number in the mode line
 

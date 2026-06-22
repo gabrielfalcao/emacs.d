@@ -5,6 +5,9 @@
 (add-hook 'after-save-hook 'c$dg$)
 (add-hook 'after-change-functions 'c$dg$)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+(add-hook 'before-make-frame-hook 'emacs-fullscreen)
+
 (add-hook 'after-save-hook '$$$$$)
 (add-hook 'after-init-hook '$$$$$)
 (add-hook 'after-init-hook #'(lambda () (interactive) (ignore-errors (delete-minibuffer-contents) (message "emacs init took %s to initialize" (emacs-init-time)))))
@@ -78,6 +81,12 @@
      (define-key javascript-mode-map
       (kbd "C-c C-f")
       #'g/format/prettify)))
+(add-hook 'css-mode-hook
+  #'(lambda ()
+     (interactive)
+     (define-key css-mode-map
+      (kbd "C-c C-f")
+      #'g/format/prettify)))
 (add-hook 'web-mode-hook
   #'(lambda ()
      (interactive)
@@ -132,7 +141,6 @@
 
 (add-hook 'after-make-frame-functions
   #'(lambda (frame)
-     (set-frame-parameter frame 'fullscreen 'maximized)
      (Ox33b4O/$/paint-mode-line nil "new buffer")))
 (add-hook 'toml-mode-hook #'(lambda () (setq fill-column 120)))
 ;; (add-hook 'toml-mode-hook #'(lambda () ( (local-set-key (kbd '("C-c C-f") 'toml-prettify-buffer)))))

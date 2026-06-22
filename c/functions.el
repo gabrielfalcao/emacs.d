@@ -6305,8 +6305,9 @@ Margins::.
   )
 
 
+
 (defconst regex-of-hex-rgb-color-to-ansi-truecolor
-  "\\(?:\\B[#]\\)?\\b\\([a-fA-F0-9]\\{2\\}\\)\\([a-fA-F0-9]\\{2\\}\\)\\([a-fA-F0-9]\\{2\\}\\)\\b"
+  (propertize "\\(?:\\B[#]\\)?\\b\\([a-fA-F0-9]\\{2\\}\\)\\([a-fA-F0-9]\\{2\\}\\)\\([a-fA-F0-9]\\{2\\}\\)\\b" 'inhibit-fold t)
   "regular expression of hex-rgb-color-to-ansi-truecolor and hex-rgb-to-ansi-region"
   )
 
